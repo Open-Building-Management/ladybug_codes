@@ -1,0 +1,15 @@
+[tool.mypy]
+mypy_path = ["src"]
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = "honeybee.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "honeybee_energy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ladybug_geometry.*"
+ignore_missing_imports = true
