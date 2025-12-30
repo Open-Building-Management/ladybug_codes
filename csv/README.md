@@ -1,6 +1,8 @@
-# simulations avec energyplus
+# around energyplus
 
-Il existe un convertisseur pour passer d'une version à une autre d'openstudio/energy plus
+## convertisseurs
+
+Il existe un convertisseur pour que les idf correspondant à une version ancienne d'energyplus soient lisibles par une version récente d'openstudio/energyplus
 
 Ce convertisseur est nécessaire si on télécharge des idf depuis https://www.energycodes.gov/prototype-building-models
 
@@ -9,7 +11,9 @@ C:\EnergyPlusV24-1-0\PreProcess\IDFVersionUpdater
 ```
 C'est un utilitaire GUI qui est inclus dans toute version d'energyplus autonome. 
 
-Les outils de preprocess/postprocess ne sont pas installés lorsqu'on installe Openstudio.
+Les outils de preprocess/postprocess ne sont pas installés lorsqu'on installe seulement Openstudio.
+
+## bâtiments exemples
 
 L'installation d'Openstudio GUI comporte un ensemble de fichiers osm de tests.
 
@@ -22,6 +26,8 @@ Il y a notamment :
 ```
 C:\openstudioapplication-1.8.0\Resources\ShoeboxModel\ShoeboxExample\measures\create_typical_building_from_model\tests
 ```
+
+## simulations
 
 Pour activer l'enregistrement de timeseries lors des simulations :
 Aller dans `Output Variables` puis `select output variables`
