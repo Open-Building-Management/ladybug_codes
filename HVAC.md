@@ -8,7 +8,8 @@ OpenStudio 3.8.0, EnergyPlus 24.1.0
 VAV – Variable Air Volume
 
 PTAC signifie Packaged Terminal Air Conditioner.
-On le trouve sous cette forme "ZoneHVAC:PackagedTerminalAirConditioner"
+On le trouve sous cette forme `ZoneHVAC:PackagedTerminalAirConditioner`
+
 PTAC = unité air-air autonome par zone
 
 # simulation settings
@@ -17,7 +18,7 @@ Do Zone Sizing → calcule la charge thermique de la zone
 
 Do System Sizing → calcule la distribution air (AirLoops / Coils / Terminals)
 
-Do Plant Sizing → calcule les besoins des boucles eau chaude / froide → essentiel si tu utilises des Baseboards ou un PlantLoop avec chaudière
+Do Plant Sizing → calcule les besoins des boucles eau chaude / froide → essentiel avec des Baseboards ou un PlantLoop avec chaudière
 
 Do HVAC sizing simulation for sizing periods
 
@@ -54,6 +55,7 @@ Cas d'usage typiques :
 chauffage direct des personnes et surfaces par rayonnement, très peu de convection d'air
 
 L'objet à utiliser pour représenter des radiateurs muraux est Zone HVAC Baseboard Rad Conv Water
+
 ce sont des radiateurs très bas, le long de la plinthe, d'où le nom de baseboard
 
 
@@ -67,15 +69,15 @@ L’émetteur :
 Dans EnergyPlus, la loi d’eau n’est PAS portée par l’émetteur, mais par la boucle hydraulique.
 
 Depuis l'onglet HVAC
-- Créer un plant loop avec un HW Boiler et une Const Spd Pump
-- Mettre un OA temp reset sur la production (-5°C ext = 70°C hot water, 15°C ext = 40°C hot water)
-- Sur le boiler, mettre leavingSetPointModulated comme choix de modulation
+- Créer un plant loop avec un `HW Boiler` et une `Const Spd Pump`
+- Mettre un `OA temp reset` sur la production (-5°C ext = 70°C hot water, 15°C ext = 40°C hot water)
+- Sur le boiler, mettre `leavingSetPointModulated` comme choix de modulation
 
 Les objets baseboards ne sont pas visibles dans l’onglet HVAC, mais on les y injecte via l'onglet Thermal Zones
 
 Depuis l'onglet Thermal Zones
-- Mettre des Zone HVAC Baseboard Rad Conv Water comme équipement de zones sur les thermal zones à chauffer
-- Rattacher ces équipements au plant loop via la case à cocher du second onglet de configuration des HVAC baseboard rad conv water.
+- Mettre des `Zone HVAC Baseboard Rad Conv Water` comme équipement de zones sur les thermal zones à chauffer
+- Rattacher ces équipements au plant loop via la case à cocher du second onglet de configuration des `HVAC baseboard rad conv water`.
 - Mettre Always On comme availability schedule pour ces radiateurs
 - Affecter le heating schedule aux thermal zones à chauffer
 
@@ -96,7 +98,7 @@ ADU = Air Distribution Unit
 
 Dans EnergyPlus / OpenStudio, cela correspond à :
 - Air Terminal Single Duct Constant Volume No Reheat
-- ADU RPLUS1-AIR TERMINAL SINGLE DUCT CONSTANT VOLUME NO REHEAT 2:Zone Air Terminal Sensible Heating Rate [W](Hourly)
+- `ADU RPLUS1-AIR TERMINAL SINGLE DUCT CONSTANT VOLUME NO REHEAT 2:Zone Air Terminal Sensible Heating Rate [W](Hourly)`
 
 Ce n’est PAS une unité de chauffage active, mais l’interface entre le réseau d’air et la zone ou encore le flux thermique sensible transmis par l’air à la zone
 
