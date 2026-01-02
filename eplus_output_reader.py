@@ -1,110 +1,58 @@
 """synthetize an eplus simulation output"""
 import csv
 from dataclasses import dataclass
-from enum import StrEnum
-import os
-import sys
+
 from matplotlib import pyplot as plt
 
-CSV_FOLDER = "osm"
-EPLUSOUT = "eplusout.csv"
+from src.vis_tools import (
+    Pattern, Exclude,
+    CSV_FOLDER, EPLUSOUT,
+    ZONE, OUTDOOR, RATE, SCHEDULES, COP,
+    choose_folder, choose_in_list,
+    init_single_column_plt, plot,
+    CopConfig, get_cop_points, bin_cop_by_outdoor_temp
+)
 
-class Pattern(StrEnum):
-    """patterns to track"""
-    ZONE_TEMP = ":Zone Air Temperature"
-    OUTDOOR = ":Site Outdoor Air"
-    SCHEDULE = ":Schedule"
-    ENERGY = "Energy"
-    RATE = "Rate"
-
-class Exclude(StrEnum):
-    "excluded patterns"
-    THERMOSTAT_SCHEDULE = "THERMOSTAT SCHEDULE"
-    ALWAYS = "ALWAYS"
 
 @dataclass(frozen=True)
 class Rule:
     """rules"""
-    includes: tuple[str, ...]
+    includes: tuple[tuple[str, ...], ...]
     excludes: tuple[str, ...] = ()
 
 RULES: dict[str, Rule] = {
-    "zone": Rule(
-        includes=(Pattern.ZONE_TEMP,),
+    ZONE: Rule(
+        includes=(
+            (Pattern.ZONE_TEMP,),
+        ),
     ),
-    "outdoor": Rule(
-        includes=(Pattern.OUTDOOR,),
+    OUTDOOR: Rule(
+        includes=(
+            (Pattern.OUTDOOR,),
+        ),
     ),
-    "rate": Rule(
-        includes=(Pattern.RATE,),
+    RATE: Rule(
+        includes=(
+            (Pattern.RATE,),
+        ),
     ),
-    "schedules": Rule(
-        includes=(Pattern.SCHEDULE,),
+    SCHEDULES: Rule(
+        includes=(
+            (Pattern.SCHEDULE,),
+        ),
         excludes=(
             Exclude.THERMOSTAT_SCHEDULE,
             Exclude.ALWAYS,
         ),
     ),
+    COP: Rule(
+         includes=(
+            (Pattern.HEATING_RATE, Pattern.ELECTRICITY_RATE),
+            (Pattern.DX,),
+        )
+    ),
 }
 
-
-def init_single_column_plt(nb_graphes) :
-    """Initialise un graphe a une seule colonne"""
-    plt.rcParams.update({'font.size':6})
-    return plt.subplots(
-        nrows=nb_graphes,
-        ncols=1,
-        figsize=(15,6),
-        sharex=True,
-        gridspec_kw={'hspace': 0.5}
-    )
-
-def get_values(data, label):
-    """extract a column with a given column label"""
-    result = []
-    try:
-        result = [
-            float(row[label])
-            for row in data
-        ]
-    except ValueError as e:
-        print(e)
-    return result
-
-
-def plot(labels, ax, data):
-    """plot on an axis"""
-    for label in labels:
-        serie = get_values(data, label)
-        if len(serie) > 0:
-            ax.plot(
-                serie,
-                label=label
-            )
-    ax.legend()
-
-def choose_folder(base_path):
-    """choix du dossier de projet"""
-    sous_dossiers = [
-        d for d in os.listdir(base_path)
-        if os.path.isdir(os.path.join(base_path, d))
-    ]
-    if not sous_dossiers:
-        print(f"Aucun sous-dossier dans '{base_path}'.")
-        sys.exit(1)
-
-    print(f"\nSous-dossiers disponibles dans '{base_path}' :")
-    for n, d in enumerate(sous_dossiers, start=1):
-        print(f"  {n}. {d}")
-
-    while True:
-        try:
-            choix = int(input("\nChoisis un numéro : "))
-            if 1 <= choix <= len(sous_dossiers):
-                return os.path.join(base_path, sous_dossiers[choix - 1])
-            print("Numéro invalide, réessaie.")
-        except ValueError:
-            print("Il faut entrer un nombre.")
 
 folder = choose_folder(CSV_FOLDER)
 
@@ -115,16 +63,65 @@ eplus_labels: dict[str, list[str]] = {name: [] for name in RULES}
 
 for key in eplus_data[0].keys():
     for name, rule in RULES.items():
-        if any(p in key for p in rule.includes):
-            if any(e in key for e in rule.excludes):
-                continue
-            eplus_labels[name].append(key)
+        # AND entre groupes
+        if not all(
+            any(p in key for p in group)
+            for group in rule.includes
+        ):
+            continue
+        # exclusions
+        if any(e in key for e in rule.excludes):
+            continue
+        eplus_labels[name].append(key)
+
+nbg = sum(1 for group in eplus_labels.values() if len(group) > 0)
+
+if eplus_labels[COP]:
+    schedule_label = choose_in_list(eplus_labels[SCHEDULES])
+    outdoor_label = choose_in_list(eplus_labels[OUTDOOR])
+    cop_config = CopConfig(
+        cop_labels=eplus_labels[COP],
+        schedule_label=schedule_label,
+        outdoor_label=outdoor_label
+    )
+    outdoor_filtered, cops_filtered, all_cops = get_cop_points(
+        eplus_data,
+        cop_config,
+        min_plr=0.15,
+        p_nominal=43150,
+        setpoint=20
+    )
+    nbg += 1
+
+fig, axes = init_single_column_plt(nbg)
+
+i = 0
+for group in eplus_labels.values():
+    if len(group):
+        plot(group, axes[i], eplus_data)
+        i += 1
+
+if eplus_labels[COP]:
+    axes[-1].plot(all_cops, label=COP)
+    axes[-1].legend()
 
 print(eplus_labels)
 
-fig, axes = init_single_column_plt(len(RULES))
-
-for i, eplus_label in enumerate(eplus_labels.values()):
-    plot(eplus_label, axes[i], eplus_data)
-
 plt.show()
+
+if eplus_labels[COP]:
+    bins, cop_med, cop_p25, cop_p75 = bin_cop_by_outdoor_temp(
+        outdoor_filtered,
+        cops_filtered,
+        bin_width=1.0,
+    )
+    plt.figure(figsize=(8, 5))
+    plt.scatter(outdoor_filtered, cops_filtered, s=5, alpha=0.15, label="Instant COP")
+    plt.plot(bins, cop_med, "-o", color="black", label="Median COP")
+    plt.fill_between(bins, cop_p25, cop_p75, alpha=0.3, label="IQR")
+    plt.xlabel("Température extérieure [°C]")
+    plt.ylabel("COP chauffage DX")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
