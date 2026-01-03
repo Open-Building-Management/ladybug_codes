@@ -14,13 +14,13 @@ PTAC = unité air-air autonome par zone
 
 # simulation settings
 
-Do Zone Sizing → calcule la charge thermique de la zone
+`Do Zone Sizing` → calcule la charge thermique de la zone
 
-Do System Sizing → calcule la distribution air (AirLoops / Coils / Terminals)
+`Do System Sizing` → calcule la distribution air (AirLoops / Coils / Terminals)
 
-Do Plant Sizing → calcule les besoins des boucles eau chaude / froide → essentiel avec des Baseboards ou un PlantLoop avec chaudière
+`Do Plant Sizing` → calcule les besoins des boucles eau chaude / froide → essentiel avec des Baseboards ou un PlantLoop avec chaudière
 
-Do HVAC sizing simulation for sizing periods
+`Do HVAC sizing simulation for sizing periods`
 
 Pour un système à eau chaude, les 4 doivent être cochés, sinon le plant est mal informé de la demande réelle
 
@@ -54,18 +54,19 @@ Cas d'usage typiques :
 
 chauffage direct des personnes et surfaces par rayonnement, très peu de convection d'air
 
-L'objet à utiliser pour représenter des radiateurs muraux est Zone HVAC Baseboard Rad Conv Water
+L'objet à utiliser pour représenter des radiateurs muraux est `Zone HVAC Baseboard Rad Conv Water`
 
 ce sont des radiateurs très bas, le long de la plinthe, d'où le nom de baseboard
 
 
 # Modéliser une chaufferie avec des radiateurs muraux à eau chaude
 
-La loi d’eau se met sur la boucle eau chaude via un SetpointManager:OutdoorAirReset, on la trouve sous le nom de OA Temp Reset
+La loi d’eau se met sur la boucle eau chaude via un `SetpointManager:OutdoorAirReset`, on la trouve sous le nom de `OA Temp Reset`
 
 L’émetteur :
 - reçoit une eau à température pilotée
 - module son débit (si VariableFlow)
+
 Dans EnergyPlus, la loi d’eau n’est PAS portée par l’émetteur, mais par la boucle hydraulique.
 
 Depuis l'onglet HVAC
