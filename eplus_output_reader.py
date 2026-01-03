@@ -9,10 +9,11 @@ from src.vis_tools import (
     CSV_FOLDER, EPLUSOUT,
     ZONE, OUTDOOR, RATE, SCHEDULES, COP,
     choose_folder, choose_in_list,
-    init_single_column_plt, plot,
+    init_single_column_plt, plot, get_diff,
     CopConfig, get_cop_points, bin_cop_by_outdoor_temp
 )
 
+DT = "deltaT"
 
 @dataclass(frozen=True)
 class Rule:
@@ -46,11 +47,21 @@ RULES: dict[str, Rule] = {
         ),
     ),
     COP: Rule(
-         includes=(
+        includes=(
             (Pattern.HEATING_RATE, Pattern.ELECTRICITY_RATE),
             (Pattern.DX,),
         )
     ),
+    "setPoint": Rule(
+        includes=(
+            ("NODE 6",),
+        )
+    ),
+    DT: Rule(
+        includes=(
+            (Pattern.INLET, Pattern.OUTLET,),
+        )
+    )
 }
 
 
@@ -96,9 +107,14 @@ if eplus_labels[COP]:
 fig, axes = init_single_column_plt(nbg)
 
 i = 0
-for group in eplus_labels.values():
+for key, group in eplus_labels.items():
     if len(group):
-        plot(group, axes[i], eplus_data)
+        if key == DT:
+            diff = get_diff(eplus_data, group[-1], group[0])
+            axes[i].plot(diff, label=DT)
+            axes[i].legend()
+        else:
+            plot(group, axes[i], eplus_data)
         i += 1
 
 if eplus_labels[COP]:

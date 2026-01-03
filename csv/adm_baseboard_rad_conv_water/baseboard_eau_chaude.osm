@@ -3570,11 +3570,11 @@ OS:Surface,
 
 OS:Site,
   {7e0caf5f-2714-4c73-bbf7-159034aabe46}, !- Handle
-  Clermont-Ferrand.Auvergne.AP,           !- Name
-  45.7869,                                !- Latitude {deg}
-  3.1495,                                 !- Longitude {deg}
+  CLERMONT-FERRAND,                       !- Name
+  45.78,                                  !- Latitude {deg}
+  3.17,                                   !- Longitude {deg}
   1,                                      !- Time Zone {hr}
-  326,                                    !- Elevation {m}
+  330,                                    !- Elevation {m}
   ;                                       !- Terrain
 
 OS:YearDescription,
@@ -3623,11 +3623,12 @@ OS:SimulationControl,
 OS:Sizing:Parameters,
   {87c65a61-8df6-4385-b4ab-67a027de3b8d}, !- Handle
   1.25,                                   !- Heating Sizing Factor
-  1.15;                                   !- Cooling Sizing Factor
+  1.15,                                   !- Cooling Sizing Factor
+  ;                                       !- Timesteps in Averaging Window
 
 OS:Timestep,
   {c35ebb73-52bf-4355-b682-1c53bac78c1c}, !- Handle
-  1;                                      !- Number of Timesteps per Hour
+  6;                                      !- Number of Timesteps per Hour
 
 OS:ShadowCalculation,
   {2693764f-c54c-4de2-9d57-00a2d9549591}, !- Handle
@@ -3856,17 +3857,17 @@ OS:StandardsInformation:Construction,
 
 OS:WeatherFile,
   {2e784187-8af7-4859-bab0-62549e34f11a}, !- Handle
-  Clermont-Ferrand.Auvergne.AP,           !- City
-  AR,                                     !- State Province Region
+  CLERMONT-FERRAND,                       !- City
+  -,                                      !- State Province Region
   FRA,                                    !- Country
-  SRC-TMYx,                               !- Data Source
+  IWEC Data,                              !- Data Source
   074600,                                 !- WMO Number
-  45.7869,                                !- Latitude {deg}
-  3.1495,                                 !- Longitude {deg}
+  45.78,                                  !- Latitude {deg}
+  3.17,                                   !- Longitude {deg}
   1,                                      !- Time Zone {hr}
-  326,                                    !- Elevation {m}
-  FRA_AR_Clermont-Ferrand.Auvergne.AP.074600_TMYx.epw, !- Url
-  6D4539D9,                               !- Checksum
+  330,                                    !- Elevation {m}
+  FRA_Clermont-Ferrand.074600_IWEC.epw,   !- Url
+  EE9FD728,                               !- Checksum
   ,                                       !- Start Date Actual Year
   Sunday;                                 !- Start Day of Week
 
@@ -4118,28 +4119,28 @@ OS:Output:Variable,
   Output Variable 1,                      !- Name
   *,                                      !- Key Value
   Site Outdoor Air Drybulb Temperature,   !- Variable Name
-  Hourly;                                 !- Reporting Frequency
+  Timestep;                               !- Reporting Frequency
 
 OS:Output:Variable,
   {947e1a77-5c52-4a7f-bb99-4e67b6bde4b1}, !- Handle
   Output Variable 2,                      !- Name
   *,                                      !- Key Value
   Site Outdoor Air Wetbulb Temperature,   !- Variable Name
-  Hourly;                                 !- Reporting Frequency
+  Timestep;                               !- Reporting Frequency
 
 OS:Output:Variable,
   {08874da1-bcad-4445-9a1c-6c81fe89b9ee}, !- Handle
   Output Variable 3,                      !- Name
   *,                                      !- Key Value
   Baseboard Total Heating Rate,           !- Variable Name
-  Hourly;                                 !- Reporting Frequency
+  Timestep;                               !- Reporting Frequency
 
 OS:Output:Variable,
   {33f87238-61e3-44ed-a0d4-16691554f977}, !- Handle
   Output Variable 4,                      !- Name
   *,                                      !- Key Value
   Schedule Value,                         !- Variable Name
-  Hourly;                                 !- Reporting Frequency
+  Timestep;                               !- Reporting Frequency
 
 OS:PlantLoop,
   {8536e15f-93ca-46bd-bd6d-fa1dffb8b1f1}, !- Handle
@@ -4347,16 +4348,16 @@ OS:Boiler:HotWater,
 OS:Curve:Biquadratic,
   {79d11c4d-f481-4548-86be-41143741fb58}, !- Handle
   Boiler Efficiency,                      !- Name
-  1,                                      !- Coefficient1 Constant
-  0,                                      !- Coefficient2 x
-  0,                                      !- Coefficient3 x**2
-  0,                                      !- Coefficient4 y
+  1.02,                                   !- Coefficient1 Constant
+  -0.02,                                  !- Coefficient2 x
+  -0.05,                                  !- Coefficient3 x**2
+  -0.002,                                 !- Coefficient4 y
   0,                                      !- Coefficient5 y**2
   0,                                      !- Coefficient6 x*y
-  0,                                      !- Minimum Value of x
+  0.1,                                    !- Minimum Value of x
   1,                                      !- Maximum Value of x
-  0,                                      !- Minimum Value of y
-  1,                                      !- Maximum Value of y
+  25,                                     !- Minimum Value of y
+  80,                                     !- Maximum Value of y
   ,                                       !- Minimum Curve Output
   ,                                       !- Maximum Curve Output
   ,                                       !- Input Unit Type for X
@@ -4690,4 +4691,44 @@ OS:Connection,
   3,                                      !- Outlet Port
   {b39ff377-2e47-4822-89a1-217bcc85659e}, !- Target Object
   2;                                      !- Inlet Port
+
+OS:Output:Variable,
+  {a0532dde-baec-4ce5-8ed8-f2252244364c}, !- Handle
+  Output Variable 5,                      !- Name
+  *,                                      !- Key Value
+  System Node Setpoint Temperature,       !- Variable Name
+  Timestep;                               !- Reporting Frequency
+
+OS:Output:Variable,
+  {08983517-9e33-4127-a73b-585373dd6258}, !- Handle
+  Output Variable 6,                      !- Name
+  *,                                      !- Key Value
+  Zone Air Temperature,                   !- Variable Name
+  Timestep;                               !- Reporting Frequency
+
+OS:EnergyManagementSystem:Sensor,
+  {4794edd9-0cb3-4f32-8d7c-2616b9f84a00}, !- Handle
+  Energy_Management_System_Sensor_1,      !- Name
+  {0bb3ed42-e751-4c6f-bcd3-97ddb3d3c132}, !- Output Variable or Output Meter Index Key Name
+  Boiler Inlet Temperature;               !- Output Variable or Output Meter Name
+
+OS:EnergyManagementSystem:Sensor,
+  {8057f709-b82a-4d31-a09a-bfbb489797eb}, !- Handle
+  Energy_Management_System_Sensor_2,      !- Name
+  {0bb3ed42-e751-4c6f-bcd3-97ddb3d3c132}, !- Output Variable or Output Meter Index Key Name
+  Boiler Outlet Temperature;              !- Output Variable or Output Meter Name
+
+OS:Output:Variable,
+  {d8968361-7736-481f-ad1c-156a6020d1ab}, !- Handle
+  Output Variable 7,                      !- Name
+  *,                                      !- Key Value
+  Boiler Inlet Temperature,               !- Variable Name
+  Timestep;                               !- Reporting Frequency
+
+OS:Output:Variable,
+  {70e5c9f2-365f-4612-ad1d-51b3c0910e43}, !- Handle
+  Output Variable 8,                      !- Name
+  *,                                      !- Key Value
+  Boiler Outlet Temperature,              !- Variable Name
+  Timestep;                               !- Reporting Frequency
 

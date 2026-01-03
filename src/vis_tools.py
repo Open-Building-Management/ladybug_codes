@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-CSV_FOLDER = "csv"
+CSV_FOLDER = "osm"
 EPLUSOUT = "eplusout.csv"
 ZONE = "zone"
 OUTDOOR = "outdoor"
@@ -29,6 +29,8 @@ class Pattern(StrEnum):
     HEATING_RATE = "Heating Rate"
     DX = "DX"
     FAN = "Fan"
+    INLET = "Inlet"
+    OUTLET = "Outlet"
 
 
 class Exclude(StrEnum):
@@ -59,6 +61,20 @@ def get_values(data, label):
         ]
     except ValueError as e:
         print(e)
+    return result
+
+def get_diff(data, label1, label2, absolute_value=1):
+    """delta between 2 columns"""
+    result = []
+    try:
+        result = [
+            float(row[label1]) - float(row[label2])
+            for row in data
+        ]
+    except ValueError as e:
+        print(e)
+    if absolute_value:
+       return [abs(res) for res in result]
     return result
 
 
