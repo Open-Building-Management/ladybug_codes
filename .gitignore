@@ -1,3 +1,4 @@
 *.pyc
 osm/*
 idf_zip/*
+weather_data
