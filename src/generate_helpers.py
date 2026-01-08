@@ -76,7 +76,7 @@ def main():
         types_lines.append("")
 
         # ---------- Helper eppy ----------
-        helpers_lines.append(f"def {class_name}(idf, **kwargs: {class_name}):")
+        helpers_lines.append(f"def {class_name}(idf, **kwargs: {class_name}Type):")
         helpers_lines.append(f"    return idf.newidfobject('{c}', **kwargs)")
         helpers_lines.append("")
 
