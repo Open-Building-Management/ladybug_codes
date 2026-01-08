@@ -15,7 +15,7 @@ from ladybug_geometry.geometry3d import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
-from helpers.consts import LOGGER
+from idfhub.helpers.consts import LOGGER
 
 WIDTH = 37.0
 DEPTH = 11.0

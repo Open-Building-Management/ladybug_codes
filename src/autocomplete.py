@@ -2,9 +2,9 @@
 run generate_helpers.py first !!!!!!!!!!!!!!
 """
 from eppy.modeleditor import IDF
-from idf_autocomplete.idf_helpers import Plantloop 
-from idf_autocomplete.idf_types import PlantloopType
-from helpers.consts import REPO_ROOT
+from idfhub.idf_autocomplete.idf_helpers import Plantloop 
+from idfhub.idf_autocomplete.idf_types import PlantloopType
+from idfhub.helpers.consts import REPO_ROOT
 
 # Charger ton IDF
 IDF.setiddname("C:/openstudioapplication-1.8.0/EnergyPlus/Energy+.idd")

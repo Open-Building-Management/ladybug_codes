@@ -4,7 +4,7 @@ from pathlib import Path
 from eppy.modeleditor import IDF
 import re
 
-from helpers.consts import REPO_ROOT
+from idfhub.helpers.consts import REPO_ROOT
 
 # ---------------- CONFIG ----------------
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
