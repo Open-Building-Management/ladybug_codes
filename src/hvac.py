@@ -5,25 +5,19 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
+# autocompletion use
+from helpers.consts import REPO_ROOT
+from idf_autocomplete.idf_helpers import (
+    Timestep, Version, Simulationcontrol,
+)
+from idf_autocomplete.idf_types import (
+    TimestepType, VersionType, SimulationcontrolType,
+)
 
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
-idf = IDF("batiment_600m2_windows_b.idf")
+idf = IDF(f"{REPO_ROOT}/batiment_600m2_windows_b.idf")
 print(idf.idd_version)
-
-all_classes = idf.idfobjects
-for c in sorted(all_classes):
-    if "CURVE" in c:
-        print(c)
-
-CLASS_NAME = "HEATPUMP:WATERTOWATER:EQUATIONFIT:HEATING"
-dummy = idf.newidfobject(CLASS_NAME)
-
-#Liste tous les attributs existants
-for attr in dummy.fieldnames:
-    print(attr)
-
-input("discovery achieved : press a key")
 
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
@@ -426,6 +420,21 @@ idf.newidfobject(
     #Stage_3_Cooling_Temperature_Offset
     #Stage_4_Cooling_Temperature_Offset
 )
+
+timestep = TimestepType(
+    Number_of_Timesteps_per_Hour=6
+)
+Timestep(idf, **timestep)
+version = VersionType()
+Version(idf, **version)
+simulationcontrol = SimulationcontrolType(
+    Do_Zone_Sizing_Calculation="Yes",
+    Do_Plant_Sizing_Calculation="Yes",
+    Do_System_Sizing_Calculation="Yes",
+    Do_HVAC_Sizing_Simulation_for_Sizing_Periods="Yes",
+    Maximum_Number_of_HVAC_Sizing_Simulation_Passes=2
+)
+Simulationcontrol(idf, **simulationcontrol)
 
 add_plant_loop(SOIL_LOOP, 15, -5)
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
