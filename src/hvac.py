@@ -6,8 +6,8 @@ from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
 
-IDD_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
-IDF.setiddname(f"{IDD_PATH}/Energy+.idd")
+OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
+IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF("batiment_600m2_windows_b.idf")
 print(idf.idd_version)
 
