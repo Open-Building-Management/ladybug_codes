@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
+KUSUDAACHENBACH = "SITE:GROUNDTEMPERATURE:UNDISTURBED:KUSUDAACHENBACH"
 
 @dataclass(frozen=True)
 class LoopNodes:
@@ -81,7 +82,7 @@ def set_nodes_on_loop_side(obj, side, *, inlet, outlet):
     """Set nodes on a loop side"""
     obj[f"{side}_{EPApi.INLET_NODE_NAME}"] = inlet
     obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"] = outlet
-    
+
 
 def set_branch_list_on_loop_side(obj, side, *, branch_list):
     """Set branch list on a loop side"""
@@ -148,7 +149,7 @@ def add_plant_loop(
         EPApi.DEMAND_SIDE,
         inlet=nodes.demand_inlet,
         outlet=nodes.demand_outlet,
-        
+
     )
     set_branch_list_on_loop_side(
         plantloop,
@@ -238,7 +239,7 @@ def add_ground_exchanger(idf: IDF, name, inlet, outlet):
         "GROUNDHEATEXCHANGER:SYSTEM",
         Name=name,
         Design_Flow_Rate=0.0033,
-        Undisturbed_Ground_Temperature_Model_Type="SITE:GROUNDTEMPERATURE:UNDISTURBED:KUSUDAACHENBACH",
+        Undisturbed_Ground_Temperature_Model_Type=KUSUDAACHENBACH,
         Undisturbed_Ground_Temperature_Model_Name="Sol_KA",
         Ground_Thermal_Conductivity=0.692626, #W/(m K)
         Ground_Thermal_Heat_Capacity=2347000, #Pa/k = J/(m3 K)
@@ -357,17 +358,17 @@ def create_branch(idf: IDF, name: str, objects: list[EpBunch], levels: list):
         "BRANCH",
         Name=name
     )
-    for i, object in enumerate(objects):
+    for i, obj in enumerate(objects):
         suffix = f"Component_{i+1}"
-        branch[f"{suffix}_Object_Type"] = object.key
-        branch[f"{suffix}_Name"] = object.Name
+        branch[f"{suffix}_Object_Type"] = obj.key
+        branch[f"{suffix}_Name"] = obj.Name
         inlet_node = f"{suffix}_{EPApi.INLET_NODE_NAME}"
         outlet_node = f"{suffix}_{EPApi.OUTLET_NODE_NAME}"
-        if levels[i] == None:
-            branch[inlet_node] = object[EPApi.INLET_NODE_NAME]
-            branch[outlet_node] = object[EPApi.OUTLET_NODE_NAME]
+        if levels[i] is None:
+            branch[inlet_node] = obj[EPApi.INLET_NODE_NAME]
+            branch[outlet_node] = obj[EPApi.OUTLET_NODE_NAME]
         else:
-            branch[inlet_node] = object[f"{levels[i]}_{EPApi.INLET_NODE_NAME}"]
-            branch[outlet_node] = object[f"{levels[i]}_{EPApi.OUTLET_NODE_NAME}"]
+            branch[inlet_node] = obj[f"{levels[i]}_{EPApi.INLET_NODE_NAME}"]
+            branch[outlet_node] = obj[f"{levels[i]}_{EPApi.OUTLET_NODE_NAME}"]
     #print(branch)
     return branch

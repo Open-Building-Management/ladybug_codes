@@ -1,11 +1,12 @@
 """geometric fonctions"""
-from typing import Literal
 from dataclasses import dataclass
+import logging
 
-from honeybee.room import Room
 from honeybee.aperture import Aperture
+from honeybee.boundarycondition import Surface
 from honeybee.door import Door
 from honeybee.face import Face
+from honeybee.room import Room
 
 from honeybee_energy.construction.window import WindowConstruction
 from honeybee_energy.construction.opaque import OpaqueConstruction
@@ -15,7 +16,7 @@ from ladybug_geometry.geometry3d import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
-from idfhub.helpers.consts import LOGGER
+LOGGER = logging.getLogger(__name__)
 
 WIDTH = 37.0
 DEPTH = 11.0
@@ -152,14 +153,7 @@ def get_from_pattern(
 
 def get(
     niveau :Room,
-    face_type: Literal[
-        "floor",
-        "roof",
-        "front",
-        "back",
-        "left",
-        "right"
-    ]
+    face_type: str
 ) -> Face:
     """get a face checking its normal"""
     if face_type == "floor":
@@ -391,7 +385,7 @@ class ApertureManager:
             spacing = (self.u_max - self.u_min - count * self.dims.width) / (count + 1)
         else:
             spacing = ecart
-        LOGGER.info(f"{self.face.identifier} >>>> spacing is {spacing}")
+        LOGGER.info(f"{self.face.identifier} >>>> aperture spacing is {spacing:.2f} m")
         for i in range(count):
             u = self.u_min + i * (self.dims.width + spacing) + spacing
             origin = local_to_world(self.face, u, self.v)
@@ -402,3 +396,12 @@ class ApertureManager:
                 label=f"{DOOR}_{i}" if aperture_type==Door else f"{WIN}_{i}",
                 aperture_type=aperture_type
             )
+
+def join_surface(room1: Room, pattern1: str, room2: Room, pattern2: str):
+    """Add boundary condition between two adjacent faces."""
+    face1 = get_from_pattern(room1, pattern1)
+    face2 = get_from_pattern(room2, pattern2)
+    bdo = (face1.identifier, face2.identifier)
+    face2.boundary_condition = Surface(boundary_condition_objects=bdo)
+    bdo = (face2.identifier, face1.identifier)
+    face1.boundary_condition = Surface(boundary_condition_objects=bdo)
