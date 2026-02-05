@@ -21,7 +21,7 @@ The hvac API of energyplus is really complex. [openstudio](https://openstudiocoa
 
 To customize things, you have to acquire some knowledge of how an idf file is structured.
 
-EDFEditor is great for visualisation, but fastidious for data entry.
+IDFEditor is great for visualisation, but fastidious for data entry.
 
 On the contrary, the [eppy](https://github.com/santoshphilip/eppy) library is a good starting point to complete an idf through python code, but lack of autocompletion facilities.
 
