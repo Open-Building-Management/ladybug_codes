@@ -47,6 +47,6 @@ py .\generate_hvac.py
 
 # DVIEW
 
-Dview is the viewer to use to analyse and energyplus simulation 
+Dview is the viewer to use to analyse an energyplus simulation 
 
 https://github.com/NatLabRockies/wex/releases/tag/v1.2.0
