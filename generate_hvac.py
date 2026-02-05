@@ -4,7 +4,7 @@ from eppy.modeleditor import IDF
 
 from idfhub.hvac import (
     EPApi,
-    add_plant_loop, add_ground_exchanger, 
+    add_plant_loop, add_ground_exchanger,
     add_constant_pump, add_watertowater_heatpump, add_baseboard,
     create_branch, create_splitter, create_mixer,
     create_pipe, create_connector_list,
@@ -21,10 +21,23 @@ from idfhub.idf_autocomplete.idf_types import (
     SiteGroundtemperatureUndisturbedKusudaachenbachType
 )
 
+from src.idfhub.helpers.common import get_logger
+
+FORMAT = (
+    '%(asctime)s | %(levelname).1s | '
+    '%(name)s:%(lineno)d | '
+    '%(message)s'
+)
+
+LOGGER = get_logger(format=FORMAT)
+
+BUILDING_NAME = "batiment_600m2"
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
-idf = IDF(f"{REPO_ROOT}/batiment_600m2_windows_b.idf")
-print(idf.idd_version)
+idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+message = f"idf hvac injection with energyplus {idf.idd_version}"
+LOGGER.info(message)
+
 
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
@@ -253,5 +266,4 @@ pipe = create_pipe(
 create_branch(idf, "demand mixer outlet branch", [pipe], [None])
 input("press")
 
-idf.save("model_with_soil.idf")
-
+idf.save(f"{BUILDING_NAME}_W_HVAC.idf")
