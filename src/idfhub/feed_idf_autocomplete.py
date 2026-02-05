@@ -9,7 +9,7 @@ from idfhub.helpers.consts import REPO_ROOT
 # ---------------- CONFIG ----------------
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
 IDD_PATH = f"{OS_EP_PATH}/Energy+.idd"
-IDF_PATH = f"{REPO_ROOT}/batiment_600m2_windows_b.idf"
+IDF_PATH = f"{REPO_ROOT}/batiment_600m2.idf"
 OUTPUT_DIR = Path(f"{REPO_ROOT}/src/idfhub/idf_autocomplete")
 MANUAL = False
 # ----------------------------------------
