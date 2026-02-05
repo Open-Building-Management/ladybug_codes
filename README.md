@@ -45,6 +45,22 @@ The idf produced in openstudio :
 
 ![](https://github.com/user-attachments/assets/2f84fcaf-1d63-4512-90f6-ea1fb404a3c0)
 
+# HVAC
+
+install openstudio first !
+
+for openstudio 1.8.0 :
+- https://github.com/openstudiocoalition/OpenStudioApplication/releases/tag/v1.8.0
+- https://github.com/openstudiocoalition/OpenStudioApplication/releases/download/v1.8.0/OpenStudioApplication-1.8.0+2722e3e751-Windows.exe
+
+the 1.8.0 version will install energyplus 24.1.0 but not a complete version : IDFEditor will not be available
+
+the full version can be installed from https://energyplus.net/downloads
+
+- https://github.com/NatLabRockies/EnergyPlus/releases/tag/v24.1.0
+- https://github.com/NatLabRockies/EnergyPlus/releases/download/v24.1.0/EnergyPlus-24.1.0-9d7789a3ac-Windows-x86_64.exe
+
+
 ```
 py .\generate_hvac.py
 ```
