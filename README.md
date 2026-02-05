@@ -36,6 +36,8 @@ py .\generate_geometry.py
 The idf produced in openstudio :
 
 ![](https://github.com/user-attachments/assets/e67ee291-8ce6-4776-8e4f-35654355ca41)
+![](https://github.com/user-attachments/assets/7a4c0e1e-7308-45db-9393-114b42a19f35)
+
 
 # IDF editor
 
