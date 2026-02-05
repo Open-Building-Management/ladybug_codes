@@ -1,3 +1,5 @@
+caution : current work in progress !
+
 # idfhub
 
 > how to generate idf files for energyplus ?
@@ -9,6 +11,8 @@ The idfhub lib provides some helpers to go even faster.
 To install :
 
 ```
+git clone https://github.com/Open-Building-Management/ladybug_codes
+cd ladybug_codes
 py -m pip install -e .
 pip install -e
 ```
