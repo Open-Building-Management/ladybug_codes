@@ -28,7 +28,7 @@ max-args = 6
 max-positional-arguments = 6
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "eppy", "honeybee"]
 build-backend = "setuptools.build_meta"
 
 [project]
