@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TypedDict, Literal
 
 class AirconditionerVariablerefrigerantflowType(TypedDict, total=False):
+    """"dict for AirconditionerVariablerefrigerantflow"""
     Heat_Pump_Name: str
     Availability_Schedule_Name: str
     Gross_Rated_Total_Cooling_Capacity: str
@@ -85,6 +86,7 @@ class AirconditionerVariablerefrigerantflowType(TypedDict, total=False):
     Heat_Recovery_Heating_Energy_Time_Constant: str
 
 class AirconditionerVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict, total=False):
+    """"dict for AirconditionerVariablerefrigerantflowFluidtemperaturecontrol"""
     Heat_Pump_Name: str
     Availability_Schedule_Name: str
     Zone_Terminal_Unit_List_Name: str
@@ -155,6 +157,7 @@ class AirconditionerVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict
     Loading_Index_9_Compressor_Power_Multiplier_Function_of_Temperature_Curve_Name: str
 
 class AirconditionerVariablerefrigerantflowFluidtemperaturecontrolHrType(TypedDict, total=False):
+    """"dict for AirconditionerVariablerefrigerantflowFluidtemperaturecontrolHr"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Terminal_Unit_List_Name: str
@@ -248,16 +251,19 @@ class AirconditionerVariablerefrigerantflowFluidtemperaturecontrolHrType(TypedDi
     Loading_Index_11_Compressor_Power_Multiplier_Function_of_Temperature_Curve_Name: str
 
 class AirflownetworkDistributionComponentCoilType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentCoil"""
     Coil_Name: str
     Coil_Object_Type: str
     Air_Path_Length: str
     Air_Path_Hydraulic_Diameter: str
 
 class AirflownetworkDistributionComponentConstantpressuredropType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentConstantpressuredrop"""
     Name: str
     Pressure_Difference_Across_the_Component: str
 
 class AirflownetworkDistributionComponentDuctType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentDuct"""
     Name: str
     Duct_Length: str
     Hydraulic_Diameter: str
@@ -270,21 +276,25 @@ class AirflownetworkDistributionComponentDuctType(TypedDict, total=False):
     Inside_Convection_Coefficient: str
 
 class AirflownetworkDistributionComponentFanType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentFan"""
     Fan_Name: str
     Supply_Fan_Object_Type: str
 
 class AirflownetworkDistributionComponentHeatexchangerType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentHeatexchanger"""
     HeatExchanger_Name: str
     HeatExchanger_Object_Type: str
     Air_Path_Length: str
     Air_Path_Hydraulic_Diameter: str
 
 class AirflownetworkDistributionComponentLeakType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentLeak"""
     Name: str
     Air_Mass_Flow_Coefficient: str
     Air_Mass_Flow_Exponent: str
 
 class AirflownetworkDistributionComponentLeakageratioType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentLeakageratio"""
     Name: str
     Effective_Leakage_Ratio: str
     Maximum_Flow_Rate: str
@@ -292,6 +302,7 @@ class AirflownetworkDistributionComponentLeakageratioType(TypedDict, total=False
     Air_Mass_Flow_Exponent: str
 
 class AirflownetworkDistributionComponentOutdoorairflowType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentOutdoorairflow"""
     Name: str
     Outdoor_Air_Mixer_Name: str
     Air_Mass_Flow_Coefficient_When_No_Outdoor_Air_Flow_at_Reference_Conditions: str
@@ -299,6 +310,7 @@ class AirflownetworkDistributionComponentOutdoorairflowType(TypedDict, total=Fal
     Reference_Crack_Conditions: str
 
 class AirflownetworkDistributionComponentReliefairflowType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentReliefairflow"""
     Name: str
     Outdoor_Air_Mixer_Name: str
     Air_Mass_Flow_Coefficient_When_No_Outdoor_Air_Flow_at_Reference_Conditions: str
@@ -306,12 +318,14 @@ class AirflownetworkDistributionComponentReliefairflowType(TypedDict, total=Fals
     Reference_Crack_Conditions: str
 
 class AirflownetworkDistributionComponentTerminalunitType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionComponentTerminalunit"""
     Terminal_Unit_Name: str
     Terminal_Unit_Object_Type: str
     Air_Path_Length: str
     Air_Path_Hydraulic_Diameter: str
 
 class AirflownetworkDistributionDuctsizingType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionDuctsizing"""
     Name: str
     Duct_Sizing_Method: str
     Duct_Sizing_Factor: str
@@ -322,6 +336,7 @@ class AirflownetworkDistributionDuctsizingType(TypedDict, total=False):
     Total_Pressure_Loss_Across_Return_Branch: str
 
 class AirflownetworkDistributionDuctviewfactorsType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionDuctviewfactors"""
     Linkage_Name: str
     Duct_Surface_Exposure_Fraction: str
     Duct_Surface_Emittance: str
@@ -367,6 +382,7 @@ class AirflownetworkDistributionDuctviewfactorsType(TypedDict, total=False):
     Surface_20_View_Factor: str
 
 class AirflownetworkDistributionLinkageType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionLinkage"""
     Name: str
     Node_1_Name: str
     Node_2_Name: str
@@ -374,12 +390,14 @@ class AirflownetworkDistributionLinkageType(TypedDict, total=False):
     Thermal_Zone_Name: str
 
 class AirflownetworkDistributionNodeType(TypedDict, total=False):
+    """"dict for AirflownetworkDistributionNode"""
     Name: str
     Component_Name_or_Node_Name: str
     Component_Object_Type_or_Node_Type: str
     Node_Height: str
 
 class AirflownetworkIntrazoneLinkageType(TypedDict, total=False):
+    """"dict for AirflownetworkIntrazoneLinkage"""
     Name: str
     Node_1_Name: str
     Node_2_Name: str
@@ -387,12 +405,14 @@ class AirflownetworkIntrazoneLinkageType(TypedDict, total=False):
     AirflowNetworkMultiZoneSurface_Name: str
 
 class AirflownetworkIntrazoneNodeType(TypedDict, total=False):
+    """"dict for AirflownetworkIntrazoneNode"""
     Name: str
     RoomAirNodeAirflowNetwork_Name: str
     Zone_Name: str
     Node_Height: str
 
 class AirflownetworkMultizoneComponentDetailedopeningType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneComponentDetailedopening"""
     Name: str
     Air_Mass_Flow_Coefficient_When_Opening_is_Closed: str
     Air_Mass_Flow_Exponent_When_Opening_is_Closed: str
@@ -421,6 +441,7 @@ class AirflownetworkMultizoneComponentDetailedopeningType(TypedDict, total=False
     Start_Height_Factor_for_Opening_Factor_4: str
 
 class AirflownetworkMultizoneComponentHorizontalopeningType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneComponentHorizontalopening"""
     Name: str
     Air_Mass_Flow_Coefficient_When_Opening_is_Closed: str
     Air_Mass_Flow_Exponent_When_Opening_is_Closed: str
@@ -428,6 +449,7 @@ class AirflownetworkMultizoneComponentHorizontalopeningType(TypedDict, total=Fal
     Discharge_Coefficient: str
 
 class AirflownetworkMultizoneComponentSimpleopeningType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneComponentSimpleopening"""
     Name: str
     Air_Mass_Flow_Coefficient_When_Opening_is_Closed: str
     Air_Mass_Flow_Exponent_When_Opening_is_Closed: str
@@ -435,12 +457,14 @@ class AirflownetworkMultizoneComponentSimpleopeningType(TypedDict, total=False):
     Discharge_Coefficient: str
 
 class AirflownetworkMultizoneComponentZoneexhaustfanType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneComponentZoneexhaustfan"""
     Name: str
     Air_Mass_Flow_Coefficient_When_the_Zone_Exhaust_Fan_is_Off_at_Reference_Conditions: str
     Air_Mass_Flow_Exponent_When_the_Zone_Exhaust_Fan_is_Off: str
     Reference_Crack_Conditions: str
 
 class AirflownetworkMultizoneExternalnodeType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneExternalnode"""
     Name: str
     External_Node_Height: str
     Wind_Pressure_Coefficient_Curve_Name: str
@@ -448,17 +472,20 @@ class AirflownetworkMultizoneExternalnodeType(TypedDict, total=False):
     Wind_Angle_Type: str
 
 class AirflownetworkMultizoneReferencecrackconditionsType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneReferencecrackconditions"""
     Name: str
     Reference_Temperature: str
     Reference_Barometric_Pressure: str
     Reference_Humidity_Ratio: str
 
 class AirflownetworkMultizoneSpecifiedflowrateType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneSpecifiedflowrate"""
     Name: str
     Air_Flow_Value: str
     Air_Flow_Units: str
 
 class AirflownetworkMultizoneSurfaceType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneSurface"""
     Surface_Name: str
     Leakage_Component_Name: str
     External_Node_Name: str
@@ -476,12 +503,14 @@ class AirflownetworkMultizoneSurfaceType(TypedDict, total=False):
     Equivalent_Rectangle_Aspect_Ratio: str
 
 class AirflownetworkMultizoneSurfaceCrackType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneSurfaceCrack"""
     Name: str
     Air_Mass_Flow_Coefficient_at_Reference_Conditions: str
     Air_Mass_Flow_Exponent: str
     Reference_Crack_Conditions: str
 
 class AirflownetworkMultizoneSurfaceEffectiveleakageareaType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneSurfaceEffectiveleakagearea"""
     Name: str
     Effective_Leakage_Area: str
     Discharge_Coefficient: str
@@ -489,6 +518,7 @@ class AirflownetworkMultizoneSurfaceEffectiveleakageareaType(TypedDict, total=Fa
     Air_Mass_Flow_Exponent: str
 
 class AirflownetworkMultizoneWindpressurecoefficientarrayType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneWindpressurecoefficientarray"""
     Name: str
     Wind_Direction_1: str
     Wind_Direction_2: str
@@ -528,6 +558,7 @@ class AirflownetworkMultizoneWindpressurecoefficientarrayType(TypedDict, total=F
     Wind_Direction_36: str
 
 class AirflownetworkMultizoneWindpressurecoefficientvaluesType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneWindpressurecoefficientvalues"""
     Name: str
     AirflowNetworkMultiZoneWindPressureCoefficientArray_Name: str
     Wind_Pressure_Coefficient_Value_1: str
@@ -568,6 +599,7 @@ class AirflownetworkMultizoneWindpressurecoefficientvaluesType(TypedDict, total=
     Wind_Pressure_Coefficient_Value_36: str
 
 class AirflownetworkMultizoneZoneType(TypedDict, total=False):
+    """"dict for AirflownetworkMultizoneZone"""
     Zone_Name: str
     Ventilation_Control_Mode: str
     Ventilation_Control_Zone_Temperature_Setpoint_Schedule_Name: str
@@ -582,6 +614,7 @@ class AirflownetworkMultizoneZoneType(TypedDict, total=False):
     Occupant_Ventilation_Control_Name: str
 
 class AirflownetworkOccupantventilationcontrolType(TypedDict, total=False):
+    """"dict for AirflownetworkOccupantventilationcontrol"""
     Name: str
     Minimum_Opening_Time: str
     Minimum_Closing_Time: str
@@ -594,6 +627,7 @@ class AirflownetworkOccupantventilationcontrolType(TypedDict, total=False):
     Closing_Probability_Schedule_Name: str
 
 class AirflownetworkSimulationcontrolType(TypedDict, total=False):
+    """"dict for AirflownetworkSimulationcontrol"""
     Name: str
     AirflowNetwork_Control: str
     Wind_Pressure_Coefficient_Type: str
@@ -612,6 +646,7 @@ class AirflownetworkSimulationcontrolType(TypedDict, total=False):
     Do_Distribution_Duct_Sizing_Calculation: str
 
 class AirflownetworkZonecontrolPressurecontrollerType(TypedDict, total=False):
+    """"dict for AirflownetworkZonecontrolPressurecontroller"""
     Name: str
     Control_Zone_Name: str
     Control_Object_Type: str
@@ -620,6 +655,7 @@ class AirflownetworkZonecontrolPressurecontrollerType(TypedDict, total=False):
     Pressure_Setpoint_Schedule_Name: str
 
 class AirloophvacType(TypedDict, total=False):
+    """"dict for Airloophvac"""
     Name: str
     Controller_List_Name: str
     Availability_Manager_List_Name: str
@@ -633,6 +669,7 @@ class AirloophvacType(TypedDict, total=False):
     Design_Return_Air_Flow_Fraction_of_Supply_Air_Flow: str
 
 class AirloophvacControllerlistType(TypedDict, total=False):
+    """"dict for AirloophvacControllerlist"""
     Name: str
     Controller_1_Object_Type: str
     Controller_1_Name: str
@@ -652,6 +689,7 @@ class AirloophvacControllerlistType(TypedDict, total=False):
     Controller_8_Name: str
 
 class AirloophvacDedicatedoutdoorairsystemType(TypedDict, total=False):
+    """"dict for AirloophvacDedicatedoutdoorairsystem"""
     Name: str
     AirLoopHVACOutdoorAirSystem_Name: str
     Availability_Schedule_Name: str
@@ -684,12 +722,14 @@ class AirloophvacDedicatedoutdoorairsystemType(TypedDict, total=False):
     AirLoopHVAC_20_Name: str
 
 class AirloophvacExhaustsystemType(TypedDict, total=False):
+    """"dict for AirloophvacExhaustsystem"""
     Name: str
     Zone_Mixer_Name: str
     Fan_Object_Type: str
     Fan_Name: str
 
 class AirloophvacMixerType(TypedDict, total=False):
+    """"dict for AirloophvacMixer"""
     Name: str
     Outlet_Node_Name: str
     Inlet_1_Node_Name: str
@@ -744,11 +784,13 @@ class AirloophvacMixerType(TypedDict, total=False):
     Inlet_50_Node_Name: str
 
 class AirloophvacOutdoorairsystemType(TypedDict, total=False):
+    """"dict for AirloophvacOutdoorairsystem"""
     Name: str
     Controller_List_Name: str
     Outdoor_Air_Equipment_List_Name: str
 
 class AirloophvacOutdoorairsystemEquipmentlistType(TypedDict, total=False):
+    """"dict for AirloophvacOutdoorairsystemEquipmentlist"""
     Name: str
     Component_1_Object_Type: str
     Component_1_Name: str
@@ -770,6 +812,7 @@ class AirloophvacOutdoorairsystemEquipmentlistType(TypedDict, total=False):
     Component_9_Name: str
 
 class AirloophvacReturnpathType(TypedDict, total=False):
+    """"dict for AirloophvacReturnpath"""
     Name: str
     Return_Air_Path_Outlet_Node_Name: str
     Component_1_Object_Type: str
@@ -824,6 +867,7 @@ class AirloophvacReturnpathType(TypedDict, total=False):
     Component_25_Name: str
 
 class AirloophvacReturnplenumType(TypedDict, total=False):
+    """"dict for AirloophvacReturnplenum"""
     Name: str
     Zone_Name: str
     Zone_Node_Name: str
@@ -1331,6 +1375,7 @@ class AirloophvacReturnplenumType(TypedDict, total=False):
     Inlet_500_Node_Name: str
 
 class AirloophvacSplitterType(TypedDict, total=False):
+    """"dict for AirloophvacSplitter"""
     Name: str
     Inlet_Node_Name: str
     Outlet_1_Node_Name: str
@@ -1385,6 +1430,7 @@ class AirloophvacSplitterType(TypedDict, total=False):
     Outlet_50_Node_Name: str
 
 class AirloophvacSupplypathType(TypedDict, total=False):
+    """"dict for AirloophvacSupplypath"""
     Name: str
     Supply_Air_Path_Inlet_Node_Name: str
     Component_1_Object_Type: str
@@ -1439,6 +1485,7 @@ class AirloophvacSupplypathType(TypedDict, total=False):
     Component_25_Name: str
 
 class AirloophvacSupplyplenumType(TypedDict, total=False):
+    """"dict for AirloophvacSupplyplenum"""
     Name: str
     Zone_Name: str
     Zone_Node_Name: str
@@ -1945,6 +1992,7 @@ class AirloophvacSupplyplenumType(TypedDict, total=False):
     Outlet_500_Node_Name: str
 
 class AirloophvacUnitaryFurnaceHeatcoolType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryFurnaceHeatcool"""
     Name: str
     Availability_Schedule_Name: str
     Furnace_Air_Inlet_Node_Name: str
@@ -1967,6 +2015,7 @@ class AirloophvacUnitaryFurnaceHeatcoolType(TypedDict, total=False):
     Reheat_Coil_Name: str
 
 class AirloophvacUnitaryFurnaceHeatonlyType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryFurnaceHeatonly"""
     Name: str
     Availability_Schedule_Name: str
     Furnace_Air_Inlet_Node_Name: str
@@ -1982,6 +2031,7 @@ class AirloophvacUnitaryFurnaceHeatonlyType(TypedDict, total=False):
     Heating_Coil_Name: str
 
 class AirloophvacUnitaryheatcoolType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatcool"""
     Name: str
     Availability_Schedule_Name: str
     Unitary_System_Air_Inlet_Node_Name: str
@@ -2004,6 +2054,7 @@ class AirloophvacUnitaryheatcoolType(TypedDict, total=False):
     Reheat_Coil_Name: str
 
 class AirloophvacUnitaryheatcoolVavchangeoverbypassType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatcoolVavchangeoverbypass"""
     Name: str
     Availability_Schedule_Name: str
     Cooling_Supply_Air_Flow_Rate: str
@@ -2035,6 +2086,7 @@ class AirloophvacUnitaryheatcoolVavchangeoverbypassType(TypedDict, total=False):
     Minimum_Runtime_Before_Operating_Mode_Change: str
 
 class AirloophvacUnitaryheatonlyType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatonly"""
     Name: str
     Availability_Schedule_Name: str
     Unitary_System_Air_Inlet_Node_Name: str
@@ -2050,6 +2102,7 @@ class AirloophvacUnitaryheatonlyType(TypedDict, total=False):
     Heating_Coil_Name: str
 
 class AirloophvacUnitaryheatpumpAirtoairType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatpumpAirtoair"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -2073,6 +2126,7 @@ class AirloophvacUnitaryheatpumpAirtoairType(TypedDict, total=False):
     Dehumidification_Control_Type: str
 
 class AirloophvacUnitaryheatpumpAirtoairMultispeedType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatpumpAirtoairMultispeed"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -2110,6 +2164,7 @@ class AirloophvacUnitaryheatpumpAirtoairMultispeedType(TypedDict, total=False):
     Cooling_Speed_4_Supply_Air_Flow_Rate: str
 
 class AirloophvacUnitaryheatpumpWatertoairType(TypedDict, total=False):
+    """"dict for AirloophvacUnitaryheatpumpWatertoair"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -2135,6 +2190,7 @@ class AirloophvacUnitaryheatpumpWatertoairType(TypedDict, total=False):
     Heat_Pump_Coil_Water_Flow_Mode: str
 
 class AirloophvacUnitarysystemType(TypedDict, total=False):
+    """"dict for AirloophvacUnitarysystem"""
     Name: str
     Control_Type: str
     Controlling_Zone_or_Thermostat_Location: str
@@ -2187,6 +2243,7 @@ class AirloophvacUnitarysystemType(TypedDict, total=False):
     Design_Specification_Multispeed_Object_Name: str
 
 class AirloophvacZonemixerType(TypedDict, total=False):
+    """"dict for AirloophvacZonemixer"""
     Name: str
     Outlet_Node_Name: str
     Inlet_1_Node_Name: str
@@ -2691,6 +2748,7 @@ class AirloophvacZonemixerType(TypedDict, total=False):
     Inlet_500_Node_Name: str
 
 class AirloophvacZonesplitterType(TypedDict, total=False):
+    """"dict for AirloophvacZonesplitter"""
     Name: str
     Inlet_Node_Name: str
     Outlet_1_Node_Name: str
@@ -3195,6 +3253,7 @@ class AirloophvacZonesplitterType(TypedDict, total=False):
     Outlet_500_Node_Name: str
 
 class AirterminalDualductConstantvolumeType(TypedDict, total=False):
+    """"dict for AirterminalDualductConstantvolume"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3203,6 +3262,7 @@ class AirterminalDualductConstantvolumeType(TypedDict, total=False):
     Maximum_Air_Flow_Rate: str
 
 class AirterminalDualductVavType(TypedDict, total=False):
+    """"dict for AirterminalDualductVav"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3214,6 +3274,7 @@ class AirterminalDualductVavType(TypedDict, total=False):
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AirterminalDualductVavOutdoorairType(TypedDict, total=False):
+    """"dict for AirterminalDualductVavOutdoorair"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3224,6 +3285,7 @@ class AirterminalDualductVavOutdoorairType(TypedDict, total=False):
     Per_Person_Ventilation_Rate_Mode: str
 
 class AirterminalSingleductConstantvolumeCooledbeamType(TypedDict, total=False):
+    """"dict for AirterminalSingleductConstantvolumeCooledbeam"""
     Name: str
     Availability_Schedule_Name: str
     Cooled_Beam_Type: str
@@ -3249,6 +3311,7 @@ class AirterminalSingleductConstantvolumeCooledbeamType(TypedDict, total=False):
     Leaving_Pipe_Inside_Diameter: str
 
 class AirterminalSingleductConstantvolumeFourpipebeamType(TypedDict, total=False):
+    """"dict for AirterminalSingleductConstantvolumeFourpipebeam"""
     Name: str
     Primary_Air_Availability_Schedule_Name: str
     Cooling_Availability_Schedule_Name: str
@@ -3278,6 +3341,7 @@ class AirterminalSingleductConstantvolumeFourpipebeamType(TypedDict, total=False
     Beam_Heating_Capacity_Hot_Water_Flow_Modification_Factor_Curve_Name: str
 
 class AirterminalSingleductConstantvolumeFourpipeinductionType(TypedDict, total=False):
+    """"dict for AirterminalSingleductConstantvolumeFourpipeinduction"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Total_Air_Flow_Rate: str
@@ -3298,6 +3362,7 @@ class AirterminalSingleductConstantvolumeFourpipeinductionType(TypedDict, total=
     Zone_Mixer_Name: str
 
 class AirterminalSingleductConstantvolumeNoreheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductConstantvolumeNoreheat"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -3307,6 +3372,7 @@ class AirterminalSingleductConstantvolumeNoreheatType(TypedDict, total=False):
     Per_Person_Ventilation_Rate_Mode: str
 
 class AirterminalSingleductConstantvolumeReheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductConstantvolumeReheat"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3320,6 +3386,7 @@ class AirterminalSingleductConstantvolumeReheatType(TypedDict, total=False):
     Maximum_Reheat_Air_Temperature: str
 
 class AirterminalSingleductMixerType(TypedDict, total=False):
+    """"dict for AirterminalSingleductMixer"""
     Name: str
     ZoneHVAC_Unit_Object_Type: str
     ZoneHVAC_Unit_Object_Name: str
@@ -3331,6 +3398,7 @@ class AirterminalSingleductMixerType(TypedDict, total=False):
     Per_Person_Ventilation_Rate_Mode: str
 
 class AirterminalSingleductParallelpiuReheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductParallelpiuReheat"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Primary_Air_Flow_Rate: str
@@ -3350,6 +3418,7 @@ class AirterminalSingleductParallelpiuReheatType(TypedDict, total=False):
     Convergence_Tolerance: str
 
 class AirterminalSingleductSeriespiuReheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductSeriespiuReheat"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Air_Flow_Rate: str
@@ -3368,6 +3437,7 @@ class AirterminalSingleductSeriespiuReheatType(TypedDict, total=False):
     Convergence_Tolerance: str
 
 class AirterminalSingleductUserdefinedType(TypedDict, total=False):
+    """"dict for AirterminalSingleductUserdefined"""
     Name: str
     Overall_Model_Simulation_Program_Calling_Manager_Name: str
     Model_Setup_and_Sizing_Program_Calling_Manager_Name: str
@@ -3385,6 +3455,7 @@ class AirterminalSingleductUserdefinedType(TypedDict, total=False):
     Ambient_Zone_Name: str
 
 class AirterminalSingleductVavHeatandcoolNoreheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductVavHeatandcoolNoreheat"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3394,6 +3465,7 @@ class AirterminalSingleductVavHeatandcoolNoreheatType(TypedDict, total=False):
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AirterminalSingleductVavHeatandcoolReheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductVavHeatandcoolReheat"""
     Name: str
     Availability_Schedule_Name: str
     Damper_Air_Outlet_Node_Name: str
@@ -3410,6 +3482,7 @@ class AirterminalSingleductVavHeatandcoolReheatType(TypedDict, total=False):
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AirterminalSingleductVavNoreheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductVavNoreheat"""
     Name: str
     Availability_Schedule_Name: str
     Air_Outlet_Node_Name: str
@@ -3423,6 +3496,7 @@ class AirterminalSingleductVavNoreheatType(TypedDict, total=False):
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AirterminalSingleductVavReheatType(TypedDict, total=False):
+    """"dict for AirterminalSingleductVavReheat"""
     Name: str
     Availability_Schedule_Name: str
     Damper_Air_Outlet_Node_Name: str
@@ -3446,6 +3520,7 @@ class AirterminalSingleductVavReheatType(TypedDict, total=False):
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AirterminalSingleductVavReheatVariablespeedfanType(TypedDict, total=False):
+    """"dict for AirterminalSingleductVavReheatVariablespeedfan"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Cooling_Air_Flow_Rate: str
@@ -3463,6 +3538,7 @@ class AirterminalSingleductVavReheatVariablespeedfanType(TypedDict, total=False)
     Minimum_Air_Flow_Turndown_Schedule_Name: str
 
 class AvailabilitymanagerDifferentialthermostatType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerDifferentialthermostat"""
     Name: str
     Hot_Node_Name: str
     Cold_Node_Name: str
@@ -3470,16 +3546,19 @@ class AvailabilitymanagerDifferentialthermostatType(TypedDict, total=False):
     Temperature_Difference_Off_Limit: str
 
 class AvailabilitymanagerHightemperatureturnoffType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerHightemperatureturnoff"""
     Name: str
     Sensor_Node_Name: str
     Temperature: str
 
 class AvailabilitymanagerHightemperatureturnonType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerHightemperatureturnon"""
     Name: str
     Sensor_Node_Name: str
     Temperature: str
 
 class AvailabilitymanagerHybridventilationType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerHybridventilation"""
     Name: str
     HVAC_Air_Loop_Name: str
     Control_Zone_Name: str
@@ -3501,17 +3580,20 @@ class AvailabilitymanagerHybridventilationType(TypedDict, total=False):
     Minimum_Ventilation_Time: str
 
 class AvailabilitymanagerLowtemperatureturnoffType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerLowtemperatureturnoff"""
     Name: str
     Sensor_Node_Name: str
     Temperature: str
     Applicability_Schedule_Name: str
 
 class AvailabilitymanagerLowtemperatureturnonType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerLowtemperatureturnon"""
     Name: str
     Sensor_Node_Name: str
     Temperature: str
 
 class AvailabilitymanagerNightcycleType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerNightcycle"""
     Name: str
     Applicability_Schedule_Name: str
     Fan_Schedule_Name: str
@@ -3525,6 +3607,7 @@ class AvailabilitymanagerNightcycleType(TypedDict, total=False):
     Heating_Zone_Fans_Only_Zone_or_Zone_List_Name: str
 
 class AvailabilitymanagerNightventilationType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerNightventilation"""
     Name: str
     Applicability_Schedule_Name: str
     Fan_Schedule_Name: str
@@ -3535,6 +3618,7 @@ class AvailabilitymanagerNightventilationType(TypedDict, total=False):
     Control_Zone_Name: str
 
 class AvailabilitymanagerOptimumstartType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerOptimumstart"""
     Name: str
     Applicability_Schedule_Name: str
     Fan_Schedule_Name: str
@@ -3551,18 +3635,22 @@ class AvailabilitymanagerOptimumstartType(TypedDict, total=False):
     Number_of_Previous_Days: str
 
 class AvailabilitymanagerScheduledType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerScheduled"""
     Name: str
     Schedule_Name: str
 
 class AvailabilitymanagerScheduledoffType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerScheduledoff"""
     Name: str
     Schedule_Name: str
 
 class AvailabilitymanagerScheduledonType(TypedDict, total=False):
+    """"dict for AvailabilitymanagerScheduledon"""
     Name: str
     Schedule_Name: str
 
 class AvailabilitymanagerassignmentlistType(TypedDict, total=False):
+    """"dict for Availabilitymanagerassignmentlist"""
     Name: str
     Availability_Manager_1_Object_Type: str
     Availability_Manager_1_Name: str
@@ -3578,6 +3666,7 @@ class AvailabilitymanagerassignmentlistType(TypedDict, total=False):
     Availability_Manager_6_Name: str
 
 class BoilerHotwaterType(TypedDict, total=False):
+    """"dict for BoilerHotwater"""
     Name: str
     Fuel_Type: str
     Nominal_Capacity: str
@@ -3598,6 +3687,7 @@ class BoilerHotwaterType(TypedDict, total=False):
     Off_Cycle_Parasitic_Fuel_Load: str
 
 class BoilerSteamType(TypedDict, total=False):
+    """"dict for BoilerSteam"""
     Name: str
     Fuel_Type: str
     Maximum_Operating_Pressure: str
@@ -3616,6 +3706,7 @@ class BoilerSteamType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class BranchType(TypedDict, total=False):
+    """"dict for Branch"""
     Name: str
     Pressure_Drop_Curve_Name: str
     Component_1_Object_Type: str
@@ -3664,6 +3755,7 @@ class BranchType(TypedDict, total=False):
     Component_11_Outlet_Node_Name: str
 
 class BranchlistType(TypedDict, total=False):
+    """"dict for Branchlist"""
     Name: str
     Branch_1_Name: str
     Branch_2_Name: str
@@ -4167,6 +4259,7 @@ class BranchlistType(TypedDict, total=False):
     Branch_500_Name: str
 
 class BuildingType(TypedDict, total=False):
+    """"dict for Building"""
     Name: str
     North_Axis: str
     Terrain: str
@@ -4177,6 +4270,7 @@ class BuildingType(TypedDict, total=False):
     Minimum_Number_of_Warmup_Days: str
 
 class BuildingsurfaceDetailedType(TypedDict, total=False):
+    """"dict for BuildingsurfaceDetailed"""
     Name: str
     Surface_Type: str
     Construction_Name: str
@@ -4550,6 +4644,7 @@ class BuildingsurfaceDetailedType(TypedDict, total=False):
     Vertex_120_Zcoordinate: str
 
 class CeilingAdiabaticType(TypedDict, total=False):
+    """"dict for CeilingAdiabatic"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -4563,6 +4658,7 @@ class CeilingAdiabaticType(TypedDict, total=False):
     Width: str
 
 class CeilingInterzoneType(TypedDict, total=False):
+    """"dict for CeilingInterzone"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -4577,6 +4673,7 @@ class CeilingInterzoneType(TypedDict, total=False):
     Width: str
 
 class CentralheatpumpsystemType(TypedDict, total=False):
+    """"dict for Centralheatpumpsystem"""
     Name: str
     Control_Method: str
     Cooling_Loop_Inlet_Node_Name: str
@@ -4669,6 +4766,7 @@ class CentralheatpumpsystemType(TypedDict, total=False):
     Number_of_Chiller_Heater_Modules_20: str
 
 class ChillerAbsorptionType(TypedDict, total=False):
+    """"dict for ChillerAbsorption"""
     Name: str
     Nominal_Capacity: str
     Nominal_Pumping_Power: str
@@ -4698,6 +4796,7 @@ class ChillerAbsorptionType(TypedDict, total=False):
     Sizing_Factor: str
 
 class ChillerAbsorptionIndirectType(TypedDict, total=False):
+    """"dict for ChillerAbsorptionIndirect"""
     Name: str
     Nominal_Capacity: str
     Nominal_Pumping_Power: str
@@ -4731,6 +4830,7 @@ class ChillerAbsorptionIndirectType(TypedDict, total=False):
     Sizing_Factor: str
 
 class ChillerCombustionturbineType(TypedDict, total=False):
+    """"dict for ChillerCombustionturbine"""
     Name: str
     Condenser_Type: str
     Nominal_Capacity: str
@@ -4795,6 +4895,7 @@ class ChillerCombustionturbineType(TypedDict, total=False):
     Turbine_Engine_Efficiency: str
 
 class ChillerConstantcopType(TypedDict, total=False):
+    """"dict for ChillerConstantcop"""
     Name: str
     Nominal_Capacity: str
     Nominal_COP: str
@@ -4812,6 +4913,7 @@ class ChillerConstantcopType(TypedDict, total=False):
     Basin_Heater_Operating_Schedule_Name: str
 
 class ChillerElectricType(TypedDict, total=False):
+    """"dict for ChillerElectric"""
     Name: str
     Condenser_Type: str
     Nominal_Capacity: str
@@ -4852,6 +4954,7 @@ class ChillerElectricType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ChillerElectricAshrae205Type(TypedDict, total=False):
+    """"dict for ChillerElectricAshrae205"""
     Name: str
     Representation_File_Name: str
     Performance_Interpolation_Method: str
@@ -4879,6 +4982,7 @@ class ChillerElectricAshrae205Type(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ChillerElectricEirType(TypedDict, total=False):
+    """"dict for ChillerElectricEir"""
     Name: str
     Reference_Capacity: str
     Reference_COP: str
@@ -4915,6 +5019,7 @@ class ChillerElectricEirType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ChillerElectricReformulatedeirType(TypedDict, total=False):
+    """"dict for ChillerElectricReformulatedeir"""
     Name: str
     Reference_Capacity: str
     Reference_COP: str
@@ -4947,6 +5052,7 @@ class ChillerElectricReformulatedeirType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ChillerEnginedrivenType(TypedDict, total=False):
+    """"dict for ChillerEnginedriven"""
     Name: str
     Condenser_Type: str
     Nominal_Capacity: str
@@ -4996,6 +5102,7 @@ class ChillerEnginedrivenType(TypedDict, total=False):
     Condenser_Heat_Recovery_Relative_Capacity_Fraction: str
 
 class ChillerheaterAbsorptionDirectfiredType(TypedDict, total=False):
+    """"dict for ChillerheaterAbsorptionDirectfired"""
     Name: str
     Nominal_Cooling_Capacity: str
     Heating_to_Cooling_Capacity_Ratio: str
@@ -5032,6 +5139,7 @@ class ChillerheaterAbsorptionDirectfiredType(TypedDict, total=False):
     Sizing_Factor: str
 
 class ChillerheaterAbsorptionDoubleeffectType(TypedDict, total=False):
+    """"dict for ChillerheaterAbsorptionDoubleeffect"""
     Name: str
     Nominal_Cooling_Capacity: str
     Heating_to_Cooling_Capacity_Ratio: str
@@ -5068,6 +5176,7 @@ class ChillerheaterAbsorptionDoubleeffectType(TypedDict, total=False):
     Sizing_Factor: str
 
 class ChillerheaterperformanceElectricEirType(TypedDict, total=False):
+    """"dict for ChillerheaterperformanceElectricEir"""
     Name: str
     Reference_Cooling_Mode_Evaporator_Capacity: str
     Reference_Cooling_Mode_COP: str
@@ -5099,6 +5208,7 @@ class ChillerheaterperformanceElectricEirType(TypedDict, total=False):
     Sizing_Factor: str
 
 class CoilCoolingDxType(TypedDict, total=False):
+    """"dict for CoilCoolingDx"""
     Name: str
     Evaporator_Inlet_Node_Name: str
     Evaporator_Outlet_Node_Name: str
@@ -5111,6 +5221,7 @@ class CoilCoolingDxType(TypedDict, total=False):
     Evaporative_Condenser_Supply_Water_Storage_Tank_Name: str
 
 class CoilCoolingDxCurvefitOperatingmodeType(TypedDict, total=False):
+    """"dict for CoilCoolingDxCurvefitOperatingmode"""
     Name: str
     Rated_Gross_Total_Cooling_Capacity: str
     Rated_Evaporator_Air_Flow_Rate: str
@@ -5135,6 +5246,7 @@ class CoilCoolingDxCurvefitOperatingmodeType(TypedDict, total=False):
     Speed_10_Name: str
 
 class CoilCoolingDxCurvefitPerformanceType(TypedDict, total=False):
+    """"dict for CoilCoolingDxCurvefitPerformance"""
     Name: str
     Crankcase_Heater_Capacity: str
     Crankcase_Heater_Capacity_Function_of_Temperature_Curve_Name: str
@@ -5151,6 +5263,7 @@ class CoilCoolingDxCurvefitPerformanceType(TypedDict, total=False):
     Alternative_Operating_Mode_2: str
 
 class CoilCoolingDxCurvefitSpeedType(TypedDict, total=False):
+    """"dict for CoilCoolingDxCurvefitSpeed"""
     Name: str
     Gross_Total_Cooling_Capacity_Fraction: str
     Evaporator_Air_Flow_Rate_Fraction: str
@@ -5173,6 +5286,7 @@ class CoilCoolingDxCurvefitSpeedType(TypedDict, total=False):
     Sensible_Heat_Ratio_Modifier_Function_of_Flow_Fraction_Curve_Name: str
 
 class CoilCoolingDxMultispeedType(TypedDict, total=False):
+    """"dict for CoilCoolingDxMultispeed"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -5275,6 +5389,7 @@ class CoilCoolingDxMultispeedType(TypedDict, total=False):
     Zone_Name_for_Condenser_Placement: str
 
 class CoilCoolingDxSinglespeedType(TypedDict, total=False):
+    """"dict for CoilCoolingDxSinglespeed"""
     Name: str
     Availability_Schedule_Name: str
     Gross_Rated_Total_Cooling_Capacity: str
@@ -5314,6 +5429,7 @@ class CoilCoolingDxSinglespeedType(TypedDict, total=False):
     Zone_Name_for_Condenser_Placement: str
 
 class CoilCoolingDxSinglespeedThermalstorageType(TypedDict, total=False):
+    """"dict for CoilCoolingDxSinglespeedThermalstorage"""
     Name: str
     Availability_Schedule_Name: str
     Operating_Mode_Control_Method: str
@@ -5422,6 +5538,7 @@ class CoilCoolingDxSinglespeedThermalstorageType(TypedDict, total=False):
     Storage_Tank_Maximum_Operating_Limit_Fluid_Temperature: str
 
 class CoilCoolingDxTwospeedType(TypedDict, total=False):
+    """"dict for CoilCoolingDxTwospeed"""
     Name: str
     Availability_Schedule_Name: str
     High_Speed_Gross_Rated_Total_Cooling_Capacity: str
@@ -5467,6 +5584,7 @@ class CoilCoolingDxTwospeedType(TypedDict, total=False):
     Zone_Name_for_Condenser_Placement: str
 
 class CoilCoolingDxTwostagewithhumiditycontrolmodeType(TypedDict, total=False):
+    """"dict for CoilCoolingDxTwostagewithhumiditycontrolmode"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -5492,6 +5610,7 @@ class CoilCoolingDxTwostagewithhumiditycontrolmodeType(TypedDict, total=False):
     Basin_Heater_Operating_Schedule_Name: str
 
 class CoilCoolingDxVariablerefrigerantflowType(TypedDict, total=False):
+    """"dict for CoilCoolingDxVariablerefrigerantflow"""
     Name: str
     Availability_Schedule_Name: str
     Gross_Rated_Total_Cooling_Capacity: str
@@ -5504,6 +5623,7 @@ class CoilCoolingDxVariablerefrigerantflowType(TypedDict, total=False):
     Name_of_Water_Storage_Tank_for_Condensate_Collection: str
 
 class CoilCoolingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict, total=False):
+    """"dict for CoilCoolingDxVariablerefrigerantflowFluidtemperaturecontrol"""
     Name: str
     Availability_Schedule_Name: str
     Coil_Air_Inlet_Node: str
@@ -5515,6 +5635,7 @@ class CoilCoolingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict,
     Name_of_Water_Storage_Tank_for_Condensate_Collection: str
 
 class CoilCoolingDxVariablespeedType(TypedDict, total=False):
+    """"dict for CoilCoolingDxVariablespeed"""
     Name: str
     Indoor_Air_Inlet_Node_Name: str
     Indoor_Air_Outlet_Node_Name: str
@@ -5662,6 +5783,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_10_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
 
 class CoilCoolingWaterType(TypedDict, total=False):
+    """"dict for CoilCoolingWater"""
     Name: str
     Availability_Schedule_Name: str
     Design_Water_Flow_Rate: str
@@ -5681,6 +5803,7 @@ class CoilCoolingWaterType(TypedDict, total=False):
     Design_Water_Temperature_Difference: str
 
 class CoilCoolingWaterDetailedgeometryType(TypedDict, total=False):
+    """"dict for CoilCoolingWaterDetailedgeometry"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Water_Flow_Rate: str
@@ -5708,6 +5831,7 @@ class CoilCoolingWaterDetailedgeometryType(TypedDict, total=False):
     Design_Inlet_Water_Temperature: str
 
 class CoilCoolingWatertoairheatpumpEquationfitType(TypedDict, total=False):
+    """"dict for CoilCoolingWatertoairheatpumpEquationfit"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -5732,6 +5856,7 @@ class CoilCoolingWatertoairheatpumpEquationfitType(TypedDict, total=False):
     Fan_Delay_Time: str
 
 class CoilCoolingWatertoairheatpumpParameterestimationType(TypedDict, total=False):
+    """"dict for CoilCoolingWatertoairheatpumpParameterestimation"""
     Name: str
     Compressor_Type: str
     Refrigerant_Type: str
@@ -5765,6 +5890,7 @@ class CoilCoolingWatertoairheatpumpParameterestimationType(TypedDict, total=Fals
     Fan_Delay_Time: str
 
 class CoilCoolingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total=False):
+    """"dict for CoilCoolingWatertoairheatpumpVariablespeedequationfit"""
     Name: str
     WatertoRefrigerant_HX_Water_Inlet_Node_Name: str
     WatertoRefrigerant_HX_Water_Outlet_Node_Name: str
@@ -5914,6 +6040,7 @@ class CoilCoolingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total
     Speed_10_Waste_Heat_Function_of_Temperature_Curve_Name: str
 
 class CoilHeatingDesuperheaterType(TypedDict, total=False):
+    """"dict for CoilHeatingDesuperheater"""
     Name: str
     Availability_Schedule_Name: str
     Heat_Reclaim_Recovery_Efficiency: str
@@ -5925,6 +6052,7 @@ class CoilHeatingDesuperheaterType(TypedDict, total=False):
     On_Cycle_Parasitic_Electric_Load: str
 
 class CoilHeatingDxMultispeedType(TypedDict, total=False):
+    """"dict for CoilHeatingDxMultispeed"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -6015,6 +6143,7 @@ class CoilHeatingDxMultispeedType(TypedDict, total=False):
     Speed_4_Sensible_Heat_Ratio_Modifier_Function_of_Flow_Fraction_Curve_Name: str
 
 class CoilHeatingDxSinglespeedType(TypedDict, total=False):
+    """"dict for CoilHeatingDxSinglespeed"""
     Name: str
     Availability_Schedule_Name: str
     Gross_Rated_Heating_Capacity: str
@@ -6050,6 +6179,7 @@ class CoilHeatingDxSinglespeedType(TypedDict, total=False):
     Sensible_Heat_Ratio_Modifier_Function_of_Flow_Fraction_Curve_Name: str
 
 class CoilHeatingDxVariablerefrigerantflowType(TypedDict, total=False):
+    """"dict for CoilHeatingDxVariablerefrigerantflow"""
     Name: str
     Availability_Schedule: str
     Gross_Rated_Heating_Capacity: str
@@ -6060,6 +6190,7 @@ class CoilHeatingDxVariablerefrigerantflowType(TypedDict, total=False):
     Heating_Capacity_Modifier_Function_of_Flow_Fraction_Curve_Name: str
 
 class CoilHeatingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict, total=False):
+    """"dict for CoilHeatingDxVariablerefrigerantflowFluidtemperaturecontrol"""
     Name: str
     Availability_Schedule: str
     Coil_Air_Inlet_Node: str
@@ -6069,6 +6200,7 @@ class CoilHeatingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict,
     Indoor_Unit_Condensing_Temperature_Function_of_Subcooling_Curve_Name: str
 
 class CoilHeatingDxVariablespeedType(TypedDict, total=False):
+    """"dict for CoilHeatingDxVariablespeed"""
     Name: str
     Indoor_Air_Inlet_Node_Name: str
     Indoor_Air_Outlet_Node_Name: str
@@ -6180,6 +6312,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     Speed_10_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
 
 class CoilHeatingElectricType(TypedDict, total=False):
+    """"dict for CoilHeatingElectric"""
     Name: str
     Availability_Schedule_Name: str
     Efficiency: str
@@ -6189,6 +6322,7 @@ class CoilHeatingElectricType(TypedDict, total=False):
     Temperature_Setpoint_Node_Name: str
 
 class CoilHeatingElectricMultistageType(TypedDict, total=False):
+    """"dict for CoilHeatingElectricMultistage"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -6205,6 +6339,7 @@ class CoilHeatingElectricMultistageType(TypedDict, total=False):
     Stage_4_Nominal_Capacity: str
 
 class CoilHeatingFuelType(TypedDict, total=False):
+    """"dict for CoilHeatingFuel"""
     Name: str
     Availability_Schedule_Name: str
     Fuel_Type: str
@@ -6218,6 +6353,7 @@ class CoilHeatingFuelType(TypedDict, total=False):
     Off_Cycle_Parasitic_Fuel_Load: str
 
 class CoilHeatingGasMultistageType(TypedDict, total=False):
+    """"dict for CoilHeatingGasMultistage"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -6240,6 +6376,7 @@ class CoilHeatingGasMultistageType(TypedDict, total=False):
     Stage_4_On_Cycle_Parasitic_Electric_Load: str
 
 class CoilHeatingSteamType(TypedDict, total=False):
+    """"dict for CoilHeatingSteam"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Steam_Flow_Rate: str
@@ -6253,6 +6390,7 @@ class CoilHeatingSteamType(TypedDict, total=False):
     Temperature_Setpoint_Node_Name: str
 
 class CoilHeatingWaterType(TypedDict, total=False):
+    """"dict for CoilHeatingWater"""
     Name: str
     Availability_Schedule_Name: str
     UFactor_Times_Area_Value: str
@@ -6271,6 +6409,7 @@ class CoilHeatingWaterType(TypedDict, total=False):
     Design_Water_Temperature_Difference: str
 
 class CoilHeatingWatertoairheatpumpEquationfitType(TypedDict, total=False):
+    """"dict for CoilHeatingWatertoairheatpumpEquationfit"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -6288,6 +6427,7 @@ class CoilHeatingWatertoairheatpumpEquationfitType(TypedDict, total=False):
     Part_Load_Fraction_Correlation_Curve_Name: str
 
 class CoilHeatingWatertoairheatpumpParameterestimationType(TypedDict, total=False):
+    """"dict for CoilHeatingWatertoairheatpumpParameterestimation"""
     Name: str
     Compressor_Type: str
     Refrigerant_Type: str
@@ -6315,6 +6455,7 @@ class CoilHeatingWatertoairheatpumpParameterestimationType(TypedDict, total=Fals
     Part_Load_Fraction_Correlation_Curve_Name: str
 
 class CoilHeatingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total=False):
+    """"dict for CoilHeatingWatertoairheatpumpVariablespeedequationfit"""
     Name: str
     WatertoRefrigerant_HX_Water_Inlet_Node_Name: str
     WatertoRefrigerant_HX_Water_Outlet_Node_Name: str
@@ -6448,6 +6589,7 @@ class CoilHeatingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total
     Speed_10_Waste_Heat_Function_of_Temperature_Curve_Name: str
 
 class CoilUserdefinedType(TypedDict, total=False):
+    """"dict for CoilUserdefined"""
     Name: str
     Overall_Model_Simulation_Program_Calling_Manager_Name: str
     Model_Setup_and_Sizing_Program_Calling_Manager_Name: str
@@ -6464,6 +6606,7 @@ class CoilUserdefinedType(TypedDict, total=False):
     Ambient_Zone_Name: str
 
 class CoilWaterheatingAirtowaterheatpumpPumpedType(TypedDict, total=False):
+    """"dict for CoilWaterheatingAirtowaterheatpumpPumped"""
     Name: str
     Rated_Heating_Capacity: str
     Rated_COP: str
@@ -6495,6 +6638,7 @@ class CoilWaterheatingAirtowaterheatpumpPumpedType(TypedDict, total=False):
     Part_Load_Fraction_Correlation_Curve_Name: str
 
 class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False):
+    """"dict for CoilWaterheatingAirtowaterheatpumpVariablespeed"""
     Name: str
     Number_of_Speeds: str
     Nominal_Speed_Level: str
@@ -6639,6 +6783,7 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_10_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
 
 class CoilWaterheatingAirtowaterheatpumpWrappedType(TypedDict, total=False):
+    """"dict for CoilWaterheatingAirtowaterheatpumpWrapped"""
     Name: str
     Rated_Heating_Capacity: str
     Rated_COP: str
@@ -6661,6 +6806,7 @@ class CoilWaterheatingAirtowaterheatpumpWrappedType(TypedDict, total=False):
     Part_Load_Fraction_Correlation_Curve_Name: str
 
 class CoilWaterheatingDesuperheaterType(TypedDict, total=False):
+    """"dict for CoilWaterheatingDesuperheater"""
     Name: str
     Availability_Schedule_Name: str
     Setpoint_Temperature_Schedule_Name: str
@@ -6683,6 +6829,7 @@ class CoilWaterheatingDesuperheaterType(TypedDict, total=False):
     OffCycle_Parasitic_Electric_Load: str
 
 class CoilperformanceDxCoolingType(TypedDict, total=False):
+    """"dict for CoilperformanceDxCooling"""
     Name: str
     Gross_Rated_Total_Cooling_Capacity: str
     Gross_Rated_Sensible_Heat_Ratio: str
@@ -6707,6 +6854,7 @@ class CoilperformanceDxCoolingType(TypedDict, total=False):
     Sensible_Heat_Ratio_Function_of_Flow_Fraction_Curve_Name: str
 
 class CoilsystemCoolingDxType(TypedDict, total=False):
+    """"dict for CoilsystemCoolingDx"""
     Name: str
     Availability_Schedule_Name: str
     DX_Cooling_Coil_System_Inlet_Node_Name: str
@@ -6721,6 +6869,7 @@ class CoilsystemCoolingDxType(TypedDict, total=False):
     Outdoor_Air_DX_Cooling_Coil_Leaving_Minimum_Air_Temperature: str
 
 class CoilsystemCoolingDxHeatexchangerassistedType(TypedDict, total=False):
+    """"dict for CoilsystemCoolingDxHeatexchangerassisted"""
     Name: str
     Heat_Exchanger_Object_Type: str
     Heat_Exchanger_Name: str
@@ -6728,6 +6877,7 @@ class CoilsystemCoolingDxHeatexchangerassistedType(TypedDict, total=False):
     Cooling_Coil_Name: str
 
 class CoilsystemCoolingWaterType(TypedDict, total=False):
+    """"dict for CoilsystemCoolingWater"""
     Name: str
     Air_Inlet_Node_Name: str
     Air_Outlet_Node_Name: str
@@ -6743,6 +6893,7 @@ class CoilsystemCoolingWaterType(TypedDict, total=False):
     Companion_Coil_Used_For_Heat_Recovery: str
 
 class CoilsystemCoolingWaterHeatexchangerassistedType(TypedDict, total=False):
+    """"dict for CoilsystemCoolingWaterHeatexchangerassisted"""
     Name: str
     Heat_Exchanger_Object_Type: str
     Heat_Exchanger_Name: str
@@ -6750,12 +6901,14 @@ class CoilsystemCoolingWaterHeatexchangerassistedType(TypedDict, total=False):
     Cooling_Coil_Name: str
 
 class CoilsystemHeatingDxType(TypedDict, total=False):
+    """"dict for CoilsystemHeatingDx"""
     Name: str
     Availability_Schedule_Name: str
     Heating_Coil_Object_Type: str
     Heating_Coil_Name: str
 
 class CoilsystemIntegratedheatpumpAirsourceType(TypedDict, total=False):
+    """"dict for CoilsystemIntegratedheatpumpAirsource"""
     Name: str
     Supply_Hot_Water_Flow_Sensor_Node_Name: str
     Space_Cooling_Coil_Name: str
@@ -6778,6 +6931,7 @@ class CoilsystemIntegratedheatpumpAirsourceType(TypedDict, total=False):
     Minimum_Speed_Level_for_SHDWH_Mode: str
 
 class ComfortviewfactoranglesType(TypedDict, total=False):
+    """"dict for Comfortviewfactorangles"""
     Name: str
     Surface_1_Name: str
     Angle_Factor_1: str
@@ -6981,6 +7135,7 @@ class ComfortviewfactoranglesType(TypedDict, total=False):
     Angle_Factor_100: str
 
 class ComplexfenestrationpropertySolarabsorbedlayersType(TypedDict, total=False):
+    """"dict for ComplexfenestrationpropertySolarabsorbedlayers"""
     Name: str
     Fenestration_Surface: str
     Construction_Name: str
@@ -6991,9 +7146,11 @@ class ComplexfenestrationpropertySolarabsorbedlayersType(TypedDict, total=False)
     Layer_5_Solar_Radiation_Absorbed_Schedule_Name: str
 
 class ComplianceBuildingType(TypedDict, total=False):
+    """"dict for ComplianceBuilding"""
     Building_Rotation_for_Appendix_G: str
 
 class ComponentcostAdjustmentsType(TypedDict, total=False):
+    """"dict for ComponentcostAdjustments"""
     Miscellaneous_Cost_per_Conditioned_Area: str
     Design_and_Engineering_Fees: str
     Contractor_Fee: str
@@ -7003,6 +7160,7 @@ class ComponentcostAdjustmentsType(TypedDict, total=False):
     Regional_Adjustment_Factor: str
 
 class ComponentcostLineitemType(TypedDict, total=False):
+    """"dict for ComponentcostLineitem"""
     Name: str
     Type: str
     Line_Item_Type: str
@@ -7018,6 +7176,7 @@ class ComponentcostLineitemType(TypedDict, total=False):
     Quantity: str
 
 class ComponentcostReferenceType(TypedDict, total=False):
+    """"dict for ComponentcostReference"""
     Reference_Building_Line_Item_Costs: str
     Reference_Building_Miscellaneous_Cost_per_Conditioned_Area: str
     Reference_Building_Design_and_Engineering_Fees: str
@@ -7028,6 +7187,7 @@ class ComponentcostReferenceType(TypedDict, total=False):
     Reference_Building_Regional_Adjustment_Factor: str
 
 class CondenserequipmentlistType(TypedDict, total=False):
+    """"dict for Condenserequipmentlist"""
     Name: str
     Equipment_1_Object_Type: str
     Equipment_1_Name: str
@@ -7051,6 +7211,7 @@ class CondenserequipmentlistType(TypedDict, total=False):
     Equipment_10_Name: str
 
 class CondenserequipmentoperationschemesType(TypedDict, total=False):
+    """"dict for Condenserequipmentoperationschemes"""
     Name: str
     Control_Scheme_1_Object_Type: str
     Control_Scheme_1_Name: str
@@ -7078,6 +7239,7 @@ class CondenserequipmentoperationschemesType(TypedDict, total=False):
     Control_Scheme_8_Schedule_Name: str
 
 class CondenserloopType(TypedDict, total=False):
+    """"dict for Condenserloop"""
     Name: str
     Fluid_Type: str
     User_Defined_Fluid_Type: str
@@ -7101,6 +7263,7 @@ class CondenserloopType(TypedDict, total=False):
     Loop_Circulation_Time: str
 
 class ConnectorMixerType(TypedDict, total=False):
+    """"dict for ConnectorMixer"""
     Name: str
     Outlet_Branch_Name: str
     Inlet_Branch_1_Name: str
@@ -7605,6 +7768,7 @@ class ConnectorMixerType(TypedDict, total=False):
     Inlet_Branch_500_Name: str
 
 class ConnectorSplitterType(TypedDict, total=False):
+    """"dict for ConnectorSplitter"""
     Name: str
     Inlet_Branch_Name: str
     Outlet_Branch_1_Name: str
@@ -8109,6 +8273,7 @@ class ConnectorSplitterType(TypedDict, total=False):
     Outlet_Branch_500_Name: str
 
 class ConnectorlistType(TypedDict, total=False):
+    """"dict for Connectorlist"""
     Name: str
     Connector_1_Object_Type: str
     Connector_1_Name: str
@@ -8116,6 +8281,7 @@ class ConnectorlistType(TypedDict, total=False):
     Connector_2_Name: str
 
 class ConstructionType(TypedDict, total=False):
+    """"dict for Construction"""
     Name: str
     Outside_Layer: str
     Layer_2: str
@@ -8129,17 +8295,20 @@ class ConstructionType(TypedDict, total=False):
     Layer_10: str
 
 class ConstructionAirboundaryType(TypedDict, total=False):
+    """"dict for ConstructionAirboundary"""
     Name: str
     Air_Exchange_Method: str
     Simple_Mixing_Air_Changes_per_Hour: str
     Simple_Mixing_Schedule_Name: str
 
 class ConstructionCfactorundergroundwallType(TypedDict, total=False):
+    """"dict for ConstructionCfactorundergroundwall"""
     Name: str
     CFactor: str
     Height: str
 
 class ConstructionComplexfenestrationstateType(TypedDict, total=False):
+    """"dict for ConstructionComplexfenestrationstate"""
     Name: str
     Basis_Type: str
     Basis_Symmetry_Type: str
@@ -8178,16 +8347,19 @@ class ConstructionComplexfenestrationstateType(TypedDict, total=False):
     Layer_5_Directional_Back_Absorptance_Matrix_Name: str
 
 class ConstructionFfactorgroundfloorType(TypedDict, total=False):
+    """"dict for ConstructionFfactorgroundfloor"""
     Name: str
     FFactor: str
     Area: str
     PerimeterExposed: str
 
 class ConstructionWindowdatafileType(TypedDict, total=False):
+    """"dict for ConstructionWindowdatafile"""
     Name: str
     File_Name: str
 
 class ConstructionWindowequivalentlayerType(TypedDict, total=False):
+    """"dict for ConstructionWindowequivalentlayer"""
     Name: str
     Outside_Layer: str
     Layer_2: str
@@ -8202,6 +8374,7 @@ class ConstructionWindowequivalentlayerType(TypedDict, total=False):
     Layer_11: str
 
 class ConstructionpropertyInternalheatsourceType(TypedDict, total=False):
+    """"dict for ConstructionpropertyInternalheatsource"""
     Name: str
     Construction_Name: str
     Thermal_Source_Present_After_Layer_Number: str
@@ -8211,6 +8384,7 @@ class ConstructionpropertyInternalheatsourceType(TypedDict, total=False):
     TwoDimensional_Temperature_Calculation_Position: str
 
 class ControllerMechanicalventilationType(TypedDict, total=False):
+    """"dict for ControllerMechanicalventilation"""
     Name: str
     Availability_Schedule_Name: str
     Demand_Controlled_Ventilation: str
@@ -8368,6 +8542,7 @@ class ControllerMechanicalventilationType(TypedDict, total=False):
     Design_Specification_Zone_Air_Distribution_Object_Name_50: str
 
 class ControllerOutdoorairType(TypedDict, total=False):
+    """"dict for ControllerOutdoorair"""
     Name: str
     Relief_Air_Outlet_Node_Name: str
     Return_Air_Node_Name: str
@@ -8397,6 +8572,7 @@ class ControllerOutdoorairType(TypedDict, total=False):
     Economizer_Operation_Staging: str
 
 class ControllerWatercoilType(TypedDict, total=False):
+    """"dict for ControllerWatercoil"""
     Name: str
     Control_Variable: str
     Action: str
@@ -8408,12 +8584,14 @@ class ControllerWatercoilType(TypedDict, total=False):
     Minimum_Actuated_Flow: str
 
 class ConvergencelimitsType(TypedDict, total=False):
+    """"dict for Convergencelimits"""
     Minimum_System_Timestep: str
     Maximum_HVAC_Iterations: str
     Minimum_Plant_Iterations: str
     Maximum_Plant_Iterations: str
 
 class CoolingtowerSinglespeedType(TypedDict, total=False):
+    """"dict for CoolingtowerSinglespeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -8454,6 +8632,7 @@ class CoolingtowerSinglespeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class CoolingtowerTwospeedType(TypedDict, total=False):
+    """"dict for CoolingtowerTwospeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -8501,6 +8680,7 @@ class CoolingtowerTwospeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class CoolingtowerVariablespeedType(TypedDict, total=False):
+    """"dict for CoolingtowerVariablespeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -8534,6 +8714,7 @@ class CoolingtowerVariablespeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class CoolingtowerVariablespeedMerkelType(TypedDict, total=False):
+    """"dict for CoolingtowerVariablespeedMerkel"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -8581,6 +8762,7 @@ class CoolingtowerVariablespeedMerkelType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class CoolingtowerperformanceCooltoolsType(TypedDict, total=False):
+    """"dict for CoolingtowerperformanceCooltools"""
     Name: str
     Minimum_Inlet_Air_WetBulb_Temperature: str
     Maximum_Inlet_Air_WetBulb_Temperature: str
@@ -8627,6 +8809,7 @@ class CoolingtowerperformanceCooltoolsType(TypedDict, total=False):
     Coefficient_35: str
 
 class CoolingtowerperformanceYorkcalcType(TypedDict, total=False):
+    """"dict for CoolingtowerperformanceYorkcalc"""
     Name: str
     Minimum_Inlet_Air_WetBulb_Temperature: str
     Maximum_Inlet_Air_WetBulb_Temperature: str
@@ -8666,9 +8849,11 @@ class CoolingtowerperformanceYorkcalcType(TypedDict, total=False):
     Coefficient_27: str
 
 class CurrencytypeType(TypedDict, total=False):
+    """"dict for Currencytype"""
     Monetary_Unit: str
 
 class CurveBicubicType(TypedDict, total=False):
+    """"dict for CurveBicubic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8691,6 +8876,7 @@ class CurveBicubicType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveBiquadraticType(TypedDict, total=False):
+    """"dict for CurveBiquadratic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8709,6 +8895,7 @@ class CurveBiquadraticType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveChillerpartloadwithliftType(TypedDict, total=False):
+    """"dict for CurveChillerpartloadwithlift"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8736,6 +8923,7 @@ class CurveChillerpartloadwithliftType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveCubicType(TypedDict, total=False):
+    """"dict for CurveCubic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8749,6 +8937,7 @@ class CurveCubicType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveCubiclinearType(TypedDict, total=False):
+    """"dict for CurveCubiclinear"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8767,6 +8956,7 @@ class CurveCubiclinearType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveDoubleexponentialdecayType(TypedDict, total=False):
+    """"dict for CurveDoubleexponentialdecay"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8781,6 +8971,7 @@ class CurveDoubleexponentialdecayType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveExponentType(TypedDict, total=False):
+    """"dict for CurveExponent"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_Constant: str
@@ -8793,6 +8984,7 @@ class CurveExponentType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveExponentialdecayType(TypedDict, total=False):
+    """"dict for CurveExponentialdecay"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8805,6 +8997,7 @@ class CurveExponentialdecayType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveExponentialskewnormalType(TypedDict, total=False):
+    """"dict for CurveExponentialskewnormal"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8818,6 +9011,7 @@ class CurveExponentialskewnormalType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveFanpressureriseType(TypedDict, total=False):
+    """"dict for CurveFanpressurerise"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8831,6 +9025,7 @@ class CurveFanpressureriseType(TypedDict, total=False):
     Maximum_Curve_Output: str
 
 class CurveFunctionalPressuredropType(TypedDict, total=False):
+    """"dict for CurveFunctionalPressuredrop"""
     Name: str
     Diameter: str
     Minor_Loss_Coefficient: str
@@ -8839,6 +9034,7 @@ class CurveFunctionalPressuredropType(TypedDict, total=False):
     Fixed_Friction_Factor: str
 
 class CurveLinearType(TypedDict, total=False):
+    """"dict for CurveLinear"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8850,6 +9046,7 @@ class CurveLinearType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveQuadlinearType(TypedDict, total=False):
+    """"dict for CurveQuadlinear"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_w: str
@@ -8872,6 +9069,7 @@ class CurveQuadlinearType(TypedDict, total=False):
     Input_Unit_Type_for_z: str
 
 class CurveQuadraticType(TypedDict, total=False):
+    """"dict for CurveQuadratic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8884,6 +9082,7 @@ class CurveQuadraticType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveQuadraticlinearType(TypedDict, total=False):
+    """"dict for CurveQuadraticlinear"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8902,6 +9101,7 @@ class CurveQuadraticlinearType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveQuarticType(TypedDict, total=False):
+    """"dict for CurveQuartic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x: str
@@ -8916,6 +9116,7 @@ class CurveQuarticType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveQuintlinearType(TypedDict, total=False):
+    """"dict for CurveQuintlinear"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_v: str
@@ -8942,6 +9143,7 @@ class CurveQuintlinearType(TypedDict, total=False):
     Input_Unit_Type_for_z: str
 
 class CurveRectangularhyperbola1Type(TypedDict, total=False):
+    """"dict for CurveRectangularhyperbola1"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8954,6 +9156,7 @@ class CurveRectangularhyperbola1Type(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveRectangularhyperbola2Type(TypedDict, total=False):
+    """"dict for CurveRectangularhyperbola2"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8966,6 +9169,7 @@ class CurveRectangularhyperbola2Type(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveSigmoidType(TypedDict, total=False):
+    """"dict for CurveSigmoid"""
     Name: str
     Coefficient1_C1: str
     Coefficient2_C2: str
@@ -8980,6 +9184,7 @@ class CurveSigmoidType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class CurveTriquadraticType(TypedDict, total=False):
+    """"dict for CurveTriquadratic"""
     Name: str
     Coefficient1_Constant: str
     Coefficient2_x2: str
@@ -9022,6 +9227,7 @@ class CurveTriquadraticType(TypedDict, total=False):
     Output_Unit_Type: str
 
 class DaylightingControlsType(TypedDict, total=False):
+    """"dict for DaylightingControls"""
     Name: str
     Zone_or_Space_Name: str
     Daylighting_Method: str
@@ -9067,6 +9273,7 @@ class DaylightingControlsType(TypedDict, total=False):
     Illuminance_Setpoint_at_Reference_Point_10: str
 
 class DaylightingDelightComplexfenestrationType(TypedDict, total=False):
+    """"dict for DaylightingDelightComplexfenestration"""
     Name: str
     Complex_Fenestration_Type: str
     Building_Surface_Name: str
@@ -9074,6 +9281,7 @@ class DaylightingDelightComplexfenestrationType(TypedDict, total=False):
     Fenestration_Rotation: str
 
 class DaylightingReferencepointType(TypedDict, total=False):
+    """"dict for DaylightingReferencepoint"""
     Name: str
     Zone_or_Space_Name: str
     XCoordinate_of_Reference_Point: str
@@ -9081,6 +9289,7 @@ class DaylightingReferencepointType(TypedDict, total=False):
     ZCoordinate_of_Reference_Point: str
 
 class DaylightingdeviceLightwellType(TypedDict, total=False):
+    """"dict for DaylightingdeviceLightwell"""
     Exterior_Window_Name: str
     Height_of_Well: str
     Perimeter_of_Bottom_of_Well: str
@@ -9088,6 +9297,7 @@ class DaylightingdeviceLightwellType(TypedDict, total=False):
     Visible_Reflectance_of_Well_Walls: str
 
 class DaylightingdeviceShelfType(TypedDict, total=False):
+    """"dict for DaylightingdeviceShelf"""
     Name: str
     Window_Name: str
     Inside_Shelf_Name: str
@@ -9096,6 +9306,7 @@ class DaylightingdeviceShelfType(TypedDict, total=False):
     View_Factor_to_Outside_Shelf: str
 
 class DaylightingdeviceTubularType(TypedDict, total=False):
+    """"dict for DaylightingdeviceTubular"""
     Name: str
     Dome_Name: str
     Diffuser_Name: str
@@ -9113,6 +9324,7 @@ class DaylightingdeviceTubularType(TypedDict, total=False):
     Transition_Zone_4_Length: str
 
 class DehumidifierDesiccantNofansType(TypedDict, total=False):
+    """"dict for DehumidifierDesiccantNofans"""
     Name: str
     Availability_Schedule_Name: str
     Process_Air_Inlet_Node_Name: str
@@ -9140,6 +9352,7 @@ class DehumidifierDesiccantNofansType(TypedDict, total=False):
     Nominal_Regeneration_Temperature: str
 
 class DehumidifierDesiccantSystemType(TypedDict, total=False):
+    """"dict for DehumidifierDesiccantSystem"""
     Name: str
     Availability_Schedule_Name: str
     Desiccant_Heat_Exchanger_Object_Type: str
@@ -9160,6 +9373,7 @@ class DehumidifierDesiccantSystemType(TypedDict, total=False):
     Exhaust_Fan_Power_Curve_Name: str
 
 class DemandmanagerElectricequipmentType(TypedDict, total=False):
+    """"dict for DemandmanagerElectricequipment"""
     Name: str
     Availability_Schedule_Name: str
     Limit_Control: str
@@ -9180,6 +9394,7 @@ class DemandmanagerElectricequipmentType(TypedDict, total=False):
     Electric_Equipment_10_Name: str
 
 class DemandmanagerExteriorlightsType(TypedDict, total=False):
+    """"dict for DemandmanagerExteriorlights"""
     Name: str
     Availability_Schedule_Name: str
     Limit_Control: str
@@ -9200,6 +9415,7 @@ class DemandmanagerExteriorlightsType(TypedDict, total=False):
     Exterior_Lights_10_Name: str
 
 class DemandmanagerLightsType(TypedDict, total=False):
+    """"dict for DemandmanagerLights"""
     Name: str
     Availability_Schedule_Name: str
     Limit_Control: str
@@ -9220,6 +9436,7 @@ class DemandmanagerLightsType(TypedDict, total=False):
     Lights_10_Name: str
 
 class DemandmanagerThermostatsType(TypedDict, total=False):
+    """"dict for DemandmanagerThermostats"""
     Name: str
     Availability_Schedule_Name: str
     Reset_Control: str
@@ -9241,6 +9458,7 @@ class DemandmanagerThermostatsType(TypedDict, total=False):
     Thermostat_10_Name: str
 
 class DemandmanagerVentilationType(TypedDict, total=False):
+    """"dict for DemandmanagerVentilation"""
     Name: str
     Availability_Schedule_Name: str
     Limit_Control: str
@@ -9262,6 +9480,7 @@ class DemandmanagerVentilationType(TypedDict, total=False):
     Controller_Outdoor_Air_10_Name: str
 
 class DemandmanagerassignmentlistType(TypedDict, total=False):
+    """"dict for Demandmanagerassignmentlist"""
     Name: str
     Meter_Name: str
     Demand_Limit_Schedule_Name: str
@@ -9292,6 +9511,7 @@ class DemandmanagerassignmentlistType(TypedDict, total=False):
     DemandManager_10_Name: str
 
 class DesignspecificationAirterminalSizingType(TypedDict, total=False):
+    """"dict for DesignspecificationAirterminalSizing"""
     Name: str
     Fraction_of_Design_Cooling_Load: str
     Cooling_Design_Supply_Air_Temperature_Difference_Ratio: str
@@ -9300,6 +9520,7 @@ class DesignspecificationAirterminalSizingType(TypedDict, total=False):
     Fraction_of_Minimum_Outdoor_Air_Flow: str
 
 class DesignspecificationOutdoorairType(TypedDict, total=False):
+    """"dict for DesignspecificationOutdoorair"""
     Name: str
     Outdoor_Air_Method: str
     Outdoor_Air_Flow_per_Person: str
@@ -9310,6 +9531,7 @@ class DesignspecificationOutdoorairType(TypedDict, total=False):
     Proportional_Control_Minimum_Outdoor_Air_Flow_Rate_Schedule_Name: str
 
 class DesignspecificationOutdoorairSpacelistType(TypedDict, total=False):
+    """"dict for DesignspecificationOutdoorairSpacelist"""
     Name: str
     Space_1_Name: str
     Space_1_Design_Specification_Outdoor_Air_Object_Name: str
@@ -9363,6 +9585,7 @@ class DesignspecificationOutdoorairSpacelistType(TypedDict, total=False):
     Space_25_Design_Specification_Outdoor_Air_Object_Name: str
 
 class DesignspecificationZoneairdistributionType(TypedDict, total=False):
+    """"dict for DesignspecificationZoneairdistribution"""
     Name: str
     Zone_Air_Distribution_Effectiveness_in_Cooling_Mode: str
     Zone_Air_Distribution_Effectiveness_in_Heating_Mode: str
@@ -9371,6 +9594,7 @@ class DesignspecificationZoneairdistributionType(TypedDict, total=False):
     Minimum_Zone_Ventilation_Efficiency: str
 
 class DesignspecificationZonehvacSizingType(TypedDict, total=False):
+    """"dict for DesignspecificationZonehvacSizing"""
     Name: str
     Cooling_Supply_Air_Flow_Rate_Method: str
     Cooling_Supply_Air_Flow_Rate: str
@@ -9397,6 +9621,7 @@ class DesignspecificationZonehvacSizingType(TypedDict, total=False):
     Fraction_of_Autosized_Heating_Design_Capacity: str
 
 class DistrictcoolingType(TypedDict, total=False):
+    """"dict for Districtcooling"""
     Name: str
     Chilled_Water_Inlet_Node_Name: str
     Chilled_Water_Outlet_Node_Name: str
@@ -9404,6 +9629,7 @@ class DistrictcoolingType(TypedDict, total=False):
     Capacity_Fraction_Schedule_Name: str
 
 class DistrictheatingSteamType(TypedDict, total=False):
+    """"dict for DistrictheatingSteam"""
     Name: str
     Steam_Inlet_Node_Name: str
     Steam_Outlet_Node_Name: str
@@ -9411,6 +9637,7 @@ class DistrictheatingSteamType(TypedDict, total=False):
     Capacity_Fraction_Schedule_Name: str
 
 class DistrictheatingWaterType(TypedDict, total=False):
+    """"dict for DistrictheatingWater"""
     Name: str
     Hot_Water_Inlet_Node_Name: str
     Hot_Water_Outlet_Node_Name: str
@@ -9418,6 +9645,7 @@ class DistrictheatingWaterType(TypedDict, total=False):
     Capacity_Fraction_Schedule_Name: str
 
 class DoorType(TypedDict, total=False):
+    """"dict for Door"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -9428,6 +9656,7 @@ class DoorType(TypedDict, total=False):
     Height: str
 
 class DoorInterzoneType(TypedDict, total=False):
+    """"dict for DoorInterzone"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -9439,11 +9668,13 @@ class DoorInterzoneType(TypedDict, total=False):
     Height: str
 
 class DuctType(TypedDict, total=False):
+    """"dict for Duct"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
 
 class ElectricequipmentType(TypedDict, total=False):
+    """"dict for Electricequipment"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -9457,6 +9688,7 @@ class ElectricequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ElectricequipmentIteAircooledType(TypedDict, total=False):
+    """"dict for ElectricequipmentIteAircooled"""
     Name: str
     Zone_or_Space_Name: str
     Air_Flow_Calculation_Method: str
@@ -9491,6 +9723,7 @@ class ElectricequipmentIteAircooledType(TypedDict, total=False):
     Return_Temperature_Difference_Schedule: str
 
 class ElectricloadcenterDistributionType(TypedDict, total=False):
+    """"dict for ElectricloadcenterDistribution"""
     Name: str
     Generator_List_Name: str
     Generator_Operation_Scheme_Type: str
@@ -9514,6 +9747,7 @@ class ElectricloadcenterDistributionType(TypedDict, total=False):
     Storage_Control_Utility_Demand_Target_Fraction_Schedule_Name: str
 
 class ElectricloadcenterGeneratorsType(TypedDict, total=False):
+    """"dict for ElectricloadcenterGenerators"""
     Name: str
     Generator_1_Name: str
     Generator_1_Object_Type: str
@@ -9667,6 +9901,7 @@ class ElectricloadcenterGeneratorsType(TypedDict, total=False):
     Generator_30_Rated_Thermal_to_Electrical_Power_Ratio: str
 
 class ElectricloadcenterInverterFunctionofpowerType(TypedDict, total=False):
+    """"dict for ElectricloadcenterInverterFunctionofpower"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9680,6 +9915,7 @@ class ElectricloadcenterInverterFunctionofpowerType(TypedDict, total=False):
     Ancillary_Power_Consumed_In_Standby: str
 
 class ElectricloadcenterInverterLookuptableType(TypedDict, total=False):
+    """"dict for ElectricloadcenterInverterLookuptable"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9695,11 +9931,13 @@ class ElectricloadcenterInverterLookuptableType(TypedDict, total=False):
     Efficiency_at_100_Power_and_Nominal_Voltage: str
 
 class ElectricloadcenterInverterPvwattsType(TypedDict, total=False):
+    """"dict for ElectricloadcenterInverterPvwatts"""
     Name: str
     DC_to_AC_Size_Ratio: str
     Inverter_Efficiency: str
 
 class ElectricloadcenterInverterSimpleType(TypedDict, total=False):
+    """"dict for ElectricloadcenterInverterSimple"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9707,6 +9945,7 @@ class ElectricloadcenterInverterSimpleType(TypedDict, total=False):
     Inverter_Efficiency: str
 
 class ElectricloadcenterStorageBatteryType(TypedDict, total=False):
+    """"dict for ElectricloadcenterStorageBattery"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9730,6 +9969,7 @@ class ElectricloadcenterStorageBatteryType(TypedDict, total=False):
     Battery_Life_Curve_Name: str
 
 class ElectricloadcenterStorageConverterType(TypedDict, total=False):
+    """"dict for ElectricloadcenterStorageConverter"""
     Name: str
     Availability_Schedule_Name: str
     Power_Conversion_Efficiency_Method: str
@@ -9741,6 +9981,7 @@ class ElectricloadcenterStorageConverterType(TypedDict, total=False):
     Radiative_Fraction: str
 
 class ElectricloadcenterStorageLiionnmcbatteryType(TypedDict, total=False):
+    """"dict for ElectricloadcenterStorageLiionnmcbattery"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9765,6 +10006,7 @@ class ElectricloadcenterStorageLiionnmcbatteryType(TypedDict, total=False):
     Battery_Cell_Internal_Electrical_Resistance: str
 
 class ElectricloadcenterStorageSimpleType(TypedDict, total=False):
+    """"dict for ElectricloadcenterStorageSimple"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -9777,6 +10019,7 @@ class ElectricloadcenterStorageSimpleType(TypedDict, total=False):
     Initial_State_of_Charge: str
 
 class ElectricloadcenterTransformerType(TypedDict, total=False):
+    """"dict for ElectricloadcenterTransformer"""
     Name: str
     Availability_Schedule_Name: str
     Transformer_Usage: str
@@ -9807,20 +10050,24 @@ class ElectricloadcenterTransformerType(TypedDict, total=False):
     Meter_10_Name: str
 
 class EnergymanagementsystemActuatorType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemActuator"""
     Name: str
     Actuated_Component_Unique_Name: str
     Actuated_Component_Type: str
     Actuated_Component_Control_Type: str
 
 class EnergymanagementsystemConstructionindexvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemConstructionindexvariable"""
     Name: str
     Construction_Object_Name: str
 
 class EnergymanagementsystemCurveortableindexvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemCurveortableindexvariable"""
     Name: str
     Curve_or_Table_Object_Name: str
 
 class EnergymanagementsystemGlobalvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemGlobalvariable"""
     Erl_Variable_1_Name: str
     Erl_Variable_2_Name: str
     Erl_Variable_3_Name: str
@@ -10325,11 +10572,13 @@ class EnergymanagementsystemGlobalvariableType(TypedDict, total=False):
     Erl_Variable_502_Name: str
 
 class EnergymanagementsystemInternalvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemInternalvariable"""
     Name: str
     Internal_Data_Index_Key_Name: str
     Internal_Data_Type: str
 
 class EnergymanagementsystemMeteredoutputvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemMeteredoutputvariable"""
     Name: str
     EMS_Variable_Name: str
     Update_Frequency: str
@@ -10341,6 +10590,7 @@ class EnergymanagementsystemMeteredoutputvariableType(TypedDict, total=False):
     Units: str
 
 class EnergymanagementsystemOutputvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemOutputvariable"""
     Name: str
     EMS_Variable_Name: str
     Type_of_Data_in_Variable: str
@@ -10349,6 +10599,7 @@ class EnergymanagementsystemOutputvariableType(TypedDict, total=False):
     Units: str
 
 class EnergymanagementsystemProgramType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemProgram"""
     Name: str
     Program_Line_1: str
     Program_Line_2: str
@@ -10853,6 +11104,7 @@ class EnergymanagementsystemProgramType(TypedDict, total=False):
     Program_Line_501: str
 
 class EnergymanagementsystemProgramcallingmanagerType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemProgramcallingmanager"""
     Name: str
     EnergyPlus_Model_Calling_Point: str
     Program_Name_1: str
@@ -10882,11 +11134,13 @@ class EnergymanagementsystemProgramcallingmanagerType(TypedDict, total=False):
     Program_Name_25: str
 
 class EnergymanagementsystemSensorType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemSensor"""
     Name: str
     OutputVariable_or_OutputMeter_Index_Key_Name: str
     OutputVariable_or_OutputMeter_Name: str
 
 class EnergymanagementsystemSubroutineType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemSubroutine"""
     Name: str
     Program_Line_1: str
     Program_Line_2: str
@@ -11009,11 +11263,13 @@ class EnergymanagementsystemSubroutineType(TypedDict, total=False):
     Program_Line_119: str
 
 class EnergymanagementsystemTrendvariableType(TypedDict, total=False):
+    """"dict for EnergymanagementsystemTrendvariable"""
     Name: str
     EMS_Variable_Name: str
     Number_of_Timesteps_to_be_Logged: str
 
 class EnvironmentalimpactfactorsType(TypedDict, total=False):
+    """"dict for Environmentalimpactfactors"""
     District_Heating_Water_Efficiency: str
     District_Cooling_COP: str
     District_Heating_Steam_Conversion_Efficiency: str
@@ -11022,6 +11278,7 @@ class EnvironmentalimpactfactorsType(TypedDict, total=False):
     Total_Carbon_Equivalent_Emission_Factor_From_CO2: str
 
 class EvaporativecoolerDirectCeldekpadType(TypedDict, total=False):
+    """"dict for EvaporativecoolerDirectCeldekpad"""
     Name: str
     Availability_Schedule_Name: str
     Direct_Pad_Area: str
@@ -11033,6 +11290,7 @@ class EvaporativecoolerDirectCeldekpadType(TypedDict, total=False):
     Water_Supply_Storage_Tank_Name: str
 
 class EvaporativecoolerDirectResearchspecialType(TypedDict, total=False):
+    """"dict for EvaporativecoolerDirectResearchspecial"""
     Name: str
     Availability_Schedule_Name: str
     Cooler_Design_Effectiveness: str
@@ -11052,6 +11310,7 @@ class EvaporativecoolerDirectResearchspecialType(TypedDict, total=False):
     Evaporative_Operation_Maximum_Limit_Drybulb_Temperature: str
 
 class EvaporativecoolerIndirectCeldekpadType(TypedDict, total=False):
+    """"dict for EvaporativecoolerIndirectCeldekpad"""
     Name: str
     Availability_Schedule_Name: str
     Direct_Pad_Area: str
@@ -11068,6 +11327,7 @@ class EvaporativecoolerIndirectCeldekpadType(TypedDict, total=False):
     Secondary_Air_Inlet_Node_Name: str
 
 class EvaporativecoolerIndirectResearchspecialType(TypedDict, total=False):
+    """"dict for EvaporativecoolerIndirectResearchspecial"""
     Name: str
     Availability_Schedule_Name: str
     Cooler_Wetbulb_Design_Effectiveness: str
@@ -11098,6 +11358,7 @@ class EvaporativecoolerIndirectResearchspecialType(TypedDict, total=False):
     Dry_Operation_Maximum_Limit_Outdoor_Drybulb_Temperature: str
 
 class EvaporativecoolerIndirectWetcoilType(TypedDict, total=False):
+    """"dict for EvaporativecoolerIndirectWetcoil"""
     Name: str
     Availability_Schedule_Name: str
     Coil_Maximum_Efficiency: str
@@ -11113,6 +11374,7 @@ class EvaporativecoolerIndirectWetcoilType(TypedDict, total=False):
     Secondary_Air_Inlet_Node_Name: str
 
 class EvaporativefluidcoolerSinglespeedType(TypedDict, total=False):
+    """"dict for EvaporativefluidcoolerSinglespeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -11140,6 +11402,7 @@ class EvaporativefluidcoolerSinglespeedType(TypedDict, total=False):
     Supply_Water_Storage_Tank_Name: str
 
 class EvaporativefluidcoolerTwospeedType(TypedDict, total=False):
+    """"dict for EvaporativefluidcoolerTwospeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -11176,6 +11439,7 @@ class EvaporativefluidcoolerTwospeedType(TypedDict, total=False):
     Supply_Water_Storage_Tank_Name: str
 
 class ExteriorFuelequipmentType(TypedDict, total=False):
+    """"dict for ExteriorFuelequipment"""
     Name: str
     Fuel_Use_Type: str
     Schedule_Name: str
@@ -11183,6 +11447,7 @@ class ExteriorFuelequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ExteriorLightsType(TypedDict, total=False):
+    """"dict for ExteriorLights"""
     Name: str
     Schedule_Name: str
     Design_Level: str
@@ -11190,6 +11455,7 @@ class ExteriorLightsType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ExteriorWaterequipmentType(TypedDict, total=False):
+    """"dict for ExteriorWaterequipment"""
     Name: str
     Fuel_Use_Type: str
     Schedule_Name: str
@@ -11197,9 +11463,11 @@ class ExteriorWaterequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ExternalinterfaceType(TypedDict, total=False):
+    """"dict for Externalinterface"""
     Name_of_External_Interface: str
 
 class ExternalinterfaceActuatorType(TypedDict, total=False):
+    """"dict for ExternalinterfaceActuator"""
     Name: str
     Actuated_Component_Unique_Name: str
     Actuated_Component_Type: str
@@ -11207,11 +11475,13 @@ class ExternalinterfaceActuatorType(TypedDict, total=False):
     Optional_Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitexportFromVariableType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitexportFromVariable"""
     OutputVariable_Index_Key_Name: str
     OutputVariable_Name: str
     FMU_Variable_Name: str
 
 class ExternalinterfaceFunctionalmockupunitexportToActuatorType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitexportToActuator"""
     Name: str
     Actuated_Component_Unique_Name: str
     Actuated_Component_Type: str
@@ -11220,22 +11490,26 @@ class ExternalinterfaceFunctionalmockupunitexportToActuatorType(TypedDict, total
     Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitexportToScheduleType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitexportToSchedule"""
     Schedule_Name: str
     Schedule_Type_Limits_Names: str
     FMU_Variable_Name: str
     Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitexportToVariableType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitexportToVariable"""
     Name: str
     FMU_Variable_Name: str
     Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitimportType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitimport"""
     FMU_File_Name: str
     FMU_Timeout: str
     FMU_LoggingOn: str
 
 class ExternalinterfaceFunctionalmockupunitimportFromVariableType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitimportFromVariable"""
     OutputVariable_Index_Key_Name: str
     OutputVariable_Name: str
     FMU_File_Name: str
@@ -11243,6 +11517,7 @@ class ExternalinterfaceFunctionalmockupunitimportFromVariableType(TypedDict, tot
     FMU_Variable_Name: str
 
 class ExternalinterfaceFunctionalmockupunitimportToActuatorType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitimportToActuator"""
     Name: str
     Actuated_Component_Unique_Name: str
     Actuated_Component_Type: str
@@ -11253,6 +11528,7 @@ class ExternalinterfaceFunctionalmockupunitimportToActuatorType(TypedDict, total
     Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitimportToScheduleType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitimportToSchedule"""
     Name: str
     Schedule_Type_Limits_Names: str
     FMU_File_Name: str
@@ -11261,6 +11537,7 @@ class ExternalinterfaceFunctionalmockupunitimportToScheduleType(TypedDict, total
     Initial_Value: str
 
 class ExternalinterfaceFunctionalmockupunitimportToVariableType(TypedDict, total=False):
+    """"dict for ExternalinterfaceFunctionalmockupunitimportToVariable"""
     Name: str
     FMU_File_Name: str
     FMU_Instance_Name: str
@@ -11268,15 +11545,18 @@ class ExternalinterfaceFunctionalmockupunitimportToVariableType(TypedDict, total
     Initial_Value: str
 
 class ExternalinterfaceScheduleType(TypedDict, total=False):
+    """"dict for ExternalinterfaceSchedule"""
     Name: str
     Schedule_Type_Limits_Name: str
     Initial_Value: str
 
 class ExternalinterfaceVariableType(TypedDict, total=False):
+    """"dict for ExternalinterfaceVariable"""
     Name: str
     Initial_Value: str
 
 class FanComponentmodelType(TypedDict, total=False):
+    """"dict for FanComponentmodel"""
     Name: str
     Air_Inlet_Node_Name: str
     Air_Outlet_Node_Name: str
@@ -11316,6 +11596,7 @@ class FanComponentmodelType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class FanConstantvolumeType(TypedDict, total=False):
+    """"dict for FanConstantvolume"""
     Name: str
     Availability_Schedule_Name: str
     Fan_Total_Efficiency: str
@@ -11328,6 +11609,7 @@ class FanConstantvolumeType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class FanOnoffType(TypedDict, total=False):
+    """"dict for FanOnoff"""
     Name: str
     Availability_Schedule_Name: str
     Fan_Total_Efficiency: str
@@ -11342,6 +11624,7 @@ class FanOnoffType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class FanSystemmodelType(TypedDict, total=False):
+    """"dict for FanSystemmodel"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -11374,6 +11657,7 @@ class FanSystemmodelType(TypedDict, total=False):
     Speed_n_Electric_Power_Fraction: str
 
 class FanVariablevolumeType(TypedDict, total=False):
+    """"dict for FanVariablevolume"""
     Name: str
     Availability_Schedule_Name: str
     Fan_Total_Efficiency: str
@@ -11394,6 +11678,7 @@ class FanVariablevolumeType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class FanZoneexhaustType(TypedDict, total=False):
+    """"dict for FanZoneexhaust"""
     Name: str
     Availability_Schedule_Name: str
     Fan_Total_Efficiency: str
@@ -11408,6 +11693,7 @@ class FanZoneexhaustType(TypedDict, total=False):
     Balanced_Exhaust_Fraction_Schedule_Name: str
 
 class FanperformanceNightventilationType(TypedDict, total=False):
+    """"dict for FanperformanceNightventilation"""
     Fan_Name: str
     Fan_Total_Efficiency: str
     Pressure_Rise: str
@@ -11416,6 +11702,7 @@ class FanperformanceNightventilationType(TypedDict, total=False):
     Motor_in_Airstream_Fraction: str
 
 class FaultmodelEnthalpysensoroffsetOutdoorairType(TypedDict, total=False):
+    """"dict for FaultmodelEnthalpysensoroffsetOutdoorair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11424,6 +11711,7 @@ class FaultmodelEnthalpysensoroffsetOutdoorairType(TypedDict, total=False):
     Enthalpy_Sensor_Offset: str
 
 class FaultmodelEnthalpysensoroffsetReturnairType(TypedDict, total=False):
+    """"dict for FaultmodelEnthalpysensoroffsetReturnair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11432,6 +11720,7 @@ class FaultmodelEnthalpysensoroffsetReturnairType(TypedDict, total=False):
     Enthalpy_Sensor_Offset: str
 
 class FaultmodelFoulingAirfilterType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingAirfilter"""
     Name: str
     Fan_Object_Type: str
     Fan_Name: str
@@ -11440,6 +11729,7 @@ class FaultmodelFoulingAirfilterType(TypedDict, total=False):
     Fan_Curve_Name: str
 
 class FaultmodelFoulingBoilerType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingBoiler"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11448,6 +11738,7 @@ class FaultmodelFoulingBoilerType(TypedDict, total=False):
     Fouling_Factor: str
 
 class FaultmodelFoulingChillerType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingChiller"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11456,6 +11747,7 @@ class FaultmodelFoulingChillerType(TypedDict, total=False):
     Fouling_Factor: str
 
 class FaultmodelFoulingCoilType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingCoil"""
     Name: str
     Coil_Name: str
     Availability_Schedule_Name: str
@@ -11468,6 +11760,7 @@ class FaultmodelFoulingCoilType(TypedDict, total=False):
     Inside_to_Outside_Coil_Surface_Area_Ratio: str
 
 class FaultmodelFoulingCoolingtowerType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingCoolingtower"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11476,6 +11769,7 @@ class FaultmodelFoulingCoolingtowerType(TypedDict, total=False):
     Reference_UA_Reduction_Factor: str
 
 class FaultmodelFoulingEvaporativecoolerType(TypedDict, total=False):
+    """"dict for FaultmodelFoulingEvaporativecooler"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11484,6 +11778,7 @@ class FaultmodelFoulingEvaporativecoolerType(TypedDict, total=False):
     Fouling_Factor: str
 
 class FaultmodelHumidistatoffsetType(TypedDict, total=False):
+    """"dict for FaultmodelHumidistatoffset"""
     Name: str
     Humidistat_Name: str
     Humidistat_Offset_Type: str
@@ -11493,6 +11788,7 @@ class FaultmodelHumidistatoffsetType(TypedDict, total=False):
     Related_Thermostat_Offset_Fault_Name: str
 
 class FaultmodelHumiditysensoroffsetOutdoorairType(TypedDict, total=False):
+    """"dict for FaultmodelHumiditysensoroffsetOutdoorair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11501,6 +11797,7 @@ class FaultmodelHumiditysensoroffsetOutdoorairType(TypedDict, total=False):
     Humidity_Sensor_Offset: str
 
 class FaultmodelTemperaturesensoroffsetChillersupplywaterType(TypedDict, total=False):
+    """"dict for FaultmodelTemperaturesensoroffsetChillersupplywater"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11509,6 +11806,7 @@ class FaultmodelTemperaturesensoroffsetChillersupplywaterType(TypedDict, total=F
     Reference_Sensor_Offset: str
 
 class FaultmodelTemperaturesensoroffsetCoilsupplyairType(TypedDict, total=False):
+    """"dict for FaultmodelTemperaturesensoroffsetCoilsupplyair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11518,6 +11816,7 @@ class FaultmodelTemperaturesensoroffsetCoilsupplyairType(TypedDict, total=False)
     Reference_Sensor_Offset: str
 
 class FaultmodelTemperaturesensoroffsetCondensersupplywaterType(TypedDict, total=False):
+    """"dict for FaultmodelTemperaturesensoroffsetCondensersupplywater"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11526,6 +11825,7 @@ class FaultmodelTemperaturesensoroffsetCondensersupplywaterType(TypedDict, total
     Reference_Sensor_Offset: str
 
 class FaultmodelTemperaturesensoroffsetOutdoorairType(TypedDict, total=False):
+    """"dict for FaultmodelTemperaturesensoroffsetOutdoorair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11534,6 +11834,7 @@ class FaultmodelTemperaturesensoroffsetOutdoorairType(TypedDict, total=False):
     Temperature_Sensor_Offset: str
 
 class FaultmodelTemperaturesensoroffsetReturnairType(TypedDict, total=False):
+    """"dict for FaultmodelTemperaturesensoroffsetReturnair"""
     Name: str
     Availability_Schedule_Name: str
     Severity_Schedule_Name: str
@@ -11542,6 +11843,7 @@ class FaultmodelTemperaturesensoroffsetReturnairType(TypedDict, total=False):
     Temperature_Sensor_Offset: str
 
 class FaultmodelThermostatoffsetType(TypedDict, total=False):
+    """"dict for FaultmodelThermostatoffset"""
     Name: str
     Thermostat_Name: str
     Availability_Schedule_Name: str
@@ -11549,6 +11851,7 @@ class FaultmodelThermostatoffsetType(TypedDict, total=False):
     Reference_Thermostat_Offset: str
 
 class FenestrationsurfaceDetailedType(TypedDict, total=False):
+    """"dict for FenestrationsurfaceDetailed"""
     Name: str
     Surface_Type: str
     Construction_Name: str
@@ -11572,6 +11875,7 @@ class FenestrationsurfaceDetailedType(TypedDict, total=False):
     Vertex_4_Zcoordinate: str
 
 class FloorAdiabaticType(TypedDict, total=False):
+    """"dict for FloorAdiabatic"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -11585,6 +11889,7 @@ class FloorAdiabaticType(TypedDict, total=False):
     Width: str
 
 class FloorDetailedType(TypedDict, total=False):
+    """"dict for FloorDetailed"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -11627,6 +11932,7 @@ class FloorDetailedType(TypedDict, total=False):
     Vertex_10_Zcoordinate: str
 
 class FloorGroundcontactType(TypedDict, total=False):
+    """"dict for FloorGroundcontact"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -11640,6 +11946,7 @@ class FloorGroundcontactType(TypedDict, total=False):
     Width: str
 
 class FloorInterzoneType(TypedDict, total=False):
+    """"dict for FloorInterzone"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -11654,6 +11961,7 @@ class FloorInterzoneType(TypedDict, total=False):
     Width: str
 
 class FluidcoolerSinglespeedType(TypedDict, total=False):
+    """"dict for FluidcoolerSinglespeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -11669,6 +11977,7 @@ class FluidcoolerSinglespeedType(TypedDict, total=False):
     Outdoor_Air_Inlet_Node_Name: str
 
 class FluidcoolerTwospeedType(TypedDict, total=False):
+    """"dict for FluidcoolerTwospeed"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -11692,6 +12001,7 @@ class FluidcoolerTwospeedType(TypedDict, total=False):
     Outdoor_Air_Inlet_Node_Name: str
 
 class FluidpropertiesConcentrationType(TypedDict, total=False):
+    """"dict for FluidpropertiesConcentration"""
     Fluid_Name: str
     Fluid_Property_Type: str
     Temperature_Values_Name: str
@@ -11948,16 +12258,19 @@ class FluidpropertiesConcentrationType(TypedDict, total=False):
     Property_Value_250: str
 
 class FluidpropertiesGlycolconcentrationType(TypedDict, total=False):
+    """"dict for FluidpropertiesGlycolconcentration"""
     Name: str
     Glycol_Type: str
     User_Defined_Glycol_Name: str
     Glycol_Concentration: str
 
 class FluidpropertiesNameType(TypedDict, total=False):
+    """"dict for FluidpropertiesName"""
     Fluid_Name: str
     Fluid_Type: str
 
 class FluidpropertiesSaturatedType(TypedDict, total=False):
+    """"dict for FluidpropertiesSaturated"""
     Fluid_Name: str
     Fluid_Property_Type: str
     Fluid_Phase: str
@@ -12214,6 +12527,7 @@ class FluidpropertiesSaturatedType(TypedDict, total=False):
     Property_Value_250: str
 
 class FluidpropertiesSuperheatedType(TypedDict, total=False):
+    """"dict for FluidpropertiesSuperheated"""
     Fluid_Name: str
     Fluid_Property_Type: str
     Temperature_Values_Name: str
@@ -12470,6 +12784,7 @@ class FluidpropertiesSuperheatedType(TypedDict, total=False):
     Property_Value_250: str
 
 class FluidpropertiesTemperaturesType(TypedDict, total=False):
+    """"dict for FluidpropertiesTemperatures"""
     Name: str
     Temperature_1: str
     Temperature_2: str
@@ -12723,6 +13038,7 @@ class FluidpropertiesTemperaturesType(TypedDict, total=False):
     Temperature_250: str
 
 class FoundationKivaType(TypedDict, total=False):
+    """"dict for FoundationKiva"""
     Name: str
     Initial_Indoor_Air_Temperature: str
     Interior_Horizontal_Insulation_Material_Name: str
@@ -12782,6 +13098,7 @@ class FoundationKivaType(TypedDict, total=False):
     Custom_Block_10_Z_Position: str
 
 class FoundationKivaSettingsType(TypedDict, total=False):
+    """"dict for FoundationKivaSettings"""
     Soil_Conductivity: str
     Soil_Density: str
     Soil_Specific_Heat: str
@@ -12796,6 +13113,7 @@ class FoundationKivaSettingsType(TypedDict, total=False):
     Simulation_Timestep: str
 
 class FuelfactorsType(TypedDict, total=False):
+    """"dict for Fuelfactors"""
     Existing_Fuel_Resource_Name: str
     Source_Energy_Factor: str
     Source_Energy_Schedule_Name: str
@@ -12833,6 +13151,7 @@ class FuelfactorsType(TypedDict, total=False):
     Nuclear_Low_Level_Emission_Factor_Schedule_Name: str
 
 class GasequipmentType(TypedDict, total=False):
+    """"dict for Gasequipment"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -12847,6 +13166,7 @@ class GasequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class GeneratorCombustionturbineType(TypedDict, total=False):
+    """"dict for GeneratorCombustionturbine"""
     Name: str
     Rated_Power_Output: str
     Electric_Circuit_Node_Name: str
@@ -12873,6 +13193,7 @@ class GeneratorCombustionturbineType(TypedDict, total=False):
     Outdoor_Air_Inlet_Node_Name: str
 
 class GeneratorFuelcellType(TypedDict, total=False):
+    """"dict for GeneratorFuelcell"""
     Name: str
     Power_Module_Name: str
     Air_Supply_Name: str
@@ -12885,6 +13206,7 @@ class GeneratorFuelcellType(TypedDict, total=False):
     Stack_Cooler_Name: str
 
 class GeneratorFuelcellAirsupplyType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellAirsupply"""
     Name: str
     Air_Inlet_Node_Name: str
     Blower_Power_Curve_Name: str
@@ -12909,6 +13231,7 @@ class GeneratorFuelcellAirsupplyType(TypedDict, total=False):
     Molar_Fraction_5: str
 
 class GeneratorFuelcellAuxiliaryheaterType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellAuxiliaryheater"""
     Name: str
     Excess_Air_Ratio: str
     Ancillary_Power_Constant_Term: str
@@ -12923,6 +13246,7 @@ class GeneratorFuelcellAuxiliaryheaterType(TypedDict, total=False):
     Minimum_Heating_Capacity_in_Kmol_per_Second: str
 
 class GeneratorFuelcellElectricalstorageType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellElectricalstorage"""
     Name: str
     Choice_of_Model: str
     Nominal_Charging_Energetic_Efficiency: str
@@ -12933,6 +13257,7 @@ class GeneratorFuelcellElectricalstorageType(TypedDict, total=False):
     Initial_Charge_State: str
 
 class GeneratorFuelcellExhaustgastowaterheatexchangerType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellExhaustgastowaterheatexchanger"""
     Name: str
     Heat_Recovery_Water_Inlet_Node_Name: str
     Heat_Recovery_Water_Outlet_Node_Name: str
@@ -12959,12 +13284,14 @@ class GeneratorFuelcellExhaustgastowaterheatexchangerType(TypedDict, total=False
     Method_4_Condensation_Threshold: str
 
 class GeneratorFuelcellInverterType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellInverter"""
     Name: str
     Inverter_Efficiency_Calculation_Mode: str
     Inverter_Efficiency: str
     Efficiency_Function_of_DC_Power_Curve_Name: str
 
 class GeneratorFuelcellPowermoduleType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellPowermodule"""
     Name: str
     Efficiency_Curve_Mode: str
     Efficiency_Curve_Name: str
@@ -13000,6 +13327,7 @@ class GeneratorFuelcellPowermoduleType(TypedDict, total=False):
     Maximum_Operating_Point: str
 
 class GeneratorFuelcellStackcoolerType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellStackcooler"""
     Name: str
     Heat_Recovery_Water_Inlet_Node_Name: str
     Heat_Recovery_Water_Outlet_Node_Name: str
@@ -13023,6 +13351,7 @@ class GeneratorFuelcellStackcoolerType(TypedDict, total=False):
     Stack_Air_Cooler_Fan_Coefficient_f2: str
 
 class GeneratorFuelcellWatersupplyType(TypedDict, total=False):
+    """"dict for GeneratorFuelcellWatersupply"""
     Name: str
     Reformer_Water_Flow_Rate_Function_of_Fuel_Rate_Curve_Name: str
     Reformer_Water_Pump_Power_Function_of_Fuel_Rate_Curve_Name: str
@@ -13032,6 +13361,7 @@ class GeneratorFuelcellWatersupplyType(TypedDict, total=False):
     Water_Temperature_Schedule_Name: str
 
 class GeneratorFuelsupplyType(TypedDict, total=False):
+    """"dict for GeneratorFuelsupply"""
     Name: str
     Fuel_Temperature_Modeling_Mode: str
     Fuel_Temperature_Reference_Node_Name: str
@@ -13070,6 +13400,7 @@ class GeneratorFuelsupplyType(TypedDict, total=False):
     Constituent_12_Molar_Fraction: str
 
 class GeneratorInternalcombustionengineType(TypedDict, total=False):
+    """"dict for GeneratorInternalcombustionengine"""
     Name: str
     Rated_Power_Output: str
     Electric_Circuit_Node_Name: str
@@ -13093,6 +13424,7 @@ class GeneratorInternalcombustionengineType(TypedDict, total=False):
     Heat_Recovery_Maximum_Temperature: str
 
 class GeneratorMicrochpType(TypedDict, total=False):
+    """"dict for GeneratorMicrochp"""
     Name: str
     Performance_Parameters_Name: str
     Zone_Name: str
@@ -13104,6 +13436,7 @@ class GeneratorMicrochpType(TypedDict, total=False):
     Availability_Schedule_Name: str
 
 class GeneratorMicrochpNonnormalizedparametersType(TypedDict, total=False):
+    """"dict for GeneratorMicrochpNonnormalizedparameters"""
     Name: str
     Maximum_Electric_Power: str
     Minimum_Electric_Power: str
@@ -13133,6 +13466,7 @@ class GeneratorMicrochpNonnormalizedparametersType(TypedDict, total=False):
     Restart_Mode: str
 
 class GeneratorMicroturbineType(TypedDict, total=False):
+    """"dict for GeneratorMicroturbine"""
     Name: str
     Reference_Electrical_Power_Output: str
     Minimum_Full_Load_Electrical_Power_Output: str
@@ -13174,6 +13508,7 @@ class GeneratorMicroturbineType(TypedDict, total=False):
     Exhaust_Air_Temperature_Function_of_Part_Load_Ratio_Curve_Name: str
 
 class GeneratorPhotovoltaicType(TypedDict, total=False):
+    """"dict for GeneratorPhotovoltaic"""
     Name: str
     Surface_Name: str
     Photovoltaic_Performance_Object_Type: str
@@ -13183,6 +13518,7 @@ class GeneratorPhotovoltaicType(TypedDict, total=False):
     Number_of_Modules_in_Series: str
 
 class GeneratorPvwattsType(TypedDict, total=False):
+    """"dict for GeneratorPvwatts"""
     Name: str
     PVWatts_Version: str
     DC_System_Capacity: str
@@ -13196,6 +13532,7 @@ class GeneratorPvwattsType(TypedDict, total=False):
     Ground_Coverage_Ratio: str
 
 class GeneratorWindturbineType(TypedDict, total=False):
+    """"dict for GeneratorWindturbine"""
     Name: str
     Availability_Schedule_Name: str
     Rotor_Type: str
@@ -13224,11 +13561,13 @@ class GeneratorWindturbineType(TypedDict, total=False):
     Power_Coefficient_C6: str
 
 class GeometrytransformType(TypedDict, total=False):
+    """"dict for Geometrytransform"""
     Plane_of_Transform: str
     Current_Aspect_Ratio: str
     New_Aspect_Ratio: str
 
 class GlazeddoorType(TypedDict, total=False):
+    """"dict for Glazeddoor"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -13240,6 +13579,7 @@ class GlazeddoorType(TypedDict, total=False):
     Height: str
 
 class GlazeddoorInterzoneType(TypedDict, total=False):
+    """"dict for GlazeddoorInterzone"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -13251,6 +13591,7 @@ class GlazeddoorInterzoneType(TypedDict, total=False):
     Height: str
 
 class GlobalgeometryrulesType(TypedDict, total=False):
+    """"dict for Globalgeometryrules"""
     Starting_Vertex_Position: str
     Vertex_Entry_Direction: str
     Coordinate_System: str
@@ -13258,6 +13599,7 @@ class GlobalgeometryrulesType(TypedDict, total=False):
     Rectangular_Surface_Coordinate_System: str
 
 class GroundheatexchangerHorizontaltrenchType(TypedDict, total=False):
+    """"dict for GroundheatexchangerHorizontaltrench"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -13281,6 +13623,7 @@ class GroundheatexchangerHorizontaltrenchType(TypedDict, total=False):
     Evapotranspiration_Ground_Cover_Parameter: str
 
 class GroundheatexchangerPondType(TypedDict, total=False):
+    """"dict for GroundheatexchangerPond"""
     Name: str
     Fluid_Inlet_Node_Name: str
     Fluid_Outlet_Node_Name: str
@@ -13294,6 +13637,7 @@ class GroundheatexchangerPondType(TypedDict, total=False):
     Length_of_Each_Tubing_Circuit: str
 
 class GroundheatexchangerResponsefactorsType(TypedDict, total=False):
+    """"dict for GroundheatexchangerResponsefactors"""
     Name: str
     GHEVerticalProperties_Object_Name: str
     Number_of_Boreholes: str
@@ -13500,6 +13844,7 @@ class GroundheatexchangerResponsefactorsType(TypedDict, total=False):
     gFunction_g_Value_100: str
 
 class GroundheatexchangerSlinkyType(TypedDict, total=False):
+    """"dict for GroundheatexchangerSlinky"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -13524,6 +13869,7 @@ class GroundheatexchangerSlinkyType(TypedDict, total=False):
     Maximum_Length_of_Simulation: str
 
 class GroundheatexchangerSurfaceType(TypedDict, total=False):
+    """"dict for GroundheatexchangerSurface"""
     Name: str
     Construction_Name: str
     Fluid_Inlet_Node_Name: str
@@ -13536,6 +13882,7 @@ class GroundheatexchangerSurfaceType(TypedDict, total=False):
     Lower_Surface_Environment: str
 
 class GroundheatexchangerSystemType(TypedDict, total=False):
+    """"dict for GroundheatexchangerSystem"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -13649,6 +13996,7 @@ class GroundheatexchangerSystemType(TypedDict, total=False):
     GHEVerticalSingle_Object_Name_100: str
 
 class GroundheatexchangerVerticalArrayType(TypedDict, total=False):
+    """"dict for GroundheatexchangerVerticalArray"""
     Name: str
     GHEVerticalProperties_Object_Name: str
     Number_of_Boreholes_in_XDirection: str
@@ -13656,6 +14004,7 @@ class GroundheatexchangerVerticalArrayType(TypedDict, total=False):
     Borehole_Spacing: str
 
 class GroundheatexchangerVerticalPropertiesType(TypedDict, total=False):
+    """"dict for GroundheatexchangerVerticalProperties"""
     Name: str
     Depth_of_Top_of_Borehole: str
     Borehole_Length: str
@@ -13669,12 +14018,14 @@ class GroundheatexchangerVerticalPropertiesType(TypedDict, total=False):
     UTube_Distance: str
 
 class GroundheatexchangerVerticalSingleType(TypedDict, total=False):
+    """"dict for GroundheatexchangerVerticalSingle"""
     Name: str
     GHEVerticalProperties_Object_Name: str
     XLocation: str
     YLocation: str
 
 class GroundheattransferBasementAutogridType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementAutogrid"""
     CLEARANCE_Distance_from_outside_of_wall_to_edge: str
     SLABX_X_dimension_of_the_building_slab: str
     SLABY_Y_dimension_of_the_building_slab: str
@@ -13683,6 +14034,7 @@ class GroundheattransferBasementAutogridType(TypedDict, total=False):
     BaseDepth_Depth_of_the_basement_wall_below_grade: str
 
 class GroundheattransferBasementBldgdataType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementBldgdata"""
     DWALL_Wall_thickness: str
     DSLAB_Floor_slab_thickness: str
     DGRAVXY_Width_of_gravel_pit_beside_basement_wall: str
@@ -13690,6 +14042,7 @@ class GroundheattransferBasementBldgdataType(TypedDict, total=False):
     DGRAVZP_Gravel_depth_below_the_floor_slab: str
 
 class GroundheattransferBasementCombldgType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementCombldg"""
     January_average_temperature: str
     February_average_temperature: str
     March_average_temperature: str
@@ -13705,19 +14058,23 @@ class GroundheattransferBasementCombldgType(TypedDict, total=False):
     Daily_variation_sine_wave_amplitude: str
 
 class GroundheattransferBasementEquivautogridType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementEquivautogrid"""
     CLEARANCE_Distance_from_outside_of_wall_to_edge_of_3D_ground_domain: str
     SlabDepth_Thickness_of_the_floor_slab: str
     BaseDepth_Depth_of_the_basement_wall_below_grade: str
 
 class GroundheattransferBasementEquivslabType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementEquivslab"""
     APRatio_The_area_to_perimeter_ratio_for_this_slab: str
     EquivSizing_Flag: str
 
 class GroundheattransferBasementInsulationType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementInsulation"""
     REXT_R_Value_of_any_exterior_insulation: str
     INSFULL_Flag_Is_the_wall_fully_insulated: str
 
 class GroundheattransferBasementInteriorType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementInterior"""
     COND_Flag_Is_the_basement_conditioned: str
     HIN_Downward_convection_only_heat_transfer_coefficient: str
     HIN_Upward_convection_only_heat_transfer_coefficient: str
@@ -13727,6 +14084,7 @@ class GroundheattransferBasementInteriorType(TypedDict, total=False):
     HIN_Horizontal_combined_convection_and_radiation_heat_transfer_coefficient: str
 
 class GroundheattransferBasementManualgridType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementManualgrid"""
     NX_Number_of_cells_in_the_X_direction_20: str
     NY_Number_of_cells_in_the_Y_direction_20: str
     NZAG_Number_of_cells_in_the_Z_direction_above_grade_4_Always: str
@@ -13736,6 +14094,7 @@ class GroundheattransferBasementManualgridType(TypedDict, total=False):
     KBASE_Z_direction_cell_indicator_of_the_top_of_the_floor_slab_520: str
 
 class GroundheattransferBasementMatlpropsType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementMatlprops"""
     NMAT_Number_of_materials_in_this_domain: str
     Density_for_Foundation_Wall: str
     density_for_Floor_Slab: str
@@ -13757,10 +14116,12 @@ class GroundheattransferBasementMatlpropsType(TypedDict, total=False):
     thermal_conductivity_for_wood: str
 
 class GroundheattransferBasementSimparametersType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementSimparameters"""
     F_Multiplier_for_the_ADI_solution: str
     IYRS_Maximum_number_of_yearly_iterations: str
 
 class GroundheattransferBasementSurfacepropsType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementSurfaceprops"""
     ALBEDO_Surface_albedo_for_No_snow_conditions: str
     ALBEDO_Surface_albedo_for_snow_conditions: str
     EPSLN_Surface_emissivity_No_Snow: str
@@ -13770,6 +14131,7 @@ class GroundheattransferBasementSurfacepropsType(TypedDict, total=False):
     PET_Flag_Potential_evapotranspiration_on: str
 
 class GroundheattransferBasementXfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementXface"""
     N1: str
     N2: str
     N3: str
@@ -13816,6 +14178,7 @@ class GroundheattransferBasementXfaceType(TypedDict, total=False):
     N44: str
 
 class GroundheattransferBasementYfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementYface"""
     N1: str
     N2: str
     N3: str
@@ -13862,6 +14225,7 @@ class GroundheattransferBasementYfaceType(TypedDict, total=False):
     N44: str
 
 class GroundheattransferBasementZfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferBasementZface"""
     N1: str
     N2: str
     N3: str
@@ -13904,11 +14268,13 @@ class GroundheattransferBasementZfaceType(TypedDict, total=False):
     N40: str
 
 class GroundheattransferControlType(TypedDict, total=False):
+    """"dict for GroundheattransferControl"""
     Name: str
     Run_Basement_Preprocessor: str
     Run_Slab_Preprocessor: str
 
 class GroundheattransferSlabAutogridType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabAutogrid"""
     SLABX_X_dimension_of_the_building_slab: str
     SLABY_Y_dimension_of_the_building_slab: str
     SLABDEPTH_Thickness_of_slab_on_grade: str
@@ -13916,6 +14282,7 @@ class GroundheattransferSlabAutogridType(TypedDict, total=False):
     ZCLEARANCE_Distance_from_bottom_of_slab_to_domain_bottom: str
 
 class GroundheattransferSlabBldgpropsType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabBldgprops"""
     IYRS_Number_of_years_to_iterate: str
     Shape_Slab_shape: str
     HBLDG_Building_height: str
@@ -13935,6 +14302,7 @@ class GroundheattransferSlabBldgpropsType(TypedDict, total=False):
     ConvTol_Convergence_Tolerance: str
 
 class GroundheattransferSlabBoundcondsType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabBoundconds"""
     EVTR_Is_surface_evapotranspiration_modeled: str
     FIXBC_is_the_lower_boundary_at_a_fixed_temperature: str
     TDEEPin: str
@@ -13942,12 +14310,14 @@ class GroundheattransferSlabBoundcondsType(TypedDict, total=False):
     USERH_User_specified_ground_surface_heat_transfer_coefficient: str
 
 class GroundheattransferSlabEquivalentslabType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabEquivalentslab"""
     APRatio_The_area_to_perimeter_ratio_for_this_slab: str
     SLABDEPTH_Thickness_of_slab_on_grade: str
     CLEARANCE_Distance_from_edge_of_slab_to_domain_edge: str
     ZCLEARANCE_Distance_from_bottom_of_slab_to_domain_bottom: str
 
 class GroundheattransferSlabInsulationType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabInsulation"""
     RINS_R_value_of_under_slab_insulation: str
     DINS_Width_of_strip_of_under_slab_insulation: str
     RVINS_R_value_of_vertical_insulation: str
@@ -13955,6 +14325,7 @@ class GroundheattransferSlabInsulationType(TypedDict, total=False):
     IVINS_Flag_Is_there_vertical_insulation: str
 
 class GroundheattransferSlabManualgridType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabManualgrid"""
     NX_Number_of_cells_in_the_X_direction: str
     NY_Number_of_cells_in_the_Y_direction: str
     NZ_Number_of_cells_in_the_Z_direction: str
@@ -13962,6 +14333,7 @@ class GroundheattransferSlabManualgridType(TypedDict, total=False):
     JBOX_Y_direction_cell_indicator_of_slab_edge: str
 
 class GroundheattransferSlabMaterialsType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabMaterials"""
     NMAT_Number_of_materials: str
     ALBEDO_Surface_Albedo_No_Snow: str
     ALBEDO_Surface_Albedo_Snow: str
@@ -13973,6 +14345,7 @@ class GroundheattransferSlabMaterialsType(TypedDict, total=False):
     HIN_Indoor_HConv_Upward: str
 
 class GroundheattransferSlabMatlpropsType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabMatlprops"""
     RHO_Slab_Material_density: str
     RHO_Soil_Density: str
     CP_Slab_CP: str
@@ -13981,6 +14354,7 @@ class GroundheattransferSlabMatlpropsType(TypedDict, total=False):
     TCON_Soil_k: str
 
 class GroundheattransferSlabXfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabXface"""
     N1: str
     N2: str
     N3: str
@@ -14023,6 +14397,7 @@ class GroundheattransferSlabXfaceType(TypedDict, total=False):
     N40: str
 
 class GroundheattransferSlabYfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabYface"""
     N1: str
     N2: str
     N3: str
@@ -14065,6 +14440,7 @@ class GroundheattransferSlabYfaceType(TypedDict, total=False):
     N40: str
 
 class GroundheattransferSlabZfaceType(TypedDict, total=False):
+    """"dict for GroundheattransferSlabZface"""
     N1: str
     N2: str
     N3: str
@@ -14092,6 +14468,7 @@ class GroundheattransferSlabZfaceType(TypedDict, total=False):
     N25: str
 
 class HeaderedpumpsConstantspeedType(TypedDict, total=False):
+    """"dict for HeaderedpumpsConstantspeed"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -14112,6 +14489,7 @@ class HeaderedpumpsConstantspeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class HeaderedpumpsVariablespeedType(TypedDict, total=False):
+    """"dict for HeaderedpumpsVariablespeed"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -14137,18 +14515,21 @@ class HeaderedpumpsVariablespeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class HeatbalancealgorithmType(TypedDict, total=False):
+    """"dict for Heatbalancealgorithm"""
     Algorithm: str
     Surface_Temperature_Upper_Limit: str
     Minimum_Surface_Convection_Heat_Transfer_Coefficient_Value: str
     Maximum_Surface_Convection_Heat_Transfer_Coefficient_Value: str
 
 class HeatbalancesettingsConductionfinitedifferenceType(TypedDict, total=False):
+    """"dict for HeatbalancesettingsConductionfinitedifference"""
     Difference_Scheme: str
     Space_Discretization_Constant: str
     Relaxation_Factor: str
     Inside_Face_Surface_Temperature_Convergence_Criteria: str
 
 class HeatexchangerAirtoairFlatplateType(TypedDict, total=False):
+    """"dict for HeatexchangerAirtoairFlatplate"""
     Name: str
     Availability_Schedule_Name: str
     Flow_Arrangement_Type: str
@@ -14166,6 +14547,7 @@ class HeatexchangerAirtoairFlatplateType(TypedDict, total=False):
     Secondary_Air_Outlet_Node_Name: str
 
 class HeatexchangerAirtoairSensibleandlatentType(TypedDict, total=False):
+    """"dict for HeatexchangerAirtoairSensibleandlatent"""
     Name: str
     Availability_Schedule_Name: str
     Nominal_Supply_Air_Flow_Rate: str
@@ -14191,6 +14573,7 @@ class HeatexchangerAirtoairSensibleandlatentType(TypedDict, total=False):
     Latent_Effectiveness_of_Cooling_Air_Flow_Curve_Name: str
 
 class HeatexchangerDesiccantBalancedflowType(TypedDict, total=False):
+    """"dict for HeatexchangerDesiccantBalancedflow"""
     Name: str
     Availability_Schedule_Name: str
     Regeneration_Air_Inlet_Node_Name: str
@@ -14202,6 +14585,7 @@ class HeatexchangerDesiccantBalancedflowType(TypedDict, total=False):
     Economizer_Lockout: str
 
 class HeatexchangerDesiccantBalancedflowPerformancedatatype1Type(TypedDict, total=False):
+    """"dict for HeatexchangerDesiccantBalancedflowPerformancedatatype1"""
     Name: str
     Nominal_Air_Flow_Rate: str
     Nominal_Air_Face_Velocity: str
@@ -14256,6 +14640,7 @@ class HeatexchangerDesiccantBalancedflowPerformancedatatype1Type(TypedDict, tota
     Maximum_Process_Inlet_Air_Relative_Humidity_for_Humidity_Ratio_Equation: str
 
 class HeatexchangerFluidtofluidType(TypedDict, total=False):
+    """"dict for HeatexchangerFluidtofluid"""
     Name: str
     Availability_Schedule_Name: str
     Loop_Demand_Side_Inlet_Node_Name: str
@@ -14278,6 +14663,7 @@ class HeatexchangerFluidtofluidType(TypedDict, total=False):
     Operation_Maximum_Temperature_Limit: str
 
 class HeatpumpAirtowaterFuelfiredCoolingType(TypedDict, total=False):
+    """"dict for HeatpumpAirtowaterFuelfiredCooling"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -14306,6 +14692,7 @@ class HeatpumpAirtowaterFuelfiredCoolingType(TypedDict, total=False):
     Standby_Electric_Power: str
 
 class HeatpumpAirtowaterFuelfiredHeatingType(TypedDict, total=False):
+    """"dict for HeatpumpAirtowaterFuelfiredHeating"""
     Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
@@ -14339,6 +14726,7 @@ class HeatpumpAirtowaterFuelfiredHeatingType(TypedDict, total=False):
     Standby_Electric_Power: str
 
 class HeatpumpPlantloopEirCoolingType(TypedDict, total=False):
+    """"dict for HeatpumpPlantloopEirCooling"""
     Name: str
     Load_Side_Inlet_Node_Name: str
     Load_Side_Outlet_Node_Name: str
@@ -14363,6 +14751,7 @@ class HeatpumpPlantloopEirCoolingType(TypedDict, total=False):
     Maximum_Supply_Water_Temperature_Curve_Name: str
 
 class HeatpumpPlantloopEirHeatingType(TypedDict, total=False):
+    """"dict for HeatpumpPlantloopEirHeating"""
     Name: str
     Load_Side_Inlet_Node_Name: str
     Load_Side_Outlet_Node_Name: str
@@ -14397,6 +14786,7 @@ class HeatpumpPlantloopEirHeatingType(TypedDict, total=False):
     Timed_Empirical_Defrost_Heat_Input_Energy_Fraction_Curve_Name: str
 
 class HeatpumpWatertowaterEquationfitCoolingType(TypedDict, total=False):
+    """"dict for HeatpumpWatertowaterEquationfitCooling"""
     Name: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
@@ -14413,6 +14803,7 @@ class HeatpumpWatertowaterEquationfitCoolingType(TypedDict, total=False):
     Companion_Heating_Heat_Pump_Name: str
 
 class HeatpumpWatertowaterEquationfitHeatingType(TypedDict, total=False):
+    """"dict for HeatpumpWatertowaterEquationfitHeating"""
     Name: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
@@ -14429,6 +14820,7 @@ class HeatpumpWatertowaterEquationfitHeatingType(TypedDict, total=False):
     Companion_Cooling_Heat_Pump_Name: str
 
 class HeatpumpWatertowaterParameterestimationCoolingType(TypedDict, total=False):
+    """"dict for HeatpumpWatertowaterParameterestimationCooling"""
     Name: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
@@ -14453,6 +14845,7 @@ class HeatpumpWatertowaterParameterestimationCoolingType(TypedDict, total=False)
     Low_Pressure_Cut_Off: str
 
 class HeatpumpWatertowaterParameterestimationHeatingType(TypedDict, total=False):
+    """"dict for HeatpumpWatertowaterParameterestimationHeating"""
     Name: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
@@ -14477,6 +14870,7 @@ class HeatpumpWatertowaterParameterestimationHeatingType(TypedDict, total=False)
     Low_Pressure_Cut_Off: str
 
 class HotwaterequipmentType(TypedDict, total=False):
+    """"dict for Hotwaterequipment"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -14490,6 +14884,7 @@ class HotwaterequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class HumidifierSteamElectricType(TypedDict, total=False):
+    """"dict for HumidifierSteamElectric"""
     Name: str
     Availability_Schedule_Name: str
     Rated_Capacity: str
@@ -14501,6 +14896,7 @@ class HumidifierSteamElectricType(TypedDict, total=False):
     Water_Storage_Tank_Name: str
 
 class HumidifierSteamGasType(TypedDict, total=False):
+    """"dict for HumidifierSteamGas"""
     Name: str
     Availability_Schedule_Name: str
     Rated_Capacity: str
@@ -14515,10 +14911,12 @@ class HumidifierSteamGasType(TypedDict, total=False):
     Inlet_Water_Temperature_Option: str
 
 class HvacsystemrootfindingalgorithmType(TypedDict, total=False):
+    """"dict for Hvacsystemrootfindingalgorithm"""
     Algorithm: str
     Number_of_Iterations_Before_Algorithm_Switch: str
 
 class HvactemplatePlantBoilerType(TypedDict, total=False):
+    """"dict for HvactemplatePlantBoiler"""
     Name: str
     Boiler_Type: str
     Capacity: str
@@ -14533,6 +14931,7 @@ class HvactemplatePlantBoilerType(TypedDict, total=False):
     Template_Plant_Loop_Type: str
 
 class HvactemplatePlantBoilerObjectreferenceType(TypedDict, total=False):
+    """"dict for HvactemplatePlantBoilerObjectreference"""
     Name: str
     Boiler_Object_Type: str
     Boiler_Name: str
@@ -14540,6 +14939,7 @@ class HvactemplatePlantBoilerObjectreferenceType(TypedDict, total=False):
     Template_Plant_Loop_Type: str
 
 class HvactemplatePlantChilledwaterloopType(TypedDict, total=False):
+    """"dict for HvactemplatePlantChilledwaterloop"""
     Name: str
     Pump_Schedule_Name: str
     Pump_Control_Type: str
@@ -14575,6 +14975,7 @@ class HvactemplatePlantChilledwaterloopType(TypedDict, total=False):
     Condenser_Water_Load_Distribution_Scheme: str
 
 class HvactemplatePlantChillerType(TypedDict, total=False):
+    """"dict for HvactemplatePlantChiller"""
     Name: str
     Chiller_Type: str
     Capacity: str
@@ -14589,12 +14990,14 @@ class HvactemplatePlantChillerType(TypedDict, total=False):
     Leaving_Chilled_Water_Lower_Temperature_Limit: str
 
 class HvactemplatePlantChillerObjectreferenceType(TypedDict, total=False):
+    """"dict for HvactemplatePlantChillerObjectreference"""
     Name: str
     Chiller_Object_Type: str
     Chiller_Name: str
     Priority: str
 
 class HvactemplatePlantHotwaterloopType(TypedDict, total=False):
+    """"dict for HvactemplatePlantHotwaterloop"""
     Name: str
     Pump_Schedule_Name: str
     Pump_Control_Type: str
@@ -14618,6 +15021,7 @@ class HvactemplatePlantHotwaterloopType(TypedDict, total=False):
     Load_Distribution_Scheme: str
 
 class HvactemplatePlantMixedwaterloopType(TypedDict, total=False):
+    """"dict for HvactemplatePlantMixedwaterloop"""
     Name: str
     Pump_Schedule_Name: str
     Pump_Control_Type: str
@@ -14637,6 +15041,7 @@ class HvactemplatePlantMixedwaterloopType(TypedDict, total=False):
     Load_Distribution_Scheme: str
 
 class HvactemplatePlantTowerType(TypedDict, total=False):
+    """"dict for HvactemplatePlantTower"""
     Name: str
     Tower_Type: str
     High_Speed_Nominal_Capacity: str
@@ -14649,6 +15054,7 @@ class HvactemplatePlantTowerType(TypedDict, total=False):
     Template_Plant_Loop_Type: str
 
 class HvactemplatePlantTowerObjectreferenceType(TypedDict, total=False):
+    """"dict for HvactemplatePlantTowerObjectreference"""
     Name: str
     Cooling_Tower_Object_Type: str
     Cooling_Tower_Name: str
@@ -14656,6 +15062,7 @@ class HvactemplatePlantTowerObjectreferenceType(TypedDict, total=False):
     Template_Plant_Loop_Type: str
 
 class HvactemplateSystemConstantvolumeType(TypedDict, total=False):
+    """"dict for HvactemplateSystemConstantvolume"""
     Name: str
     System_Availability_Schedule_Name: str
     Supply_Fan_Maximum_Flow_Rate: str
@@ -14728,6 +15135,7 @@ class HvactemplateSystemConstantvolumeType(TypedDict, total=False):
     Return_Fan_Motor_in_Air_Stream_Fraction: str
 
 class HvactemplateSystemDedicatedoutdoorairType(TypedDict, total=False):
+    """"dict for HvactemplateSystemDedicatedoutdoorair"""
     Name: str
     System_Availability_Schedule_Name: str
     Air_Outlet_Type: str
@@ -14776,6 +15184,7 @@ class HvactemplateSystemDedicatedoutdoorairType(TypedDict, total=False):
     Humidifier_Setpoint_Schedule_Name: str
 
 class HvactemplateSystemDualductType(TypedDict, total=False):
+    """"dict for HvactemplateSystemDualduct"""
     Name: str
     System_Availability_Schedule_Name: str
     System_Configuration_Type: str
@@ -14869,6 +15278,7 @@ class HvactemplateSystemDualductType(TypedDict, total=False):
     Return_Fan_PartLoad_Power_Coefficients: str
 
 class HvactemplateSystemPackagedvavType(TypedDict, total=False):
+    """"dict for HvactemplateSystemPackagedvav"""
     Name: str
     System_Availability_Schedule_Name: str
     Supply_Fan_Maximum_Flow_Rate: str
@@ -14930,6 +15340,7 @@ class HvactemplateSystemPackagedvavType(TypedDict, total=False):
     Return_Fan_PartLoad_Power_Coefficients: str
 
 class HvactemplateSystemUnitaryType(TypedDict, total=False):
+    """"dict for HvactemplateSystemUnitary"""
     Name: str
     System_Availability_Schedule_Name: str
     Control_Zone_or_Thermostat_Location_Name: str
@@ -14983,6 +15394,7 @@ class HvactemplateSystemUnitaryType(TypedDict, total=False):
     Return_Fan_Motor_in_Air_Stream_Fraction: str
 
 class HvactemplateSystemUnitaryheatpumpAirtoairType(TypedDict, total=False):
+    """"dict for HvactemplateSystemUnitaryheatpumpAirtoair"""
     Name: str
     System_Availability_Schedule_Name: str
     Control_Zone_or_Thermostat_Location_Name: str
@@ -15046,6 +15458,7 @@ class HvactemplateSystemUnitaryheatpumpAirtoairType(TypedDict, total=False):
     Return_Fan_Motor_in_Air_Stream_Fraction: str
 
 class HvactemplateSystemUnitarysystemType(TypedDict, total=False):
+    """"dict for HvactemplateSystemUnitarysystem"""
     Name: str
     System_Availability_Schedule_Name: str
     Control_Type: str
@@ -15119,6 +15532,7 @@ class HvactemplateSystemUnitarysystemType(TypedDict, total=False):
     Return_Fan_Motor_in_Air_Stream_Fraction: str
 
 class HvactemplateSystemVavType(TypedDict, total=False):
+    """"dict for HvactemplateSystemVav"""
     Name: str
     System_Availability_Schedule_Name: str
     Supply_Fan_Maximum_Flow_Rate: str
@@ -15182,6 +15596,7 @@ class HvactemplateSystemVavType(TypedDict, total=False):
     Return_Fan_PartLoad_Power_Coefficients: str
 
 class HvactemplateSystemVrfType(TypedDict, total=False):
+    """"dict for HvactemplateSystemVrf"""
     Name: str
     System_Availability_Schedule_Name: str
     Gross_Rated_Total_Cooling_Capacity: str
@@ -15223,6 +15638,7 @@ class HvactemplateSystemVrfType(TypedDict, total=False):
     Maximum_Outdoor_Temperature_in_Heat_Recovery_Mode: str
 
 class HvactemplateThermostatType(TypedDict, total=False):
+    """"dict for HvactemplateThermostat"""
     Name: str
     Heating_Setpoint_Schedule_Name: str
     Constant_Heating_Setpoint: str
@@ -15230,6 +15646,7 @@ class HvactemplateThermostatType(TypedDict, total=False):
     Constant_Cooling_Setpoint: str
 
 class HvactemplateZoneBaseboardheatType(TypedDict, total=False):
+    """"dict for HvactemplateZoneBaseboardheat"""
     Zone_Name: str
     Template_Thermostat_Name: str
     Zone_Heating_Sizing_Factor: str
@@ -15245,6 +15662,7 @@ class HvactemplateZoneBaseboardheatType(TypedDict, total=False):
     Design_Specification_Zone_Air_Distribution_Object_Name: str
 
 class HvactemplateZoneConstantvolumeType(TypedDict, total=False):
+    """"dict for HvactemplateZoneConstantvolume"""
     Zone_Name: str
     Template_Constant_Volume_System_Name: str
     Template_Thermostat_Name: str
@@ -15273,6 +15691,7 @@ class HvactemplateZoneConstantvolumeType(TypedDict, total=False):
     Zone_Heating_Design_Supply_Air_Temperature_Difference: str
 
 class HvactemplateZoneDualductType(TypedDict, total=False):
+    """"dict for HvactemplateZoneDualduct"""
     Zone_Name: str
     Template_Dual_Duct_System_Name: str
     Template_Thermostat_Name: str
@@ -15301,6 +15720,7 @@ class HvactemplateZoneDualductType(TypedDict, total=False):
     Zone_Heating_Design_Supply_Air_Temperature_Difference: str
 
 class HvactemplateZoneFancoilType(TypedDict, total=False):
+    """"dict for HvactemplateZoneFancoil"""
     Zone_Name: str
     Template_Thermostat_Name: str
     Supply_Air_Maximum_Flow_Rate: str
@@ -15337,6 +15757,7 @@ class HvactemplateZoneFancoilType(TypedDict, total=False):
     Baseboard_Heating_Capacity: str
 
 class HvactemplateZoneIdealloadsairsystemType(TypedDict, total=False):
+    """"dict for HvactemplateZoneIdealloadsairsystem"""
     Zone_Name: str
     Template_Thermostat_Name: str
     System_Availability_Schedule_Name: str
@@ -15369,6 +15790,7 @@ class HvactemplateZoneIdealloadsairsystemType(TypedDict, total=False):
     Latent_Heat_Recovery_Effectiveness: str
 
 class HvactemplateZonePtacType(TypedDict, total=False):
+    """"dict for HvactemplateZonePtac"""
     Zone_Name: str
     Template_Thermostat_Name: str
     Cooling_Supply_Air_Flow_Rate: str
@@ -15411,6 +15833,7 @@ class HvactemplateZonePtacType(TypedDict, total=False):
     Capacity_Control_Method: str
 
 class HvactemplateZonePthpType(TypedDict, total=False):
+    """"dict for HvactemplateZonePthp"""
     Zone_Name: str
     Template_Thermostat_Name: str
     Cooling_Supply_Air_Flow_Rate: str
@@ -15463,6 +15886,7 @@ class HvactemplateZonePthpType(TypedDict, total=False):
     Capacity_Control_Method: str
 
 class HvactemplateZoneUnitaryType(TypedDict, total=False):
+    """"dict for HvactemplateZoneUnitary"""
     Zone_Name: str
     Template_Unitary_System_Name: str
     Template_Thermostat_Name: str
@@ -15488,6 +15912,7 @@ class HvactemplateZoneUnitaryType(TypedDict, total=False):
     Design_Specification_Zone_Air_Distribution_Object_Name: str
 
 class HvactemplateZoneVavType(TypedDict, total=False):
+    """"dict for HvactemplateZoneVav"""
     Zone_Name: str
     Template_VAV_System_Name: str
     Template_Thermostat_Name: str
@@ -15524,6 +15949,7 @@ class HvactemplateZoneVavType(TypedDict, total=False):
     Design_Specification_Zone_Air_Distribution_Object_Name: str
 
 class HvactemplateZoneVavFanpoweredType(TypedDict, total=False):
+    """"dict for HvactemplateZoneVavFanpowered"""
     Zone_Name: str
     Template_VAV_System_Name: str
     Template_Thermostat_Name: str
@@ -15559,6 +15985,7 @@ class HvactemplateZoneVavFanpoweredType(TypedDict, total=False):
     Design_Specification_Zone_Air_Distribution_Object_Name: str
 
 class HvactemplateZoneVavHeatandcoolType(TypedDict, total=False):
+    """"dict for HvactemplateZoneVavHeatandcool"""
     Zone_Name: str
     Template_VAV_System_Name: str
     Template_Thermostat_Name: str
@@ -15588,6 +16015,7 @@ class HvactemplateZoneVavHeatandcoolType(TypedDict, total=False):
     Zone_Heating_Design_Supply_Air_Temperature_Difference: str
 
 class HvactemplateZoneVrfType(TypedDict, total=False):
+    """"dict for HvactemplateZoneVrf"""
     Zone_Name: str
     Template_VRF_System_Name: str
     Template_Thermostat_Name: str
@@ -15634,6 +16062,7 @@ class HvactemplateZoneVrfType(TypedDict, total=False):
     Baseboard_Heating_Capacity: str
 
 class HvactemplateZoneWatertoairheatpumpType(TypedDict, total=False):
+    """"dict for HvactemplateZoneWatertoairheatpump"""
     Zone_Name: str
     Template_Thermostat_Name: str
     Cooling_Supply_Air_Flow_Rate: str
@@ -15679,6 +16108,7 @@ class HvactemplateZoneWatertoairheatpumpType(TypedDict, total=False):
     Baseboard_Heating_Capacity: str
 
 class HybridmodelZoneType(TypedDict, total=False):
+    """"dict for HybridmodelZone"""
     Name: str
     Zone_Name: str
     Calculate_Zone_Internal_Thermal_Mass: str
@@ -15701,6 +16131,7 @@ class HybridmodelZoneType(TypedDict, total=False):
     End_Day_of_Month: str
 
 class IndoorlivingwallType(TypedDict, total=False):
+    """"dict for Indoorlivingwall"""
     Name: str
     Surface_Name: str
     Schedule_Name: str
@@ -15715,6 +16146,7 @@ class IndoorlivingwallType(TypedDict, total=False):
     Radiant_Fraction_of_LED_Lights: str
 
 class InternalmassType(TypedDict, total=False):
+    """"dict for Internalmass"""
     Name: str
     Construction_Name: str
     Zone_or_ZoneList_Name: str
@@ -15722,6 +16154,7 @@ class InternalmassType(TypedDict, total=False):
     Surface_Area: str
 
 class LifecyclecostNonrecurringcostType(TypedDict, total=False):
+    """"dict for LifecyclecostNonrecurringcost"""
     Name: str
     Category: str
     Cost: str
@@ -15730,6 +16163,7 @@ class LifecyclecostNonrecurringcostType(TypedDict, total=False):
     Months_from_Start: str
 
 class LifecyclecostParametersType(TypedDict, total=False):
+    """"dict for LifecyclecostParameters"""
     Name: str
     Discounting_Convention: str
     Inflation_Approach: str
@@ -15745,6 +16179,7 @@ class LifecyclecostParametersType(TypedDict, total=False):
     Depreciation_Method: str
 
 class LifecyclecostRecurringcostsType(TypedDict, total=False):
+    """"dict for LifecyclecostRecurringcosts"""
     Name: str
     Category: str
     Cost: str
@@ -15756,6 +16191,7 @@ class LifecyclecostRecurringcostsType(TypedDict, total=False):
     Annual_escalation_rate: str
 
 class LifecyclecostUseadjustmentType(TypedDict, total=False):
+    """"dict for LifecyclecostUseadjustment"""
     Name: str
     Resource: str
     Year_1_Multiplier: str
@@ -15860,6 +16296,7 @@ class LifecyclecostUseadjustmentType(TypedDict, total=False):
     Year_100_Multiplier: str
 
 class LifecyclecostUsepriceescalationType(TypedDict, total=False):
+    """"dict for LifecyclecostUsepriceescalation"""
     LCC_Price_Escalation_Name: str
     Resource: str
     Escalation_Start_Year: str
@@ -15966,6 +16403,7 @@ class LifecyclecostUsepriceescalationType(TypedDict, total=False):
     Year_100_Escalation: str
 
 class LightsType(TypedDict, total=False):
+    """"dict for Lights"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -15985,6 +16423,7 @@ class LightsType(TypedDict, total=False):
     Exhaust_Air_Heat_Gain_Node_Name: str
 
 class LoadprofilePlantType(TypedDict, total=False):
+    """"dict for LoadprofilePlant"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -15996,6 +16435,7 @@ class LoadprofilePlantType(TypedDict, total=False):
     Degree_of_Loop_SubCooling: str
 
 class MaterialType(TypedDict, total=False):
+    """"dict for Material"""
     Name: str
     Roughness: str
     Thickness: str
@@ -16007,13 +16447,16 @@ class MaterialType(TypedDict, total=False):
     Visible_Absorptance: str
 
 class MaterialAirgapType(TypedDict, total=False):
+    """"dict for MaterialAirgap"""
     Name: str
     Thermal_Resistance: str
 
 class MaterialInfraredtransparentType(TypedDict, total=False):
+    """"dict for MaterialInfraredtransparent"""
     Name: str
 
 class MaterialNomassType(TypedDict, total=False):
+    """"dict for MaterialNomass"""
     Name: str
     Roughness: str
     Thermal_Resistance: str
@@ -16022,6 +16465,7 @@ class MaterialNomassType(TypedDict, total=False):
     Visible_Absorptance: str
 
 class MaterialRoofvegetationType(TypedDict, total=False):
+    """"dict for MaterialRoofvegetation"""
     Name: str
     Height_of_Plants: str
     Leaf_Area_Index: str
@@ -16043,6 +16487,7 @@ class MaterialRoofvegetationType(TypedDict, total=False):
     Moisture_Diffusion_Calculation_Method: str
 
 class MaterialpropertyGlazingspectraldataType(TypedDict, total=False):
+    """"dict for MaterialpropertyGlazingspectraldata"""
     Name: str
     Wavelength_1: str
     Transmittance_1: str
@@ -19246,6 +19691,7 @@ class MaterialpropertyGlazingspectraldataType(TypedDict, total=False):
     Back_Reflectance_800: str
 
 class MaterialpropertyHeatandmoisturetransferDiffusionType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferDiffusion"""
     Material_Name: str
     Number_of_Data_Pairs: str
     Relative_Humidity_Fraction_1: str
@@ -19300,6 +19746,7 @@ class MaterialpropertyHeatandmoisturetransferDiffusionType(TypedDict, total=Fals
     Water_Vapor_Diffusion_Resistance_Factor_25: str
 
 class MaterialpropertyHeatandmoisturetransferRedistributionType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferRedistribution"""
     Material_Name: str
     Number_of_Redistribution_points: str
     Moisture_Content_1: str
@@ -19354,11 +19801,13 @@ class MaterialpropertyHeatandmoisturetransferRedistributionType(TypedDict, total
     Liquid_Transport_Coefficient_25: str
 
 class MaterialpropertyHeatandmoisturetransferSettingsType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferSettings"""
     Material_Name: str
     Porosity: str
     Initial_Water_Content_Ratio: str
 
 class MaterialpropertyHeatandmoisturetransferSorptionisothermType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferSorptionisotherm"""
     Material_Name: str
     Number_of_Isotherm_Coordinates: str
     Relative_Humidity_Fraction_1: str
@@ -19413,6 +19862,7 @@ class MaterialpropertyHeatandmoisturetransferSorptionisothermType(TypedDict, tot
     Moisture_Content_25: str
 
 class MaterialpropertyHeatandmoisturetransferSuctionType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferSuction"""
     Material_Name: str
     Number_of_Suction_points: str
     Moisture_Content_1: str
@@ -19467,6 +19917,7 @@ class MaterialpropertyHeatandmoisturetransferSuctionType(TypedDict, total=False)
     Liquid_Transport_Coefficient_25: str
 
 class MaterialpropertyHeatandmoisturetransferThermalconductivityType(TypedDict, total=False):
+    """"dict for MaterialpropertyHeatandmoisturetransferThermalconductivity"""
     Material_Name: str
     Number_of_Thermal_Coordinates: str
     Moisture_Content_1: str
@@ -19521,6 +19972,7 @@ class MaterialpropertyHeatandmoisturetransferThermalconductivityType(TypedDict, 
     Thermal_Conductivity_25: str
 
 class MaterialpropertyMoisturepenetrationdepthSettingsType(TypedDict, total=False):
+    """"dict for MaterialpropertyMoisturepenetrationdepthSettings"""
     Name: str
     Water_Vapor_Diffusion_Resistance_Factor: str
     Moisture_Equation_Coefficient_a: str
@@ -19533,6 +19985,7 @@ class MaterialpropertyMoisturepenetrationdepthSettingsType(TypedDict, total=Fals
     Coating_Layer_Water_Vapor_Diffusion_Resistance_Factor: str
 
 class MaterialpropertyPhasechangeType(TypedDict, total=False):
+    """"dict for MaterialpropertyPhasechange"""
     Name: str
     Temperature_Coefficient_for_Thermal_Conductivity: str
     Temperature_1: str
@@ -19569,6 +20022,7 @@ class MaterialpropertyPhasechangeType(TypedDict, total=False):
     Enthalpy_16: str
 
 class MaterialpropertyPhasechangehysteresisType(TypedDict, total=False):
+    """"dict for MaterialpropertyPhasechangehysteresis"""
     Name: str
     Latent_Heat_during_the_Entire_Phase_Change_Process: str
     Liquid_State_Thermal_Conductivity: str
@@ -19585,6 +20039,7 @@ class MaterialpropertyPhasechangehysteresisType(TypedDict, total=False):
     Low_Temperature_Difference_of_Freezing_Curve: str
 
 class MaterialpropertyVariableabsorptanceType(TypedDict, total=False):
+    """"dict for MaterialpropertyVariableabsorptance"""
     Name: str
     Reference_Material_Name: str
     Control_Signal: str
@@ -19594,6 +20049,7 @@ class MaterialpropertyVariableabsorptanceType(TypedDict, total=False):
     Solar_Absorptance_Schedule_Name: str
 
 class MaterialpropertyVariablethermalconductivityType(TypedDict, total=False):
+    """"dict for MaterialpropertyVariablethermalconductivity"""
     Name: str
     Temperature_1: str
     Thermal_Conductivity_1: str
@@ -19617,6 +20073,7 @@ class MaterialpropertyVariablethermalconductivityType(TypedDict, total=False):
     Thermal_Conductivity_10: str
 
 class MatrixTwodimensionType(TypedDict, total=False):
+    """"dict for MatrixTwodimension"""
     Name: str
     Number_of_Rows: str
     Number_of_Columns: str
@@ -40660,6 +41117,7 @@ class MatrixTwodimensionType(TypedDict, total=False):
     Value_21038: str
 
 class MeterCustomType(TypedDict, total=False):
+    """"dict for MeterCustom"""
     Name: str
     Resource_Type: str
     Key_Name_1: str
@@ -40764,6 +41222,7 @@ class MeterCustomType(TypedDict, total=False):
     Output_Variable_or_Meter_Name_50: str
 
 class MeterCustomdecrementType(TypedDict, total=False):
+    """"dict for MeterCustomdecrement"""
     Name: str
     Resource_Type: str
     Source_Meter_Name: str
@@ -40813,6 +41272,7 @@ class MeterCustomdecrementType(TypedDict, total=False):
     Output_Variable_or_Meter_Name_22: str
 
 class NodelistType(TypedDict, total=False):
+    """"dict for Nodelist"""
     Name: str
     Node_1_Name: str
     Node_2_Name: str
@@ -41316,6 +41776,7 @@ class NodelistType(TypedDict, total=False):
     Node_500_Name: str
 
 class OtherequipmentType(TypedDict, total=False):
+    """"dict for Otherequipment"""
     Name: str
     Fuel_Type: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
@@ -41331,6 +41792,7 @@ class OtherequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class OutdoorairMixerType(TypedDict, total=False):
+    """"dict for OutdoorairMixer"""
     Name: str
     Mixed_Air_Node_Name: str
     Outdoor_Air_Stream_Node_Name: str
@@ -41338,6 +41800,7 @@ class OutdoorairMixerType(TypedDict, total=False):
     Return_Air_Stream_Node_Name: str
 
 class OutdoorairNodeType(TypedDict, total=False):
+    """"dict for OutdoorairNode"""
     Name: str
     Height_Above_Ground: str
     Drybulb_Temperature_Schedule_Name: str
@@ -41349,6 +41812,7 @@ class OutdoorairNodeType(TypedDict, total=False):
     Wind_Angle_Type: str
 
 class OutdoorairNodelistType(TypedDict, total=False):
+    """"dict for OutdoorairNodelist"""
     Node_or_NodeList_Name_1: str
     Node_or_NodeList_Name_2: str
     Node_or_NodeList_Name_3: str
@@ -41851,17 +42315,21 @@ class OutdoorairNodelistType(TypedDict, total=False):
     Node_or_NodeList_Name_500: str
 
 class OutputConstructionsType(TypedDict, total=False):
+    """"dict for OutputConstructions"""
     Details_Type_1: str
     Details_Type_2: str
 
 class OutputDaylightfactorsType(TypedDict, total=False):
+    """"dict for OutputDaylightfactors"""
     Reporting_Days: str
 
 class OutputDebuggingdataType(TypedDict, total=False):
+    """"dict for OutputDebuggingdata"""
     Report_Debugging_Data: str
     Report_During_Warmup: str
 
 class OutputDiagnosticsType(TypedDict, total=False):
+    """"dict for OutputDiagnostics"""
     Key_1: str
     Key_2: str
     Key_3: str
@@ -41869,14 +42337,17 @@ class OutputDiagnosticsType(TypedDict, total=False):
     Key_5: str
 
 class OutputEnergymanagementsystemType(TypedDict, total=False):
+    """"dict for OutputEnergymanagementsystem"""
     Actuator_Availability_Dictionary_Reporting: str
     Internal_Variable_Availability_Dictionary_Reporting: str
     EMS_Runtime_Language_Debug_Output_Level: str
 
 class OutputEnvironmentalimpactfactorsType(TypedDict, total=False):
+    """"dict for OutputEnvironmentalimpactfactors"""
     Reporting_Frequency: str
 
 class OutputIlluminancemapType(TypedDict, total=False):
+    """"dict for OutputIlluminancemap"""
     Name: str
     Zone_Name: str
     Z_height: str
@@ -41888,28 +42359,34 @@ class OutputIlluminancemapType(TypedDict, total=False):
     Number_of_Y_Grid_Points: str
 
 class OutputJsonType(TypedDict, total=False):
+    """"dict for OutputJson"""
     Option_Type: str
     Output_JSON: str
     Output_CBOR: str
     Output_MessagePack: str
 
 class OutputMeterType(TypedDict, total=False):
+    """"dict for OutputMeter"""
     Key_Name: str
     Reporting_Frequency: str
 
 class OutputMeterCumulativeType(TypedDict, total=False):
+    """"dict for OutputMeterCumulative"""
     Key_Name: str
     Reporting_Frequency: str
 
 class OutputMeterCumulativeMeterfileonlyType(TypedDict, total=False):
+    """"dict for OutputMeterCumulativeMeterfileonly"""
     Key_Name: str
     Reporting_Frequency: str
 
 class OutputMeterMeterfileonlyType(TypedDict, total=False):
+    """"dict for OutputMeterMeterfileonly"""
     Key_Name: str
     Reporting_Frequency: str
 
 class OutputPreprocessormessageType(TypedDict, total=False):
+    """"dict for OutputPreprocessormessage"""
     Preprocessor_Name: str
     Error_Severity: str
     Message_Line_1: str
@@ -41924,22 +42401,27 @@ class OutputPreprocessormessageType(TypedDict, total=False):
     Message_Line_10: str
 
 class OutputSchedulesType(TypedDict, total=False):
+    """"dict for OutputSchedules"""
     Key_Field: str
 
 class OutputSqliteType(TypedDict, total=False):
+    """"dict for OutputSqlite"""
     Option_Type: str
     Unit_Conversion_for_Tabular_Data: str
 
 class OutputSurfacesDrawingType(TypedDict, total=False):
+    """"dict for OutputSurfacesDrawing"""
     Report_Type: str
     Report_Specifications_1: str
     Report_Specifications_2: str
 
 class OutputSurfacesListType(TypedDict, total=False):
+    """"dict for OutputSurfacesList"""
     Report_Type: str
     Report_Specifications: str
 
 class OutputTableAnnualType(TypedDict, total=False):
+    """"dict for OutputTableAnnual"""
     Name: str
     Filter: str
     Schedule_Name: str
@@ -41990,6 +42472,7 @@ class OutputTableAnnualType(TypedDict, total=False):
     Digits_After_Decimal_15: str
 
 class OutputTableMonthlyType(TypedDict, total=False):
+    """"dict for OutputTableMonthly"""
     Name: str
     Digits_After_Decimal: str
     Variable_or_Meter_1_Name: str
@@ -42044,6 +42527,7 @@ class OutputTableMonthlyType(TypedDict, total=False):
     Aggregation_Type_for_Variable_or_Meter_25: str
 
 class OutputTableReportperiodType(TypedDict, total=False):
+    """"dict for OutputTableReportperiod"""
     Name: str
     Report_Name: str
     Begin_Year: str
@@ -42056,6 +42540,7 @@ class OutputTableReportperiodType(TypedDict, total=False):
     End_Hour_of_Day: str
 
 class OutputTableSummaryreportsType(TypedDict, total=False):
+    """"dict for OutputTableSummaryreports"""
     Report_1_Name: str
     Report_2_Name: str
     Report_3_Name: str
@@ -42083,6 +42568,7 @@ class OutputTableSummaryreportsType(TypedDict, total=False):
     Report_25_Name: str
 
 class OutputTableTimebinsType(TypedDict, total=False):
+    """"dict for OutputTableTimebins"""
     Key_Value: str
     Variable_Name: str
     Interval_Start: str
@@ -42092,16 +42578,19 @@ class OutputTableTimebinsType(TypedDict, total=False):
     Variable_Type: str
 
 class OutputVariableType(TypedDict, total=False):
+    """"dict for OutputVariable"""
     Key_Value: str
     Variable_Name: str
     Reporting_Frequency: str
     Schedule_Name: str
 
 class OutputVariabledictionaryType(TypedDict, total=False):
+    """"dict for OutputVariabledictionary"""
     Key_Field: str
     Sort_Option: str
 
 class OutputcontrolFilesType(TypedDict, total=False):
+    """"dict for OutputcontrolFiles"""
     Output_CSV: str
     Output_MTR: str
     Output_ESO: str
@@ -42135,16 +42624,20 @@ class OutputcontrolFilesType(TypedDict, total=False):
     Output_Tarcog: str
 
 class OutputcontrolIlluminancemapStyleType(TypedDict, total=False):
+    """"dict for OutputcontrolIlluminancemapStyle"""
     Column_Separator: str
 
 class OutputcontrolReportingtolerancesType(TypedDict, total=False):
+    """"dict for OutputcontrolReportingtolerances"""
     Tolerance_for_Time_Heating_Setpoint_Not_Met: str
     Tolerance_for_Time_Cooling_Setpoint_Not_Met: str
 
 class OutputcontrolSizingStyleType(TypedDict, total=False):
+    """"dict for OutputcontrolSizingStyle"""
     Column_Separator: str
 
 class OutputcontrolSurfacecolorschemeType(TypedDict, total=False):
+    """"dict for OutputcontrolSurfacecolorscheme"""
     Name: str
     Drawing_Element_1_Type: str
     Color_for_Drawing_Element_1: str
@@ -42178,14 +42671,17 @@ class OutputcontrolSurfacecolorschemeType(TypedDict, total=False):
     Color_for_Drawing_Element_15: str
 
 class OutputcontrolTableStyleType(TypedDict, total=False):
+    """"dict for OutputcontrolTableStyle"""
     Column_Separator: str
     Unit_Conversion: str
 
 class OutputcontrolTimestampType(TypedDict, total=False):
+    """"dict for OutputcontrolTimestamp"""
     ISO_8601_Format: str
     Timestamp_at_Beginning_of_Interval: str
 
 class ParametricFilenamesuffixType(TypedDict, total=False):
+    """"dict for ParametricFilenamesuffix"""
     Name: str
     Suffix_for_File_Name_in_Run_1: str
     Suffix_for_File_Name_in_Run_2: str
@@ -42289,6 +42785,7 @@ class ParametricFilenamesuffixType(TypedDict, total=False):
     Suffix_for_File_Name_in_Run_100: str
 
 class ParametricLogicType(TypedDict, total=False):
+    """"dict for ParametricLogic"""
     Name: str
     Parametric_Logic_Line_1: str
     Parametric_Logic_Line_2: str
@@ -42392,6 +42889,7 @@ class ParametricLogicType(TypedDict, total=False):
     Parametric_Logic_Line_100: str
 
 class ParametricRuncontrolType(TypedDict, total=False):
+    """"dict for ParametricRuncontrol"""
     Name: str
     Perform_Run_1: str
     Perform_Run_2: str
@@ -42495,6 +42993,7 @@ class ParametricRuncontrolType(TypedDict, total=False):
     Perform_Run_100: str
 
 class ParametricSetvalueforrunType(TypedDict, total=False):
+    """"dict for ParametricSetvalueforrun"""
     Name: str
     Value_for_Run_1: str
     Value_for_Run_2: str
@@ -42598,6 +43097,7 @@ class ParametricSetvalueforrunType(TypedDict, total=False):
     Value_for_Run_100: str
 
 class PeopleType(TypedDict, total=False):
+    """"dict for People"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Number_of_People_Schedule_Name: str
@@ -42629,6 +43129,7 @@ class PeopleType(TypedDict, total=False):
     Heat_Stress_Temperature_Threshold: str
 
 class PerformanceprecisiontradeoffsType(TypedDict, total=False):
+    """"dict for Performanceprecisiontradeoffs"""
     Use_Coil_Direct_Solutions: str
     Zone_Radiant_Exchange_Algorithm: str
     Override_Mode: str
@@ -42637,6 +43138,7 @@ class PerformanceprecisiontradeoffsType(TypedDict, total=False):
     Use_Representative_Surfaces_for_Calculations: str
 
 class PhotovoltaicperformanceEquivalentonediodeType(TypedDict, total=False):
+    """"dict for PhotovoltaicperformanceEquivalentonediode"""
     Name: str
     Cell_type: str
     Number_of_Cells_in_Series: str
@@ -42659,6 +43161,7 @@ class PhotovoltaicperformanceEquivalentonediodeType(TypedDict, total=False):
     Total_Heat_Capacity: str
 
 class PhotovoltaicperformanceSandiaType(TypedDict, total=False):
+    """"dict for PhotovoltaicperformanceSandia"""
     Name: str
     Active_Area: str
     Number_of_Cells_in_Series: str
@@ -42701,6 +43204,7 @@ class PhotovoltaicperformanceSandiaType(TypedDict, total=False):
     Sandia_Database_Parameter_c7: str
 
 class PhotovoltaicperformanceSimpleType(TypedDict, total=False):
+    """"dict for PhotovoltaicperformanceSimple"""
     Name: str
     Fraction_of_Surface_Area_with_Active_Solar_Cells: str
     Conversion_Efficiency_Input_Mode: str
@@ -42708,16 +43212,19 @@ class PhotovoltaicperformanceSimpleType(TypedDict, total=False):
     Efficiency_Schedule_Name: str
 
 class PipeAdiabaticType(TypedDict, total=False):
+    """"dict for PipeAdiabatic"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
 
 class PipeAdiabaticSteamType(TypedDict, total=False):
+    """"dict for PipeAdiabaticSteam"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
 
 class PipeIndoorType(TypedDict, total=False):
+    """"dict for PipeIndoor"""
     Name: str
     Construction_Name: str
     Fluid_Inlet_Node_Name: str
@@ -42730,6 +43237,7 @@ class PipeIndoorType(TypedDict, total=False):
     Pipe_Length: str
 
 class PipeOutdoorType(TypedDict, total=False):
+    """"dict for PipeOutdoor"""
     Name: str
     Construction_Name: str
     Fluid_Inlet_Node_Name: str
@@ -42739,6 +43247,7 @@ class PipeOutdoorType(TypedDict, total=False):
     Pipe_Length: str
 
 class PipeUndergroundType(TypedDict, total=False):
+    """"dict for PipeUnderground"""
     Name: str
     Construction_Name: str
     Fluid_Inlet_Node_Name: str
@@ -42751,6 +43260,7 @@ class PipeUndergroundType(TypedDict, total=False):
     Undisturbed_Ground_Temperature_Model_Name: str
 
 class PipingsystemUndergroundDomainType(TypedDict, total=False):
+    """"dict for PipingsystemUndergroundDomain"""
     Name: str
     Xmax: str
     Ymax: str
@@ -42789,6 +43299,7 @@ class PipingsystemUndergroundDomainType(TypedDict, total=False):
     Pipe_Circuit_6: str
 
 class PipingsystemUndergroundPipecircuitType(TypedDict, total=False):
+    """"dict for PipingsystemUndergroundPipecircuit"""
     Name: str
     Pipe_Thermal_Conductivity: str
     Pipe_Density: str
@@ -42811,12 +43322,14 @@ class PipingsystemUndergroundPipecircuitType(TypedDict, total=False):
     Pipe_Segment_6: str
 
 class PipingsystemUndergroundPipesegmentType(TypedDict, total=False):
+    """"dict for PipingsystemUndergroundPipesegment"""
     Name: str
     X_Position: str
     Y_Position: str
     Flow_Direction: str
 
 class PlantcomponentTemperaturesourceType(TypedDict, total=False):
+    """"dict for PlantcomponentTemperaturesource"""
     Name: str
     Inlet_Node: str
     Outlet_Node: str
@@ -42826,6 +43339,7 @@ class PlantcomponentTemperaturesourceType(TypedDict, total=False):
     Source_Temperature_Schedule_Name: str
 
 class PlantcomponentUserdefinedType(TypedDict, total=False):
+    """"dict for PlantcomponentUserdefined"""
     Name: str
     Main_Model_Program_Calling_Manager_Name: str
     Number_of_Plant_Loop_Connections: str
@@ -42860,6 +43374,7 @@ class PlantcomponentUserdefinedType(TypedDict, total=False):
     Ambient_Zone_Name: str
 
 class PlantequipmentlistType(TypedDict, total=False):
+    """"dict for Plantequipmentlist"""
     Name: str
     Equipment_1_Object_Type: str
     Equipment_1_Name: str
@@ -42883,6 +43398,7 @@ class PlantequipmentlistType(TypedDict, total=False):
     Equipment_10_Name: str
 
 class PlantequipmentoperationChillerheaterchangeoverType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationChillerheaterchangeover"""
     Name: str
     Primary_Cooling_Plant_Setpoint_Temperature: str
     Secondary_Distribution_Cooling_Plant_Setpoint_Temperature: str
@@ -42903,6 +43419,7 @@ class PlantequipmentoperationChillerheaterchangeoverType(TypedDict, total=False)
     Backup_Outdoor_Low_Temperature: str
 
 class PlantequipmentoperationComponentsetpointType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationComponentsetpoint"""
     Name: str
     Equipment_1_Object_Type: str
     Equipment_1_Name: str
@@ -42966,6 +43483,7 @@ class PlantequipmentoperationComponentsetpointType(TypedDict, total=False):
     Operation_10_Type: str
 
 class PlantequipmentoperationCoolingloadType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationCoolingload"""
     Name: str
     Load_Range_1_Lower_Limit: str
     Load_Range_1_Upper_Limit: str
@@ -42999,6 +43517,7 @@ class PlantequipmentoperationCoolingloadType(TypedDict, total=False):
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationHeatingloadType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationHeatingload"""
     Name: str
     Load_Range_1_Lower_Limit: str
     Load_Range_1_Upper_Limit: str
@@ -43032,6 +43551,7 @@ class PlantequipmentoperationHeatingloadType(TypedDict, total=False):
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoordewpointType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoordewpoint"""
     Name: str
     Dewpoint_Temperature_Range_1_Lower_Limit: str
     Dewpoint_Temperature_Range_1_Upper_Limit: str
@@ -43065,6 +43585,7 @@ class PlantequipmentoperationOutdoordewpointType(TypedDict, total=False):
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoordewpointdifferenceType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoordewpointdifference"""
     Name: str
     Reference_Temperature_Node_Name: str
     Dewpoint_Temperature_Difference_Range_1_Lower_Limit: str
@@ -43099,6 +43620,7 @@ class PlantequipmentoperationOutdoordewpointdifferenceType(TypedDict, total=Fals
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoordrybulbType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoordrybulb"""
     Name: str
     DryBulb_Temperature_Range_1_Lower_Limit: str
     DryBulb_Temperature_Range_1_Upper_Limit: str
@@ -43132,6 +43654,7 @@ class PlantequipmentoperationOutdoordrybulbType(TypedDict, total=False):
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoordrybulbdifferenceType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoordrybulbdifference"""
     Name: str
     Reference_Temperature_Node_Name: str
     DryBulb_Temperature_Difference_Range_1_Lower_Limit: str
@@ -43166,6 +43689,7 @@ class PlantequipmentoperationOutdoordrybulbdifferenceType(TypedDict, total=False
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoorrelativehumidityType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoorrelativehumidity"""
     Name: str
     Relative_Humidity_Range_1_Lower_Limit: str
     Relative_Humidity_Range_1_Upper_Limit: str
@@ -43199,6 +43723,7 @@ class PlantequipmentoperationOutdoorrelativehumidityType(TypedDict, total=False)
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoorwetbulbType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoorwetbulb"""
     Name: str
     WetBulb_Temperature_Range_1_Lower_Limit: str
     WetBulb_Temperature_Range_1_Upper_Limit: str
@@ -43232,6 +43757,7 @@ class PlantequipmentoperationOutdoorwetbulbType(TypedDict, total=False):
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationOutdoorwetbulbdifferenceType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationOutdoorwetbulbdifference"""
     Name: str
     Reference_Temperature_Node_Name: str
     WetBulb_Temperature_Difference_Range_1_Lower_Limit: str
@@ -43266,6 +43792,7 @@ class PlantequipmentoperationOutdoorwetbulbdifferenceType(TypedDict, total=False
     Range_10_Equipment_List_Name: str
 
 class PlantequipmentoperationThermalenergystorageType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationThermalenergystorage"""
     Name: str
     OnPeak_Schedule: str
     Charging_Availability_Schedule: str
@@ -43333,10 +43860,12 @@ class PlantequipmentoperationThermalenergystorageType(TypedDict, total=False):
     Component_10_Operation_Type: str
 
 class PlantequipmentoperationUncontrolledType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationUncontrolled"""
     Name: str
     Equipment_List_Name: str
 
 class PlantequipmentoperationUserdefinedType(TypedDict, total=False):
+    """"dict for PlantequipmentoperationUserdefined"""
     Name: str
     Main_Model_Program_Calling_Manager_Name: str
     Initialization_Program_Calling_Manager_Name: str
@@ -43362,6 +43891,7 @@ class PlantequipmentoperationUserdefinedType(TypedDict, total=False):
     Equipment_10_Name: str
 
 class PlantequipmentoperationschemesType(TypedDict, total=False):
+    """"dict for Plantequipmentoperationschemes"""
     Name: str
     Control_Scheme_1_Object_Type: str
     Control_Scheme_1_Name: str
@@ -43389,6 +43919,7 @@ class PlantequipmentoperationschemesType(TypedDict, total=False):
     Control_Scheme_8_Schedule_Name: str
 
 class PlantloopType(TypedDict, total=False):
+    """"dict for Plantloop"""
     Name: str
     Fluid_Type: str
     User_Defined_Fluid_Type: str
@@ -43415,6 +43946,7 @@ class PlantloopType(TypedDict, total=False):
     Loop_Circulation_Time: str
 
 class PumpConstantspeedType(TypedDict, total=False):
+    """"dict for PumpConstantspeed"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -43436,6 +43968,7 @@ class PumpConstantspeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class PumpVariablespeedType(TypedDict, total=False):
+    """"dict for PumpVariablespeed"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -43468,6 +44001,7 @@ class PumpVariablespeedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class PumpVariablespeedCondensateType(TypedDict, total=False):
+    """"dict for PumpVariablespeedCondensate"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -43489,12 +44023,14 @@ class PumpVariablespeedCondensateType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class PythonpluginInstanceType(TypedDict, total=False):
+    """"dict for PythonpluginInstance"""
     Name: str
     Run_During_Warmup_Days: str
     Python_Module_Name: str
     Plugin_Class_Name: str
 
 class PythonpluginOutputvariableType(TypedDict, total=False):
+    """"dict for PythonpluginOutputvariable"""
     Name: str
     Python_Plugin_Variable_Name: str
     Type_of_Data_in_Variable: str
@@ -43506,6 +44042,7 @@ class PythonpluginOutputvariableType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class PythonpluginSearchpathsType(TypedDict, total=False):
+    """"dict for PythonpluginSearchpaths"""
     Name: str
     Add_Current_Working_Directory_to_Search_Path: str
     Add_Input_File_Directory_to_Search_Path: str
@@ -43522,11 +44059,13 @@ class PythonpluginSearchpathsType(TypedDict, total=False):
     Search_Path_10: str
 
 class PythonpluginTrendvariableType(TypedDict, total=False):
+    """"dict for PythonpluginTrendvariable"""
     Name: str
     Name_of_a_Python_Plugin_Variable: str
     Number_of_Timesteps_to_be_Logged: str
 
 class PythonpluginVariablesType(TypedDict, total=False):
+    """"dict for PythonpluginVariables"""
     Name: str
     Variable_Name_1: str
     Variable_Name_2: str
@@ -43540,6 +44079,7 @@ class PythonpluginVariablesType(TypedDict, total=False):
     Variable_Name_10: str
 
 class RefrigerationAirchillerType(TypedDict, total=False):
+    """"dict for RefrigerationAirchiller"""
     Name: str
     Availability_Schedule_Name: str
     Capacity_Rating_Type: str
@@ -43570,6 +44110,7 @@ class RefrigerationAirchillerType(TypedDict, total=False):
     Average_Refrigerant_Charge_Inventory: str
 
 class RefrigerationCaseType(TypedDict, total=False):
+    """"dict for RefrigerationCase"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -43608,6 +44149,7 @@ class RefrigerationCaseType(TypedDict, total=False):
     Under_Case_HVAC_Return_Air_Node_Name: str
 
 class RefrigerationCaseandwalkinlistType(TypedDict, total=False):
+    """"dict for RefrigerationCaseandwalkinlist"""
     Name: str
     Case_or_WalkIn_1_Name: str
     Case_or_WalkIn_2_Name: str
@@ -43651,6 +44193,7 @@ class RefrigerationCaseandwalkinlistType(TypedDict, total=False):
     Case_or_WalkIn_40_Name: str
 
 class RefrigerationCompressorType(TypedDict, total=False):
+    """"dict for RefrigerationCompressor"""
     Name: str
     Refrigeration_Compressor_Power_Curve_Name: str
     Refrigeration_Compressor_Capacity_Curve_Name: str
@@ -43664,6 +44207,7 @@ class RefrigerationCompressorType(TypedDict, total=False):
     Transcritical_Compressor_Capacity_Curve_Name: str
 
 class RefrigerationCompressorlistType(TypedDict, total=False):
+    """"dict for RefrigerationCompressorlist"""
     Name: str
     Refrigeration_Compressor_1_Name: str
     Refrigeration_Compressor_2_Name: str
@@ -43707,6 +44251,7 @@ class RefrigerationCompressorlistType(TypedDict, total=False):
     Refrigeration_Compressor_40_Name: str
 
 class RefrigerationCompressorrackType(TypedDict, total=False):
+    """"dict for RefrigerationCompressorrack"""
     Name: str
     Heat_Rejection_Location: str
     Design_Compressor_Rack_COP: str
@@ -43735,6 +44280,7 @@ class RefrigerationCompressorrackType(TypedDict, total=False):
     Heat_Rejection_Zone_Name: str
 
 class RefrigerationCondenserAircooledType(TypedDict, total=False):
+    """"dict for RefrigerationCondenserAircooled"""
     Name: str
     Rated_Effective_Total_Heat_Rejection_Rate_Curve_Name: str
     Rated_Subcooling_Temperature_Difference: str
@@ -43748,6 +44294,7 @@ class RefrigerationCondenserAircooledType(TypedDict, total=False):
     Condensate_Piping_Refrigerant_Inventory: str
 
 class RefrigerationCondenserCascadeType(TypedDict, total=False):
+    """"dict for RefrigerationCondenserCascade"""
     Name: str
     Rated_Condensing_Temperature: str
     Rated_Approach_Temperature_Difference: str
@@ -43758,6 +44305,7 @@ class RefrigerationCondenserCascadeType(TypedDict, total=False):
     Condensate_Piping_Refrigerant_Inventory: str
 
 class RefrigerationCondenserEvaporativecooledType(TypedDict, total=False):
+    """"dict for RefrigerationCondenserEvaporativecooled"""
     Name: str
     Rated_Effective_Total_Heat_Rejection_Rate: str
     Rated_Subcooling_Temperature_Difference: str
@@ -43783,6 +44331,7 @@ class RefrigerationCondenserEvaporativecooledType(TypedDict, total=False):
     Condensate_Piping_Refrigerant_Inventory: str
 
 class RefrigerationCondenserWatercooledType(TypedDict, total=False):
+    """"dict for RefrigerationCondenserWatercooled"""
     Name: str
     Rated_Effective_Total_Heat_Rejection_Rate: str
     Rated_Condensing_Temperature: str
@@ -43802,6 +44351,7 @@ class RefrigerationCondenserWatercooledType(TypedDict, total=False):
     Condensate_Piping_Refrigerant_Inventory: str
 
 class RefrigerationGascoolerAircooledType(TypedDict, total=False):
+    """"dict for RefrigerationGascoolerAircooled"""
     Name: str
     Rated_Total_Heat_Rejection_Rate_Curve_Name: str
     Gas_Cooler_Fan_Speed_Control_Type: str
@@ -43818,6 +44368,7 @@ class RefrigerationGascoolerAircooledType(TypedDict, total=False):
     Gas_Cooler_Outlet_Piping_Refrigerant_Inventory: str
 
 class RefrigerationSecondarysystemType(TypedDict, total=False):
+    """"dict for RefrigerationSecondarysystem"""
     Name: str
     Refrigerated_Case_or_Walkin_or_CaseAndWalkInList_Name: str
     Circulating_Fluid_Type: str
@@ -43843,6 +44394,7 @@ class RefrigerationSecondarysystemType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class RefrigerationSubcoolerType(TypedDict, total=False):
+    """"dict for RefrigerationSubcooler"""
     Name: str
     Subcooler_Type: str
     Liquid_Suction_Design_Subcooling_Temperature_Difference: str
@@ -43852,6 +44404,7 @@ class RefrigerationSubcoolerType(TypedDict, total=False):
     Outlet_Control_Temperature: str
 
 class RefrigerationSystemType(TypedDict, total=False):
+    """"dict for RefrigerationSystem"""
     Name: str
     Refrigerated_Case_or_Walkin_or_CaseAndWalkInList_Name: str
     Refrigeration_Transfer_Load_or_TransferLoad_List_Name: str
@@ -43871,6 +44424,7 @@ class RefrigerationSystemType(TypedDict, total=False):
     HighStage_Compressor_or_CompressorList_Name: str
 
 class RefrigerationTranscriticalsystemType(TypedDict, total=False):
+    """"dict for RefrigerationTranscriticalsystem"""
     Name: str
     System_Type: str
     Medium_Temperature_Refrigerated_Case_or_Walkin_or_CaseAndWalkInList_Name: str
@@ -43888,6 +44442,7 @@ class RefrigerationTranscriticalsystemType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class RefrigerationTransferloadlistType(TypedDict, total=False):
+    """"dict for RefrigerationTransferloadlist"""
     Name: str
     Cascade_Condenser_Name_or_Secondary_System_1_Name: str
     Cascade_Condenser_Name_or_Secondary_System_2_Name: str
@@ -43900,6 +44455,7 @@ class RefrigerationTransferloadlistType(TypedDict, total=False):
     Cascade_Condenser_Name_or_Secondary_System_9_Name: str
 
 class RefrigerationWalkinType(TypedDict, total=False):
+    """"dict for RefrigerationWalkin"""
     Name: str
     Availability_Schedule_Name: str
     Rated_Coil_Cooling_Capacity: str
@@ -43959,6 +44515,7 @@ class RefrigerationWalkinType(TypedDict, total=False):
     Stocking_Door_Opening_Protection_Type_Facing_Zone_3: str
 
 class RoofType(TypedDict, total=False):
+    """"dict for Roof"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -43972,6 +44529,7 @@ class RoofType(TypedDict, total=False):
     Width: str
 
 class RoofceilingDetailedType(TypedDict, total=False):
+    """"dict for RoofceilingDetailed"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -44014,11 +44572,13 @@ class RoofceilingDetailedType(TypedDict, total=False):
     Vertex_10_Zcoordinate: str
 
 class RoofirrigationType(TypedDict, total=False):
+    """"dict for Roofirrigation"""
     Irrigation_Model_Type: str
     Irrigation_Rate_Schedule_Name: str
     Irrigation_Maximum_Saturation_Threshold: str
 
 class RoomairNodeType(TypedDict, total=False):
+    """"dict for RoomairNode"""
     Name: str
     Node_Type: str
     Zone_Name: str
@@ -44046,6 +44606,7 @@ class RoomairNodeType(TypedDict, total=False):
     Surface_21_Name: str
 
 class RoomairNodeAirflownetworkType(TypedDict, total=False):
+    """"dict for RoomairNodeAirflownetwork"""
     Name: str
     Zone_Name: str
     Fraction_of_Zone_Air_Volume: str
@@ -44054,6 +44615,7 @@ class RoomairNodeAirflownetworkType(TypedDict, total=False):
     RoomAirNodeAirflowNetworkHVACEquipment_Name: str
 
 class RoomairNodeAirflownetworkAdjacentsurfacelistType(TypedDict, total=False):
+    """"dict for RoomairNodeAirflownetworkAdjacentsurfacelist"""
     Name: str
     Surface_1_Name: str
     Surface_2_Name: str
@@ -44078,6 +44640,7 @@ class RoomairNodeAirflownetworkAdjacentsurfacelistType(TypedDict, total=False):
     Surface_21_Name: str
 
 class RoomairNodeAirflownetworkHvacequipmentType(TypedDict, total=False):
+    """"dict for RoomairNodeAirflownetworkHvacequipment"""
     Name: str
     ZoneHVAC_or_Air_Terminal_Equipment_Object_Type_1: str
     ZoneHVAC_or_Air_Terminal_Equipment_Object_Name_1: str
@@ -44089,6 +44652,7 @@ class RoomairNodeAirflownetworkHvacequipmentType(TypedDict, total=False):
     Fraction_of_Input_or_Return_Air_to_HVAC_Equipment_2: str
 
 class RoomairNodeAirflownetworkInternalgainsType(TypedDict, total=False):
+    """"dict for RoomairNodeAirflownetworkInternalgains"""
     Name: str
     Internal_Gain_Object_1_Type: str
     Internal_Gain_Object_1_Name: str
@@ -44101,6 +44665,7 @@ class RoomairNodeAirflownetworkInternalgainsType(TypedDict, total=False):
     Fraction_of_Gains_to_Node_3: str
 
 class RoomairTemperaturepatternConstantgradientType(TypedDict, total=False):
+    """"dict for RoomairTemperaturepatternConstantgradient"""
     Room_Air_Temperature_Pattern_Constant_Gradient_Name: str
     Control_Integer_for_Pattern_Control_Schedule_Name: str
     Thermostat_Offset: str
@@ -44109,6 +44674,7 @@ class RoomairTemperaturepatternConstantgradientType(TypedDict, total=False):
     Temperature_Gradient: str
 
 class RoomairTemperaturepatternNondimensionalheightType(TypedDict, total=False):
+    """"dict for RoomairTemperaturepatternNondimensionalheight"""
     Name: str
     Control_Integer_for_Pattern_Control_Schedule_Name: str
     Thermostat_Offset: str
@@ -44154,6 +44720,7 @@ class RoomairTemperaturepatternNondimensionalheightType(TypedDict, total=False):
     Pair_19_Delta_Adjacent_Air_Temperature: str
 
 class RoomairTemperaturepatternSurfacemappingType(TypedDict, total=False):
+    """"dict for RoomairTemperaturepatternSurfacemapping"""
     Name: str
     Control_Integer_for_Pattern_Control_Schedule_Name: str
     Thermostat_Offset: str
@@ -44203,6 +44770,7 @@ class RoomairTemperaturepatternSurfacemappingType(TypedDict, total=False):
     Delta_Adjacent_Air_Temperature_Pair_21: str
 
 class RoomairTemperaturepatternTwogradientType(TypedDict, total=False):
+    """"dict for RoomairTemperaturepatternTwogradient"""
     Room_Air_Temperature_Pattern_Two_Gradient_Name: str
     Control_Integer_for_Pattern_Control_Schedule_Name: str
     Thermostat_Height: str
@@ -44217,18 +44785,21 @@ class RoomairTemperaturepatternTwogradientType(TypedDict, total=False):
     Lower_Heat_Rate_Bound: str
 
 class RoomairTemperaturepatternUserdefinedType(TypedDict, total=False):
+    """"dict for RoomairTemperaturepatternUserdefined"""
     Name: str
     Zone_Name: str
     Availability_Schedule_Name: str
     Pattern_Control_Schedule_Name: str
 
 class RoomairmodeltypeType(TypedDict, total=False):
+    """"dict for Roomairmodeltype"""
     Name: str
     Zone_Name: str
     RoomAir_Modeling_Type: str
     Air_Temperature_Coupling_Strategy: str
 
 class RoomairsettingsAirflownetworkType(TypedDict, total=False):
+    """"dict for RoomairsettingsAirflownetwork"""
     Name: str
     Zone_Name: str
     Control_Point_RoomAirflowNetworkNode_Name: str
@@ -44240,16 +44811,19 @@ class RoomairsettingsAirflownetworkType(TypedDict, total=False):
     RoomAirflowNetworkNode_Name_6: str
 
 class RoomairsettingsCrossventilationType(TypedDict, total=False):
+    """"dict for RoomairsettingsCrossventilation"""
     Zone_Name: str
     Gain_Distribution_Schedule_Name: str
     Airflow_Region_Used_for_Thermal_Comfort_Evaluation: str
 
 class RoomairsettingsOnenodedisplacementventilationType(TypedDict, total=False):
+    """"dict for RoomairsettingsOnenodedisplacementventilation"""
     Zone_Name: str
     Fraction_of_Convective_Internal_Loads_Added_to_Floor_Air: str
     Fraction_of_Infiltration_Internal_Loads_Added_to_Floor_Air: str
 
 class RoomairsettingsThreenodedisplacementventilationType(TypedDict, total=False):
+    """"dict for RoomairsettingsThreenodedisplacementventilation"""
     Zone_Name: str
     Gain_Distribution_Schedule_Name: str
     Number_of_Plumes_per_Occupant: str
@@ -44258,6 +44832,7 @@ class RoomairsettingsThreenodedisplacementventilationType(TypedDict, total=False
     Temperature_Difference_Threshold_for_Reporting: str
 
 class RoomairsettingsUnderfloorairdistributionexteriorType(TypedDict, total=False):
+    """"dict for RoomairsettingsUnderfloorairdistributionexterior"""
     Zone_Name: str
     Number_of_Diffusers_per_Zone: str
     Power_per_Plume: str
@@ -44275,6 +44850,7 @@ class RoomairsettingsUnderfloorairdistributionexteriorType(TypedDict, total=Fals
     Coefficient_E_in_formula_Kc__AGammaB__C__DGamma__EGamma2: str
 
 class RoomairsettingsUnderfloorairdistributioninteriorType(TypedDict, total=False):
+    """"dict for RoomairsettingsUnderfloorairdistributioninterior"""
     Zone_Name: str
     Number_of_Diffusers: str
     Power_per_Plume: str
@@ -44292,6 +44868,7 @@ class RoomairsettingsUnderfloorairdistributioninteriorType(TypedDict, total=Fals
     Coefficient_E: str
 
 class RunperiodType(TypedDict, total=False):
+    """"dict for Runperiod"""
     Name: str
     Begin_Month: str
     Begin_Day_of_Month: str
@@ -44309,16 +44886,19 @@ class RunperiodType(TypedDict, total=False):
     First_Hour_Interpolation_Starting_Values: str
 
 class RunperiodcontrolDaylightsavingtimeType(TypedDict, total=False):
+    """"dict for RunperiodcontrolDaylightsavingtime"""
     Start_Date: str
     End_Date: str
 
 class RunperiodcontrolSpecialdaysType(TypedDict, total=False):
+    """"dict for RunperiodcontrolSpecialdays"""
     Name: str
     Start_Date: str
     Duration: str
     Special_Day_Type: str
 
 class ScheduleCompactType(TypedDict, total=False):
+    """"dict for ScheduleCompact"""
     Name: str
     Schedule_Type_Limits_Name: str
     Field_1: str
@@ -54321,11 +54901,13 @@ class ScheduleCompactType(TypedDict, total=False):
     Field_9998: str
 
 class ScheduleConstantType(TypedDict, total=False):
+    """"dict for ScheduleConstant"""
     Name: str
     Schedule_Type_Limits_Name: str
     Hourly_Value: str
 
 class ScheduleDayHourlyType(TypedDict, total=False):
+    """"dict for ScheduleDayHourly"""
     Name: str
     Schedule_Type_Limits_Name: str
     Hour_1: str
@@ -54354,6 +54936,7 @@ class ScheduleDayHourlyType(TypedDict, total=False):
     Hour_24: str
 
 class ScheduleDayIntervalType(TypedDict, total=False):
+    """"dict for ScheduleDayInterval"""
     Name: str
     Schedule_Type_Limits_Name: str
     Interpolate_to_Timestep: str
@@ -54647,6 +55230,7 @@ class ScheduleDayIntervalType(TypedDict, total=False):
     Value_Until_Time_144: str
 
 class ScheduleDayListType(TypedDict, total=False):
+    """"dict for ScheduleDayList"""
     Name: str
     Schedule_Type_Limits_Name: str
     Interpolate_to_Timestep: str
@@ -56093,6 +56677,7 @@ class ScheduleDayListType(TypedDict, total=False):
     Value_1440: str
 
 class ScheduleFileType(TypedDict, total=False):
+    """"dict for ScheduleFile"""
     Name: str
     Schedule_Type_Limits_Name: str
     File_Name: str
@@ -56105,9 +56690,11 @@ class ScheduleFileType(TypedDict, total=False):
     Adjust_Schedule_for_Daylight_Savings: str
 
 class ScheduleFileShadingType(TypedDict, total=False):
+    """"dict for ScheduleFileShading"""
     File_Name: str
 
 class ScheduleWeekCompactType(TypedDict, total=False):
+    """"dict for ScheduleWeekCompact"""
     Name: str
     DayType_List_1: str
     ScheduleDay_Name_1: str
@@ -56121,6 +56708,7 @@ class ScheduleWeekCompactType(TypedDict, total=False):
     ScheduleDay_Name_5: str
 
 class ScheduleWeekDailyType(TypedDict, total=False):
+    """"dict for ScheduleWeekDaily"""
     Name: str
     Sunday_ScheduleDay_Name: str
     Monday_ScheduleDay_Name: str
@@ -56136,6 +56724,7 @@ class ScheduleWeekDailyType(TypedDict, total=False):
     CustomDay2_ScheduleDay_Name: str
 
 class ScheduleYearType(TypedDict, total=False):
+    """"dict for ScheduleYear"""
     Name: str
     Schedule_Type_Limits_Name: str
     ScheduleWeek_Name_1: str
@@ -56405,6 +56994,7 @@ class ScheduleYearType(TypedDict, total=False):
     End_Day_53: str
 
 class ScheduletypelimitsType(TypedDict, total=False):
+    """"dict for Scheduletypelimits"""
     Name: str
     Lower_Limit_Value: str
     Upper_Limit_Value: str
@@ -56412,6 +57002,7 @@ class ScheduletypelimitsType(TypedDict, total=False):
     Unit_Type: str
 
 class SetpointmanagerColdestType(TypedDict, total=False):
+    """"dict for SetpointmanagerColdest"""
     Name: str
     Control_Variable: str
     HVAC_Air_Loop_Name: str
@@ -56421,6 +57012,7 @@ class SetpointmanagerColdestType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerCondenserenteringresetType(TypedDict, total=False):
+    """"dict for SetpointmanagerCondenserenteringreset"""
     Name: str
     Control_Variable: str
     Default_Condenser_Entering_Water_Temperature_Schedule_Name: str
@@ -56433,6 +57025,7 @@ class SetpointmanagerCondenserenteringresetType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerCondenserenteringresetIdealType(TypedDict, total=False):
+    """"dict for SetpointmanagerCondenserenteringresetIdeal"""
     Name: str
     Control_Variable: str
     Minimum_Lift: str
@@ -56440,6 +57033,7 @@ class SetpointmanagerCondenserenteringresetIdealType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerFollowgroundtemperatureType(TypedDict, total=False):
+    """"dict for SetpointmanagerFollowgroundtemperature"""
     Name: str
     Control_Variable: str
     Reference_Ground_Temperature_Object_Type: str
@@ -56449,6 +57043,7 @@ class SetpointmanagerFollowgroundtemperatureType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerFollowoutdoorairtemperatureType(TypedDict, total=False):
+    """"dict for SetpointmanagerFollowoutdoorairtemperature"""
     Name: str
     Control_Variable: str
     Reference_Temperature_Type: str
@@ -56458,6 +57053,7 @@ class SetpointmanagerFollowoutdoorairtemperatureType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerFollowsystemnodetemperatureType(TypedDict, total=False):
+    """"dict for SetpointmanagerFollowsystemnodetemperature"""
     Name: str
     Control_Variable: str
     Reference_Node_Name: str
@@ -56468,6 +57064,7 @@ class SetpointmanagerFollowsystemnodetemperatureType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMixedairType(TypedDict, total=False):
+    """"dict for SetpointmanagerMixedair"""
     Name: str
     Control_Variable: str
     Reference_Setpoint_Node_Name: str
@@ -56479,6 +57076,7 @@ class SetpointmanagerMixedairType(TypedDict, total=False):
     Minimum_Temperature_at_Cooling_Coil_Outlet_Node: str
 
 class SetpointmanagerMultizoneCoolingAverageType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneCoolingAverage"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Temperature: str
@@ -56486,6 +57084,7 @@ class SetpointmanagerMultizoneCoolingAverageType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMultizoneHeatingAverageType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneHeatingAverage"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Temperature: str
@@ -56493,6 +57092,7 @@ class SetpointmanagerMultizoneHeatingAverageType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMultizoneHumidityMaximumType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneHumidityMaximum"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Humidity_Ratio: str
@@ -56500,6 +57100,7 @@ class SetpointmanagerMultizoneHumidityMaximumType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMultizoneHumidityMinimumType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneHumidityMinimum"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Humidity_Ratio: str
@@ -56507,6 +57108,7 @@ class SetpointmanagerMultizoneHumidityMinimumType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMultizoneMaximumhumidityAverageType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneMaximumhumidityAverage"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Humidity_Ratio: str
@@ -56514,6 +57116,7 @@ class SetpointmanagerMultizoneMaximumhumidityAverageType(TypedDict, total=False)
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerMultizoneMinimumhumidityAverageType(TypedDict, total=False):
+    """"dict for SetpointmanagerMultizoneMinimumhumidityAverage"""
     Name: str
     HVAC_Air_Loop_Name: str
     Minimum_Setpoint_Humidity_Ratio: str
@@ -56521,6 +57124,7 @@ class SetpointmanagerMultizoneMinimumhumidityAverageType(TypedDict, total=False)
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerOutdoorairpretreatType(TypedDict, total=False):
+    """"dict for SetpointmanagerOutdoorairpretreat"""
     Name: str
     Control_Variable: str
     Minimum_Setpoint_Temperature: str
@@ -56534,6 +57138,7 @@ class SetpointmanagerOutdoorairpretreatType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerOutdoorairresetType(TypedDict, total=False):
+    """"dict for SetpointmanagerOutdoorairreset"""
     Name: str
     Control_Variable: str
     Setpoint_at_Outdoor_Low_Temperature: str
@@ -56548,12 +57153,14 @@ class SetpointmanagerOutdoorairresetType(TypedDict, total=False):
     Outdoor_High_Temperature_2: str
 
 class SetpointmanagerReturnairbypassflowType(TypedDict, total=False):
+    """"dict for SetpointmanagerReturnairbypassflow"""
     Name: str
     Control_Variable: str
     HVAC_Air_Loop_Name: str
     Temperature_Setpoint_Schedule_Name: str
 
 class SetpointmanagerReturntemperatureChilledwaterType(TypedDict, total=False):
+    """"dict for SetpointmanagerReturntemperatureChilledwater"""
     Name: str
     Plant_Loop_Supply_Outlet_Node: str
     Plant_Loop_Supply_Inlet_Node: str
@@ -56564,6 +57171,7 @@ class SetpointmanagerReturntemperatureChilledwaterType(TypedDict, total=False):
     Return_Temperature_Setpoint_Schedule_Name: str
 
 class SetpointmanagerReturntemperatureHotwaterType(TypedDict, total=False):
+    """"dict for SetpointmanagerReturntemperatureHotwater"""
     Name: str
     Plant_Loop_Supply_Outlet_Node: str
     Plant_Loop_Supply_Inlet_Node: str
@@ -56574,12 +57182,14 @@ class SetpointmanagerReturntemperatureHotwaterType(TypedDict, total=False):
     Return_Temperature_Setpoint_Schedule_Name: str
 
 class SetpointmanagerScheduledType(TypedDict, total=False):
+    """"dict for SetpointmanagerScheduled"""
     Name: str
     Control_Variable: str
     Schedule_Name: str
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerScheduledDualsetpointType(TypedDict, total=False):
+    """"dict for SetpointmanagerScheduledDualsetpoint"""
     Name: str
     Control_Variable: str
     High_Setpoint_Schedule_Name: str
@@ -56587,6 +57197,7 @@ class SetpointmanagerScheduledDualsetpointType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSinglezoneCoolingType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneCooling"""
     Name: str
     Control_Variable: str
     Minimum_Supply_Air_Temperature: str
@@ -56597,6 +57208,7 @@ class SetpointmanagerSinglezoneCoolingType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSinglezoneHeatingType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneHeating"""
     Name: str
     Control_Variable: str
     Minimum_Supply_Air_Temperature: str
@@ -56607,16 +57219,19 @@ class SetpointmanagerSinglezoneHeatingType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSinglezoneHumidityMaximumType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneHumidityMaximum"""
     Name: str
     Setpoint_Node_or_NodeList_Name: str
     Control_Zone_Air_Node_Name: str
 
 class SetpointmanagerSinglezoneHumidityMinimumType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneHumidityMinimum"""
     Name: str
     Setpoint_Node_or_NodeList_Name: str
     Control_Zone_Air_Node_Name: str
 
 class SetpointmanagerSinglezoneOnestagecoolingType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneOnestagecooling"""
     Name: str
     Cooling_Stage_On_Supply_Air_Setpoint_Temperature: str
     Cooling_Stage_Off_Supply_Air_Setpoint_Temperature: str
@@ -56624,6 +57239,7 @@ class SetpointmanagerSinglezoneOnestagecoolingType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSinglezoneOnestageheatingType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneOnestageheating"""
     Name: str
     Heating_Stage_On_Supply_Air_Setpoint_Temperature: str
     Heating_Stage_Off_Supply_Air_Setpoint_Temperature: str
@@ -56631,6 +57247,7 @@ class SetpointmanagerSinglezoneOnestageheatingType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSinglezoneReheatType(TypedDict, total=False):
+    """"dict for SetpointmanagerSinglezoneReheat"""
     Name: str
     Control_Variable: str
     Minimum_Supply_Air_Temperature: str
@@ -56641,6 +57258,7 @@ class SetpointmanagerSinglezoneReheatType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSystemnoderesetHumidityType(TypedDict, total=False):
+    """"dict for SetpointmanagerSystemnoderesetHumidity"""
     Name: str
     Control_Variable: str
     Setpoint_at_Low_Reference_Humidity_Ratio: str
@@ -56651,6 +57269,7 @@ class SetpointmanagerSystemnoderesetHumidityType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerSystemnoderesetTemperatureType(TypedDict, total=False):
+    """"dict for SetpointmanagerSystemnoderesetTemperature"""
     Name: str
     Control_Variable: str
     Setpoint_at_Low_Reference_Temperature: str
@@ -56661,6 +57280,7 @@ class SetpointmanagerSystemnoderesetTemperatureType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerWarmestType(TypedDict, total=False):
+    """"dict for SetpointmanagerWarmest"""
     Name: str
     Control_Variable: str
     HVAC_Air_Loop_Name: str
@@ -56670,6 +57290,7 @@ class SetpointmanagerWarmestType(TypedDict, total=False):
     Setpoint_Node_or_NodeList_Name: str
 
 class SetpointmanagerWarmesttemperatureflowType(TypedDict, total=False):
+    """"dict for SetpointmanagerWarmesttemperatureflow"""
     Name: str
     Control_Variable: str
     HVAC_Air_Loop_Name: str
@@ -56680,6 +57301,7 @@ class SetpointmanagerWarmesttemperatureflowType(TypedDict, total=False):
     Minimum_Turndown_Ratio: str
 
 class ShadingBuildingType(TypedDict, total=False):
+    """"dict for ShadingBuilding"""
     Name: str
     Azimuth_Angle: str
     Tilt_Angle: str
@@ -56690,6 +57312,7 @@ class ShadingBuildingType(TypedDict, total=False):
     Height: str
 
 class ShadingBuildingDetailedType(TypedDict, total=False):
+    """"dict for ShadingBuildingDetailed"""
     Name: str
     Transmittance_Schedule_Name: str
     Number_of_Vertices: str
@@ -57055,6 +57678,7 @@ class ShadingBuildingDetailedType(TypedDict, total=False):
     Vertex_120_Zcoordinate: str
 
 class ShadingFinType(TypedDict, total=False):
+    """"dict for ShadingFin"""
     Name: str
     Window_or_Door_Name: str
     Left_Extension_from_WindowDoor: str
@@ -57069,6 +57693,7 @@ class ShadingFinType(TypedDict, total=False):
     Right_Depth: str
 
 class ShadingFinProjectionType(TypedDict, total=False):
+    """"dict for ShadingFinProjection"""
     Name: str
     Window_or_Door_Name: str
     Left_Extension_from_WindowDoor: str
@@ -57083,6 +57708,7 @@ class ShadingFinProjectionType(TypedDict, total=False):
     Right_Depth_as_Fraction_of_WindowDoor_Width: str
 
 class ShadingOverhangType(TypedDict, total=False):
+    """"dict for ShadingOverhang"""
     Name: str
     Window_or_Door_Name: str
     Height_above_Window_or_Door: str
@@ -57092,6 +57718,7 @@ class ShadingOverhangType(TypedDict, total=False):
     Depth: str
 
 class ShadingOverhangProjectionType(TypedDict, total=False):
+    """"dict for ShadingOverhangProjection"""
     Name: str
     Window_or_Door_Name: str
     Height_above_Window_or_Door: str
@@ -57101,6 +57728,7 @@ class ShadingOverhangProjectionType(TypedDict, total=False):
     Depth_as_Fraction_of_WindowDoor_Height: str
 
 class ShadingSiteType(TypedDict, total=False):
+    """"dict for ShadingSite"""
     Name: str
     Azimuth_Angle: str
     Tilt_Angle: str
@@ -57111,6 +57739,7 @@ class ShadingSiteType(TypedDict, total=False):
     Height: str
 
 class ShadingSiteDetailedType(TypedDict, total=False):
+    """"dict for ShadingSiteDetailed"""
     Name: str
     Transmittance_Schedule_Name: str
     Number_of_Vertices: str
@@ -57476,6 +58105,7 @@ class ShadingSiteDetailedType(TypedDict, total=False):
     Vertex_120_Zcoordinate: str
 
 class ShadingZoneDetailedType(TypedDict, total=False):
+    """"dict for ShadingZoneDetailed"""
     Name: str
     Base_Surface_Name: str
     Transmittance_Schedule_Name: str
@@ -57842,6 +58472,7 @@ class ShadingZoneDetailedType(TypedDict, total=False):
     Vertex_120_Zcoordinate: str
 
 class ShadingpropertyReflectanceType(TypedDict, total=False):
+    """"dict for ShadingpropertyReflectance"""
     Shading_Surface_Name: str
     Diffuse_Solar_Reflectance_of_Unglazed_Part_of_Shading_Surface: str
     Diffuse_Visible_Reflectance_of_Unglazed_Part_of_Shading_Surface: str
@@ -57849,6 +58480,7 @@ class ShadingpropertyReflectanceType(TypedDict, total=False):
     Glazing_Construction_Name: str
 
 class ShadowcalculationType(TypedDict, total=False):
+    """"dict for Shadowcalculation"""
     Shading_Calculation_Method: str
     Shading_Calculation_Update_Frequency_Method: str
     Shading_Calculation_Update_Frequency: str
@@ -57867,6 +58499,7 @@ class ShadowcalculationType(TypedDict, total=False):
     Shading_Zone_Group_6_ZoneList_Name: str
 
 class SimulationcontrolType(TypedDict, total=False):
+    """"dict for Simulationcontrol"""
     Do_Zone_Sizing_Calculation: str
     Do_System_Sizing_Calculation: str
     Do_Plant_Sizing_Calculation: str
@@ -57876,6 +58509,7 @@ class SimulationcontrolType(TypedDict, total=False):
     Maximum_Number_of_HVAC_Sizing_Simulation_Passes: str
 
 class SiteGrounddomainBasementType(TypedDict, total=False):
+    """"dict for SiteGrounddomainBasement"""
     Name: str
     Ground_Domain_Depth: str
     Aspect_Ratio: str
@@ -57902,6 +58536,7 @@ class SiteGrounddomainBasementType(TypedDict, total=False):
     Mesh_Density_Parameter: str
 
 class SiteGrounddomainSlabType(TypedDict, total=False):
+    """"dict for SiteGrounddomainSlab"""
     Name: str
     Ground_Domain_Depth: str
     Aspect_Ratio: str
@@ -57929,6 +58564,7 @@ class SiteGrounddomainSlabType(TypedDict, total=False):
     Mesh_Density_Parameter: str
 
 class SiteGroundreflectanceType(TypedDict, total=False):
+    """"dict for SiteGroundreflectance"""
     January_Ground_Reflectance: str
     February_Ground_Reflectance: str
     March_Ground_Reflectance: str
@@ -57943,10 +58579,12 @@ class SiteGroundreflectanceType(TypedDict, total=False):
     December_Ground_Reflectance: str
 
 class SiteGroundreflectanceSnowmodifierType(TypedDict, total=False):
+    """"dict for SiteGroundreflectanceSnowmodifier"""
     Ground_Reflected_Solar_Modifier: str
     Daylighting_Ground_Reflected_Solar_Modifier: str
 
 class SiteGroundtemperatureBuildingsurfaceType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureBuildingsurface"""
     January_Ground_Temperature: str
     February_Ground_Temperature: str
     March_Ground_Temperature: str
@@ -57961,6 +58599,7 @@ class SiteGroundtemperatureBuildingsurfaceType(TypedDict, total=False):
     December_Ground_Temperature: str
 
 class SiteGroundtemperatureDeepType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureDeep"""
     January_Deep_Ground_Temperature: str
     February_Deep_Ground_Temperature: str
     March_Deep_Ground_Temperature: str
@@ -57975,6 +58614,7 @@ class SiteGroundtemperatureDeepType(TypedDict, total=False):
     December_Deep_Ground_Temperature: str
 
 class SiteGroundtemperatureFcfactormethodType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureFcfactormethod"""
     January_Ground_Temperature: str
     February_Ground_Temperature: str
     March_Ground_Temperature: str
@@ -57989,6 +58629,7 @@ class SiteGroundtemperatureFcfactormethodType(TypedDict, total=False):
     December_Ground_Temperature: str
 
 class SiteGroundtemperatureShallowType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureShallow"""
     January_Surface_Ground_Temperature: str
     February_Surface_Ground_Temperature: str
     March_Surface_Ground_Temperature: str
@@ -58003,6 +58644,7 @@ class SiteGroundtemperatureShallowType(TypedDict, total=False):
     December_Surface_Ground_Temperature: str
 
 class SiteGroundtemperatureUndisturbedFinitedifferenceType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureUndisturbedFinitedifference"""
     Name: str
     Soil_Thermal_Conductivity: str
     Soil_Density: str
@@ -58012,6 +58654,7 @@ class SiteGroundtemperatureUndisturbedFinitedifferenceType(TypedDict, total=Fals
     Evapotranspiration_Ground_Cover_Parameter: str
 
 class SiteGroundtemperatureUndisturbedKusudaachenbachType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureUndisturbedKusudaachenbach"""
     Name: str
     Soil_Thermal_Conductivity: str
     Soil_Density: str
@@ -58021,6 +58664,7 @@ class SiteGroundtemperatureUndisturbedKusudaachenbachType(TypedDict, total=False
     Phase_Shift_of_Minimum_Surface_Temperature: str
 
 class SiteGroundtemperatureUndisturbedXingType(TypedDict, total=False):
+    """"dict for SiteGroundtemperatureUndisturbedXing"""
     Name: str
     Soil_Thermal_Conductivity: str
     Soil_Density: str
@@ -58032,11 +58676,13 @@ class SiteGroundtemperatureUndisturbedXingType(TypedDict, total=False):
     Phase_Shift_of_Temperature_Amplitude_2: str
 
 class SiteHeightvariationType(TypedDict, total=False):
+    """"dict for SiteHeightvariation"""
     Wind_Speed_Profile_Exponent: str
     Wind_Speed_Profile_Boundary_Layer_Thickness: str
     Air_Temperature_Gradient_Coefficient: str
 
 class SiteLocationType(TypedDict, total=False):
+    """"dict for SiteLocation"""
     Name: str
     Latitude: str
     Longitude: str
@@ -58044,18 +58690,21 @@ class SiteLocationType(TypedDict, total=False):
     Elevation: str
 
 class SitePrecipitationType(TypedDict, total=False):
+    """"dict for SitePrecipitation"""
     Precipitation_Model_Type: str
     Design_Level_for_Total_Annual_Precipitation: str
     Precipitation_Rates_Schedule_Name: str
     Average_Total_Annual_Precipitation: str
 
 class SiteSolarandvisiblespectrumType(TypedDict, total=False):
+    """"dict for SiteSolarandvisiblespectrum"""
     Name: str
     Spectrum_Data_Method: str
     Solar_Spectrum_Data_Object_Name: str
     Visible_Spectrum_Data_Object_Name: str
 
 class SiteSpectrumdataType(TypedDict, total=False):
+    """"dict for SiteSpectrumdata"""
     Name: str
     Spectrum_Data_Type: str
     Wavelength: str
@@ -58274,29 +58923,34 @@ class SiteSpectrumdataType(TypedDict, total=False):
     N214: str
 
 class SiteVariablelocationType(TypedDict, total=False):
+    """"dict for SiteVariablelocation"""
     Name: str
     Building_Location_Latitude_Schedule: str
     Building_Location_Longitude_Schedule: str
     Building_Location_Orientation_Schedule: str
 
 class SiteWatermainstemperatureType(TypedDict, total=False):
+    """"dict for SiteWatermainstemperature"""
     Calculation_Method: str
     Temperature_Schedule_Name: str
     Annual_Average_Outdoor_Air_Temperature: str
     Maximum_Difference_In_Monthly_Average_Outdoor_Air_Temperatures: str
 
 class SiteWeatherstationType(TypedDict, total=False):
+    """"dict for SiteWeatherstation"""
     Wind_Sensor_Height_Above_Ground: str
     Wind_Speed_Profile_Exponent: str
     Wind_Speed_Profile_Boundary_Layer_Thickness: str
     Air_Temperature_Sensor_Height_Above_Ground: str
 
 class SizingParametersType(TypedDict, total=False):
+    """"dict for SizingParameters"""
     Heating_Sizing_Factor: str
     Cooling_Sizing_Factor: str
     Timesteps_in_Averaging_Window: str
 
 class SizingPlantType(TypedDict, total=False):
+    """"dict for SizingPlant"""
     Plant_or_Condenser_Loop_Name: str
     Loop_Type: str
     Design_Loop_Exit_Temperature: str
@@ -58306,6 +58960,7 @@ class SizingPlantType(TypedDict, total=False):
     Coincident_Sizing_Factor_Mode: str
 
 class SizingSystemType(TypedDict, total=False):
+    """"dict for SizingSystem"""
     AirLoop_Name: str
     Type_of_Load_to_Size_On: str
     Design_Outdoor_Air_Flow_Rate: str
@@ -58346,6 +59001,7 @@ class SizingSystemType(TypedDict, total=False):
     Occupant_Diversity: str
 
 class SizingZoneType(TypedDict, total=False):
+    """"dict for SizingZone"""
     Zone_or_ZoneList_Name: str
     Zone_Cooling_Design_Supply_Air_Temperature_Input_Method: str
     Zone_Cooling_Design_Supply_Air_Temperature: str
@@ -58384,6 +59040,7 @@ class SizingZoneType(TypedDict, total=False):
     Zone_Humidistat_Humidification_Set_Point_Schedule_Name: str
 
 class SizingperiodDesigndayType(TypedDict, total=False):
+    """"dict for SizingperiodDesignday"""
     Name: str
     Month: str
     Day_of_Month: str
@@ -58414,6 +59071,7 @@ class SizingperiodDesigndayType(TypedDict, total=False):
     Begin_Environment_Reset_Mode: str
 
 class SizingperiodWeatherfileconditiontypeType(TypedDict, total=False):
+    """"dict for SizingperiodWeatherfileconditiontype"""
     Name: str
     Period_Selection: str
     Day_of_Week_for_Start_Day: str
@@ -58421,6 +59079,7 @@ class SizingperiodWeatherfileconditiontypeType(TypedDict, total=False):
     Use_Weather_File_Rain_and_Snow_Indicators: str
 
 class SizingperiodWeatherfiledaysType(TypedDict, total=False):
+    """"dict for SizingperiodWeatherfiledays"""
     Name: str
     Begin_Month: str
     Begin_Day_of_Month: str
@@ -58431,6 +59090,7 @@ class SizingperiodWeatherfiledaysType(TypedDict, total=False):
     Use_Weather_File_Rain_and_Snow_Indicators: str
 
 class SolarcollectorFlatplatePhotovoltaicthermalType(TypedDict, total=False):
+    """"dict for SolarcollectorFlatplatePhotovoltaicthermal"""
     Name: str
     Surface_Name: str
     PhotovoltaicThermal_Model_Performance_Name: str
@@ -58443,6 +59103,7 @@ class SolarcollectorFlatplatePhotovoltaicthermalType(TypedDict, total=False):
     Design_Flow_Rate: str
 
 class SolarcollectorFlatplateWaterType(TypedDict, total=False):
+    """"dict for SolarcollectorFlatplateWater"""
     Name: str
     SolarCollectorPerformance_Name: str
     Surface_Name: str
@@ -58451,6 +59112,7 @@ class SolarcollectorFlatplateWaterType(TypedDict, total=False):
     Maximum_Flow_Rate: str
 
 class SolarcollectorIntegralcollectorstorageType(TypedDict, total=False):
+    """"dict for SolarcollectorIntegralcollectorstorage"""
     Name: str
     IntegralCollectorStorageParameters_Name: str
     Surface_Name: str
@@ -58461,6 +59123,7 @@ class SolarcollectorIntegralcollectorstorageType(TypedDict, total=False):
     Maximum_Flow_Rate: str
 
 class SolarcollectorUnglazedtranspiredType(TypedDict, total=False):
+    """"dict for SolarcollectorUnglazedtranspired"""
     Name: str
     Boundary_Conditions_Model_Name: str
     Availability_Schedule_Name: str
@@ -58495,6 +59158,7 @@ class SolarcollectorUnglazedtranspiredType(TypedDict, total=False):
     Surface_10_Name: str
 
 class SolarcollectorUnglazedtranspiredMultisystemType(TypedDict, total=False):
+    """"dict for SolarcollectorUnglazedtranspiredMultisystem"""
     Solar_Collector_Name: str
     Outdoor_Air_System_1_Collector_Inlet_Node: str
     Outdoor_Air_System_1_Collector_Outlet_Node: str
@@ -58518,6 +59182,7 @@ class SolarcollectorUnglazedtranspiredMultisystemType(TypedDict, total=False):
     Outdoor_Air_System_5_Zone_Node: str
 
 class SolarcollectorperformanceFlatplateType(TypedDict, total=False):
+    """"dict for SolarcollectorperformanceFlatplate"""
     Name: str
     Gross_Area: str
     Test_Fluid: str
@@ -58530,6 +59195,7 @@ class SolarcollectorperformanceFlatplateType(TypedDict, total=False):
     Coefficient_3_of_Incident_Angle_Modifier: str
 
 class SolarcollectorperformanceIntegralcollectorstorageType(TypedDict, total=False):
+    """"dict for SolarcollectorperformanceIntegralcollectorstorage"""
     Name: str
     ICS_Collector_Type: str
     Gross_Area: str
@@ -58551,6 +59217,7 @@ class SolarcollectorperformanceIntegralcollectorstorageType(TypedDict, total=Fal
     Emissivity_of_Absorber_Plate: str
 
 class SolarcollectorperformancePhotovoltaicthermalBipvtType(TypedDict, total=False):
+    """"dict for SolarcollectorperformancePhotovoltaicthermalBipvt"""
     Name: str
     Boundary_Conditions_Model_Name: str
     Availability_Schedule_Name: str
@@ -58569,6 +59236,7 @@ class SolarcollectorperformancePhotovoltaicthermalBipvtType(TypedDict, total=Fal
     Glass_Extinction_Coefficient: str
 
 class SolarcollectorperformancePhotovoltaicthermalSimpleType(TypedDict, total=False):
+    """"dict for SolarcollectorperformancePhotovoltaicthermalSimple"""
     Name: str
     Fraction_of_Surface_Area_with_Active_Thermal_Collector: str
     Thermal_Conversion_Efficiency_Input_Mode_Type: str
@@ -58577,6 +59245,7 @@ class SolarcollectorperformancePhotovoltaicthermalSimpleType(TypedDict, total=Fa
     Front_Surface_Emittance: str
 
 class SpaceType(TypedDict, total=False):
+    """"dict for Space"""
     Name: str
     Zone_Name: str
     Ceiling_Height: str
@@ -58588,6 +59257,7 @@ class SpaceType(TypedDict, total=False):
     Tag_3: str
 
 class SpacehvacEquipmentconnectionsType(TypedDict, total=False):
+    """"dict for SpacehvacEquipmentconnections"""
     Space_Name: str
     Space_Air_Inlet_Node_or_NodeList_Name: str
     Space_Air_Exhaust_Node_or_NodeList_Name: str
@@ -58597,6 +59267,7 @@ class SpacehvacEquipmentconnectionsType(TypedDict, total=False):
     Space_Return_Air_Node_1_Flow_Rate_Basis_Node_or_NodeList_Name: str
 
 class SpacehvacZoneequipmentmixerType(TypedDict, total=False):
+    """"dict for SpacehvacZoneequipmentmixer"""
     Name: str
     Zone_Name: str
     Zone_Equipment_Inlet_Node_Name: str
@@ -58612,6 +59283,7 @@ class SpacehvacZoneequipmentmixerType(TypedDict, total=False):
     Space_3_Node_Name: str
 
 class SpacehvacZoneequipmentsplitterType(TypedDict, total=False):
+    """"dict for SpacehvacZoneequipmentsplitter"""
     Name: str
     Zone_Name: str
     Zone_Equipment_Object_Type: str
@@ -58631,6 +59303,7 @@ class SpacehvacZoneequipmentsplitterType(TypedDict, total=False):
     Space_3_Supply_Node_Name: str
 
 class SpacelistType(TypedDict, total=False):
+    """"dict for Spacelist"""
     Name: str
     Space_1_Name: str
     Space_2_Name: str
@@ -58684,6 +59357,7 @@ class SpacelistType(TypedDict, total=False):
     Space_50_Name: str
 
 class SteamequipmentType(TypedDict, total=False):
+    """"dict for Steamequipment"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -58697,6 +59371,7 @@ class SteamequipmentType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class SurfacecontaminantsourceandsinkGenericBoundarylayerdiffusionType(TypedDict, total=False):
+    """"dict for SurfacecontaminantsourceandsinkGenericBoundarylayerdiffusion"""
     Name: str
     Surface_Name: str
     Mass_Transfer_Coefficient: str
@@ -58704,12 +59379,14 @@ class SurfacecontaminantsourceandsinkGenericBoundarylayerdiffusionType(TypedDict
     Henry_Adsorption_Constant_or_Partition_Coefficient: str
 
 class SurfacecontaminantsourceandsinkGenericDepositionvelocitysinkType(TypedDict, total=False):
+    """"dict for SurfacecontaminantsourceandsinkGenericDepositionvelocitysink"""
     Name: str
     Surface_Name: str
     Deposition_Velocity: str
     Schedule_Name: str
 
 class SurfacecontaminantsourceandsinkGenericPressuredrivenType(TypedDict, total=False):
+    """"dict for SurfacecontaminantsourceandsinkGenericPressuredriven"""
     Name: str
     Surface_Name: str
     Design_Generation_Rate_Coefficient: str
@@ -58717,15 +59394,18 @@ class SurfacecontaminantsourceandsinkGenericPressuredrivenType(TypedDict, total=
     Generation_Exponent: str
 
 class SurfacecontrolMovableinsulationType(TypedDict, total=False):
+    """"dict for SurfacecontrolMovableinsulation"""
     Insulation_Type: str
     Surface_Name: str
     Material_Name: str
     Schedule_Name: str
 
 class SurfaceconvectionalgorithmInsideType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmInside"""
     Algorithm: str
 
 class SurfaceconvectionalgorithmInsideAdaptivemodelselectionsType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmInsideAdaptivemodelselections"""
     Name: str
     Simple_Buoyancy_Vertical_Wall_Equation_Source: str
     Simple_Buoyancy_Vertical_Wall_User_Curve_Name: str
@@ -58819,6 +59499,7 @@ class SurfaceconvectionalgorithmInsideAdaptivemodelselectionsType(TypedDict, tot
     Mixed_Regime_Window_Equation_User_Curve_Name: str
 
 class SurfaceconvectionalgorithmInsideUsercurveType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmInsideUsercurve"""
     Name: str
     Reference_Temperature_for_Convection_Heat_Transfer: str
     Hc_Function_of_Temperature_Difference_Curve_Name: str
@@ -58827,9 +59508,11 @@ class SurfaceconvectionalgorithmInsideUsercurveType(TypedDict, total=False):
     Hc_Function_of_Air_System_Volume_Flow_Rate_Divided_by_Zone_Perimeter_Length_Curve_Name: str
 
 class SurfaceconvectionalgorithmOutsideType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmOutside"""
     Algorithm: str
 
 class SurfaceconvectionalgorithmOutsideAdaptivemodelselectionsType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmOutsideAdaptivemodelselections"""
     Name: str
     Wind_Convection_Windward_Vertical_Wall_Equation_Source: str
     Wind_Convection_Windward_Equation_Vertical_Wall_User_Curve_Name: str
@@ -58845,6 +59528,7 @@ class SurfaceconvectionalgorithmOutsideAdaptivemodelselectionsType(TypedDict, to
     Natural_Convection_Unstable_Horizontal_Equation_User_Curve_Name: str
 
 class SurfaceconvectionalgorithmOutsideUsercurveType(TypedDict, total=False):
+    """"dict for SurfaceconvectionalgorithmOutsideUsercurve"""
     Name: str
     Wind_Speed_Type_for_Curve: str
     Hf_Function_of_Wind_Speed_Curve_Name: str
@@ -58852,6 +59536,7 @@ class SurfaceconvectionalgorithmOutsideUsercurveType(TypedDict, total=False):
     Hn_Function_of_Temperature_Difference_Divided_by_Height_Curve_Name: str
 
 class SurfacepropertiesVaporcoefficientsType(TypedDict, total=False):
+    """"dict for SurfacepropertiesVaporcoefficients"""
     Surface_Name: str
     Constant_External_Vapor_Transfer_Coefficient: str
     External_Vapor_Coefficient_Value: str
@@ -58859,6 +59544,7 @@ class SurfacepropertiesVaporcoefficientsType(TypedDict, total=False):
     Internal_Vapor_Coefficient_Value: str
 
 class SurfacepropertyConvectioncoefficientsType(TypedDict, total=False):
+    """"dict for SurfacepropertyConvectioncoefficients"""
     Surface_Name: str
     Convection_Coefficient_1_Location: str
     Convection_Coefficient_1_Type: str
@@ -58872,6 +59558,7 @@ class SurfacepropertyConvectioncoefficientsType(TypedDict, total=False):
     Convection_Coefficient_2_User_Curve_Name: str
 
 class SurfacepropertyConvectioncoefficientsMultiplesurfaceType(TypedDict, total=False):
+    """"dict for SurfacepropertyConvectioncoefficientsMultiplesurface"""
     Surface_Type: str
     Convection_Coefficient_1_Location: str
     Convection_Coefficient_1_Type: str
@@ -58885,6 +59572,7 @@ class SurfacepropertyConvectioncoefficientsMultiplesurfaceType(TypedDict, total=
     Convection_Coefficient_2_User_Curve_Name: str
 
 class SurfacepropertyExposedfoundationperimeterType(TypedDict, total=False):
+    """"dict for SurfacepropertyExposedfoundationperimeter"""
     Surface_Name: str
     Exposed_Perimeter_Calculation_Method: str
     Total_Exposed_Perimeter: str
@@ -58901,6 +59589,7 @@ class SurfacepropertyExposedfoundationperimeterType(TypedDict, total=False):
     Surface_Segment_10_Exposed: str
 
 class SurfacepropertyExteriornaturalventedcavityType(TypedDict, total=False):
+    """"dict for SurfacepropertyExteriornaturalventedcavity"""
     Name: str
     Boundary_Conditions_Model_Name: str
     Area_Fraction_of_Openings: str
@@ -58924,6 +59613,7 @@ class SurfacepropertyExteriornaturalventedcavityType(TypedDict, total=False):
     Surface_10_Name: str
 
 class SurfacepropertyGroundsurfacesType(TypedDict, total=False):
+    """"dict for SurfacepropertyGroundsurfaces"""
     Name: str
     Ground_Surface_1_Name: str
     Ground_Surface_1_View_Factor: str
@@ -58947,25 +59637,30 @@ class SurfacepropertyGroundsurfacesType(TypedDict, total=False):
     Ground_Surface_5_Reflectance_Schedule_Name: str
 
 class SurfacepropertyHeatbalancesourcetermType(TypedDict, total=False):
+    """"dict for SurfacepropertyHeatbalancesourceterm"""
     Surface_Name: str
     Inside_Face_Heat_Source_Term_Schedule_Name: str
     Outside_Face_Heat_Source_Term_Schedule_Name: str
 
 class SurfacepropertyHeattransferalgorithmType(TypedDict, total=False):
+    """"dict for SurfacepropertyHeattransferalgorithm"""
     Surface_Name: str
     Algorithm: str
 
 class SurfacepropertyHeattransferalgorithmConstructionType(TypedDict, total=False):
+    """"dict for SurfacepropertyHeattransferalgorithmConstruction"""
     Name: str
     Algorithm: str
     Construction_Name: str
 
 class SurfacepropertyHeattransferalgorithmMultiplesurfaceType(TypedDict, total=False):
+    """"dict for SurfacepropertyHeattransferalgorithmMultiplesurface"""
     Name: str
     Surface_Type: str
     Algorithm: str
 
 class SurfacepropertyHeattransferalgorithmSurfacelistType(TypedDict, total=False):
+    """"dict for SurfacepropertyHeattransferalgorithmSurfacelist"""
     Name: str
     Algorithm: str
     Surface_Name_1: str
@@ -58976,11 +59671,13 @@ class SurfacepropertyHeattransferalgorithmSurfacelistType(TypedDict, total=False
     Surface_Name_6: str
 
 class SurfacepropertyIncidentsolarmultiplierType(TypedDict, total=False):
+    """"dict for SurfacepropertyIncidentsolarmultiplier"""
     Surface_Name: str
     Incident_Solar_Multiplier: str
     Incident_Solar_Multiplier_Schedule_Name: str
 
 class SurfacepropertyLocalenvironmentType(TypedDict, total=False):
+    """"dict for SurfacepropertyLocalenvironment"""
     Name: str
     Exterior_Surface_Name: str
     Sunlit_Fraction_Schedule_Name: str
@@ -58989,6 +59686,7 @@ class SurfacepropertyLocalenvironmentType(TypedDict, total=False):
     Ground_Surfaces_Object_Name: str
 
 class SurfacepropertyOthersidecoefficientsType(TypedDict, total=False):
+    """"dict for SurfacepropertyOthersidecoefficients"""
     Name: str
     Combined_ConvectiveRadiative_Film_Coefficient: str
     Constant_Temperature: str
@@ -59005,16 +59703,19 @@ class SurfacepropertyOthersidecoefficientsType(TypedDict, total=False):
     Maximum_Other_Side_Temperature_Limit: str
 
 class SurfacepropertyOthersideconditionsmodelType(TypedDict, total=False):
+    """"dict for SurfacepropertyOthersideconditionsmodel"""
     Name: str
     Type_of_Modeling: str
 
 class SurfacepropertySolarincidentinsideType(TypedDict, total=False):
+    """"dict for SurfacepropertySolarincidentinside"""
     Name: str
     Surface_Name: str
     Construction_Name: str
     Inside_Surface_Incident_Sun_Solar_Radiation_Schedule_Name: str
 
 class SurfacepropertySurroundingsurfacesType(TypedDict, total=False):
+    """"dict for SurfacepropertySurroundingsurfaces"""
     Name: str
     Sky_View_Factor: str
     Sky_Temperature_Schedule_Name: str
@@ -59052,12 +59753,14 @@ class SurfacepropertySurroundingsurfacesType(TypedDict, total=False):
     Surrounding_Surface_10_Temperature_Schedule_Name: str
 
 class SurfacepropertyUnderwaterType(TypedDict, total=False):
+    """"dict for SurfacepropertyUnderwater"""
     Name: str
     Distance_from_Surface_Centroid_to_Leading_Edge_of_Boundary_Layer: str
     Free_Stream_Water_Temperature_Schedule: str
     Free_Stream_Water_Velocity_Schedule: str
 
 class SwimmingpoolIndoorType(TypedDict, total=False):
+    """"dict for SwimmingpoolIndoor"""
     Name: str
     Surface_Name: str
     Average_Depth: str
@@ -59078,6 +59781,7 @@ class SwimmingpoolIndoorType(TypedDict, total=False):
     People_Heat_Gain_Schedule: str
 
 class TableIndependentvariableType(TypedDict, total=False):
+    """"dict for TableIndependentvariable"""
     Name: str
     Interpolation_Method: str
     Extrapolation_Method: str
@@ -59105,6 +59809,7 @@ class TableIndependentvariableType(TypedDict, total=False):
     Value_15: str
 
 class TableIndependentvariablelistType(TypedDict, total=False):
+    """"dict for TableIndependentvariablelist"""
     Name: str
     Independent_Variable_1_Name: str
     Independent_Variable_2_Name: str
@@ -59114,6 +59819,7 @@ class TableIndependentvariablelistType(TypedDict, total=False):
     Independent_Variable_6_Name: str
 
 class TableLookupType(TypedDict, total=False):
+    """"dict for TableLookup"""
     Name: str
     Independent_Variable_List_Name: str
     Normalization_Method: str
@@ -60641,6 +61347,7 @@ class TableLookupType(TypedDict, total=False):
     Output_Value_1515: str
 
 class TemperingvalveType(TypedDict, total=False):
+    """"dict for Temperingvalve"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -60649,6 +61356,7 @@ class TemperingvalveType(TypedDict, total=False):
     Pump_Outlet_Node_Name: str
 
 class ThermalstorageChilledwaterMixedType(TypedDict, total=False):
+    """"dict for ThermalstorageChilledwaterMixed"""
     Name: str
     Tank_Volume: str
     Setpoint_Temperature_Schedule_Name: str
@@ -60673,6 +61381,7 @@ class ThermalstorageChilledwaterMixedType(TypedDict, total=False):
     Tank_Recovery_Time: str
 
 class ThermalstorageChilledwaterStratifiedType(TypedDict, total=False):
+    """"dict for ThermalstorageChilledwaterStratified"""
     Name: str
     Tank_Volume: str
     Tank_Height: str
@@ -60718,6 +61427,7 @@ class ThermalstorageChilledwaterStratifiedType(TypedDict, total=False):
     Node_10_Additional_Loss_Coefficient: str
 
 class ThermalstorageIceDetailedType(TypedDict, total=False):
+    """"dict for ThermalstorageIceDetailed"""
     Name: str
     Availability_Schedule_Name: str
     Capacity: str
@@ -60735,6 +61445,7 @@ class ThermalstorageIceDetailedType(TypedDict, total=False):
     Thaw_Process_Indicator: str
 
 class ThermalstorageIceSimpleType(TypedDict, total=False):
+    """"dict for ThermalstorageIceSimple"""
     Name: str
     Ice_Storage_Type: str
     Capacity: str
@@ -60742,43 +61453,53 @@ class ThermalstorageIceSimpleType(TypedDict, total=False):
     Outlet_Node_Name: str
 
 class ThermostatsetpointDualsetpointType(TypedDict, total=False):
+    """"dict for ThermostatsetpointDualsetpoint"""
     Name: str
     Heating_Setpoint_Temperature_Schedule_Name: str
     Cooling_Setpoint_Temperature_Schedule_Name: str
 
 class ThermostatsetpointSinglecoolingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointSinglecooling"""
     Name: str
     Setpoint_Temperature_Schedule_Name: str
 
 class ThermostatsetpointSingleheatingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointSingleheating"""
     Name: str
     Setpoint_Temperature_Schedule_Name: str
 
 class ThermostatsetpointSingleheatingorcoolingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointSingleheatingorcooling"""
     Name: str
     Setpoint_Temperature_Schedule_Name: str
 
 class ThermostatsetpointThermalcomfortFangerDualsetpointType(TypedDict, total=False):
+    """"dict for ThermostatsetpointThermalcomfortFangerDualsetpoint"""
     Name: str
     Fanger_Thermal_Comfort_Heating_Schedule_Name: str
     Fanger_Thermal_Comfort_Cooling_Schedule_Name: str
 
 class ThermostatsetpointThermalcomfortFangerSinglecoolingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointThermalcomfortFangerSinglecooling"""
     Name: str
     Fanger_Thermal_Comfort_Schedule_Name: str
 
 class ThermostatsetpointThermalcomfortFangerSingleheatingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointThermalcomfortFangerSingleheating"""
     Name: str
     Fanger_Thermal_Comfort_Schedule_Name: str
 
 class ThermostatsetpointThermalcomfortFangerSingleheatingorcoolingType(TypedDict, total=False):
+    """"dict for ThermostatsetpointThermalcomfortFangerSingleheatingorcooling"""
     Name: str
     Fanger_Thermal_Comfort_Schedule_Name: str
 
 class TimestepType(TypedDict, total=False):
+    """"dict for Timestep"""
     Number_of_Timesteps_per_Hour: str
 
 class UnitarysystemperformanceMultispeedType(TypedDict, total=False):
+    """"dict for UnitarysystemperformanceMultispeed"""
     Name: str
     Number_of_Speeds_for_Heating: str
     Number_of_Speeds_for_Cooling: str
@@ -60806,6 +61527,7 @@ class UnitarysystemperformanceMultispeedType(TypedDict, total=False):
     Cooling_Speed_10_Supply_Air_Flow_Ratio: str
 
 class UtilitycostChargeBlockType(TypedDict, total=False):
+    """"dict for UtilitycostChargeBlock"""
     Utility_Cost_Charge_Block_Name: str
     Tariff_Name: str
     Source_Variable: str
@@ -60845,6 +61567,7 @@ class UtilitycostChargeBlockType(TypedDict, total=False):
     Block_15_Cost_per_Unit_Value_or_Variable_Name: str
 
 class UtilitycostChargeSimpleType(TypedDict, total=False):
+    """"dict for UtilitycostChargeSimple"""
     Utility_Cost_Charge_Simple_Name: str
     Tariff_Name: str
     Source_Variable: str
@@ -60853,6 +61576,7 @@ class UtilitycostChargeSimpleType(TypedDict, total=False):
     Cost_per_Unit_Value_or_Variable_Name: str
 
 class UtilitycostComputationType(TypedDict, total=False):
+    """"dict for UtilitycostComputation"""
     Name: str
     Tariff_Name: str
     Compute_Step_1: str
@@ -60887,6 +61611,7 @@ class UtilitycostComputationType(TypedDict, total=False):
     Compute_Step_30: str
 
 class UtilitycostQualifyType(TypedDict, total=False):
+    """"dict for UtilitycostQualify"""
     Utility_Cost_Qualify_Name: str
     Tariff_Name: str
     Variable_Name: str
@@ -60897,6 +61622,7 @@ class UtilitycostQualifyType(TypedDict, total=False):
     Number_of_Months: str
 
 class UtilitycostRatchetType(TypedDict, total=False):
+    """"dict for UtilitycostRatchet"""
     Name: str
     Tariff_Name: str
     Baseline_Source_Variable: str
@@ -60907,6 +61633,7 @@ class UtilitycostRatchetType(TypedDict, total=False):
     Offset_Value_or_Variable_Name: str
 
 class UtilitycostTariffType(TypedDict, total=False):
+    """"dict for UtilitycostTariff"""
     Name: str
     Output_Meter_Name: str
     Conversion_Factor_Choice: str
@@ -60924,6 +61651,7 @@ class UtilitycostTariffType(TypedDict, total=False):
     Buy_Or_Sell: str
 
 class UtilitycostVariableType(TypedDict, total=False):
+    """"dict for UtilitycostVariable"""
     Name: str
     Tariff_Name: str
     Variable_Type: str
@@ -60941,9 +61669,11 @@ class UtilitycostVariableType(TypedDict, total=False):
     December_Value: str
 
 class VersionType(TypedDict, total=False):
+    """"dict for Version"""
     Version_Identifier: str
 
 class WallAdiabaticType(TypedDict, total=False):
+    """"dict for WallAdiabatic"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -60957,6 +61687,7 @@ class WallAdiabaticType(TypedDict, total=False):
     Height: str
 
 class WallDetailedType(TypedDict, total=False):
+    """"dict for WallDetailed"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -60999,6 +61730,7 @@ class WallDetailedType(TypedDict, total=False):
     Vertex_10_Zcoordinate: str
 
 class WallExteriorType(TypedDict, total=False):
+    """"dict for WallExterior"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -61012,6 +61744,7 @@ class WallExteriorType(TypedDict, total=False):
     Height: str
 
 class WallInterzoneType(TypedDict, total=False):
+    """"dict for WallInterzone"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -61026,6 +61759,7 @@ class WallInterzoneType(TypedDict, total=False):
     Height: str
 
 class WallUndergroundType(TypedDict, total=False):
+    """"dict for WallUnderground"""
     Name: str
     Construction_Name: str
     Zone_Name: str
@@ -61039,6 +61773,7 @@ class WallUndergroundType(TypedDict, total=False):
     Height: str
 
 class WaterheaterHeatpumpPumpedcondenserType(TypedDict, total=False):
+    """"dict for WaterheaterHeatpumpPumpedcondenser"""
     Name: str
     Availability_Schedule_Name: str
     Compressor_Setpoint_Temperature_Schedule_Name: str
@@ -61080,6 +61815,7 @@ class WaterheaterHeatpumpPumpedcondenserType(TypedDict, total=False):
     Control_Sensor_2_Height_In_Stratified_Tank: str
 
 class WaterheaterHeatpumpWrappedcondenserType(TypedDict, total=False):
+    """"dict for WaterheaterHeatpumpWrappedcondenser"""
     Name: str
     Availability_Schedule_Name: str
     Compressor_Setpoint_Temperature_Schedule_Name: str
@@ -61120,6 +61856,7 @@ class WaterheaterHeatpumpWrappedcondenserType(TypedDict, total=False):
     Control_Sensor_2_Height_In_Stratified_Tank: str
 
 class WaterheaterMixedType(TypedDict, total=False):
+    """"dict for WaterheaterMixed"""
     Name: str
     Tank_Volume: str
     Setpoint_Temperature_Schedule_Name: str
@@ -61164,6 +61901,7 @@ class WaterheaterMixedType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class WaterheaterSizingType(TypedDict, total=False):
+    """"dict for WaterheaterSizing"""
     WaterHeater_Name: str
     Design_Mode: str
     Time_Storage_Can_Meet_Peak_Draw: str
@@ -61182,6 +61920,7 @@ class WaterheaterSizingType(TypedDict, total=False):
     Height_Aspect_Ratio: str
 
 class WaterheaterStratifiedType(TypedDict, total=False):
+    """"dict for WaterheaterStratified"""
     Name: str
     EndUse_Subcategory: str
     Tank_Volume: str
@@ -61251,6 +61990,7 @@ class WaterheaterStratifiedType(TypedDict, total=False):
     Indirect_Alternate_Setpoint_Temperature_Schedule_Name: str
 
 class WateruseConnectionsType(TypedDict, total=False):
+    """"dict for WateruseConnections"""
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
@@ -61273,6 +62013,7 @@ class WateruseConnectionsType(TypedDict, total=False):
     Water_Use_Equipment_10_Name: str
 
 class WateruseEquipmentType(TypedDict, total=False):
+    """"dict for WateruseEquipment"""
     Name: str
     EndUse_Subcategory: str
     Peak_Flow_Rate: str
@@ -61285,6 +62026,7 @@ class WateruseEquipmentType(TypedDict, total=False):
     Latent_Fraction_Schedule_Name: str
 
 class WateruseRaincollectorType(TypedDict, total=False):
+    """"dict for WateruseRaincollector"""
     Name: str
     Storage_Tank_Name: str
     Loss_Factor_Mode: str
@@ -61303,6 +62045,7 @@ class WateruseRaincollectorType(TypedDict, total=False):
     Collection_Surface_10_Name: str
 
 class WateruseStorageType(TypedDict, total=False):
+    """"dict for WateruseStorage"""
     Name: str
     Water_Quality_Subcategory: str
     Maximum_Capacity: str
@@ -61325,6 +62068,7 @@ class WateruseStorageType(TypedDict, total=False):
     Tank_Outside_Surface_Material_Name: str
 
 class WateruseWellType(TypedDict, total=False):
+    """"dict for WateruseWell"""
     Name: str
     Storage_Tank_Name: str
     Pump_Depth: str
@@ -61339,12 +62083,14 @@ class WateruseWellType(TypedDict, total=False):
     Water_Table_Depth_Schedule_Name: str
 
 class WeatherpropertySkytemperatureType(TypedDict, total=False):
+    """"dict for WeatherpropertySkytemperature"""
     Name: str
     Calculation_Type: str
     Schedule_Name: str
     Use_Weather_File_Horizontal_IR: str
 
 class WindowType(TypedDict, total=False):
+    """"dict for Window"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -61356,6 +62102,7 @@ class WindowType(TypedDict, total=False):
     Height: str
 
 class WindowInterzoneType(TypedDict, total=False):
+    """"dict for WindowInterzone"""
     Name: str
     Construction_Name: str
     Building_Surface_Name: str
@@ -61367,17 +62114,20 @@ class WindowInterzoneType(TypedDict, total=False):
     Height: str
 
 class WindowgapDeflectionstateType(TypedDict, total=False):
+    """"dict for WindowgapDeflectionstate"""
     Name: str
     Deflected_Thickness: str
     Initial_Temperature: str
     Initial_Pressure: str
 
 class WindowgapSupportpillarType(TypedDict, total=False):
+    """"dict for WindowgapSupportpillar"""
     Name: str
     Spacing: str
     Radius: str
 
 class WindowmaterialBlindType(TypedDict, total=False):
+    """"dict for WindowmaterialBlind"""
     Name: str
     Slat_Orientation: str
     Slat_Width: str
@@ -61409,6 +62159,7 @@ class WindowmaterialBlindType(TypedDict, total=False):
     Maximum_Slat_Angle: str
 
 class WindowmaterialBlindEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialBlindEquivalentlayer"""
     Name: str
     Slat_Orientation: str
     Slat_Width: str
@@ -61435,6 +62186,7 @@ class WindowmaterialBlindEquivalentlayerType(TypedDict, total=False):
     Slat_Angle_Control: str
 
 class WindowmaterialComplexshadeType(TypedDict, total=False):
+    """"dict for WindowmaterialComplexshade"""
     Name: str
     Layer_Type: str
     Thickness: str
@@ -61455,6 +62207,7 @@ class WindowmaterialComplexshadeType(TypedDict, total=False):
     Slat_Curve: str
 
 class WindowmaterialDrapeEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialDrapeEquivalentlayer"""
     Name: str
     Drape_BeamBeam_Solar_Transmittance_at_Normal_Incidence: str
     Front_Side_Drape_BeamDiffuse_Solar_Transmittance: str
@@ -61471,6 +62224,7 @@ class WindowmaterialDrapeEquivalentlayerType(TypedDict, total=False):
     Length_of_Pleated_Fabric: str
 
 class WindowmaterialGapType(TypedDict, total=False):
+    """"dict for WindowmaterialGap"""
     Name: str
     Thickness: str
     Gas_or_Gas_Mixture: str
@@ -61479,6 +62233,7 @@ class WindowmaterialGapType(TypedDict, total=False):
     Support_Pillar: str
 
 class WindowmaterialGapEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialGapEquivalentlayer"""
     Name: str
     Gas_Type: str
     Thickness: str
@@ -61496,6 +62251,7 @@ class WindowmaterialGapEquivalentlayerType(TypedDict, total=False):
     Specific_Heat_Ratio: str
 
 class WindowmaterialGasType(TypedDict, total=False):
+    """"dict for WindowmaterialGas"""
     Name: str
     Gas_Type: str
     Thickness: str
@@ -61512,6 +62268,7 @@ class WindowmaterialGasType(TypedDict, total=False):
     Specific_Heat_Ratio: str
 
 class WindowmaterialGasmixtureType(TypedDict, total=False):
+    """"dict for WindowmaterialGasmixture"""
     Name: str
     Thickness: str
     Number_of_Gases_in_Mixture: str
@@ -61525,6 +62282,7 @@ class WindowmaterialGasmixtureType(TypedDict, total=False):
     Gas_4_Fraction: str
 
 class WindowmaterialGlazingType(TypedDict, total=False):
+    """"dict for WindowmaterialGlazing"""
     Name: str
     Optical_Data_Type: str
     Window_Glass_Spectral_Data_Set_Name: str
@@ -61548,6 +62306,7 @@ class WindowmaterialGlazingType(TypedDict, total=False):
     Window_Glass_Spectral_and_Incident_Angle_Back_Reflectance_Data_Set_Table_Name: str
 
 class WindowmaterialGlazingEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialGlazingEquivalentlayer"""
     Name: str
     Optical_Data_Type: str
     Window_Glass_Spectral_Data_Set_Name: str
@@ -61579,6 +62338,7 @@ class WindowmaterialGlazingEquivalentlayerType(TypedDict, total=False):
     Thermal_Resistance: str
 
 class WindowmaterialGlazingRefractionextinctionmethodType(TypedDict, total=False):
+    """"dict for WindowmaterialGlazingRefractionextinctionmethod"""
     Name: str
     Thickness: str
     Solar_Index_of_Refraction: str
@@ -61592,6 +62352,7 @@ class WindowmaterialGlazingRefractionextinctionmethodType(TypedDict, total=False
     Solar_Diffusing: str
 
 class WindowmaterialGlazinggroupThermochromicType(TypedDict, total=False):
+    """"dict for WindowmaterialGlazinggroupThermochromic"""
     Name: str
     Optical_Data_Temperature_1: str
     Window_Material_Glazing_Name_1: str
@@ -61685,6 +62446,7 @@ class WindowmaterialGlazinggroupThermochromicType(TypedDict, total=False):
     Window_Material_Glazing_Name_45: str
 
 class WindowmaterialScreenType(TypedDict, total=False):
+    """"dict for WindowmaterialScreen"""
     Name: str
     Reflected_Beam_Transmittance_Accounting_Method: str
     Diffuse_Solar_Reflectance: str
@@ -61701,6 +62463,7 @@ class WindowmaterialScreenType(TypedDict, total=False):
     Angle_of_Resolution_for_Screen_Transmittance_Output_Map: str
 
 class WindowmaterialScreenEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialScreenEquivalentlayer"""
     Name: str
     Screen_BeamBeam_Solar_Transmittance: str
     Screen_BeamDiffuse_Solar_Transmittance: str
@@ -61714,6 +62477,7 @@ class WindowmaterialScreenEquivalentlayerType(TypedDict, total=False):
     Screen_Wire_Diameter: str
 
 class WindowmaterialShadeType(TypedDict, total=False):
+    """"dict for WindowmaterialShade"""
     Name: str
     Solar_Transmittance: str
     Solar_Reflectance: str
@@ -61731,6 +62495,7 @@ class WindowmaterialShadeType(TypedDict, total=False):
     Airflow_Permeability: str
 
 class WindowmaterialShadeEquivalentlayerType(TypedDict, total=False):
+    """"dict for WindowmaterialShadeEquivalentlayer"""
     Name: str
     Shade_BeamBeam_Solar_Transmittance: str
     Front_Side_Shade_BeamDiffuse_Solar_Transmittance: str
@@ -61745,12 +62510,14 @@ class WindowmaterialShadeEquivalentlayerType(TypedDict, total=False):
     Back_Side_Shade_Material_Infrared_Emissivity: str
 
 class WindowmaterialSimpleglazingsystemType(TypedDict, total=False):
+    """"dict for WindowmaterialSimpleglazingsystem"""
     Name: str
     UFactor: str
     Solar_Heat_Gain_Coefficient: str
     Visible_Transmittance: str
 
 class WindowpropertyAirflowcontrolType(TypedDict, total=False):
+    """"dict for WindowpropertyAirflowcontrol"""
     Name: str
     Airflow_Source: str
     Airflow_Destination: str
@@ -61761,6 +62528,7 @@ class WindowpropertyAirflowcontrolType(TypedDict, total=False):
     Airflow_Return_Air_Node_Name: str
 
 class WindowpropertyFrameanddividerType(TypedDict, total=False):
+    """"dict for WindowpropertyFrameanddivider"""
     Name: str
     Frame_Width: str
     Frame_Outside_Projection: str
@@ -61789,6 +62557,7 @@ class WindowpropertyFrameanddividerType(TypedDict, total=False):
     NFRC_Product_Type_for_Assembly_Calculations: str
 
 class WindowpropertyStormwindowType(TypedDict, total=False):
+    """"dict for WindowpropertyStormwindow"""
     Window_Name: str
     Storm_Glass_Layer_Name: str
     Distance_Between_Storm_Glass_Layer_and_Adjacent_Glass: str
@@ -61798,9 +62567,11 @@ class WindowpropertyStormwindowType(TypedDict, total=False):
     Day_of_Month_that_Storm_Glass_Layer_is_Taken_Off: str
 
 class WindowscalculationengineType(TypedDict, total=False):
+    """"dict for Windowscalculationengine"""
     Windows_engine: str
 
 class WindowshadingcontrolType(TypedDict, total=False):
+    """"dict for Windowshadingcontrol"""
     Name: str
     Zone_Name: str
     Shading_Control_Sequence_Number: str
@@ -61829,6 +62600,7 @@ class WindowshadingcontrolType(TypedDict, total=False):
     Fenestration_Surface_10_Name: str
 
 class WindowthermalmodelParamsType(TypedDict, total=False):
+    """"dict for WindowthermalmodelParams"""
     Name: str
     standard: str
     Thermal_Model: str
@@ -61839,6 +62611,7 @@ class WindowthermalmodelParamsType(TypedDict, total=False):
     Initial_pressure: str
 
 class ZoneType(TypedDict, total=False):
+    """"dict for Zone"""
     Name: str
     Direction_of_Relative_North: str
     X_Origin: str
@@ -61854,6 +62627,7 @@ class ZoneType(TypedDict, total=False):
     Part_of_Total_Floor_Area: str
 
 class ZoneairbalanceOutdoorairType(TypedDict, total=False):
+    """"dict for ZoneairbalanceOutdoorair"""
     Name: str
     Zone_Name: str
     Air_Balance_Method: str
@@ -61861,22 +62635,26 @@ class ZoneairbalanceOutdoorairType(TypedDict, total=False):
     Induced_Outdoor_Air_Schedule_Name: str
 
 class ZoneaircontaminantbalanceType(TypedDict, total=False):
+    """"dict for Zoneaircontaminantbalance"""
     Carbon_Dioxide_Concentration: str
     Outdoor_Carbon_Dioxide_Schedule_Name: str
     Generic_Contaminant_Concentration: str
     Outdoor_Generic_Contaminant_Schedule_Name: str
 
 class ZoneairheatbalancealgorithmType(TypedDict, total=False):
+    """"dict for Zoneairheatbalancealgorithm"""
     Algorithm: str
     Do_Space_Heat_Balance_for_Sizing: str
     Do_Space_Heat_Balance_for_Simulation: str
 
 class ZoneairmassflowconservationType(TypedDict, total=False):
+    """"dict for Zoneairmassflowconservation"""
     Adjust_Zone_Mixing_and_Return_For_Air_Mass_Flow_Balance: str
     Infiltration_Balancing_Method: str
     Infiltration_Balancing_Zones: str
 
 class ZonebaseboardOutdoortemperaturecontrolledType(TypedDict, total=False):
+    """"dict for ZonebaseboardOutdoortemperaturecontrolled"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -61888,6 +62666,7 @@ class ZonebaseboardOutdoortemperaturecontrolledType(TypedDict, total=False):
     EndUse_Subcategory: str
 
 class ZonecapacitancemultiplierResearchspecialType(TypedDict, total=False):
+    """"dict for ZonecapacitancemultiplierResearchspecial"""
     Name: str
     Zone_or_ZoneList_Name: str
     Temperature_Capacity_Multiplier: str
@@ -61896,12 +62675,14 @@ class ZonecapacitancemultiplierResearchspecialType(TypedDict, total=False):
     Generic_Contaminant_Capacity_Multiplier: str
 
 class ZonecontaminantsourceandsinkCarbondioxideType(TypedDict, total=False):
+    """"dict for ZonecontaminantsourceandsinkCarbondioxide"""
     Name: str
     Zone_Name: str
     Design_Generation_Rate: str
     Schedule_Name: str
 
 class ZonecontaminantsourceandsinkGenericConstantType(TypedDict, total=False):
+    """"dict for ZonecontaminantsourceandsinkGenericConstant"""
     Name: str
     Zone_Name: str
     Design_Generation_Rate: str
@@ -61910,6 +62691,7 @@ class ZonecontaminantsourceandsinkGenericConstantType(TypedDict, total=False):
     Removal_Schedule_Name: str
 
 class ZonecontaminantsourceandsinkGenericCutoffmodelType(TypedDict, total=False):
+    """"dict for ZonecontaminantsourceandsinkGenericCutoffmodel"""
     Name: str
     Zone_Name: str
     Design_Generation_Rate_Coefficient: str
@@ -61917,6 +62699,7 @@ class ZonecontaminantsourceandsinkGenericCutoffmodelType(TypedDict, total=False)
     Cutoff_Generic_Contaminant_at_which_Emission_Ceases: str
 
 class ZonecontaminantsourceandsinkGenericDecaysourceType(TypedDict, total=False):
+    """"dict for ZonecontaminantsourceandsinkGenericDecaysource"""
     Name: str
     Zone_Name: str
     Initial_Emission_Rate: str
@@ -61924,12 +62707,14 @@ class ZonecontaminantsourceandsinkGenericDecaysourceType(TypedDict, total=False)
     Delay_Time_Constant: str
 
 class ZonecontaminantsourceandsinkGenericDepositionratesinkType(TypedDict, total=False):
+    """"dict for ZonecontaminantsourceandsinkGenericDepositionratesink"""
     Name: str
     Zone_Name: str
     Deposition_Rate: str
     Schedule_Name: str
 
 class ZonecontrolContaminantcontrollerType(TypedDict, total=False):
+    """"dict for ZonecontrolContaminantcontroller"""
     Name: str
     Zone_Name: str
     Carbon_Dioxide_Control_Availability_Schedule_Name: str
@@ -61940,12 +62725,14 @@ class ZonecontrolContaminantcontrollerType(TypedDict, total=False):
     Generic_Contaminant_Setpoint_Schedule_Name: str
 
 class ZonecontrolHumidistatType(TypedDict, total=False):
+    """"dict for ZonecontrolHumidistat"""
     Name: str
     Zone_Name: str
     Humidifying_Relative_Humidity_Setpoint_Schedule_Name: str
     Dehumidifying_Relative_Humidity_Setpoint_Schedule_Name: str
 
 class ZonecontrolThermostatType(TypedDict, total=False):
+    """"dict for ZonecontrolThermostat"""
     Name: str
     Zone_or_ZoneList_Name: str
     Control_Type_Schedule_Name: str
@@ -61960,6 +62747,7 @@ class ZonecontrolThermostatType(TypedDict, total=False):
     Temperature_Difference_Between_Cutout_And_Setpoint: str
 
 class ZonecontrolThermostatOperativetemperatureType(TypedDict, total=False):
+    """"dict for ZonecontrolThermostatOperativetemperature"""
     Thermostat_Name: str
     Radiative_Fraction_Input_Mode: str
     Fixed_Radiative_Fraction: str
@@ -61967,6 +62755,7 @@ class ZonecontrolThermostatOperativetemperatureType(TypedDict, total=False):
     Adaptive_Comfort_Model_Type: str
 
 class ZonecontrolThermostatStageddualsetpointType(TypedDict, total=False):
+    """"dict for ZonecontrolThermostatStageddualsetpoint"""
     Name: str
     Zone_or_ZoneList_Name: str
     Number_of_Heating_Stages: str
@@ -61985,6 +62774,7 @@ class ZonecontrolThermostatStageddualsetpointType(TypedDict, total=False):
     Stage_4_Cooling_Temperature_Offset: str
 
 class ZonecontrolThermostatTemperatureandhumidityType(TypedDict, total=False):
+    """"dict for ZonecontrolThermostatTemperatureandhumidity"""
     Thermostat_Name: str
     Dehumidifying_Relative_Humidity_Setpoint_Schedule_Name: str
     Dehumidification_Control_Type: str
@@ -61994,6 +62784,7 @@ class ZonecontrolThermostatTemperatureandhumidityType(TypedDict, total=False):
     Overcool_Control_Ratio: str
 
 class ZonecontrolThermostatThermalcomfortType(TypedDict, total=False):
+    """"dict for ZonecontrolThermostatThermalcomfort"""
     Name: str
     Zone_or_ZoneList_Name: str
     Averaging_Method: str
@@ -62011,6 +62802,7 @@ class ZonecontrolThermostatThermalcomfortType(TypedDict, total=False):
     Thermal_Comfort_Control_4_Name: str
 
 class ZonecooltowerShowerType(TypedDict, total=False):
+    """"dict for ZonecooltowerShower"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -62027,6 +62819,7 @@ class ZonecooltowerShowerType(TypedDict, total=False):
     Rated_Power_Consumption: str
 
 class ZonecrossmixingType(TypedDict, total=False):
+    """"dict for Zonecrossmixing"""
     Name: str
     Zone_or_Space_Name: str
     Schedule_Name: str
@@ -62046,6 +62839,7 @@ class ZonecrossmixingType(TypedDict, total=False):
     Maximum_Outdoor_Temperature_Schedule_Name: str
 
 class ZoneearthtubeType(TypedDict, total=False):
+    """"dict for Zoneearthtube"""
     Zone_Name: str
     Schedule_Name: str
     Design_Flow_Rate: str
@@ -62072,6 +62866,7 @@ class ZoneearthtubeType(TypedDict, total=False):
     Earth_Tube_Model_Parameters: str
 
 class ZoneearthtubeParametersType(TypedDict, total=False):
+    """"dict for ZoneearthtubeParameters"""
     Earth_Tube_Model_Parameters_Name: str
     Nodes_Above_Earth_Tube: str
     Nodes_Below_Earth_Tube: str
@@ -62080,11 +62875,13 @@ class ZoneearthtubeParametersType(TypedDict, total=False):
     Earth_Tube_Solution_Space_Width: str
 
 class ZonegroupType(TypedDict, total=False):
+    """"dict for Zonegroup"""
     Name: str
     Zone_List_Name: str
     Zone_List_Multiplier: str
 
 class ZonehvacAirdistributionunitType(TypedDict, total=False):
+    """"dict for ZonehvacAirdistributionunit"""
     Name: str
     Air_Distribution_Unit_Outlet_Node_Name: str
     Air_Terminal_Object_Type: str
@@ -62094,6 +62891,7 @@ class ZonehvacAirdistributionunitType(TypedDict, total=False):
     Design_Specification_Air_Terminal_Sizing_Object_Name: str
 
 class ZonehvacBaseboardConvectiveElectricType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardConvectiveElectric"""
     Name: str
     Availability_Schedule_Name: str
     Heating_Design_Capacity_Method: str
@@ -62103,6 +62901,7 @@ class ZonehvacBaseboardConvectiveElectricType(TypedDict, total=False):
     Efficiency: str
 
 class ZonehvacBaseboardConvectiveWaterType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardConvectiveWater"""
     Name: str
     Availability_Schedule_Name: str
     Inlet_Node_Name: str
@@ -62116,6 +62915,7 @@ class ZonehvacBaseboardConvectiveWaterType(TypedDict, total=False):
     Convergence_Tolerance: str
 
 class ZonehvacBaseboardRadiantconvectiveElectricType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardRadiantconvectiveElectric"""
     Name: str
     Availability_Schedule_Name: str
     Heating_Design_Capacity_Method: str
@@ -62327,6 +63127,7 @@ class ZonehvacBaseboardRadiantconvectiveElectricType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_to_Surface_100: str
 
 class ZonehvacBaseboardRadiantconvectiveSteamType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardRadiantconvectiveSteam"""
     Name: str
     Design_Object: str
     Availability_Schedule_Name: str
@@ -62537,6 +63338,7 @@ class ZonehvacBaseboardRadiantconvectiveSteamType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_to_Surface_100: str
 
 class ZonehvacBaseboardRadiantconvectiveSteamDesignType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardRadiantconvectiveSteamDesign"""
     Name: str
     Heating_Design_Capacity_Method: str
     Heating_Design_Capacity_Per_Floor_Area: str
@@ -62546,6 +63348,7 @@ class ZonehvacBaseboardRadiantconvectiveSteamDesignType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_Incident_on_People: str
 
 class ZonehvacBaseboardRadiantconvectiveWaterType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardRadiantconvectiveWater"""
     Name: str
     Design_Object: str
     Availability_Schedule_Name: str
@@ -62757,6 +63560,7 @@ class ZonehvacBaseboardRadiantconvectiveWaterType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_to_Surface_100: str
 
 class ZonehvacBaseboardRadiantconvectiveWaterDesignType(TypedDict, total=False):
+    """"dict for ZonehvacBaseboardRadiantconvectiveWaterDesign"""
     Name: str
     Heating_Design_Capacity_Method: str
     Heating_Design_Capacity_Per_Floor_Area: str
@@ -62766,6 +63570,7 @@ class ZonehvacBaseboardRadiantconvectiveWaterDesignType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_Incident_on_People: str
 
 class ZonehvacCoolingpanelRadiantconvectiveWaterType(TypedDict, total=False):
+    """"dict for ZonehvacCoolingpanelRadiantconvectiveWater"""
     Name: str
     Availability_Schedule_Name: str
     Water_Inlet_Node_Name: str
@@ -62987,6 +63792,7 @@ class ZonehvacCoolingpanelRadiantconvectiveWaterType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_to_Surface_100: str
 
 class ZonehvacDehumidifierDxType(TypedDict, total=False):
+    """"dict for ZonehvacDehumidifierDx"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -63003,6 +63809,7 @@ class ZonehvacDehumidifierDxType(TypedDict, total=False):
     Condensate_Collection_Water_Storage_Tank_Name: str
 
 class ZonehvacEnergyrecoveryventilatorType(TypedDict, total=False):
+    """"dict for ZonehvacEnergyrecoveryventilator"""
     Name: str
     Availability_Schedule_Name: str
     Heat_Exchanger_Name: str
@@ -63016,6 +63823,7 @@ class ZonehvacEnergyrecoveryventilatorType(TypedDict, total=False):
     Availability_Manager_List_Name: str
 
 class ZonehvacEnergyrecoveryventilatorControllerType(TypedDict, total=False):
+    """"dict for ZonehvacEnergyrecoveryventilatorController"""
     Name: str
     Temperature_High_Limit: str
     Temperature_Low_Limit: str
@@ -63031,6 +63839,7 @@ class ZonehvacEnergyrecoveryventilatorControllerType(TypedDict, total=False):
     Control_High_Indoor_Humidity_Based_on_Outdoor_Humidity_Ratio: str
 
 class ZonehvacEquipmentconnectionsType(TypedDict, total=False):
+    """"dict for ZonehvacEquipmentconnections"""
     Zone_Name: str
     Zone_Conditioning_Equipment_List_Name: str
     Zone_Air_Inlet_Node_or_NodeList_Name: str
@@ -63041,6 +63850,7 @@ class ZonehvacEquipmentconnectionsType(TypedDict, total=False):
     Zone_Return_Air_Node_1_Flow_Rate_Basis_Node_or_NodeList_Name: str
 
 class ZonehvacEquipmentlistType(TypedDict, total=False):
+    """"dict for ZonehvacEquipmentlist"""
     Name: str
     Load_Distribution_Scheme: str
     Zone_Equipment_1_Object_Type: str
@@ -63153,6 +63963,7 @@ class ZonehvacEquipmentlistType(TypedDict, total=False):
     Zone_Equipment_18_Sequential_Heating_Fraction_Schedule_Name: str
 
 class ZonehvacEvaporativecoolerunitType(TypedDict, total=False):
+    """"dict for ZonehvacEvaporativecoolerunit"""
     Name: str
     Availability_Schedule_Name: str
     Availability_Manager_List_Name: str
@@ -63174,6 +63985,7 @@ class ZonehvacEvaporativecoolerunitType(TypedDict, total=False):
     Shut_Off_Relative_Humidity: str
 
 class ZonehvacExhaustcontrolType(TypedDict, total=False):
+    """"dict for ZonehvacExhaustcontrol"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -63188,6 +64000,7 @@ class ZonehvacExhaustcontrolType(TypedDict, total=False):
     Balanced_Exhaust_Fraction_Schedule_Name: str
 
 class ZonehvacForcedairUserdefinedType(TypedDict, total=False):
+    """"dict for ZonehvacForcedairUserdefined"""
     Name: str
     Overall_Model_Simulation_Program_Calling_Manager_Name: str
     Model_Setup_and_Sizing_Program_Calling_Manager_Name: str
@@ -63207,6 +64020,7 @@ class ZonehvacForcedairUserdefinedType(TypedDict, total=False):
     Ambient_Zone_Name: str
 
 class ZonehvacFourpipefancoilType(TypedDict, total=False):
+    """"dict for ZonehvacFourpipefancoil"""
     Name: str
     Availability_Schedule_Name: str
     Capacity_Control_Method: str
@@ -63238,6 +64052,7 @@ class ZonehvacFourpipefancoilType(TypedDict, total=False):
     Maximum_Supply_Air_Temperature_in_Heating_Mode: str
 
 class ZonehvacHightemperatureradiantType(TypedDict, total=False):
+    """"dict for ZonehvacHightemperatureradiant"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -63456,6 +64271,7 @@ class ZonehvacHightemperatureradiantType(TypedDict, total=False):
     Fraction_of_Radiant_Energy_to_Surface_100: str
 
 class ZonehvacHybridunitaryhvacType(TypedDict, total=False):
+    """"dict for ZonehvacHybridunitaryhvac"""
     Name: str
     Availability_Schedule_Name: str
     Availability_Manager_List_Name: str
@@ -64118,6 +64934,7 @@ class ZonehvacHybridunitaryhvacType(TypedDict, total=False):
     Mode_25_Maximum_Supply_Air_Mass_Flow_Rate_Ratio: str
 
 class ZonehvacIdealloadsairsystemType(TypedDict, total=False):
+    """"dict for ZonehvacIdealloadsairsystem"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Supply_Air_Node_Name: str
@@ -64148,6 +64965,7 @@ class ZonehvacIdealloadsairsystemType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
 
 class ZonehvacLowtemperatureradiantConstantflowType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantConstantflow"""
     Name: str
     Design_Object: str
     Availability_Schedule_Name: str
@@ -64174,6 +64992,7 @@ class ZonehvacLowtemperatureradiantConstantflowType(TypedDict, total=False):
     Circuit_Length: str
 
 class ZonehvacLowtemperatureradiantConstantflowDesignType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantConstantflowDesign"""
     Name: str
     Fluid_to_Radiant_Surface_Heat_Transfer_Model: str
     Hydronic_Tubing_Inside_Diameter: str
@@ -64188,6 +65007,7 @@ class ZonehvacLowtemperatureradiantConstantflowDesignType(TypedDict, total=False
     Changeover_Delay_Time_Period_Schedule: str
 
 class ZonehvacLowtemperatureradiantElectricType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantElectric"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -64202,6 +65022,7 @@ class ZonehvacLowtemperatureradiantElectricType(TypedDict, total=False):
     Heating_Setpoint_Temperature_Schedule_Name: str
 
 class ZonehvacLowtemperatureradiantSurfacegroupType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantSurfacegroup"""
     Name: str
     Surface_1_Name: str
     Flow_Fraction_for_Surface_1: str
@@ -64405,6 +65226,7 @@ class ZonehvacLowtemperatureradiantSurfacegroupType(TypedDict, total=False):
     Flow_Fraction_for_Surface_100: str
 
 class ZonehvacLowtemperatureradiantVariableflowType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantVariableflow"""
     Name: str
     Design_Object: str
     Availability_Schedule_Name: str
@@ -64423,6 +65245,7 @@ class ZonehvacLowtemperatureradiantVariableflowType(TypedDict, total=False):
     Circuit_Length: str
 
 class ZonehvacLowtemperatureradiantVariableflowDesignType(TypedDict, total=False):
+    """"dict for ZonehvacLowtemperatureradiantVariableflowDesign"""
     Name: str
     Fluid_to_Radiant_Surface_Heat_Transfer_Model: str
     Hydronic_Tubing_Inside_Diameter: str
@@ -64445,6 +65268,7 @@ class ZonehvacLowtemperatureradiantVariableflowDesignType(TypedDict, total=False
     Changeover_Delay_Time_Period_Schedule: str
 
 class ZonehvacOutdoorairunitType(TypedDict, total=False):
+    """"dict for ZonehvacOutdoorairunit"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -64466,6 +65290,7 @@ class ZonehvacOutdoorairunitType(TypedDict, total=False):
     Availability_Manager_List_Name: str
 
 class ZonehvacOutdoorairunitEquipmentlistType(TypedDict, total=False):
+    """"dict for ZonehvacOutdoorairunitEquipmentlist"""
     Name: str
     Component_1_Object_Type: str
     Component_1_Name: str
@@ -64485,6 +65310,7 @@ class ZonehvacOutdoorairunitEquipmentlistType(TypedDict, total=False):
     Component_8_Name: str
 
 class ZonehvacPackagedterminalairconditionerType(TypedDict, total=False):
+    """"dict for ZonehvacPackagedterminalairconditioner"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -64513,6 +65339,7 @@ class ZonehvacPackagedterminalairconditionerType(TypedDict, total=False):
     Maximum_Supply_Air_Temperature_in_Heating_Mode: str
 
 class ZonehvacPackagedterminalheatpumpType(TypedDict, total=False):
+    """"dict for ZonehvacPackagedterminalheatpump"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -64547,6 +65374,7 @@ class ZonehvacPackagedterminalheatpumpType(TypedDict, total=False):
     Maximum_Supply_Air_Temperature_in_Heating_Mode: str
 
 class ZonehvacRefrigerationchillersetType(TypedDict, total=False):
+    """"dict for ZonehvacRefrigerationchillerset"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -64649,6 +65477,7 @@ class ZonehvacRefrigerationchillersetType(TypedDict, total=False):
     Air_Chiller_95_Name: str
 
 class ZonehvacTerminalunitVariablerefrigerantflowType(TypedDict, total=False):
+    """"dict for ZonehvacTerminalunitVariablerefrigerantflow"""
     Zone_Terminal_Unit_Name: str
     Terminal_Unit_Availability_Schedule: str
     Terminal_Unit_Air_Inlet_Node_Name: str
@@ -64684,6 +65513,7 @@ class ZonehvacTerminalunitVariablerefrigerantflowType(TypedDict, total=False):
     Design_Specification_Multispeed_Object_Name: str
 
 class ZonehvacUnitheaterType(TypedDict, total=False):
+    """"dict for ZonehvacUnitheater"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -64702,6 +65532,7 @@ class ZonehvacUnitheaterType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
 
 class ZonehvacUnitventilatorType(TypedDict, total=False):
+    """"dict for ZonehvacUnitventilator"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Supply_Air_Flow_Rate: str
@@ -64729,6 +65560,7 @@ class ZonehvacUnitventilatorType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
 
 class ZonehvacVentilatedslabType(TypedDict, total=False):
+    """"dict for ZonehvacVentilatedslab"""
     Name: str
     Availability_Schedule_Name: str
     Zone_Name: str
@@ -64771,6 +65603,7 @@ class ZonehvacVentilatedslabType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
 
 class ZonehvacVentilatedslabSlabgroupType(TypedDict, total=False):
+    """"dict for ZonehvacVentilatedslabSlabgroup"""
     Name: str
     Zone_1_Name: str
     Surface_1_Name: str
@@ -64844,6 +65677,7 @@ class ZonehvacVentilatedslabSlabgroupType(TypedDict, total=False):
     Slab_Outlet_Node_Name_for_Surface_10: str
 
 class ZonehvacWatertoairheatpumpType(TypedDict, total=False):
+    """"dict for ZonehvacWatertoairheatpump"""
     Name: str
     Availability_Schedule_Name: str
     Air_Inlet_Node_Name: str
@@ -64877,6 +65711,7 @@ class ZonehvacWatertoairheatpumpType(TypedDict, total=False):
     Design_Specification_Multispeed_Object_Name: str
 
 class ZonehvacWindowairconditionerType(TypedDict, total=False):
+    """"dict for ZonehvacWindowairconditioner"""
     Name: str
     Availability_Schedule_Name: str
     Maximum_Supply_Air_Flow_Rate: str
@@ -64896,6 +65731,7 @@ class ZonehvacWindowairconditionerType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
 
 class ZoneinfiltrationDesignflowrateType(TypedDict, total=False):
+    """"dict for ZoneinfiltrationDesignflowrate"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -64910,6 +65746,7 @@ class ZoneinfiltrationDesignflowrateType(TypedDict, total=False):
     Velocity_Squared_Term_Coefficient: str
 
 class ZoneinfiltrationEffectiveleakageareaType(TypedDict, total=False):
+    """"dict for ZoneinfiltrationEffectiveleakagearea"""
     Name: str
     Zone_or_Space_Name: str
     Schedule_Name: str
@@ -64918,6 +65755,7 @@ class ZoneinfiltrationEffectiveleakageareaType(TypedDict, total=False):
     Wind_Coefficient: str
 
 class ZoneinfiltrationFlowcoefficientType(TypedDict, total=False):
+    """"dict for ZoneinfiltrationFlowcoefficient"""
     Name: str
     Zone_or_Space_Name: str
     Schedule_Name: str
@@ -64928,6 +65766,7 @@ class ZoneinfiltrationFlowcoefficientType(TypedDict, total=False):
     Shelter_Factor: str
 
 class ZonelistType(TypedDict, total=False):
+    """"dict for Zonelist"""
     Name: str
     Zone_1_Name: str
     Zone_2_Name: str
@@ -65431,6 +66270,7 @@ class ZonelistType(TypedDict, total=False):
     Zone_500_Name: str
 
 class ZonemixingType(TypedDict, total=False):
+    """"dict for Zonemixing"""
     Name: str
     Zone_or_Space_Name: str
     Schedule_Name: str
@@ -65450,11 +66290,13 @@ class ZonemixingType(TypedDict, total=False):
     Maximum_Outdoor_Temperature_Schedule_Name: str
 
 class ZonepropertyLocalenvironmentType(TypedDict, total=False):
+    """"dict for ZonepropertyLocalenvironment"""
     Name: str
     Zone_Name: str
     Outdoor_Air_Node_Name: str
 
 class ZonepropertyUserviewfactorsBysurfacenameType(TypedDict, total=False):
+    """"dict for ZonepropertyUserviewfactorsBysurfacename"""
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     From_Surface_1: str
     To_Surface_1: str
@@ -66928,6 +67770,7 @@ class ZonepropertyUserviewfactorsBysurfacenameType(TypedDict, total=False):
     View_Factor_490: str
 
 class ZonerefrigerationdoormixingType(TypedDict, total=False):
+    """"dict for Zonerefrigerationdoormixing"""
     Name: str
     Zone_1_Name: str
     Zone_2_Name: str
@@ -66937,6 +67780,7 @@ class ZonerefrigerationdoormixingType(TypedDict, total=False):
     Door_Protection_Type: str
 
 class ZoneterminalunitlistType(TypedDict, total=False):
+    """"dict for Zoneterminalunitlist"""
     Zone_Terminal_Unit_List_Name: str
     Zone_Terminal_Unit_Name_1: str
     Zone_Terminal_Unit_Name_2: str
@@ -66960,6 +67804,7 @@ class ZoneterminalunitlistType(TypedDict, total=False):
     Zone_Terminal_Unit_Name_20: str
 
 class ZonethermalchimneyType(TypedDict, total=False):
+    """"dict for Zonethermalchimney"""
     Name: str
     Zone_Name: str
     Availability_Schedule_Name: str
@@ -67048,6 +67893,7 @@ class ZonethermalchimneyType(TypedDict, total=False):
     Cross_Sectional_Areas_of_Air_Channel_Inlet_20: str
 
 class ZoneventilationDesignflowrateType(TypedDict, total=False):
+    """"dict for ZoneventilationDesignflowrate"""
     Name: str
     Zone_or_ZoneList_or_Space_or_SpaceList_Name: str
     Schedule_Name: str
@@ -67076,6 +67922,7 @@ class ZoneventilationDesignflowrateType(TypedDict, total=False):
     Maximum_Wind_Speed: str
 
 class ZoneventilationWindandstackopenareaType(TypedDict, total=False):
+    """"dict for ZoneventilationWindandstackopenarea"""
     Name: str
     Zone_or_Space_Name: str
     Opening_Area: str

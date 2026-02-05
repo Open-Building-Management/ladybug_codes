@@ -1,8 +1,8 @@
 """generate helpers to autocomplete EP classes and objects"""
 from __future__ import annotations
 from pathlib import Path
-from eppy.modeleditor import IDF
 import re
+from eppy.modeleditor import IDF
 
 from idfhub.helpers.consts import REPO_ROOT
 
@@ -10,7 +10,7 @@ from idfhub.helpers.consts import REPO_ROOT
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
 IDD_PATH = f"{OS_EP_PATH}/Energy+.idd"
 IDF_PATH = f"{REPO_ROOT}/batiment_600m2_windows_b.idf"
-OUTPUT_DIR = Path(f"{REPO_ROOT}/src/idf_autocomplete")
+OUTPUT_DIR = Path(f"{REPO_ROOT}/src/idfhub/idf_autocomplete")
 MANUAL = False
 # ----------------------------------------
 
@@ -66,17 +66,19 @@ def main():
 
         # ---------- TypedDict ----------
         types_lines.append(f"class {class_name}Type(TypedDict, total=False):")
+        types_lines.append(f'    """"dict for {class_name}"""')
         if not dummy.fieldnames:
             types_lines.append("    pass")
         else:
             for f in dummy.fieldnames:
                 py_name = clean_name(f)
                 if py_name != "key":
-                    types_lines.append(f"    {py_name}: str")  # type simplifié, on pourrait raffiner
+                    types_lines.append(f"    {py_name}: str")
         types_lines.append("")
 
         # ---------- Helper eppy ----------
         helpers_lines.append(f"def {class_name}(idf, **kwargs: {class_name}Type):")
+        helpers_lines.append(f'    """"helper for {class_name}"""')
         helpers_lines.append(f"    return idf.newidfobject('{c}', **kwargs)")
         helpers_lines.append("")
 
