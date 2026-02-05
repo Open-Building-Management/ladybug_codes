@@ -28,12 +28,16 @@ max-args = 6
 max-positional-arguments = 6
 
 [build-system]
-requires = ["setuptools", "eppy", "honeybee"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "idfhub"
 version = "0.0.1"
+dependencies = [
+    "eppy",
+    "honeybee"
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
