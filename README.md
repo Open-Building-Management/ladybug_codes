@@ -41,3 +41,12 @@ The idf produced in openstudio :
 
 ![](https://github.com/user-attachments/assets/2f84fcaf-1d63-4512-90f6-ea1fb404a3c0)
 
+```
+py .\generate_hvac.py
+```
+
+# DVIEW
+
+Dview is the viewer to use to analyse and energyplus simulation 
+
+https://github.com/NatLabRockies/wex/releases/tag/v1.2.0
