@@ -36,7 +36,10 @@ name = "idfhub"
 version = "0.0.1"
 dependencies = [
     "eppy",
-    "honeybee"
+    "honeybee-core",
+    "honeybee-energy",
+    "honeybee",
+    "ladybug-geometry"
 ]
 
 [tool.setuptools]
