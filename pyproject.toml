@@ -1,6 +1,11 @@
 [tool.mypy]
 mypy_path = ["src"]
 explicit_package_bases = true
+exclude = ["src/idfhub/idf_autocomplete"]
+
+[[tool.mypy.overrides]]
+module = "eppy.*"
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "honeybee.*"
@@ -13,6 +18,14 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "ladybug_geometry.*"
 ignore_missing_imports = true
+
+[tool.pylint]
+ignore = ["idf_autocomplete"]
+
+[tool.pylint.design]
+max-locals = 20
+max-args = 6
+max-positional-arguments = 6
 
 [build-system]
 requires = ["setuptools"]
