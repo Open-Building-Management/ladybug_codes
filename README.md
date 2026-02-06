@@ -4,7 +4,7 @@ caution : current work in progress !
 
 > how to generate idf files for energyplus ?
 
-[honeybee](https://github.com/ladybug-tools/honeybee) is really convenient for geometry and materials.
+[honeybee](https://github.com/ladybug-tools/honeybee) is very convenient for geometry and materials.
 
 The idfhub lib provides some helpers to go even faster.
 
@@ -17,7 +17,7 @@ py -m pip install -e .
 pip install -e
 ```
 
-The hvac API of energyplus is really complex. [openstudio](https://openstudiocoalition.org/) is excellent for standard systems (PackagedRoofHeatPump for exemple) 
+The HVAC API of energyplus is really complex. [openstudio](https://openstudiocoalition.org/) is excellent for standard systems (PackagedRoofHeatPump for exemple) 
 
 To customize things, you have to acquire some knowledge of how an idf file is structured.
 
