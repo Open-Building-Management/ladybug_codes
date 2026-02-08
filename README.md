@@ -45,6 +45,8 @@ The idf produced in openstudio :
 
 # basic autocompletion in vscode
 
+https://code.visualstudio.com/download
+
 ![](https://github.com/user-attachments/assets/2f84fcaf-1d63-4512-90f6-ea1fb404a3c0)
 
 # HVAC
