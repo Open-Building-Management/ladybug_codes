@@ -12,16 +12,24 @@ from idfhub.hvac import (
 )
 # autocompletion use
 from idfhub.helpers.consts import REPO_ROOT
-from idfhub.idf_autocomplete.idf_helpers import (
+from idfhub.idf_autocomplete.idf_helpers_short import (
     Timestep, Version, Simulationcontrol,
-    SiteGroundtemperatureUndisturbedKusudaachenbach
+    SiteGroundtemperatureUndisturbedKusudaachenbach,
+    Scheduletypelimits, ScheduleConstant,
+    ScheduleDayInterval, ScheduleWeekDaily, ScheduleYear,
+    ScheduleCompact,
+    ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
 )
-from idfhub.idf_autocomplete.idf_types import (
+from idfhub.idf_autocomplete.idf_types_short import (
     TimestepType, VersionType, SimulationcontrolType,
-    SiteGroundtemperatureUndisturbedKusudaachenbachType
+    SiteGroundtemperatureUndisturbedKusudaachenbachType,
+    ScheduletypelimitsType, ScheduleConstantType,
+    ScheduleDayIntervalType, ScheduleWeekDailyType, ScheduleYearType,
+    ScheduleCompactType,
+    ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
 )
 
-from src.idfhub.helpers.common import get_logger
+from idfhub.helpers.common import get_logger
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -35,7 +43,7 @@ BUILDING_NAME = "batiment_600m2"
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
-message = f"idf hvac injection with energyplus {idf.idd_version}"
+message = f"idf hvac injection for energyplus {idf.idd_version}"
 LOGGER.info(message)
 
 
@@ -67,6 +75,175 @@ simulationcontrol = SimulationcontrolType(
     Maximum_Number_of_HVAC_Sizing_Simulation_Passes=2
 )
 Simulationcontrol(idf, **simulationcontrol)
+
+DISCRETE = "Discrete"
+CONTINUOUS = "Continuous"
+#---------------------------------------------------------------------------------------------------
+# Schedules
+# on crée 2 schedules constants, à 20°C pour le chauffage et à 25°C pour le raffraichissement :
+# - const_temp_sched_20deg
+# - const_temp_sched_25deg
+#---------------------------------------------------------------------------------------------------
+temperature_typelimits = ScheduletypelimitsType(
+    Name="temperature",
+    Numeric_Type=CONTINUOUS,
+    Unit_Type="Temperature"
+)
+Scheduletypelimits(idf, **temperature_typelimits)
+on_off_typelimits = ScheduletypelimitsType(
+    Name="on_off",
+    Lower_Limit_Value=0,
+    Upper_Limit_Value=1,
+    Numeric_Type=DISCRETE,
+    Unit_Type="Availability"
+)
+Scheduletypelimits(idf, **on_off_typelimits)
+# ajout car generate_geometry produit un schedule constant qui nécessite Fractional ????
+fractional_typelimits = ScheduletypelimitsType(
+    Name="Fractional",
+    Lower_Limit_Value=0,
+    Upper_Limit_Value=1,
+    Numeric_Type=CONTINUOUS,
+)
+Scheduletypelimits(idf, **fractional_typelimits)
+
+const_temp_sched = ScheduleConstantType(
+    Name="const_temp_sched_25deg",
+    Schedule_Type_Limits_Name="temperature",
+    Hourly_Value=25
+)
+ScheduleConstant(idf, **const_temp_sched)
+const_temp_sched["Name"] = "const_temp_sched_20deg"
+const_temp_sched["Hourly_Value"] = 20
+ScheduleConstant(idf, **const_temp_sched)
+#---------------------------------------------------------------------------------------------------
+# on crée un schedule d'availability, de type on/off : systems_year_availability
+# mais on ne va pas s'en servir, car on va passer par un schedule compact pour les thermostat
+#---------------------------------------------------------------------------------------------------
+day_work = ScheduleDayIntervalType(
+    Name="day_work",
+    Schedule_Type_Limits_Name="on_off",
+    Interpolate_to_Timestep="No",
+    Time_1="07:00",
+    Value_Until_Time_1=0,
+    Time_2="17:00",
+    Value_Until_Time_2=1,
+    Time_3="24:00",
+    Value_Until_Time_3=0
+)
+day_off = ScheduleDayIntervalType(
+    Name="day_off",
+    Schedule_Type_Limits_Name="on_off",
+    Interpolate_to_Timestep="No",
+    Time_1="24:00",
+    Value_Until_Time_1=0
+)
+ScheduleDayInterval(idf, **day_work)
+ScheduleDayInterval(idf, **day_off)
+
+systems_week_availability = ScheduleWeekDailyType(
+    Name="systems_week_availability",
+    Sunday_ScheduleDay_Name="day_off",
+    Monday_ScheduleDay_Name="day_work",
+    Tuesday_ScheduleDay_Name="day_work",
+    Wednesday_ScheduleDay_Name="day_work",
+    Thursday_ScheduleDay_Name="day_work",
+    Friday_ScheduleDay_Name="day_work",
+    Saturday_ScheduleDay_Name="day_off",
+    Holiday_ScheduleDay_Name="day_off",
+    SummerDesignDay_ScheduleDay_Name="day_work",
+    WinterDesignDay_ScheduleDay_Name="day_work",
+    CustomDay1_ScheduleDay_Name="day_work",
+    CustomDay2_ScheduleDay_Name="day_work"
+)
+ScheduleWeekDaily(idf, **systems_week_availability)
+systems_year_availability = ScheduleYearType(
+    Name="systems_year_availability",
+    Schedule_Type_Limits_Name="on_off",
+    ScheduleWeek_Name_1="systems_week_availability",
+    Start_Day_1=1,
+    Start_Month_1=1,
+    End_Day_1=31,
+    End_Month_1=12
+)
+ScheduleYear(idf, **systems_year_availability)
+#---------------------------------------------------------------------------------------------------
+# End Of Schedules
+#---------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------------------------
+# Thermostats
+#---------------------------------------------------------------------------------------------------
+zone_thermostat = ThermostatsetpointDualsetpointType(
+    Name="zone_thermostat",
+    Heating_Setpoint_Temperature_Schedule_Name="const_temp_sched_20deg",
+    Cooling_Setpoint_Temperature_Schedule_Name="const_temp_sched_25deg"
+)
+ThermostatsetpointDualsetpoint(idf, **zone_thermostat)
+
+# Control types are integers: 
+# 0 - Uncontrolled (floating, no thermostat),
+# 1 = ThermostatSetpoint:SingleHeating,
+# 2 = ThermostatSetpoint:SingleCooling,
+# 3 = ThermostatSetpoint:SingleHeatingOrCooling,
+# 4 = ThermostatSetpoint:DualSetpoint
+control_types = ScheduletypelimitsType(
+    Name="control_types",
+    Lower_Limit_Value=0,
+    Upper_Limit_Value=4,
+    Numeric_Type=DISCRETE
+)
+Scheduletypelimits(idf, **control_types)
+
+# on utilise un schedule compact
+# Mots-clés utiles dans For:
+# Weekdays
+# Weekends
+# AllDays
+# Monday
+# Tuesday
+# ...
+# Holidays
+# SummerDesignDay
+# WinterDesignDay
+# CustomDay1/2
+control_type_schedule = ScheduleCompactType(
+    Name="control_type_schedule",
+    Schedule_Type_Limits_Name="control_types",
+    Field_1="Through: 12/31",
+    Field_2="For: Weekdays",
+    Field_3="Until: 07:00",
+    Field_4=0,
+    Field_5="Until: 17:00",
+    Field_6=4,
+    Field_7="Until: 24:00",
+    Field_8=0,
+    Field_9="For: Weekends",
+    Field_10="Until: 24:00",
+    Field_11=0
+)
+ScheduleCompact(idf, **control_type_schedule)
+
+rdc_thermostat = ZonecontrolThermostatType(
+    Name="RDC_thermostat",
+    Zone_or_ZoneList_Name="RDC",
+    Control_Type_Schedule_Name="control_type_schedule",
+    Control_1_Object_Type="ThermostatSetpoint:DualSetpoint",
+    Control_1_Name="zone_thermostat"
+)
+ZonecontrolThermostat(idf, **rdc_thermostat)
+
+rplus1_thermostat = ZonecontrolThermostatType(
+    Name="RPLUS1_thermostat",
+    Zone_or_ZoneList_Name="RPLUS1",
+    Control_Type_Schedule_Name="control_type_schedule",
+    Control_1_Object_Type="ThermostatSetpoint:DualSetpoint",
+    Control_1_Name="zone_thermostat"
+)
+ZonecontrolThermostat(idf, **rplus1_thermostat)
+#---------------------------------------------------------------------------------------------------
+# End Of Thermostats
+#---------------------------------------------------------------------------------------------------
 
 add_plant_loop(idf, SOIL_LOOP, 15, -5)
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
