@@ -9,7 +9,7 @@ KUSUDAACHENBACH = "SITE:GROUNDTEMPERATURE:UNDISTURBED:KUSUDAACHENBACH"
 
 @dataclass(frozen=True)
 class LoopNodes:
-    """Loop nodes management"""
+    """Produces generic node names for a plantloop"""
     name: str
 
     @property
@@ -31,7 +31,7 @@ class LoopNodes:
 
 @dataclass(frozen=True)
 class Branches:
-    """Branches Management"""
+    """Produces generic branch names for a plantloop"""
     name: str
 
     @property
@@ -64,18 +64,8 @@ class EPApi(StrEnum):
     CONNECTOR_LIST_NAME = "Connector_List_Name"
     SOURCE_SIDE = "Source_Side"
     LOAD_SIDE = "Load_Side"
-
-@dataclass
-class NodeSetter:
-    """Node setter"""
-    obj: EpBunch
-
-    def set_inlet(self, side, node):
-        """set an inlet"""
-        self.obj[f"{side}_{EPApi.INLET_NODE_NAME}"] = node
-    def set_outlet(self, side, node):
-        """set an outlet"""
-        self.obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"] = node
+    INLET_BRANCH_NAME = "Inlet_Branch_Name"
+    OUTLET_BRANCH_NAME = "Outlet_Branch_Name"
 
 
 def set_nodes_on_loop_side(obj, side, *, inlet, outlet):
@@ -164,9 +154,9 @@ def create_splitter(idf: IDF, name: str, branches: list):
     """create a splitter"""
     splitter = idf.newidfobject(
         "CONNECTOR:SPLITTER",
-        Name=name,
-        Inlet_Branch_Name=f"{name} inlet branch"
+        Name=name
     )
+    splitter[EPApi.INLET_BRANCH_NAME] = f"{name} inlet branch"
     for i, branch in enumerate(branches):
         splitter[f"Outlet_Branch_{i+1}_Name"] = branch.Name
     return splitter
@@ -176,9 +166,9 @@ def create_mixer(idf: IDF, name: str, branches: list):
     """create a mixer"""
     mixer = idf.newidfobject(
         "CONNECTOR:MIXER",
-        Name=name,
-        Outlet_Branch_Name=f"{name} outlet branch"
+        Name=name
     )
+    mixer[EPApi.OUTLET_BRANCH_NAME] = f"{name} outlet branch"
     for i, branch in enumerate(branches):
         mixer[f"Inlet_Branch_{i+1}_Name"] = branch.Name
     return mixer
@@ -320,39 +310,7 @@ def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_peo
     return zone_baseboard
 
 
-def add_watertowater_heatpump(idf: IDF, name: str):
-    """Add a water to water heatpump"""
-    nodes = LoopNodes(name)
-    heatpump = idf.newidfobject(
-        "HEATPUMP:WATERTOWATER:EQUATIONFIT:HEATING",
-        Name=name,
-        Reference_Load_Side_Flow_Rate=EPApi.AUTOSIZE,
-        Reference_Source_Side_Flow_Rate=EPApi.AUTOSIZE,
-        Reference_Heating_Capacity=EPApi.AUTOSIZE,
-        Reference_Heating_Power_Consumption=EPApi.AUTOSIZE,
-        Heating_Capacity_Curve_Name=f"{name} - heating HeatCapCurve",
-        Heating_Compressor_Power_Curve_Name=f"{name} - heating HeatCompPowerCurve",
-        Reference_Coefficient_of_Performance=5,
-        Sizing_Factor=1,
-        #Companion_Cooling_Heat_Pump_Name
-    )
-    set_nodes_on_loop_side(
-        heatpump,
-        EPApi.SOURCE_SIDE,
-        inlet=nodes.demand_inlet,
-        outlet=nodes.demand_outlet
-    )
-    set_nodes_on_loop_side(
-        heatpump,
-        EPApi.LOAD_SIDE,
-        inlet=nodes.supply_inlet,
-        outlet=nodes.supply_outlet
-    )
-    return heatpump
-
-
-
-def create_branch(idf: IDF, name: str, objects: list[EpBunch], levels: list):
+def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
     """create a branch"""
     branch = idf.newidfobject(
         "BRANCH",
@@ -364,11 +322,11 @@ def create_branch(idf: IDF, name: str, objects: list[EpBunch], levels: list):
         branch[f"{suffix}_Name"] = obj.Name
         inlet_node = f"{suffix}_{EPApi.INLET_NODE_NAME}"
         outlet_node = f"{suffix}_{EPApi.OUTLET_NODE_NAME}"
-        if levels[i] is None:
+        if sides[i] is None:
             branch[inlet_node] = obj[EPApi.INLET_NODE_NAME]
             branch[outlet_node] = obj[EPApi.OUTLET_NODE_NAME]
         else:
-            branch[inlet_node] = obj[f"{levels[i]}_{EPApi.INLET_NODE_NAME}"]
-            branch[outlet_node] = obj[f"{levels[i]}_{EPApi.OUTLET_NODE_NAME}"]
+            branch[inlet_node] = obj[f"{sides[i]}_{EPApi.INLET_NODE_NAME}"]
+            branch[outlet_node] = obj[f"{sides[i]}_{EPApi.OUTLET_NODE_NAME}"]
     #print(branch)
     return branch

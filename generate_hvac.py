@@ -5,31 +5,37 @@ from eppy.modeleditor import IDF
 from idfhub.hvac import (
     EPApi,
     add_plant_loop, add_ground_exchanger,
-    add_constant_pump, add_watertowater_heatpump, add_baseboard,
+    add_constant_pump, add_baseboard,
     create_branch, create_splitter, create_mixer,
     create_pipe, create_connector_list,
-    LoopNodes, Branches, NodeSetter,
+    LoopNodes, Branches,
+    set_nodes_on_loop_side
 )
 # autocompletion use
-from idfhub.helpers.consts import REPO_ROOT
 from idfhub.idf_autocomplete.idf_helpers_short import (
     Timestep, Version, Simulationcontrol,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
     Scheduletypelimits, ScheduleConstant,
-    ScheduleDayInterval, ScheduleWeekDaily, ScheduleYear,
     ScheduleCompact,
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
+    CurveQuadlinear,
+    HeatpumpWatertowaterEquationfitHeating,
+    SiteGroundtemperatureDeep
 )
 from idfhub.idf_autocomplete.idf_types_short import (
     TimestepType, VersionType, SimulationcontrolType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
     ScheduletypelimitsType, ScheduleConstantType,
-    ScheduleDayIntervalType, ScheduleWeekDailyType, ScheduleYearType,
     ScheduleCompactType,
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
+    CurveQuadlinearType,
+    HeatpumpWatertowaterEquationfitHeatingType,
+    SiteGroundtemperatureDeepType
 )
 
 from idfhub.helpers.common import get_logger
+
+from common import idf, BUILDING_NAME
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -39,10 +45,7 @@ FORMAT = (
 
 LOGGER = get_logger(format=FORMAT)
 
-BUILDING_NAME = "batiment_600m2"
-OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
-IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
-idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+
 message = f"idf hvac injection for energyplus {idf.idd_version}"
 LOGGER.info(message)
 
@@ -107,66 +110,17 @@ fractional_typelimits = ScheduletypelimitsType(
 )
 Scheduletypelimits(idf, **fractional_typelimits)
 
-const_temp_sched = ScheduleConstantType(
-    Name="const_temp_sched_25deg",
-    Schedule_Type_Limits_Name="temperature",
-    Hourly_Value=25
-)
-ScheduleConstant(idf, **const_temp_sched)
-const_temp_sched["Name"] = "const_temp_sched_20deg"
-const_temp_sched["Hourly_Value"] = 20
-ScheduleConstant(idf, **const_temp_sched)
-#---------------------------------------------------------------------------------------------------
-# on crée un schedule d'availability, de type on/off : systems_year_availability
-# mais on ne va pas s'en servir, car on va passer par un schedule compact pour les thermostat
-#---------------------------------------------------------------------------------------------------
-day_work = ScheduleDayIntervalType(
-    Name="day_work",
-    Schedule_Type_Limits_Name="on_off",
-    Interpolate_to_Timestep="No",
-    Time_1="07:00",
-    Value_Until_Time_1=0,
-    Time_2="17:00",
-    Value_Until_Time_2=1,
-    Time_3="24:00",
-    Value_Until_Time_3=0
-)
-day_off = ScheduleDayIntervalType(
-    Name="day_off",
-    Schedule_Type_Limits_Name="on_off",
-    Interpolate_to_Timestep="No",
-    Time_1="24:00",
-    Value_Until_Time_1=0
-)
-ScheduleDayInterval(idf, **day_work)
-ScheduleDayInterval(idf, **day_off)
+def create_const_sched(temp: int):
+    """create a constant schedule type"""
+    return ScheduleConstantType(
+        Name=f"const_temp_sched_{temp}deg",
+        Schedule_Type_Limits_Name="temperature",
+        Hourly_Value=temp
+    )
 
-systems_week_availability = ScheduleWeekDailyType(
-    Name="systems_week_availability",
-    Sunday_ScheduleDay_Name="day_off",
-    Monday_ScheduleDay_Name="day_work",
-    Tuesday_ScheduleDay_Name="day_work",
-    Wednesday_ScheduleDay_Name="day_work",
-    Thursday_ScheduleDay_Name="day_work",
-    Friday_ScheduleDay_Name="day_work",
-    Saturday_ScheduleDay_Name="day_off",
-    Holiday_ScheduleDay_Name="day_off",
-    SummerDesignDay_ScheduleDay_Name="day_work",
-    WinterDesignDay_ScheduleDay_Name="day_work",
-    CustomDay1_ScheduleDay_Name="day_work",
-    CustomDay2_ScheduleDay_Name="day_work"
-)
-ScheduleWeekDaily(idf, **systems_week_availability)
-systems_year_availability = ScheduleYearType(
-    Name="systems_year_availability",
-    Schedule_Type_Limits_Name="on_off",
-    ScheduleWeek_Name_1="systems_week_availability",
-    Start_Day_1=1,
-    Start_Month_1=1,
-    End_Day_1=31,
-    End_Month_1=12
-)
-ScheduleYear(idf, **systems_year_availability)
+ScheduleConstant(idf, **create_const_sched(25))
+ScheduleConstant(idf, **create_const_sched(20))
+
 #---------------------------------------------------------------------------------------------------
 # End Of Schedules
 #---------------------------------------------------------------------------------------------------
@@ -245,10 +199,20 @@ ZonecontrolThermostat(idf, **rplus1_thermostat)
 # End Of Thermostats
 #---------------------------------------------------------------------------------------------------
 
+#---------------------------------------------------------------------------------------------------
+# Plant Loops
+#---------------------------------------------------------------------------------------------------
 add_plant_loop(idf, SOIL_LOOP, 15, -5)
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
 soil_loop_branches = Branches(SOIL_LOOP)
 
+heating_loop = add_plant_loop(idf, HEAT_LOOP, 100, 0)
+heating_loop_nodes = LoopNodes(HEAT_LOOP)
+heating_loop_branches = Branches(HEAT_LOOP)
+
+#---------------------------------------------------------------------------------------------------
+# PRODUCTION SYSTEMS
+#---------------------------------------------------------------------------------------------------
 borehole = add_ground_exchanger(
     idf,
     "Borehole",
@@ -261,64 +225,120 @@ soil_pump = add_constant_pump(
     "Borehole outlet",
     soil_loop_nodes.supply_outlet
 )
-
-
-idf.newidfobject(
-    "CURVE:QUADLINEAR",
-    Name="HPWTW Heating Capacity Curve",
-    Coefficient1_Constant=0.8,
-    Coefficient2_w=0.01,
-    Coefficient3_x=0.02,
-    Coefficient4_y=0.03,
-    Coefficient5_z=0.0,
-    Minimum_Value_of_w=-5.0,
-    Maximum_Value_of_w=20.0,
-    Minimum_Value_of_x=30.0,
-    Maximum_Value_of_x=55.0,
-    Minimum_Value_of_y=-5.0,
-    Maximum_Value_of_y=20.0,
-    Minimum_Value_of_z=0.0,
-    Maximum_Value_of_z=1.0,
-    Minimum_Curve_Output=0.5,
-    Maximum_Curve_Output=1.5,
-    Input_Unit_Type_for_w="Temperature",
-    Input_Unit_Type_for_x="Temperature",
-    Input_Unit_Type_for_y="Temperature",
-    Input_Unit_Type_for_z="Dimensionless"
+inside_pump = add_constant_pump(
+    idf,
+    f"{HEAT_LOOP} Pump",
+    heating_loop_nodes.supply_inlet,
+    "inside pump outlet"
 )
 
-idf.newidfobject(
-    "CURVE:QUADLINEAR",
-    Name="HPWTW Heating Power Curve",
-    Coefficient1_Constant=0.5,
-    Coefficient2_w=0.005,
-    Coefficient3_x=0.015,
-    Coefficient4_y=0.02,
-    Coefficient5_z=0.0,
-    Minimum_Value_of_w=-5.0,
-    Maximum_Value_of_w=20.0,
-    Minimum_Value_of_x=30.0,
-    Maximum_Value_of_x=55.0,
-    Minimum_Value_of_y=-5.0,
-    Maximum_Value_of_y=20.0,
-    Minimum_Value_of_z=0.0,
-    Maximum_Value_of_z=1.0,
-    Minimum_Curve_Output=0.5,
-    Maximum_Curve_Output=1.5,
-    Input_Unit_Type_for_w="Temperature",
-    Input_Unit_Type_for_x="Temperature",
-    Input_Unit_Type_for_y="Temperature",
-    Input_Unit_Type_for_z="Dimensionless"
+def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
+    """create a curve for heatpump configuration"""
+    return CurveQuadlinearType(
+        Name=name,
+        Coefficient1_Constant=coeff1,
+        Coefficient2_w=coeff2,
+        Coefficient3_x=coeff3,
+        Coefficient4_y=coeff4,
+        Coefficient5_z=0,
+        Minimum_Value_of_w=-5.0,
+        Maximum_Value_of_w=20.0,
+        Minimum_Value_of_x=30.0,
+        Maximum_Value_of_x=55.0,
+        Minimum_Value_of_y=-5.0,
+        Maximum_Value_of_y=20.0,
+        Minimum_Value_of_z=0.0,
+        Maximum_Value_of_z=1.0,
+        Minimum_Curve_Output=0.5,
+        Maximum_Curve_Output=1.5,
+        Input_Unit_Type_for_w="Temperature",
+        Input_Unit_Type_for_x="Temperature",
+        Input_Unit_Type_for_y="Temperature",
+        Input_Unit_Type_for_z="Dimensionless"
+    )
+
+hpwtw_name = "HPWTW"
+capacity_curve_name = f"{hpwtw_name} Heating capacity curve"
+power_curve_name = f"{hpwtw_name} Heating power curve"
+CurveQuadlinear(
+    idf,
+    **create_quadlincurve(
+        capacity_curve_name,
+        0.8, 0.01, 0.02, 0.03
+    )
 )
 
+CurveQuadlinear(
+    idf,
+    **create_quadlincurve(
+        power_curve_name,
+        0.5, 0.005, 0.015, 0.02
+    )
+)
 
-hpwtw = add_watertowater_heatpump(idf, "HPWTW")
+hpwtw = HeatpumpWatertowaterEquationfitHeating(
+    idf, 
+    **HeatpumpWatertowaterEquationfitHeatingType(
+        Name=hpwtw_name,
+        Reference_Load_Side_Flow_Rate=EPApi.AUTOSIZE,
+        Reference_Source_Side_Flow_Rate=EPApi.AUTOSIZE,
+        Reference_Heating_Capacity=EPApi.AUTOSIZE,
+        Reference_Heating_Power_Consumption=EPApi.AUTOSIZE,
+        Reference_Coefficient_of_Performance=5,
+        Sizing_Factor=1,
+        Heating_Capacity_Curve_Name=capacity_curve_name,
+        Heating_Compressor_Power_Curve_Name=power_curve_name
+    )
+)
+set_nodes_on_loop_side(
+    hpwtw,
+    EPApi.SOURCE_SIDE,
+    inlet=soil_loop_nodes.demand_inlet,
+    outlet=soil_loop_nodes.demand_outlet
+)
+set_nodes_on_loop_side(
+    hpwtw,
+    EPApi.LOAD_SIDE,
+    inlet=inside_pump[EPApi.OUTLET_NODE_NAME],
+    outlet=heating_loop_nodes.supply_outlet
+)
 
-hpwtw.Heating_Capacity_Curve_Name = "HPWTW Heating Capacity Curve"
-hpwtw.Heating_Compressor_Power_Curve_Name = "HPWTW Heating Power Curve"
+create_branch(
+    idf,
+    name = soil_loop_branches.supply_branch,
+    objects = [borehole, soil_pump],
+    sides = [None, None]
+)
+create_branch(
+    idf,
+    name = soil_loop_branches.demand_branch,
+    objects = [hpwtw],
+    sides = [EPApi.SOURCE_SIDE]
+)
+create_branch(
+    idf,
+    name = heating_loop_branches.supply_branch,
+    objects = [inside_pump, hpwtw],
+    sides = [None, EPApi.LOAD_SIDE]
+)
 
-create_branch(idf, soil_loop_branches.supply_branch, [borehole, soil_pump], [None, None])
-create_branch(idf, soil_loop_branches.demand_branch, [hpwtw], ["Source_Side"])
+SiteGroundtemperatureDeep(
+    idf,
+    **SiteGroundtemperatureDeepType(
+        January_Deep_Ground_Temperature=7.0,
+        February_Deep_Ground_Temperature=8.0,
+        March_Deep_Ground_Temperature=9.5,
+        April_Deep_Ground_Temperature=11.0,
+        May_Deep_Ground_Temperature=12.5,
+        June_Deep_Ground_Temperature=13.5,
+        July_Deep_Ground_Temperature=14.0,
+        August_Deep_Ground_Temperature=13.8,
+        September_Deep_Ground_Temperature=12.5,
+        October_Deep_Ground_Temperature=10.5,
+        November_Deep_Ground_Temperature=8.5,
+        December_Deep_Ground_Temperature=7.5,
+    )
+)
 
 idf.newidfobject(
     "SETPOINTMANAGER:FOLLOWGROUNDTEMPERATURE",
@@ -333,7 +353,7 @@ idf.newidfobject(
 
 idf.newidfobject(
     "SIZING:PLANT",
-    Plant_or_Condenser_Loop_Name="Soil Loop",
+    Plant_or_Condenser_Loop_Name=SOIL_LOOP,
     Loop_Type="Condenser",
     Design_Loop_Exit_Temperature=15,
     Loop_Design_Temperature_Difference=5,
@@ -344,7 +364,7 @@ idf.newidfobject(
 
 idf.newidfobject(
     "PLANTEQUIPMENTOPERATIONSCHEMES",
-    Name="Soil Loop",
+    Name=SOIL_LOOP,
     Control_Scheme_1_Object_Type="PlantEquipmentOperation:Uncontrolled",
     Control_Scheme_1_Name="Plant Soil Loop Uncontrolled",
     Control_Scheme_1_Schedule_Name="Always On"
@@ -363,42 +383,23 @@ idf.newidfobject(
     Equipment_1_Name="Borehole"
 )
 
-
-heating_loop = add_plant_loop(idf, HEAT_LOOP, 100, 0)
-heating_loop_nodes = LoopNodes(HEAT_LOOP)
-heating_loop_branches = Branches(HEAT_LOOP)
-
-inside_pump = add_constant_pump(
-    idf,
-    f"{HEAT_LOOP} Pump",
-    heating_loop_nodes.supply_inlet,
-    "inside pump outlet"
-)
-
-hpns = NodeSetter(hpwtw)
-hpns.set_inlet(EPApi.LOAD_SIDE, "inside pump outlet")
-
-create_branch(
-    idf,
-    heating_loop_branches.supply_branch,
-    [inside_pump, hpwtw],
-    [None, "Load_Side"]
-)
-
+#---------------------------------------------------------------------------------------------------
+# EMISSION SYSTEMS
+#---------------------------------------------------------------------------------------------------
 rplus1_baseboard = add_baseboard(idf, "RPLUS1", "rplus1 inlet", "rplus1 outlet")
 rdc_baseboard = add_baseboard(idf, "RDC", "rdc inlet", "rdc outlet")
 
 rplus1_baseboard_branch = create_branch(
     idf,
-    f"{heating_loop_branches.demand_branch} rplus1",
-    [rplus1_baseboard],
-    [None]
+    name = f"{heating_loop_branches.demand_branch} rplus1",
+    objects = [rplus1_baseboard],
+    sides = [None]
 )
 rdc_baseboard_branch = create_branch(
     idf,
-    f"{heating_loop_branches.demand_branch} rdc",
-    [rdc_baseboard],
-    [None]
+    name = f"{heating_loop_branches.demand_branch} rdc",
+    objects = [rdc_baseboard],
+    sides = [None]
 )
 
 splitter = create_splitter(
@@ -422,10 +423,10 @@ heat_loop_demand_branch = idf.getobject(
     "BRANCHLIST",
     heating_loop_branches.demand_branch_list
 )
-heat_loop_demand_branch.Branch_1_Name = "demand splitter inlet branch"
+heat_loop_demand_branch.Branch_1_Name = splitter[EPApi.INLET_BRANCH_NAME]
 heat_loop_demand_branch.Branch_2_Name = rdc_baseboard_branch.Name
 heat_loop_demand_branch.Branch_3_Name = rplus1_baseboard_branch.Name
-heat_loop_demand_branch.Branch_4_Name = "demand mixer outlet branch"
+heat_loop_demand_branch.Branch_4_Name = mixer[EPApi.OUTLET_BRANCH_NAME]
 
 pipe = create_pipe(
     idf,
@@ -433,14 +434,24 @@ pipe = create_pipe(
     heating_loop_nodes.demand_inlet,
     f"{heating_loop_nodes.demand_inlet} Pipe Node"
 )
-create_branch(idf, "demand splitter inlet branch", [pipe], [None])
+create_branch(
+    idf,
+    name = splitter[EPApi.INLET_BRANCH_NAME], 
+    objects = [pipe],
+    sides = [None]
+)
 pipe = create_pipe(
     idf,
     f"{heating_loop_nodes.demand_outlet} Pipe",
     f"{heating_loop_nodes.demand_outlet} Pipe Node",
     heating_loop_nodes.demand_outlet
 )
-create_branch(idf, "demand mixer outlet branch", [pipe], [None])
+create_branch(
+    idf,
+    name = mixer[EPApi.OUTLET_BRANCH_NAME],
+    objects = [pipe],
+    sides = [None]
+)
 input("press")
 
 idf.save(f"{BUILDING_NAME}_W_HVAC.idf")
