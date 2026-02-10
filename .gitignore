@@ -1,5 +1,6 @@
 *.pyc
 osm/*
+osm_*
 idf_zip/*
 weather_data
 *egg-info
