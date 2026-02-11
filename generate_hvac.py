@@ -18,7 +18,6 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     CurveQuadlinear,
     HeatpumpWatertowaterEquationfitHeating,
-    SiteGroundtemperatureDeep,
     GroundheatexchangerVerticalProperties,
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
@@ -31,7 +30,6 @@ from idfhub.idf_autocomplete.idf_types_short import (
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     CurveQuadlinearType,
     HeatpumpWatertowaterEquationfitHeatingType,
-    SiteGroundtemperatureDeepType,
     GroundheatexchangerVerticalPropertiesType,
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
@@ -259,8 +257,8 @@ borehole = GroundheatexchangerSystem(
         Design_Flow_Rate=0.0033, # m3/s > 0.0033*3600 m3/h soit 11,88 m3/h pour 10 forages, soit 1.2 m3/h par forage
         Undisturbed_Ground_Temperature_Model_Name=soil.Name,
         Undisturbed_Ground_Temperature_Model_Type=soil.key,
-        Ground_Thermal_Conductivity=0.692626, #W / (m K)
-        Ground_Thermal_Heat_Capacity=2347000, #Pa/K = J / (m3 K)
+        Ground_Thermal_Conductivity=2.5, #W / (m K) - 0.69 serait une valeur médiocre
+        Ground_Thermal_Heat_Capacity=1.8e6, #Pa/K = J / (m3 K)
         GHEVerticalArray_Object_Name=champ_de_sondes.Name
     )
 )
@@ -268,7 +266,7 @@ borehole = GroundheatexchangerSystem(
 soil_pump = add_constant_pump(
     idf,
     f"{SOIL_LOOP} Pump",
-    "Borehole outlet",
+    borehole[EPApi.OUTLET_NODE_NAME],
     soil_loop_nodes.supply_outlet
 )
 inside_pump = add_constant_pump(
@@ -366,34 +364,6 @@ create_branch(
     sides = [None, EPApi.LOAD_SIDE]
 )
 
-ground_temperature = SiteGroundtemperatureDeep(
-    idf,
-    **SiteGroundtemperatureDeepType(
-        January_Deep_Ground_Temperature=7.0,
-        February_Deep_Ground_Temperature=8.0,
-        March_Deep_Ground_Temperature=9.5,
-        April_Deep_Ground_Temperature=11.0,
-        May_Deep_Ground_Temperature=12.5,
-        June_Deep_Ground_Temperature=13.5,
-        July_Deep_Ground_Temperature=14.0,
-        August_Deep_Ground_Temperature=13.8,
-        September_Deep_Ground_Temperature=12.5,
-        October_Deep_Ground_Temperature=10.5,
-        November_Deep_Ground_Temperature=8.5,
-        December_Deep_Ground_Temperature=7.5,
-    )
-)
-
-idf.newidfobject(
-    "SETPOINTMANAGER:FOLLOWGROUNDTEMPERATURE",
-    Name="SetPoint Follow Ground Temperature",
-    Control_Variable="Temperature",
-    Reference_Ground_Temperature_Object_Type=ground_temperature.key,
-    #Offset_Temperature_Difference=0,
-    #Maximum_Setpoint_Temperature=60,
-    #Minimum_Setpoint_Temperature=0,
-    Setpoint_Node_or_NodeList_Name=soil_loop_nodes.supply_outlet
-)
 
 idf.newidfobject(
     "SIZING:PLANT",
