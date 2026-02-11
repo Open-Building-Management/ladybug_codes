@@ -53,25 +53,27 @@ LOGGER.info(message)
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
 
-soil = SiteGroundtemperatureUndisturbedKusudaachenbachType(
-    Name="Sol_KA",
-    Soil_Thermal_Conductivity=2.5, # W/(m K)
-    Soil_Density=2000, # kg/m3
-    Soil_Specific_Heat=900, # J/(kg K)
-    Average_Soil_Surface_Temperature=11,
-    Average_Amplitude_of_Surface_Temperature=10,
-    Phase_Shift_of_Minimum_Surface_Temperature=45 #days
+soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
+    idf,
+    **SiteGroundtemperatureUndisturbedKusudaachenbachType(
+        Name="Sol_KA",
         Soil_Thermal_Conductivity=2.5, # W/(m K)
         Soil_Density=2000, # kg/m3
+        Soil_Specific_Heat=900, # J/(kg K)
+        Average_Soil_Surface_Temperature=11,
+        Average_Amplitude_of_Surface_Temperature=10,
+        Phase_Shift_of_Minimum_Surface_Temperature=45 #days
+    )
 )
-SiteGroundtemperatureUndisturbedKusudaachenbach(idf, **soil)
 
-timestep = TimestepType(
-    Number_of_Timesteps_per_Hour=6
+Timestep(
+    idf,
+    **TimestepType(
+        Number_of_Timesteps_per_Hour=6
+    )
 )
-Timestep(idf, **timestep)
-version = VersionType()
-Version(idf, **version)
+version = Version(idf, **VersionType())
+
 simulationcontrol = SimulationcontrolType(
     Do_Zone_Sizing_Calculation="Yes",
     Do_Plant_Sizing_Calculation="Yes",
@@ -89,28 +91,35 @@ CONTINUOUS = "Continuous"
 # - const_temp_sched_20deg
 # - const_temp_sched_25deg
 #---------------------------------------------------------------------------------------------------
-temperature_typelimits = ScheduletypelimitsType(
-    Name="temperature",
-    Numeric_Type=CONTINUOUS,
-    Unit_Type="Temperature"
+temperature_typelimits = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="temperature",
+        Numeric_Type=CONTINUOUS,
+        Unit_Type="Temperature"
+    )
 )
-Scheduletypelimits(idf, **temperature_typelimits)
-on_off_typelimits = ScheduletypelimitsType(
-    Name="on_off",
-    Lower_Limit_Value=0,
-    Upper_Limit_Value=1,
-    Numeric_Type=DISCRETE,
-    Unit_Type="Availability"
+
+on_off_typelimits = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="on_off",
+        Lower_Limit_Value=0,
+        Upper_Limit_Value=1,
+        Numeric_Type=DISCRETE,
+        Unit_Type="Availability"
+    )
 )
-Scheduletypelimits(idf, **on_off_typelimits)
-# ajout car generate_geometry produit un schedule constant qui nécessite Fractional ????
-fractional_typelimits = ScheduletypelimitsType(
-    Name="Fractional",
-    Lower_Limit_Value=0,
-    Upper_Limit_Value=1,
-    Numeric_Type=CONTINUOUS,
+# ajout car generate_geometry nécessite un schedule constant appelé Always On qui utilise Fractional ????
+fractional_typelimits = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="Fractional",
+        Lower_Limit_Value=0,
+        Upper_Limit_Value=1,
+        Numeric_Type=CONTINUOUS,
+    )
 )
-Scheduletypelimits(idf, **fractional_typelimits)
 
 def create_const_sched(temp: int):
     """create a constant schedule type"""
@@ -120,8 +129,8 @@ def create_const_sched(temp: int):
         Hourly_Value=temp
     )
 
-ScheduleConstant(idf, **create_const_sched(25))
-ScheduleConstant(idf, **create_const_sched(20))
+consigne_25deg = ScheduleConstant(idf, **create_const_sched(25))
+consigne_20deg = ScheduleConstant(idf, **create_const_sched(20))
 
 #---------------------------------------------------------------------------------------------------
 # End Of Schedules
@@ -130,12 +139,14 @@ ScheduleConstant(idf, **create_const_sched(20))
 #---------------------------------------------------------------------------------------------------
 # Thermostats
 #---------------------------------------------------------------------------------------------------
-zone_thermostat = ThermostatsetpointDualsetpointType(
-    Name="zone_thermostat",
-    Heating_Setpoint_Temperature_Schedule_Name="const_temp_sched_20deg",
-    Cooling_Setpoint_Temperature_Schedule_Name="const_temp_sched_25deg"
+zone_thermostat = ThermostatsetpointDualsetpoint(
+    idf,
+    **ThermostatsetpointDualsetpointType(
+        Name="zone_thermostat",
+        Heating_Setpoint_Temperature_Schedule_Name=consigne_20deg.Name,
+        Cooling_Setpoint_Temperature_Schedule_Name=consigne_25deg.Name
+    )
 )
-ThermostatsetpointDualsetpoint(idf, **zone_thermostat)
 
 # Control types are integers: 
 # 0 - Uncontrolled (floating, no thermostat),
@@ -143,13 +154,15 @@ ThermostatsetpointDualsetpoint(idf, **zone_thermostat)
 # 2 = ThermostatSetpoint:SingleCooling,
 # 3 = ThermostatSetpoint:SingleHeatingOrCooling,
 # 4 = ThermostatSetpoint:DualSetpoint
-control_types = ScheduletypelimitsType(
-    Name="control_types",
-    Lower_Limit_Value=0,
-    Upper_Limit_Value=4,
-    Numeric_Type=DISCRETE
+control_types = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="control_types",
+        Lower_Limit_Value=0,
+        Upper_Limit_Value=4,
+        Numeric_Type=DISCRETE
+    )
 )
-Scheduletypelimits(idf, **control_types)
 
 # on utilise un schedule compact
 # Mots-clés utiles dans For:
@@ -163,40 +176,46 @@ Scheduletypelimits(idf, **control_types)
 # SummerDesignDay
 # WinterDesignDay
 # CustomDay1/2
-control_type_schedule = ScheduleCompactType(
-    Name="control_type_schedule",
-    Schedule_Type_Limits_Name="control_types",
-    Field_1="Through: 12/31",
-    Field_2="For: Weekdays",
-    Field_3="Until: 07:00",
-    Field_4=0,
-    Field_5="Until: 17:00",
-    Field_6=4,
-    Field_7="Until: 24:00",
-    Field_8=0,
-    Field_9="For: Weekends",
-    Field_10="Until: 24:00",
-    Field_11=0
+control_type_schedule = ScheduleCompact(
+    idf,
+    **ScheduleCompactType(
+        Name="control_type_schedule",
+        Schedule_Type_Limits_Name=control_types.Name,
+        Field_1="Through: 12/31",
+        Field_2="For: Weekdays",
+        Field_3="Until: 07:00",
+        Field_4=0,
+        Field_5="Until: 17:00",
+        Field_6=4,
+        Field_7="Until: 24:00",
+        Field_8=0,
+        Field_9="For: Weekends",
+        Field_10="Until: 24:00",
+        Field_11=0
+    )
 )
-ScheduleCompact(idf, **control_type_schedule)
 
-rdc_thermostat = ZonecontrolThermostatType(
-    Name="RDC_thermostat",
-    Zone_or_ZoneList_Name="RDC",
-    Control_Type_Schedule_Name="control_type_schedule",
-    Control_1_Object_Type="ThermostatSetpoint:DualSetpoint",
-    Control_1_Name="zone_thermostat"
+rdc_thermostat = ZonecontrolThermostat(
+    idf,
+    **ZonecontrolThermostatType(
+        Name="RDC_thermostat",
+        Zone_or_ZoneList_Name="RDC",
+        Control_Type_Schedule_Name=control_type_schedule.Name,
+        Control_1_Object_Type=zone_thermostat.key,
+        Control_1_Name=zone_thermostat.Name
+    )
 )
-ZonecontrolThermostat(idf, **rdc_thermostat)
 
-rplus1_thermostat = ZonecontrolThermostatType(
-    Name="RPLUS1_thermostat",
-    Zone_or_ZoneList_Name="RPLUS1",
-    Control_Type_Schedule_Name="control_type_schedule",
-    Control_1_Object_Type="ThermostatSetpoint:DualSetpoint",
-    Control_1_Name="zone_thermostat"
+rplus1_thermostat = ZonecontrolThermostat(
+    idf,
+    **ZonecontrolThermostatType(
+        Name="RPLUS1_thermostat",
+        Zone_or_ZoneList_Name="RPLUS1",
+        Control_Type_Schedule_Name=control_type_schedule.Name,
+        Control_1_Object_Type=zone_thermostat.key,
+        Control_1_Name=zone_thermostat.Name
+    )
 )
-ZonecontrolThermostat(idf, **rplus1_thermostat)
 #---------------------------------------------------------------------------------------------------
 # End Of Thermostats
 #---------------------------------------------------------------------------------------------------
@@ -260,20 +279,18 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
     )
 
 hpwtw_name = "HPWTW"
-capacity_curve_name = f"{hpwtw_name} Heating capacity curve"
-power_curve_name = f"{hpwtw_name} Heating power curve"
-CurveQuadlinear(
+capacity_curve = CurveQuadlinear(
     idf,
     **create_quadlincurve(
-        capacity_curve_name,
+        f"{hpwtw_name} Heating capacity curve",
         0.8, 0.01, 0.02, 0.03
     )
 )
 
-CurveQuadlinear(
+power_curve = CurveQuadlinear(
     idf,
     **create_quadlincurve(
-        power_curve_name,
+        f"{hpwtw_name} Heating power curve",
         0.5, 0.005, 0.015, 0.02
     )
 )
@@ -288,8 +305,8 @@ hpwtw = HeatpumpWatertowaterEquationfitHeating(
         Reference_Heating_Power_Consumption=EPApi.AUTOSIZE,
         Reference_Coefficient_of_Performance=5,
         Sizing_Factor=1,
-        Heating_Capacity_Curve_Name=capacity_curve_name,
-        Heating_Compressor_Power_Curve_Name=power_curve_name
+        Heating_Capacity_Curve_Name=capacity_curve.Name,
+        Heating_Compressor_Power_Curve_Name=power_curve.Name
     )
 )
 set_nodes(
@@ -324,7 +341,7 @@ create_branch(
     sides = [None, EPApi.LOAD_SIDE]
 )
 
-SiteGroundtemperatureDeep(
+ground_temperature = SiteGroundtemperatureDeep(
     idf,
     **SiteGroundtemperatureDeepType(
         January_Deep_Ground_Temperature=7.0,
@@ -346,7 +363,7 @@ idf.newidfobject(
     "SETPOINTMANAGER:FOLLOWGROUNDTEMPERATURE",
     Name="SetPoint Follow Ground Temperature",
     Control_Variable="Temperature",
-    Reference_Ground_Temperature_Object_Type="Site:GroundTemperature:Deep",
+    Reference_Ground_Temperature_Object_Type=ground_temperature.key,
     #Offset_Temperature_Difference=0,
     #Maximum_Setpoint_Temperature=60,
     #Minimum_Setpoint_Temperature=0,
@@ -364,26 +381,27 @@ idf.newidfobject(
     #Coincident_Sizing_Factor_Mode
 )
 
+soil_loop_equipement_list = idf.newidfobject(
+    "PLANTEQUIPMENTLIST",
+    Name="Plant Soil Loop Equipment List",
+    Equipment_1_Object_Type=borehole.key,
+    Equipment_1_Name="Borehole"
+)
+
+soil_loop_operation_scheme = idf.newidfobject(
+    "PLANTEQUIPMENTOPERATION:UNCONTROLLED",
+    Name="Plant Soil Loop Uncontrolled",
+    Equipment_List_Name=soil_loop_equipement_list.Name
+)
+
 idf.newidfobject(
     "PLANTEQUIPMENTOPERATIONSCHEMES",
     Name=SOIL_LOOP,
-    Control_Scheme_1_Object_Type="PlantEquipmentOperation:Uncontrolled",
-    Control_Scheme_1_Name="Plant Soil Loop Uncontrolled",
+    Control_Scheme_1_Object_Type=soil_loop_operation_scheme.key,
+    Control_Scheme_1_Name=soil_loop_operation_scheme.Name,
     Control_Scheme_1_Schedule_Name="Always On"
 )
 
-idf.newidfobject(
-    "PLANTEQUIPMENTOPERATION:UNCONTROLLED",
-    Name="Plant Soil Loop Uncontrolled",
-    Equipment_List_Name="Plant Soil Loop Equipment List"
-)
-
-idf.newidfobject(
-    "PLANTEQUIPMENTLIST",
-    Name="Plant Soil Loop Equipment List",
-    Equipment_1_Object_Type="GROUNDHEATEXCHANGER:SYSTEM",
-    Equipment_1_Name="Borehole"
-)
 
 #---------------------------------------------------------------------------------------------------
 # EMISSION SYSTEMS
