@@ -223,40 +223,6 @@ def add_constant_pump(idf: IDF, name: str, inlet: str, outlet: str):
     pump[EPApi.OUTLET_NODE_NAME] = outlet
     return pump
 
-def add_ground_exchanger(idf: IDF, name, inlet, outlet):
-    """add a borehole ?"""
-    borehole = idf.newidfobject(
-        "GROUNDHEATEXCHANGER:SYSTEM",
-        Name=name,
-        Design_Flow_Rate=0.0033,
-        Undisturbed_Ground_Temperature_Model_Type=KUSUDAACHENBACH,
-        Undisturbed_Ground_Temperature_Model_Name="Sol_KA",
-        Ground_Thermal_Conductivity=0.692626, #W/(m K)
-        Ground_Thermal_Heat_Capacity=2347000, #Pa/k = J/(m3 K)
-        #GHEVerticalResponseFactors_Object_Name
-        #gFunction_Calculation_Method
-        #GHEVerticalArray_Object_Name
-        #GHEVerticalSingle_Object_Name_1
-        #GHEVerticalSingle_Object_Name_2
-        #GHEVerticalSingle_Object_Name_3
-        #GHEVerticalSingle_Object_Name_4
-        #GHEVerticalSingle_Object_Name_5
-        #GHEVerticalSingle_Object_Name_6
-        #GHEVerticalSingle_Object_Name_7
-        #GHEVerticalSingle_Object_Name_8
-        #GHEVerticalSingle_Object_Name_9
-        #GHEVerticalSingle_Object_Name_10
-        #GHEVerticalSingle_Object_Name_11
-        #GHEVerticalSingle_Object_Name_12
-        #GHEVerticalSingle_Object_Name_13
-        #GHEVerticalSingle_Object_Name_14
-        #GHEVerticalSingle_Object_Name_15
-        #GHEVerticalSingle_Object_Name_100
-    )
-    borehole[EPApi.INLET_NODE_NAME] = inlet
-    borehole[EPApi.OUTLET_NODE_NAME] = outlet
-    return borehole
-
 
 def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_people=0.3):
     """Add baseboards like (radiant and convective) EU heaters"""

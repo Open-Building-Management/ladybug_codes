@@ -2,7 +2,7 @@
 
 from idfhub.hvac import (
     EPApi,
-    add_plant_loop, add_ground_exchanger,
+    add_plant_loop,
     add_constant_pump, add_baseboard,
     create_branch, create_splitter, create_mixer,
     create_pipe, create_connector_list,
@@ -18,7 +18,10 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     CurveQuadlinear,
     HeatpumpWatertowaterEquationfitHeating,
-    SiteGroundtemperatureDeep
+    SiteGroundtemperatureDeep,
+    GroundheatexchangerVerticalProperties,
+    GroundheatexchangerVerticalArray,
+    GroundheatexchangerSystem,
 )
 from idfhub.idf_autocomplete.idf_types_short import (
     TimestepType, VersionType, SimulationcontrolType,
@@ -28,7 +31,10 @@ from idfhub.idf_autocomplete.idf_types_short import (
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     CurveQuadlinearType,
     HeatpumpWatertowaterEquationfitHeatingType,
-    SiteGroundtemperatureDeepType
+    SiteGroundtemperatureDeepType,
+    GroundheatexchangerVerticalPropertiesType,
+    GroundheatexchangerVerticalArrayType,
+    GroundheatexchangerSystemType,
 )
 
 from idfhub.helpers.common import get_logger
@@ -215,12 +221,50 @@ heating_loop_branches = Branches(HEAT_LOOP)
 #---------------------------------------------------------------------------------------------------
 # PRODUCTION SYSTEMS
 #---------------------------------------------------------------------------------------------------
-borehole = add_ground_exchanger(
+
+hole = GroundheatexchangerVerticalProperties(
     idf,
-    "Borehole",
-    soil_loop_nodes.supply_inlet,
-    "Borehole outlet"
+    **GroundheatexchangerVerticalPropertiesType(
+        Name="single typical hole",
+        Depth_of_Top_of_Borehole=1,
+        Borehole_Length=100,
+        Borehole_Diameter=0.15,
+        Grout_Thermal_Conductivity=1.2, # W / (m K)
+        Grout_Thermal_Heat_Capacity=3.0e6, # J / (m3 K)
+        Pipe_Thermal_Conductivity=0.4, 
+        Pipe_Thermal_Heat_Capacity=2.0e6,
+        Pipe_Thickness=0.003,
+        Pipe_Outer_Diameter=0.032,
+        UTube_Distance=0.055,
+    )
 )
+
+champ_de_sondes = GroundheatexchangerVerticalArray(
+    idf,
+    **GroundheatexchangerVerticalArrayType(
+        Name="champ de sondes",
+        GHEVerticalProperties_Object_Name=hole.Name,
+        Number_of_Boreholes_in_XDirection=5,
+        Number_of_Boreholes_in_YDirection=2,
+        Borehole_Spacing=6
+    )
+)
+
+borehole = GroundheatexchangerSystem(
+    idf, 
+    **GroundheatexchangerSystemType(
+        Name="Borehole",
+        Inlet_Node_Name=soil_loop_nodes.supply_inlet,
+        Outlet_Node_Name="Borehole outlet",
+        Design_Flow_Rate=0.0033, # m3/s > 0.0033*3600 m3/h soit 11,88 m3/h pour 10 forages, soit 1.2 m3/h par forage
+        Undisturbed_Ground_Temperature_Model_Name=soil.Name,
+        Undisturbed_Ground_Temperature_Model_Type=soil.key,
+        Ground_Thermal_Conductivity=0.692626, #W / (m K)
+        Ground_Thermal_Heat_Capacity=2347000, #Pa/K = J / (m3 K)
+        GHEVerticalArray_Object_Name=champ_de_sondes.Name
+    )
+)
+
 soil_pump = add_constant_pump(
     idf,
     f"{SOIL_LOOP} Pump",
