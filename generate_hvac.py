@@ -61,6 +61,8 @@ soil = SiteGroundtemperatureUndisturbedKusudaachenbachType(
     Average_Soil_Surface_Temperature=11,
     Average_Amplitude_of_Surface_Temperature=10,
     Phase_Shift_of_Minimum_Surface_Temperature=45 #days
+        Soil_Thermal_Conductivity=2.5, # W/(m K)
+        Soil_Density=2000, # kg/m3
 )
 SiteGroundtemperatureUndisturbedKusudaachenbach(idf, **soil)
 
