@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
-KUSUDAACHENBACH = "SITE:GROUNDTEMPERATURE:UNDISTURBED:KUSUDAACHENBACH"
 
 @dataclass(frozen=True)
 class LoopNodes:
