@@ -1,7 +1,5 @@
 """"hvac generator"""
 
-from eppy.modeleditor import IDF
-
 from idfhub.hvac import (
     EPApi,
     add_plant_loop, add_ground_exchanger,
@@ -86,7 +84,7 @@ Simulationcontrol(idf, **simulationcontrol)
 DISCRETE = "Discrete"
 CONTINUOUS = "Continuous"
 #---------------------------------------------------------------------------------------------------
-# Schedules
+# Schedules and Thermostats
 # on crée 2 schedules constants, à 20°C pour le chauffage et à 25°C pour le raffraichissement :
 # - const_temp_sched_20deg
 # - const_temp_sched_25deg
@@ -100,16 +98,6 @@ temperature_typelimits = Scheduletypelimits(
     )
 )
 
-on_off_typelimits = Scheduletypelimits(
-    idf,
-    **ScheduletypelimitsType(
-        Name="on_off",
-        Lower_Limit_Value=0,
-        Upper_Limit_Value=1,
-        Numeric_Type=DISCRETE,
-        Unit_Type="Availability"
-    )
-)
 # ajout car generate_geometry nécessite un schedule constant appelé Always On qui utilise Fractional ????
 fractional_typelimits = Scheduletypelimits(
     idf,
@@ -125,20 +113,13 @@ def create_const_sched(temp: int):
     """create a constant schedule type"""
     return ScheduleConstantType(
         Name=f"const_temp_sched_{temp}deg",
-        Schedule_Type_Limits_Name="temperature",
+        Schedule_Type_Limits_Name=temperature_typelimits.Name,
         Hourly_Value=temp
     )
 
 consigne_25deg = ScheduleConstant(idf, **create_const_sched(25))
 consigne_20deg = ScheduleConstant(idf, **create_const_sched(20))
 
-#---------------------------------------------------------------------------------------------------
-# End Of Schedules
-#---------------------------------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------------------------------
-# Thermostats
-#---------------------------------------------------------------------------------------------------
 zone_thermostat = ThermostatsetpointDualsetpoint(
     idf,
     **ThermostatsetpointDualsetpointType(
@@ -217,7 +198,7 @@ rplus1_thermostat = ZonecontrolThermostat(
     )
 )
 #---------------------------------------------------------------------------------------------------
-# End Of Thermostats
+# End Of Thermostats and Thermostats
 #---------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------------------------

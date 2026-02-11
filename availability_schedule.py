@@ -2,18 +2,32 @@
 NOT USED
 """
 from idfhub.idf_autocomplete.idf_helpers_short import(
+    Scheduletypelimits,
     ScheduleDayInterval, ScheduleWeekDaily, ScheduleYear,
 )
 from idfhub.idf_autocomplete.idf_types_short import(
+    ScheduletypelimitsType,
     ScheduleDayIntervalType, ScheduleWeekDailyType, ScheduleYearType,
 )
 
 from common import idf
+DISCRETE = "Discrete"
 
 #---------------------------------------------------------------------------------------------------
 # # on crée un schedule d'availability, de type on/off : systems_year_availability
 # mais on ne va pas s'en servir, car on va passer par un schedule compact pour les thermostat
 #---------------------------------------------------------------------------------------------------
+on_off_typelimits = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="on_off",
+        Lower_Limit_Value=0,
+        Upper_Limit_Value=1,
+        Numeric_Type=DISCRETE,
+        Unit_Type="Availability"
+    )
+)
+
 day_work = ScheduleDayIntervalType(
     Name="day_work",
     Schedule_Type_Limits_Name="on_off",
