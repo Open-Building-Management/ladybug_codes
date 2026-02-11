@@ -21,6 +21,8 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     GroundheatexchangerVerticalProperties,
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
+    Plantequipmentlist, Plantequipmentoperationschemes,
+    PlantequipmentoperationUncontrolled, PlantequipmentoperationHeatingload,
 )
 from idfhub.idf_autocomplete.idf_types_short import (
     TimestepType, VersionType, SimulationcontrolType,
@@ -33,6 +35,8 @@ from idfhub.idf_autocomplete.idf_types_short import (
     GroundheatexchangerVerticalPropertiesType,
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
+    PlantequipmentlistType, PlantequipmentoperationschemesType,
+    PlantequipmentoperationUncontrolledType, PlantequipmentoperationHeatingloadType
 )
 
 from idfhub.helpers.common import get_logger
@@ -74,12 +78,12 @@ Simulationcontrol(idf, **simulationcontrol)
 
 DISCRETE = "Discrete"
 CONTINUOUS = "Continuous"
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Schedules and Thermostats
-# on crée 2 schedules constants, à 20°C pour le chauffage et à 25°C pour le raffraichissement :
+# on crée 2 schedules constants, 20°C chauffage et 25°C raffraichissement :
 # - const_temp_sched_20deg
 # - const_temp_sched_25deg
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 temperature_typelimits = Scheduletypelimits(
     idf,
     **ScheduletypelimitsType(
@@ -195,7 +199,7 @@ rplus1_thermostat = ZonecontrolThermostat(
 #------------------------------------------------------------------------------
 # # Plant Loops
 #------------------------------------------------------------------------------
-add_plant_loop(idf, SOIL_LOOP, 15, -5)
+soil_loop = add_plant_loop(idf, SOIL_LOOP, 15, -5)
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
 soil_loop_branches = Branches(SOIL_LOOP)
 
@@ -380,25 +384,58 @@ idf.newidfobject(
     #Coincident_Sizing_Factor_Mode
 )
 
-soil_loop_equipement_list = idf.newidfobject(
-    "PLANTEQUIPMENTLIST",
-    Name="Plant Soil Loop Equipment List",
-    Equipment_1_Object_Type=borehole.key,
-    Equipment_1_Name="Borehole"
+#------------------------------------------------------------------------------
+# PLANT EQUIPEMENTS
+#------------------------------------------------------------------------------
+soil_loop_equipement_list = Plantequipmentlist(
+    idf,
+    **PlantequipmentlistType(
+        Name=f"{soil_loop.Name} Equipment List",
+        Equipment_1_Object_Type=borehole.key,
+        Equipment_1_Name=borehole.Name
+    )
 )
-
-soil_loop_operation_scheme = idf.newidfobject(
-    "PLANTEQUIPMENTOPERATION:UNCONTROLLED",
-    Name="Plant Soil Loop Uncontrolled",
-    Equipment_List_Name=soil_loop_equipement_list.Name
+soil_loop_operation = PlantequipmentoperationUncontrolled(
+    idf,
+    **PlantequipmentoperationUncontrolledType(
+        Name=f"{soil_loop.Name} Uncontrolled",
+        Equipment_List_Name=soil_loop_equipement_list.Name
+    )
 )
-
-idf.newidfobject(
-    "PLANTEQUIPMENTOPERATIONSCHEMES",
-    Name=SOIL_LOOP,
-    Control_Scheme_1_Object_Type=soil_loop_operation_scheme.key,
-    Control_Scheme_1_Name=soil_loop_operation_scheme.Name,
-    Control_Scheme_1_Schedule_Name="Always On"
+heating_loop_equipement_list = Plantequipmentlist(
+    idf,
+    **PlantequipmentlistType(
+        Name=f"{heating_loop.Name} Equipment List",
+        Equipment_1_Object_Type=hpwtw.key,
+        Equipment_1_Name=hpwtw.Name
+    )
+)
+heating_loop_operation = PlantequipmentoperationHeatingload(
+    idf,
+    **PlantequipmentoperationHeatingloadType(
+        Name=f"{heating_loop.Name} operation",
+        Load_Range_1_Lower_Limit=0,
+        Load_Range_1_Upper_Limit=1e9,
+        Range_1_Equipment_List_Name=heating_loop_equipement_list.Name
+    )
+)
+Plantequipmentoperationschemes(
+    idf,
+    **PlantequipmentoperationschemesType(
+        Name=SOIL_LOOP,
+        Control_Scheme_1_Object_Type=soil_loop_operation.key,
+        Control_Scheme_1_Name=soil_loop_operation.Name,
+        Control_Scheme_1_Schedule_Name="Always On"
+    )
+)
+Plantequipmentoperationschemes(
+    idf,
+    **PlantequipmentoperationschemesType(
+        Name=HEAT_LOOP,
+        Control_Scheme_1_Object_Type=heating_loop_operation.key,
+        Control_Scheme_1_Name=heating_loop_operation.Name,
+        Control_Scheme_1_Schedule_Name="Always On"
+    )
 )
 
 #------------------------------------------------------------------------------
