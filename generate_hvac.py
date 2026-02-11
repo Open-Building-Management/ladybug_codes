@@ -55,19 +55,6 @@ LOGGER.info(message)
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
 
-soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
-    idf,
-    **SiteGroundtemperatureUndisturbedKusudaachenbachType(
-        Name="Sol_KA",
-        Soil_Thermal_Conductivity=2.5, # W/(m K)
-        Soil_Density=2000, # kg/m3
-        Soil_Specific_Heat=900, # J/(kg K)
-        Average_Soil_Surface_Temperature=11,
-        Average_Amplitude_of_Surface_Temperature=10,
-        Phase_Shift_of_Minimum_Surface_Temperature=45 #days
-    )
-)
-
 Timestep(
     idf,
     **TimestepType(
@@ -201,13 +188,13 @@ rplus1_thermostat = ZonecontrolThermostat(
         Control_1_Name=zone_thermostat.Name
     )
 )
-#---------------------------------------------------------------------------------------------------
-# End Of Thermostats and Thermostats
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# End Of Schedules and Thermostats
+#------------------------------------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------
-# Plant Loops
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# # Plant Loops
+#------------------------------------------------------------------------------
 add_plant_loop(idf, SOIL_LOOP, 15, -5)
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
 soil_loop_branches = Branches(SOIL_LOOP)
@@ -216,9 +203,22 @@ heating_loop = add_plant_loop(idf, HEAT_LOOP, 100, 0)
 heating_loop_nodes = LoopNodes(HEAT_LOOP)
 heating_loop_branches = Branches(HEAT_LOOP)
 
-#---------------------------------------------------------------------------------------------------
-# PRODUCTION SYSTEMS
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# SOIL, BOREHOLE, PRODUCTION SYSTEMS
+#------------------------------------------------------------------------------
+
+soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
+    idf,
+    **SiteGroundtemperatureUndisturbedKusudaachenbachType(
+        Name="Sol_KA",
+        Soil_Thermal_Conductivity=2.5, # W/(m K)
+        Soil_Density=2000, # kg/m3
+        Soil_Specific_Heat=900, # J/(kg K)
+        Average_Soil_Surface_Temperature=11,
+        Average_Amplitude_of_Surface_Temperature=10,
+        Phase_Shift_of_Minimum_Surface_Temperature=45 #days
+    )
+)
 
 hole = GroundheatexchangerVerticalProperties(
     idf,
@@ -248,13 +248,14 @@ champ_de_sondes = GroundheatexchangerVerticalArray(
     )
 )
 
+# 0.0033*3600 m3/h soit 11,88 m3/h pour 10 forages, soit 1.2 m3/h par forage
 borehole = GroundheatexchangerSystem(
     idf, 
     **GroundheatexchangerSystemType(
         Name="Borehole",
         Inlet_Node_Name=soil_loop_nodes.supply_inlet,
         Outlet_Node_Name="Borehole outlet",
-        Design_Flow_Rate=0.0033, # m3/s > 0.0033*3600 m3/h soit 11,88 m3/h pour 10 forages, soit 1.2 m3/h par forage
+        Design_Flow_Rate=0.0033, # m3/s
         Undisturbed_Ground_Temperature_Model_Name=soil.Name,
         Undisturbed_Ground_Temperature_Model_Type=soil.key,
         Ground_Thermal_Conductivity=2.5, #W / (m K) - 0.69 serait une valeur médiocre
@@ -345,6 +346,9 @@ set_nodes(
     outlet=heating_loop_nodes.supply_outlet
 )
 
+# BRANCHES
+# on donne aux branches des noms standards qui ont déjà été attribués à une branchlist
+# lors de la création du loop correspondant
 create_branch(
     idf,
     name = soil_loop_branches.supply_branch,
@@ -397,10 +401,9 @@ idf.newidfobject(
     Control_Scheme_1_Schedule_Name="Always On"
 )
 
-
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # EMISSION SYSTEMS
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 rplus1_baseboard = add_baseboard(idf, "RPLUS1", "rplus1 inlet", "rplus1 outlet")
 rdc_baseboard = add_baseboard(idf, "RDC", "rdc inlet", "rdc outlet")
 
@@ -434,6 +437,8 @@ create_connector_list(
 )
 heating_loop.Demand_Side_Connector_List_Name = "heating demand connector list"
 
+# on doit gérer la branchlist manuellement !
+# car on a un splitter et un mixer
 heat_loop_demand_branch = idf.getobject(
     "BRANCHLIST",
     heating_loop_branches.demand_branch_list
