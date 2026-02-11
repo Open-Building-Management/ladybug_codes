@@ -68,13 +68,13 @@ class EPApi(StrEnum):
     OUTLET_BRANCH_NAME = "Outlet_Branch_Name"
 
 
-def set_nodes_on_loop_side(obj, side, *, inlet, outlet):
+def set_nodes(obj, *, side, inlet, outlet):
     """Set nodes on a loop side"""
     obj[f"{side}_{EPApi.INLET_NODE_NAME}"] = inlet
     obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"] = outlet
 
 
-def set_branch_list_on_loop_side(obj, side, *, branch_list):
+def set_branch_list(obj, *, side, branch_list):
     """Set branch list on a loop side"""
     obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
 
@@ -122,28 +122,28 @@ def add_plant_loop(
         #Pressure_Simulation_Type
         #Loop_Circulation_Time
     )
-    set_nodes_on_loop_side(
+    set_nodes(
         plantloop,
-        EPApi.PLANT_SIDE,
+        side=EPApi.PLANT_SIDE,
         inlet=nodes.supply_inlet,
         outlet=nodes.supply_outlet,
     )
-    set_branch_list_on_loop_side(
+    set_branch_list(
         plantloop,
-        EPApi.PLANT_SIDE,
+        side=EPApi.PLANT_SIDE,
         branch_list=branches.supply_branch_list,
     )
 
-    set_nodes_on_loop_side(
+    set_nodes(
         plantloop,
-        EPApi.DEMAND_SIDE,
+        side=EPApi.DEMAND_SIDE,
         inlet=nodes.demand_inlet,
         outlet=nodes.demand_outlet,
 
     )
-    set_branch_list_on_loop_side(
+    set_branch_list(
         plantloop,
-        EPApi.DEMAND_SIDE,
+        side=EPApi.DEMAND_SIDE,
         branch_list=branches.demand_branch_list,
     )
 

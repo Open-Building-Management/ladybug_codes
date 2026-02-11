@@ -9,7 +9,7 @@ from idfhub.hvac import (
     create_branch, create_splitter, create_mixer,
     create_pipe, create_connector_list,
     LoopNodes, Branches,
-    set_nodes_on_loop_side
+    set_nodes
 )
 # autocompletion use
 from idfhub.idf_autocomplete.idf_helpers_short import (
@@ -290,15 +290,15 @@ hpwtw = HeatpumpWatertowaterEquationfitHeating(
         Heating_Compressor_Power_Curve_Name=power_curve_name
     )
 )
-set_nodes_on_loop_side(
+set_nodes(
     hpwtw,
-    EPApi.SOURCE_SIDE,
+    side=EPApi.SOURCE_SIDE,
     inlet=soil_loop_nodes.demand_inlet,
     outlet=soil_loop_nodes.demand_outlet
 )
-set_nodes_on_loop_side(
+set_nodes(
     hpwtw,
-    EPApi.LOAD_SIDE,
+    side=EPApi.LOAD_SIDE,
     inlet=inside_pump[EPApi.OUTLET_NODE_NAME],
     outlet=heating_loop_nodes.supply_outlet
 )
