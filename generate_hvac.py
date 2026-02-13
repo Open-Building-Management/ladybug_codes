@@ -64,14 +64,18 @@ Timestep(
         Number_of_Timesteps_per_Hour=6
     )
 )
-version = Version(idf, **VersionType())
+Version(idf, **VersionType())
 
-simulationcontrol = SimulationcontrolType(
-    Do_Zone_Sizing_Calculation="Yes",
-    Do_Plant_Sizing_Calculation="Yes",
-    Do_System_Sizing_Calculation="Yes",
-    Do_HVAC_Sizing_Simulation_for_Sizing_Periods="Yes",
-    Maximum_Number_of_HVAC_Sizing_Simulation_Passes=2
+Simulationcontrol(
+    idf,
+    **SimulationcontrolType(
+        Do_Zone_Sizing_Calculation="Yes",
+        Do_Plant_Sizing_Calculation="Yes",
+        Do_System_Sizing_Calculation="Yes",
+        Do_HVAC_Sizing_Simulation_for_Sizing_Periods="Yes",
+        Maximum_Number_of_HVAC_Sizing_Simulation_Passes=2
+    )
+)
 )
 Simulationcontrol(idf, **simulationcontrol)
 
@@ -206,6 +210,17 @@ heating_loop = add_plant_loop(idf, HEAT_LOOP, 100, 0)
 heating_loop_nodes = LoopNodes(HEAT_LOOP)
 heating_loop_branches = Branches(HEAT_LOOP)
 
+SizingPlant(
+    idf,
+    **SizingPlantType(
+        Plant_or_Condenser_Loop_Name=SOIL_LOOP,
+        Loop_Type="Cooling",
+        Design_Loop_Exit_Temperature=15,
+        Loop_Design_Temperature_Difference=5,
+        Sizing_Option="NonCoincident",
+        Zone_Timesteps_in_Averaging_Window=1,
+    )
+)
 #------------------------------------------------------------------------------
 # SOIL, BOREHOLE, PRODUCTION SYSTEMS
 #------------------------------------------------------------------------------
@@ -373,16 +388,6 @@ create_branch(
 
 
 idf.newidfobject(
-    "SIZING:PLANT",
-    Plant_or_Condenser_Loop_Name=SOIL_LOOP,
-    Loop_Type="Condenser",
-    Design_Loop_Exit_Temperature=15,
-    Loop_Design_Temperature_Difference=5,
-    Sizing_Option="NonCoincident",
-    Zone_Timesteps_in_Averaging_Window=1,
-    #Coincident_Sizing_Factor_Mode
-)
-
 #------------------------------------------------------------------------------
 # PLANT EQUIPEMENTS
 #------------------------------------------------------------------------------
