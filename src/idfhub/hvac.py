@@ -86,7 +86,8 @@ def add_plant_loop(
 ):
     """create a plant loop
     pour la robustesse, on ne crée aucune branche
-    mais on crée les objets BRANCHLIST"""
+    mais on crée les objets BRANCHLIST
+    On met le setpoint sur le supply outlet"""
     nodes = LoopNodes(name)
     branches = Branches(name)
 
