@@ -4,10 +4,9 @@ from idfhub.hvac import (
     EPApi,
     add_plant_loop,
     add_constant_pump, add_baseboard,
-    create_branch, create_splitter, create_mixer,
-    create_pipe, create_connector_list,
+    create_branch,
     LoopNodes, Branches,
-    set_nodes
+    set_nodes, split_mix
 )
 # autocompletion use
 from idfhub.idf_autocomplete.idf_helpers_short import (
@@ -456,59 +455,13 @@ rdc_baseboard_branch = create_branch(
     objects = [rdc_baseboard],
     sides = [None]
 )
+split_mix(
+    idf=idf,
+    plantloop=heating_loop,
+    side=EPApi.DEMAND_SIDE,
+    branches=[rdc_baseboard_branch, rplus1_baseboard_branch]
+)
 
-splitter = create_splitter(
-    idf,
-    "demand splitter",
-    [rdc_baseboard_branch, rplus1_baseboard_branch]
-)
-mixer = create_mixer(
-    idf,
-    "demand mixer",
-    [rdc_baseboard_branch, rplus1_baseboard_branch]
-)
-create_connector_list(
-    idf,
-    "heating demand connector list",
-    [splitter, mixer]
-)
-heating_loop.Demand_Side_Connector_List_Name = "heating demand connector list"
-
-# on doit gérer la branchlist manuellement !
-# car on a un splitter et un mixer
-heat_loop_demand_branch = idf.getobject(
-    "BRANCHLIST",
-    heating_loop_branches.demand_branch_list
-)
-heat_loop_demand_branch.Branch_1_Name = splitter[EPApi.INLET_BRANCH_NAME]
-heat_loop_demand_branch.Branch_2_Name = rdc_baseboard_branch.Name
-heat_loop_demand_branch.Branch_3_Name = rplus1_baseboard_branch.Name
-heat_loop_demand_branch.Branch_4_Name = mixer[EPApi.OUTLET_BRANCH_NAME]
-
-pipe = create_pipe(
-    idf,
-    f"{heating_loop_nodes.demand_inlet} Pipe",
-    heating_loop_nodes.demand_inlet,
-    f"{heating_loop_nodes.demand_inlet} Pipe Node"
-)
-create_branch(
-    idf,
-    name = splitter[EPApi.INLET_BRANCH_NAME], 
-    objects = [pipe],
-    sides = [None]
-)
-pipe = create_pipe(
-    idf,
-    f"{heating_loop_nodes.demand_outlet} Pipe",
-    f"{heating_loop_nodes.demand_outlet} Pipe Node",
-    heating_loop_nodes.demand_outlet
-)
-create_branch(
-    idf,
-    name = mixer[EPApi.OUTLET_BRANCH_NAME],
-    objects = [pipe],
-    sides = [None]
-)
 input("press")
 
 idf.save(f"{BUILDING_NAME}_W_HVAC.idf")

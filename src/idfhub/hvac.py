@@ -295,3 +295,62 @@ def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
             branch[outlet_node] = obj[f"{sides[i]}_{EPApi.OUTLET_NODE_NAME}"]
     #print(branch)
     return branch
+
+
+def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
+    """split to branches and mix on a side of a plantloop"""
+    splitter = create_splitter(
+        idf,
+        f"{plantloop.Name} {side} splitter",
+        branches
+    )
+    mixer = create_mixer(
+        idf,
+        f"{plantloop.Name} {side} mixer",
+        branches
+    )
+    connector_list_name = f"{plantloop.Name} {side} connector list"
+    create_connector_list(
+        idf,
+        connector_list_name,
+        [splitter, mixer]
+    )
+    plantloop.Demand_Side_Connector_List_Name = connector_list_name
+    # on récupère la branchlist du plantloop pour mise à jour !
+    plantloop_demand_branch_list = idf.getobject(
+        "BRANCHLIST",
+        plantloop[f"{side}_{EPApi.BRANCH_LIST_NAME}"]
+    )
+    i = 1
+    plantloop_demand_branch_list[f"Branch_{i}_Name"] = splitter[EPApi.INLET_BRANCH_NAME]
+    for branch in branches:
+        i += 1
+        plantloop_demand_branch_list[f"Branch_{i}_Name"] = branch.Name
+    i += 1
+    plantloop_demand_branch_list[f"Branch_{i}_Name"] = mixer[EPApi.OUTLET_BRANCH_NAME]
+    plantloop_inlet_node_name = plantloop[f"{side}_{EPApi.INLET_NODE_NAME}"]
+    inlet_pipe = create_pipe(
+        idf,
+        f"{plantloop_inlet_node_name} Pipe",
+        plantloop_inlet_node_name,
+        f"{plantloop_inlet_node_name} Pipe Node"
+    )
+    create_branch(
+        idf,
+        name = splitter[EPApi.INLET_BRANCH_NAME], 
+        objects = [inlet_pipe],
+        sides = [None]
+    )
+    plantloop_outlet_node_name = plantloop[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+    outlet_pipe = create_pipe(
+        idf,
+        f"{plantloop_outlet_node_name} Pipe",
+        f"{plantloop_outlet_node_name} Pipe Node",
+        plantloop_outlet_node_name
+    )
+    create_branch(
+        idf,
+        name = mixer[EPApi.OUTLET_BRANCH_NAME],
+        objects = [outlet_pipe],
+        sides = [None]
+    )
