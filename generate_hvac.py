@@ -1,4 +1,5 @@
 """"hvac generator"""
+import os
 
 from idfhub.hvac import (
     EPApi,
@@ -10,7 +11,8 @@ from idfhub.hvac import (
 )
 # autocompletion use
 from idfhub.idf_autocomplete.idf_helpers_short import (
-    Timestep, Version, Simulationcontrol,
+    Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
+    Building, Globalgeometryrules,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
     Scheduletypelimits, ScheduleConstant,
     ScheduleCompact,
@@ -22,9 +24,17 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     GroundheatexchangerSystem,
     Plantequipmentlist, Plantequipmentoperationschemes,
     PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
+    SetpointmanagerOutdoorairreset, SetpointmanagerScheduled,
+    SizingParameters, SizingZone, SizingPlant,
+    ZonehvacEquipmentlist, ZonehvacEquipmentconnections,
+    OutputVariabledictionary,
+    OutputTableSummaryreports, OutputcontrolTableStyle,
+    OutputVariable, OutputSqlite,
+    FluidpropertiesGlycolconcentration
 )
 from idfhub.idf_autocomplete.idf_types_short import (
-    TimestepType, VersionType, SimulationcontrolType,
+    TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
+    BuildingType, GlobalgeometryrulesType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
     ScheduletypelimitsType, ScheduleConstantType,
     ScheduleCompactType,
@@ -36,6 +46,13 @@ from idfhub.idf_autocomplete.idf_types_short import (
     GroundheatexchangerSystemType,
     PlantequipmentlistType, PlantequipmentoperationschemesType,
     PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
+    SetpointmanagerOutdoorairresetType, SetpointmanagerScheduledType,
+    SizingParametersType, SizingZoneType, SizingPlantType,
+    ZonehvacEquipmentlistType, ZonehvacEquipmentconnectionsType,
+    OutputVariabledictionaryType,
+    OutputTableSummaryreportsType, OutputcontrolTableStyleType,
+    OutputVariableType, OutputSqliteType,
+    FluidpropertiesGlycolconcentrationType
 )
 
 from idfhub.helpers.common import get_logger
@@ -54,9 +71,10 @@ LOGGER = get_logger(format=FORMAT)
 message = f"idf hvac injection for energyplus {idf.idd_version}"
 LOGGER.info(message)
 
-
+EP_SIM_PATH = "ep_simulations"
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
+PROJECT_NAME = f"{BUILDING_NAME}_no_bypass"
 
 Timestep(
     idf,
@@ -76,8 +94,52 @@ Simulationcontrol(
         Maximum_Number_of_HVAC_Sizing_Simulation_Passes=2
     )
 )
+
+SizingperiodDesignday(
+    idf,
+    **SizingperiodDesigndayType(
+        Name="design_day",
+        Month=1,
+        Day_of_Month=1,
+        Day_Type="WinterDesignDay",
+        Maximum_DryBulb_Temperature=-5,
+        Wind_Speed=0,
+        Wind_Direction=0,
+        Wetbulb_or_DewPoint_at_Maximum_DryBulb=-10,
+        Humidity_Condition_Type="DewPoint"
+    )
 )
-Simulationcontrol(idf, **simulationcontrol)
+
+Runperiod(
+    idf,
+    **RunperiodType(
+        Name="run period",
+        Begin_Month=1,
+        Begin_Day_of_Month=1,
+        End_Month=12,
+        End_Day_of_Month=31,
+        Use_Weather_File_Holidays_and_Special_Days="No",
+        Use_Weather_File_Daylight_Saving_Period="No"
+    )
+)
+SizingParameters(idf, **SizingParametersType(Heating_Sizing_Factor=1.25, Cooling_Sizing_Factor=1.15))
+Building(
+    idf,
+    **BuildingType(
+        Name="CeremaCF",
+        Loads_Convergence_Tolerance_Value=0.04,
+        Temperature_Convergence_Tolerance_Value=0.4
+    )
+)
+Globalgeometryrules(
+    idf,
+    **GlobalgeometryrulesType(
+        Starting_Vertex_Position="UpperLeftCorner",
+        Vertex_Entry_Direction="Counterclockwise",
+        Coordinate_System="Relative"
+    )
+)
+
 
 DISCRETE = "Discrete"
 CONTINUOUS = "Continuous"
@@ -117,6 +179,7 @@ def create_const_sched(temp: int):
 
 consigne_25deg = ScheduleConstant(idf, **create_const_sched(25))
 consigne_20deg = ScheduleConstant(idf, **create_const_sched(20))
+consigne_12deg = ScheduleConstant(idf, **create_const_sched(12))
 
 zone_thermostat = ThermostatsetpointDualsetpoint(
     idf,
@@ -170,7 +233,14 @@ control_type_schedule = ScheduleCompact(
         Field_8=0,
         Field_9="For: Weekends",
         Field_10="Until: 24:00",
-        Field_11=0
+        Field_11=0,
+        Field_12="For:WinterDesignDay",
+        Field_13="Until: 07:00",
+        Field_14=0,
+        Field_15="Until: 17:00",
+        Field_16=4,
+        Field_17="Until: 24:00",
+        Field_18=0,
     )
 )
 
@@ -202,7 +272,18 @@ rplus1_thermostat = ZonecontrolThermostat(
 #------------------------------------------------------------------------------
 # Plant Loops
 #------------------------------------------------------------------------------
-soil_loop = add_plant_loop(idf, SOIL_LOOP, 15, -5)
+glycol_water_30 = FluidpropertiesGlycolconcentration(
+    idf,
+    **FluidpropertiesGlycolconcentrationType(
+        Name="eau glycol 30pourcent",
+        Glycol_Type="PropyleneGlycol",
+        Glycol_Concentration=0.3
+    )
+)
+
+soil_loop = add_plant_loop(idf, SOIL_LOOP, 35, -5)
+soil_loop.Fluid_Type = "UserDefinedFluidType"
+soil_loop.User_Defined_Fluid_Type = glycol_water_30.Name
 soil_loop_nodes = LoopNodes(SOIL_LOOP)
 soil_loop_branches = Branches(SOIL_LOOP)
 
@@ -215,10 +296,61 @@ SizingPlant(
     **SizingPlantType(
         Plant_or_Condenser_Loop_Name=SOIL_LOOP,
         Loop_Type="Cooling",
-        Design_Loop_Exit_Temperature=15,
+        Design_Loop_Exit_Temperature=12,
         Loop_Design_Temperature_Difference=5,
         Sizing_Option="NonCoincident",
         Zone_Timesteps_in_Averaging_Window=1,
+    )
+)
+SizingPlant(
+    idf,
+    **SizingPlantType(
+        Plant_or_Condenser_Loop_Name=HEAT_LOOP,
+        Loop_Type="Heating",
+        Design_Loop_Exit_Temperature=70,
+        Loop_Design_Temperature_Difference=10,
+        Sizing_Option="NonCoincident",
+        Zone_Timesteps_in_Averaging_Window=1,
+    )
+)
+
+def basic_zone_sizing(zone_name: str):
+    """basic zone sizing"""
+    return SizingZone(
+        idf,
+        **SizingZoneType(
+            Zone_or_ZoneList_Name=zone_name,
+            Zone_Cooling_Design_Supply_Air_Humidity_Ratio=0.008,
+            Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
+            Zone_Heating_Design_Supply_Air_Temperature=40,
+        )
+    )
+basic_zone_sizing("RDC")
+basic_zone_sizing("RPLUS1")
+
+#------------------------------------------------------------------------------
+# SETPOINTS
+# > LOI D'EAU sur le heating loop
+#------------------------------------------------------------------------------
+SetpointmanagerOutdoorairreset(
+    idf,
+    **SetpointmanagerOutdoorairresetType(
+        Name="loi d'eau heating loop",
+        Control_Variable="Temperature",
+        Setpoint_at_Outdoor_Low_Temperature=70,
+        Outdoor_Low_Temperature=-5,
+        Setpoint_at_Outdoor_High_Temperature=40,
+        Outdoor_High_Temperature=15,
+        Setpoint_Node_or_NodeList_Name=heating_loop_nodes.supply_outlet
+    )
+)
+SetpointmanagerScheduled(
+    idf,
+    **SetpointmanagerScheduledType(
+        Name="set point soil loop",
+        Control_Variable="temperature",
+        Schedule_Name=consigne_12deg.Name,
+        Setpoint_Node_or_NodeList_Name=soil_loop_nodes.supply_outlet,
     )
 )
 #------------------------------------------------------------------------------
@@ -355,7 +487,7 @@ set_nodes(
     hpwtw,
     side=EPApi.SOURCE_SIDE,
     inlet=soil_loop_nodes.demand_inlet,
-    outlet=soil_loop_nodes.demand_outlet
+    outlet=soil_loop_nodes.demand_outlet,
 )
 set_nodes(
     hpwtw,
@@ -469,6 +601,86 @@ split_mix(
     branches=[rdc_baseboard_branch, rplus1_baseboard_branch]
 )
 
+#------------------------------------------------------------------------------
+# ZONE EQUIPMENTS DECLARATION
+#------------------------------------------------------------------------------
+rdc_equipment_list = ZonehvacEquipmentlist(
+    idf,
+    **ZonehvacEquipmentlistType(
+        Name="rdc equipment list",
+        Zone_Equipment_1_Name=rdc_baseboard.Name,
+        Zone_Equipment_1_Object_Type=rdc_baseboard.key,
+        Zone_Equipment_1_Cooling_Sequence=1,
+        Zone_Equipment_1_Heating_or_NoLoad_Sequence=1
+    )
+)
+rplus1_equipment_list = ZonehvacEquipmentlist(
+    idf,
+    **ZonehvacEquipmentlistType(
+        Name="rplus1 equipment list",
+        Zone_Equipment_1_Name=rplus1_baseboard.Name,
+        Zone_Equipment_1_Object_Type=rplus1_baseboard.key,
+        Zone_Equipment_1_Cooling_Sequence=1,
+        Zone_Equipment_1_Heating_or_NoLoad_Sequence=1
+    )
+)
+ZonehvacEquipmentconnections(
+    idf,
+    **ZonehvacEquipmentconnectionsType(
+        Zone_Name="RDC",
+        Zone_Conditioning_Equipment_List_Name=rdc_equipment_list.Name,
+        Zone_Air_Node_Name="rdc air node"
+    )
+)
+ZonehvacEquipmentconnections(
+    idf,
+    **ZonehvacEquipmentconnectionsType(
+        Zone_Name="RPLUS1",
+        Zone_Conditioning_Equipment_List_Name=rplus1_equipment_list.Name,
+        Zone_Air_Node_Name="rplus1 air node"
+    )
+)
+
+#------------------------------------------------------------------------------
+# OUTPUT CONFIGURATION
+#------------------------------------------------------------------------------
+OutputVariabledictionary(
+    idf,
+    **OutputVariabledictionaryType(
+        Key_Field="IDF",
+        Sort_Option="Unsorted"
+    )
+)
+OutputTableSummaryreports(idf, **OutputTableSummaryreportsType(Report_1_Name="AllSummary"))
+OutputcontrolTableStyle(idf, **OutputcontrolTableStyleType(Column_Separator="HTML"))
+
+def add_variable(name):
+    """add a variable to the ep output"""
+    OutputVariable(
+        idf,
+        **OutputVariableType(
+            Key_Value="*",
+            Variable_Name=name,
+            Reporting_Frequency="Timestep"
+        )
+    )
+add_variable("Site Outdoor Air Drybulb Temperature")
+add_variable("Zone Air Temperature")
+add_variable("Ground Heat Exchanger Heat Transfer Rate")
+add_variable("Ground Heat Exchanger Inlet Temperature")
+add_variable("Ground Heat Exchanger Outlet Temperature")
+
+OutputSqlite(
+    idf,
+    **OutputSqliteType(
+        Option_Type="SimpleAndTabular"
+    )
+)
 input("press")
 
-idf.save(f"{BUILDING_NAME}_W_HVAC.idf")
+if not os.path.exists(EP_SIM_PATH):
+    os.mkdir(EP_SIM_PATH)
+if not os.path.exists(f"{EP_SIM_PATH}/{PROJECT_NAME}"):
+    os.mkdir(f"{EP_SIM_PATH}/{PROJECT_NAME}")
+
+idf.save(f"ep_simulations/{PROJECT_NAME}/{PROJECT_NAME}_W_HVAC.idf")
