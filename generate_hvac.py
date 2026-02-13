@@ -21,7 +21,7 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
     Plantequipmentlist, Plantequipmentoperationschemes,
-    PlantequipmentoperationUncontrolled, PlantequipmentoperationHeatingload,
+    PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
 )
 from idfhub.idf_autocomplete.idf_types_short import (
     TimestepType, VersionType, SimulationcontrolType,
@@ -35,7 +35,7 @@ from idfhub.idf_autocomplete.idf_types_short import (
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
     PlantequipmentlistType, PlantequipmentoperationschemesType,
-    PlantequipmentoperationUncontrolledType, PlantequipmentoperationHeatingloadType
+    PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
 )
 
 from idfhub.helpers.common import get_logger
@@ -398,11 +398,14 @@ soil_loop_equipement_list = Plantequipmentlist(
         Equipment_1_Name=borehole.Name
     )
 )
-soil_loop_operation = PlantequipmentoperationUncontrolled(
+
+soil_loop_operation = PlantequipmentoperationCoolingload(
     idf,
-    **PlantequipmentoperationUncontrolledType(
-        Name=f"{soil_loop.Name} Uncontrolled",
-        Equipment_List_Name=soil_loop_equipement_list.Name
+    **PlantequipmentoperationCoolingloadType(
+        Name=f"{soil_loop.Name} cooling operation",
+        Load_Range_1_Lower_Limit=0,
+        Load_Range_1_Upper_Limit=1e9,
+        Range_1_Equipment_List_Name=soil_loop_equipement_list.Name
     )
 )
 heating_loop_equipement_list = Plantequipmentlist(
@@ -416,7 +419,7 @@ heating_loop_equipement_list = Plantequipmentlist(
 heating_loop_operation = PlantequipmentoperationHeatingload(
     idf,
     **PlantequipmentoperationHeatingloadType(
-        Name=f"{heating_loop.Name} operation",
+        Name=f"{heating_loop.Name} heating operation",
         Load_Range_1_Lower_Limit=0,
         Load_Range_1_Upper_Limit=1e9,
         Range_1_Equipment_List_Name=heating_loop_equipement_list.Name
