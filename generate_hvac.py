@@ -374,7 +374,7 @@ hole = GroundheatexchangerVerticalProperties(
     idf,
     **GroundheatexchangerVerticalPropertiesType(
         Name="single typical hole",
-        Depth_of_Top_of_Borehole=1,
+        Depth_of_Top_of_Borehole=0,
         Borehole_Length=100,
         Borehole_Diameter=0.15,
         Grout_Thermal_Conductivity=1.2, # W / (m K)
