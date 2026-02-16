@@ -74,7 +74,7 @@ LOGGER.info(message)
 EP_SIM_PATH = "ep_simulations"
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
-PROJECT_NAME = f"{BUILDING_NAME}_no_bypass"
+PROJECT_NAME = "no_bypass_W_HVAC"
 
 Timestep(
     idf,
@@ -680,7 +680,9 @@ input("press")
 
 if not os.path.exists(EP_SIM_PATH):
     os.mkdir(EP_SIM_PATH)
-if not os.path.exists(f"{EP_SIM_PATH}/{PROJECT_NAME}"):
-    os.mkdir(f"{EP_SIM_PATH}/{PROJECT_NAME}")
+if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}"):
+    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_NAME}")
+if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}"):
+    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}")
 
-idf.save(f"ep_simulations/{PROJECT_NAME}/{PROJECT_NAME}_W_HVAC.idf")
+idf.save(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}/{PROJECT_NAME}.idf")
