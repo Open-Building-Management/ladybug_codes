@@ -2,15 +2,14 @@
 from __future__ import annotations
 from pathlib import Path
 import re
+import argparse
 from eppy.modeleditor import IDF
 
 from idfhub.helpers.consts import REPO_ROOT
 
 # ---------------- CONFIG ----------------
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
-IDD_PATH = f"{OS_EP_PATH}/Energy+.idd"
-IDF_PATH = f"{REPO_ROOT}/batiment_600m2.idf"
-OUTPUT_DIR = Path(f"{REPO_ROOT}/src/idfhub/idf_autocomplete")
+IDF_PATH = f"{REPO_ROOT}/empty.idf"
 TYPES_NAME = "idf_types_short"
 HELPERS_NAME = "idf_helpers_short"
 # no more than 50 variables like Field_1, Field_2, etc etc
@@ -78,9 +77,20 @@ def append(idf, c):
     helpers_lines.append(f"    return idf.newidfobject('{c}', **kwargs)")
     helpers_lines.append("")
 
-def main():
+def get_ep_version(idd_file: str) -> str | None:
+    """get energyplus version from the idd file"""
+    ep_version = None
+    with open(idd_file, 'r', encoding="utf-8") as f:
+        for line in f:
+            if line.startswith("!IDD_Version"):
+                ep_version = line.split(" ")[-1].strip().replace(".","_")
+                print(f"Version d'EnergyPlus : {ep_version}")
+                break
+    return ep_version
+
+def main(output: Path):
     """generate the helpers"""
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    output.mkdir(exist_ok=True)
 
     # ---------- Load IDF ----------
     idf = IDF(IDF_PATH)
@@ -90,14 +100,38 @@ def main():
         append(idf, c)
 
     # ---------- Write files ----------
-    (OUTPUT_DIR / f"{TYPES_NAME}.py").write_text("\n".join(types_lines), encoding="utf-8")
-    (OUTPUT_DIR / f"{HELPERS_NAME}.py").write_text("\n".join(helpers_lines), encoding="utf-8")
+    (output / f"{TYPES_NAME}.py").write_text("\n".join(types_lines), encoding="utf-8")
+    (output / f"{HELPERS_NAME}.py").write_text("\n".join(helpers_lines), encoding="utf-8")
 
-    print(f"✔ Helpers generated in {OUTPUT_DIR}")
+    print(f"✔ Helpers generated in {output}")
 
 if __name__ == "__main__":
-    IDF.setiddname(IDD_PATH)
+    parser = argparse.ArgumentParser(
+        description="generate autocompletion python helpers for energyplus"
+    )
+    parser.add_argument(
+        "--os_ep_path",
+        action="store",
+        help="energyplus absolute path",
+        default=OS_EP_PATH
+    )
+    parser.add_argument(
+        "--version",
+        action="store",
+        help="use folder structure using ep version number",
+        default=True
+    )
+    args = parser.parse_args()
+
+    IDD_FILE = f"{args.os_ep_path}/Energy+.idd"
+    version = get_ep_version(idd_file=IDD_FILE)
+
+    IDF.setiddname(IDD_FILE)
+
     if MANUAL:
         manual()
     else:
-        main()
+        OUTPUT_DIR = f"{REPO_ROOT}/src/idfhub/idf_autocomplete"
+        if args.version and version is not None:
+            OUTPUT_DIR = f"{OUTPUT_DIR}/{version}"
+        main(Path(OUTPUT_DIR))
