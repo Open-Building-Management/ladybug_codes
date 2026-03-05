@@ -269,17 +269,25 @@ def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_peo
     floors = [s for s in surfaces if s.Surface_Type == "Floor"]
     ceilings = [s for s in surfaces if s.Surface_Type == "Ceiling"]
     roofs = [s for s in surfaces if s.Surface_Type == "Roof"]
-    weights = {
-        "Wall": 0.7,
-        "Floor": 0.2,
-        "Ceiling": 0.1,
-        "Roof": 0.1
-    }
     nbs = {
         "Wall": len(walls),
         "Floor": len(floors),
         "Ceiling": len(ceilings),
         "Roof": len(roofs)
+    }
+    w_ceiling = 0.1
+    w_roof = 0.1
+    if nbs["Ceiling"] and not nbs["Roof"]:
+        w_ceiling = 0.2
+        w_roof = 0
+    if nbs["Roof"] and not nbs["Ceiling"]:
+        w_ceiling = 0
+        w_roof = 0.2 
+    weights = {
+        "Wall": 0.6,
+        "Floor": 0.2,
+        "Ceiling": w_ceiling,
+        "Roof": w_roof
     }
     for i, s in enumerate(surfaces):
         zone_baseboard[f"Surface_{i+1}_Name"] = s.Name
