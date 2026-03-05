@@ -1220,6 +1220,7 @@ class AirloophvacUnitaryheatpumpAirtoairType(TypedDict, total=False):
     Fan_Placement: str
     Supply_Air_Fan_Operating_Mode_Schedule_Name: str
     Dehumidification_Control_Type: str
+    DX_Heating_Coil_Sizing_Ratio: str
 
 class AirloophvacUnitaryheatpumpAirtoairMultispeedType(TypedDict, total=False):
     """"dict for AirloophvacUnitaryheatpumpAirtoairMultispeed"""
@@ -1234,7 +1235,7 @@ class AirloophvacUnitaryheatpumpAirtoairMultispeedType(TypedDict, total=False):
     Supply_Air_Fan_Operating_Mode_Schedule_Name: str
     Heating_Coil_Object_Type: str
     Heating_Coil_Name: str
-    Minimum_Outdoor_DryBulb_Temperature_for_Compressor_Operation: str
+    DX_Heating_Coil_Sizing_Ratio: str
     Cooling_Coil_Object_Type: str
     Cooling_Coil_Name: str
     Supplemental_Heating_Coil_Object_Type: str
@@ -1284,6 +1285,7 @@ class AirloophvacUnitaryheatpumpWatertoairType(TypedDict, total=False):
     Supply_Air_Fan_Operating_Mode_Schedule_Name: str
     Dehumidification_Control_Type: str
     Heat_Pump_Coil_Water_Flow_Mode: str
+    DX_Heating_Coil_Sizing_Ratio: str
 
 class AirloophvacUnitarysystemType(TypedDict, total=False):
     """"dict for AirloophvacUnitarysystem"""
@@ -1610,6 +1612,11 @@ class AirterminalSingleductParallelpiuReheatType(TypedDict, total=False):
     Maximum_Hot_Water_or_Steam_Flow_Rate: str
     Minimum_Hot_Water_or_Steam_Flow_Rate: str
     Convergence_Tolerance: str
+    Fan_Control_Type: str
+    Minimum_Fan_Turn_Down_Ratio: str
+    Heating_Control_Type: str
+    Design_Heating_Discharge_Air_Temperature: str
+    High_Limit_Heating_Discharge_Air_Temperature: str
 
 class AirterminalSingleductSeriespiuReheatType(TypedDict, total=False):
     """"dict for AirterminalSingleductSeriespiuReheat"""
@@ -1629,6 +1636,11 @@ class AirterminalSingleductSeriespiuReheatType(TypedDict, total=False):
     Maximum_Hot_Water_or_Steam_Flow_Rate: str
     Minimum_Hot_Water_or_Steam_Flow_Rate: str
     Convergence_Tolerance: str
+    Fan_Control_Type: str
+    Minimum_Fan_Turn_Down_Ratio: str
+    Heating_Control_Type: str
+    Design_Heating_Discharge_Air_Temperature: str
+    High_Limit_Heating_Discharge_Air_Temperature: str
 
 class AirterminalSingleductUserdefinedType(TypedDict, total=False):
     """"dict for AirterminalSingleductUserdefined"""
@@ -2441,6 +2453,8 @@ class ChillerConstantcopType(TypedDict, total=False):
     Basin_Heater_Capacity: str
     Basin_Heater_Setpoint_Temperature: str
     Basin_Heater_Operating_Schedule_Name: str
+    Thermosiphon_Capacity_Fraction_Curve_Name: str
+    Thermosiphon_Minimum_Temperature_Difference: str
 
 class ChillerElectricType(TypedDict, total=False):
     """"dict for ChillerElectric"""
@@ -2482,6 +2496,8 @@ class ChillerElectricType(TypedDict, total=False):
     Heat_Recovery_Inlet_High_Temperature_Limit_Schedule_Name: str
     Heat_Recovery_Leaving_Temperature_Setpoint_Node_Name: str
     EndUse_Subcategory: str
+    Thermosiphon_Capacity_Fraction_Curve_Name: str
+    Thermosiphon_Minimum_Temperature_Difference: str
 
 class ChillerElectricAshrae205Type(TypedDict, total=False):
     """"dict for ChillerElectricAshrae205"""
@@ -2547,6 +2563,12 @@ class ChillerElectricEirType(TypedDict, total=False):
     Heat_Recovery_Inlet_High_Temperature_Limit_Schedule_Name: str
     Heat_Recovery_Leaving_Temperature_Setpoint_Node_Name: str
     EndUse_Subcategory: str
+    Condenser_Flow_Control: str
+    Condenser_Loop_Flow_Rate_Fraction_Function_of_Loop_Part_Load_Ratio_Curve_Name: str
+    Temperature_Difference_Across_Condenser_Schedule_Name: str
+    Condenser_Minimum_Flow_Fraction: str
+    Thermosiphon_Capacity_Fraction_Curve_Name: str
+    Thermosiphon_Minimum_Temperature_Difference: str
 
 class ChillerElectricReformulatedeirType(TypedDict, total=False):
     """"dict for ChillerElectricReformulatedeir"""
@@ -2580,6 +2602,12 @@ class ChillerElectricReformulatedeirType(TypedDict, total=False):
     Heat_Recovery_Inlet_High_Temperature_Limit_Schedule_Name: str
     Heat_Recovery_Leaving_Temperature_Setpoint_Node_Name: str
     EndUse_Subcategory: str
+    Condenser_Flow_Control: str
+    Condenser_Loop_Flow_Rate_Fraction_Function_of_Loop_Part_Load_Ratio_Curve_Name: str
+    Temperature_Difference_Across_Condenser_Schedule_Name: str
+    Condenser_Minimum_Flow_Fraction: str
+    Thermosiphon_Capacity_Fraction_Curve_Name: str
+    Thermosiphon_Minimum_Temperature_Difference: str
 
 class ChillerEnginedrivenType(TypedDict, total=False):
     """"dict for ChillerEnginedriven"""
@@ -3167,6 +3195,7 @@ class CoilCoolingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict,
 class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     """"dict for CoilCoolingDxVariablespeed"""
     Name: str
+    Availability_Schedule_Name: str
     Indoor_Air_Inlet_Node_Name: str
     Indoor_Air_Outlet_Node_Name: str
     Number_of_Speeds: str
@@ -3257,7 +3286,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_6_Reference_Unit_Rated_Air_Flow_Rate: str
     _2017_Speed_6_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_6_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
-    Speed_6_Reference_Unit_Condenser_Air_Flow_Rate: str
+    Speed_6_Reference_Unit_Rated_Condenser_Air_Flow_Rate: str
     Speed_6_Reference_Unit_Rated_Pad_Effectiveness_of_Evap_Precooling: str
     Speed_6_Total_Cooling_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_6_Total_Cooling_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -3269,7 +3298,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_7_Reference_Unit_Rated_Air_Flow_Rate: str
     _2017_Speed_7_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_7_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
-    Speed_7_Reference_Unit_Condenser_Flow_Rate: str
+    Speed_7_Reference_Unit_Rated_Condenser_Air_Flow_Rate: str
     Speed_7_Reference_Unit_Rated_Pad_Effectiveness_of_Evap_Precooling: str
     Speed_7_Total_Cooling_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_7_Total_Cooling_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -3281,7 +3310,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_8_Reference_Unit_Rated_Air_Flow_Rate: str
     _2017_Speed_8_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_8_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
-    Speed_8_Reference_Unit_Condenser_Air_Flow_Rate: str
+    Speed_8_Reference_Unit_Rated_Condenser_Air_Flow_Rate: str
     Speed_8_Reference_Unit_Rated_Pad_Effectiveness_of_Evap_Precooling: str
     Speed_8_Total_Cooling_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_8_Total_Cooling_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -3293,7 +3322,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_9_Reference_Unit_Rated_Air_Flow_Rate: str
     _2017_Speed_9_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_9_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
-    Speed_9_Reference_Unit_Condenser_Air_Flow_Rate: str
+    Speed_9_Reference_Unit_Rated_Condenser_Air_Flow_Rate: str
     Speed_9_Reference_Unit_Rated_Pad_Effectiveness_of_Evap_Precooling: str
     Speed_9_Total_Cooling_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_9_Total_Cooling_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -3305,7 +3334,7 @@ class CoilCoolingDxVariablespeedType(TypedDict, total=False):
     Speed_10_Reference_Unit_Rated_Air_Flow_Rate: str
     _2017_Speed_10_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_10_Rated_Evaporator_Fan_Power_Per_Volume_Flow_Rate: str
-    Speed_10_Reference_Unit_Condenser_Air_Flow_Rate: str
+    Speed_10_Reference_Unit_Rated_Condenser_Air_Flow_Rate: str
     Speed_10_Reference_Unit_Rated_Pad_Effectiveness_of_Evap_Precooling: str
     Speed_10_Total_Cooling_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_10_Total_Cooling_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -3363,6 +3392,7 @@ class CoilCoolingWaterDetailedgeometryType(TypedDict, total=False):
 class CoilCoolingWatertoairheatpumpEquationfitType(TypedDict, total=False):
     """"dict for CoilCoolingWatertoairheatpumpEquationfit"""
     Name: str
+    Availability_Schedule_Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
     Air_Inlet_Node_Name: str
@@ -3388,6 +3418,7 @@ class CoilCoolingWatertoairheatpumpEquationfitType(TypedDict, total=False):
 class CoilCoolingWatertoairheatpumpParameterestimationType(TypedDict, total=False):
     """"dict for CoilCoolingWatertoairheatpumpParameterestimation"""
     Name: str
+    Availability_Schedule_Name: str
     Compressor_Type: str
     Refrigerant_Type: str
     Design_Source_Side_Flow_Rate: str
@@ -3422,6 +3453,7 @@ class CoilCoolingWatertoairheatpumpParameterestimationType(TypedDict, total=Fals
 class CoilCoolingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total=False):
     """"dict for CoilCoolingWatertoairheatpumpVariablespeedequationfit"""
     Name: str
+    Availability_Schedule_Name: str
     WatertoRefrigerant_HX_Water_Inlet_Node_Name: str
     WatertoRefrigerant_HX_Water_Outlet_Node_Name: str
     Indoor_Air_Inlet_Node_Name: str
@@ -3568,6 +3600,14 @@ class CoilCoolingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total
     Speed_10_Energy_Input_Ratio_Function_of_Water_Flow_Fraction_Curve_Name: str
     Speed_10_Reference_Unit_Waste_Heat_Fraction_of_Input_Power_At_Rated_Conditions: str
     Speed_10_Waste_Heat_Function_of_Temperature_Curve_Name: str
+
+class CoilDxAshrae205PerformanceType(TypedDict, total=False):
+    """"dict for CoilDxAshrae205Performance"""
+    Name: str
+    Representation_File_Name: str
+    Performance_Interpolation_Method: str
+    Rated_Total_Cooling_Capacity: str
+    Rated_SteadyState_Heating_Capacity: str
 
 class CoilHeatingDesuperheaterType(TypedDict, total=False):
     """"dict for CoilHeatingDesuperheater"""
@@ -3732,6 +3772,7 @@ class CoilHeatingDxVariablerefrigerantflowFluidtemperaturecontrolType(TypedDict,
 class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     """"dict for CoilHeatingDxVariablespeed"""
     Name: str
+    Availability_Schedule_Name: str
     Indoor_Air_Inlet_Node_Name: str
     Indoor_Air_Outlet_Node_Name: str
     Number_of_Speeds: str
@@ -3783,7 +3824,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_4_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_4_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_4_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_4_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_4_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_4_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_4_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_5_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3792,7 +3833,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_5_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_5_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_5_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_5_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_5_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_5_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_5_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_6_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3801,7 +3842,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_6_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_6_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_6_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_6_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_6_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_6_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_6_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_7_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3810,7 +3851,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_7_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_7_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_7_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_7_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_7_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_7_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_7_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_8_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3819,7 +3860,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_8_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_8_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_8_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_8_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_8_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_8_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_8_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_9_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3828,7 +3869,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_9_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_9_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_9_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_9_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_9_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_9_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_9_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_10_Reference_Unit_Gross_Rated_Heating_Capacity: str
@@ -3837,7 +3878,7 @@ class CoilHeatingDxVariablespeedType(TypedDict, total=False):
     _2017_Speed_10_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     _2023_Speed_10_Rated_Supply_Air_Fan_Power_Per_Volume_Flow_Rate: str
     Speed_10_Heating_Capacity_Function_of_Temperature_Curve_Name: str
-    Speed_10_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
+    Speed_10_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_10_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Speed_10_Energy_Input_Ratio_Function_of_Air_Flow_Fraction_Curve_Name: str
 
@@ -3941,6 +3982,7 @@ class CoilHeatingWaterType(TypedDict, total=False):
 class CoilHeatingWatertoairheatpumpEquationfitType(TypedDict, total=False):
     """"dict for CoilHeatingWatertoairheatpumpEquationfit"""
     Name: str
+    Availability_Schedule_Name: str
     Water_Inlet_Node_Name: str
     Water_Outlet_Node_Name: str
     Air_Inlet_Node_Name: str
@@ -3959,6 +4001,7 @@ class CoilHeatingWatertoairheatpumpEquationfitType(TypedDict, total=False):
 class CoilHeatingWatertoairheatpumpParameterestimationType(TypedDict, total=False):
     """"dict for CoilHeatingWatertoairheatpumpParameterestimation"""
     Name: str
+    Availability_Schedule_Name: str
     Compressor_Type: str
     Refrigerant_Type: str
     Design_Source_Side_Flow_Rate: str
@@ -3987,6 +4030,7 @@ class CoilHeatingWatertoairheatpumpParameterestimationType(TypedDict, total=Fals
 class CoilHeatingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total=False):
     """"dict for CoilHeatingWatertoairheatpumpVariablespeedequationfit"""
     Name: str
+    Availability_Schedule_Name: str
     WatertoRefrigerant_HX_Water_Inlet_Node_Name: str
     WatertoRefrigerant_HX_Water_Outlet_Node_Name: str
     Indoor_Air_Inlet_Node_Name: str
@@ -3999,7 +4043,7 @@ class CoilHeatingWatertoairheatpumpVariablespeedequationfitType(TypedDict, total
     Energy_Part_Load_Fraction_Curve_Name: str
     Speed_1_Reference_Unit_Gross_Rated_Heating_Capacity: str
     Speed_1_Reference_Unit_Gross_Rated_Heating_COP: str
-    Speed_1_Reference_Unit_Rated_Air_Flow: str
+    Speed_1_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_1_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_1_Heating_Capacity_Function_of_Temperature_Curve_Name: str
     Speed_1_Total_Heating_Capacity_Function_of_Air_Flow_Fraction_Curve_Name: str
@@ -4138,6 +4182,7 @@ class CoilUserdefinedType(TypedDict, total=False):
 class CoilWaterheatingAirtowaterheatpumpPumpedType(TypedDict, total=False):
     """"dict for CoilWaterheatingAirtowaterheatpumpPumped"""
     Name: str
+    Availability_Schedule_Name: str
     Rated_Heating_Capacity: str
     Rated_COP: str
     Rated_Sensible_Heat_Ratio: str
@@ -4170,6 +4215,7 @@ class CoilWaterheatingAirtowaterheatpumpPumpedType(TypedDict, total=False):
 class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False):
     """"dict for CoilWaterheatingAirtowaterheatpumpVariablespeed"""
     Name: str
+    Availability_Schedule_Name: str
     Number_of_Speeds: str
     Nominal_Speed_Level: str
     Rated_Water_Heating_Capacity: str
@@ -4191,9 +4237,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Maximum_Ambient_Temperature_for_Crankcase_Heater_Operation: str
     Evaporator_Air_Temperature_Type_for_Curve_Objects: str
     Part_Load_Fraction_Correlation_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_1: str
-    Rated_Water_Heating_COP_at_Speed_1: str
-    Rated_Sensible_Heat_Ratio_at_Speed_1: str
+    Speed_1_Rated_Water_Heating_Capacity: str
+    Speed_1_Rated_Water_Heating_COP: str
+    Speed_1_Rated_Sensible_Heat_Ratio: str
     Speed_1_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_1_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_1_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4203,9 +4249,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_1_COP_Function_of_Temperature_Curve_Name: str
     Speed_1_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_1_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_2: str
-    Rated_Water_Heating_COP_at_Speed_2: str
-    Rated_Sensible_Heat_Ratio_at_Speed_2: str
+    Speed_2_Rated_Water_Heating_Capacity: str
+    Speed_2_Rated_Water_Heating_COP: str
+    Speed_2_Rated_Sensible_Heat_Ratio: str
     Speed_2_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_2_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_2_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4215,9 +4261,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_2_COP_Function_of_Temperature_Curve_Name: str
     Speed_2_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_2_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_speed_3: str
-    Rated_Water_Heating_COP_at_Speed_3: str
-    Rated_Sensible_Heat_Ratio_at_Speed_3: str
+    Speed_3_Rated_Water_Heating_Capacity: str
+    Speed_3_Rated_Water_Heating_COP: str
+    Speed_3_Rated_Sensible_Heat_Ratio: str
     Speed_3_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_3_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_3_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4227,9 +4273,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_3_COP_Function_of_Temperature_Curve_Name: str
     Speed_3_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_3_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_4: str
-    Rated_Water_Heating_COP_at_Speed_4: str
-    Rated_Sensible_Heat_Ratio_at_Speed_4: str
+    Speed_4_Rated_Water_Heating_Capacity: str
+    Speed_4_Rated_Water_Heating_COP: str
+    Speed_4_Rated_Sensible_Heat_Ratio: str
     Speed_4_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_4_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_4_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4239,9 +4285,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_4_COP_Function_of_Temperature_Curve_Name: str
     Speed_4_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_4_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_5: str
-    Rated_Water_Heating_COP_at_Speed_5: str
-    Rated_Sensible_Heat_Ratio_at_Speed_5: str
+    Speed_5_Rated_Water_Heating_Capacity: str
+    Speed_5_Rated_Water_Heating_COP: str
+    Speed_5_Rated_Sensible_Heat_Ratio: str
     Speed_5_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_5_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_5_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4251,9 +4297,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_5_COP_Function_of_Temperature_Curve_Name: str
     Speed_5_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_5_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_6: str
-    Rated_Water_Heating_COP_at_Speed_6: str
-    Rated_Sensible_Heat_Ratio_at_Speed_6: str
+    Speed_6_Rated_Water_Heating_Capacity: str
+    Speed_6_Rated_Water_Heating_COP: str
+    Speed_6_Rated_Sensible_Heat_Ratio: str
     Speed_6_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_6_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_6_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4263,9 +4309,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_6_COP_Function_of_Temperature_Curve_Name: str
     Speed_6_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_6_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_7: str
-    Rated_Water_Heating_COP_at_Speed_7: str
-    Rated_Sensible_Heat_Ratio_at_Speed_7: str
+    Speed_7_Rated_Water_Heating_Capacity: str
+    Speed_7_Rated_Water_Heating_COP: str
+    Speed_7_Rated_Sensible_Heat_Ratio: str
     Speed_7_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_7_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_7_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4275,9 +4321,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_7_COP_Function_of_Temperature_Curve_Name: str
     Speed_7_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_7_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_8: str
-    Rated_Water_Heating_COP_at_Speed_8: str
-    Rated_Sensible_Heat_Ratio_at_Speed_8: str
+    Speed_8_Rated_Water_Heating_Capacity: str
+    Speed_8_Rated_Water_Heating_COP: str
+    Speed_8_Rated_Sensible_Heat_Ratio: str
     Speed_8_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_8_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_8_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4287,9 +4333,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_8_COP_Function_of_Temperature_Curve_Name: str
     Speed_8_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_8_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_9: str
-    Rated_Water_Heating_COP_at_Speed_9: str
-    Rated_Sensible_Heat_Ratio_at_Speed_9: str
+    Speed_9_Rated_Water_Heating_Capacity: str
+    Speed_9_Rated_Water_Heating_COP: str
+    Speed_9_Rated_Sensible_Heat_Ratio: str
     Speed_9_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_9_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_9_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4299,9 +4345,9 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
     Speed_9_COP_Function_of_Temperature_Curve_Name: str
     Speed_9_COP_Function_of_Air_Flow_Fraction_Curve_Name: str
     Speed_9_COP_Function_of_Water_Flow_Fraction_Curve_Name: str
-    Rated_Water_Heating_Capacity_at_Speed_10: str
-    Rated_Water_Heating_COP_at_Speed_10: str
-    Rated_Sensible_Heat_Ratio_at_Speed_10: str
+    Speed_10_Rated_Water_Heating_Capacity: str
+    Speed_10_Rated_Water_Heating_COP: str
+    Speed_10_Rated_Sensible_Heat_Ratio: str
     Speed_10_Reference_Unit_Rated_Air_Flow_Rate: str
     Speed_10_Reference_Unit_Rated_Water_Flow_Rate: str
     Speed_10_Reference_Unit_Water_Pump_Input_Power_At_Rated_Conditions: str
@@ -4315,6 +4361,7 @@ class CoilWaterheatingAirtowaterheatpumpVariablespeedType(TypedDict, total=False
 class CoilWaterheatingAirtowaterheatpumpWrappedType(TypedDict, total=False):
     """"dict for CoilWaterheatingAirtowaterheatpumpWrapped"""
     Name: str
+    Availability_Schedule_Name: str
     Rated_Heating_Capacity: str
     Rated_COP: str
     Rated_Sensible_Heat_Ratio: str
@@ -6195,6 +6242,28 @@ class DuctType(TypedDict, total=False):
     Name: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
+
+class DuctLossConductionType(TypedDict, total=False):
+    """"dict for DuctLossConduction"""
+    Name: str
+    AirLoopHVAC_Name: str
+    AirflowNetworkDistributionLinkage_Name: str
+    Environment_Type: str
+    Ambient_Zone_Name: str
+    Ambient_Temperature_Schedule_Name: str
+    Ambient_Humidity_Ratio_Schedule_Name: str
+
+class DuctLossLeakageType(TypedDict, total=False):
+    """"dict for DuctLossLeakage"""
+    Name: str
+    AirLoopHVAC_Name: str
+    AirflowNetworkDistributionLinkage_Name: str
+
+class DuctLossMakeupairType(TypedDict, total=False):
+    """"dict for DuctLossMakeupair"""
+    Name: str
+    AirLoopHVAC_Name: str
+    AirflowNetworkDistributionLinkage_Name: str
 
 class ElectricequipmentType(TypedDict, total=False):
     """"dict for Electricequipment"""
@@ -8532,6 +8601,8 @@ class GroundheatexchangerSystemType(TypedDict, total=False):
     Ground_Thermal_Heat_Capacity: str
     GHEVerticalResponseFactors_Object_Name: str
     gFunction_Calculation_Method: str
+    GHEVerticalSizing_Object_Type: str
+    GHEVerticalSizing_Object_Name: str
     GHEVerticalArray_Object_Name: str
     GHEVerticalSingle_Object_Name_1: str
     GHEVerticalSingle_Object_Name_2: str
@@ -8611,6 +8682,21 @@ class GroundheatexchangerVerticalSingleType(TypedDict, total=False):
     GHEVerticalProperties_Object_Name: str
     XLocation: str
     YLocation: str
+
+class GroundheatexchangerVerticalSizingRectangleType(TypedDict, total=False):
+    """"dict for GroundheatexchangerVerticalSizingRectangle"""
+    Name: str
+    SizingPeriodWeatherFileDays_Name: str
+    Design_Flow_Rate_Per_Borehole: str
+    Available_Borehole_Field_Length: str
+    Available_Borehole_Field_Width: str
+    Maximum_Number_of_Boreholes: str
+    Minimum_Borehole_Spacing: str
+    Maximum_Borehole_Spacing: str
+    Minimum_Borehole_Vertical_Length: str
+    Maximum_Borehole_Vertical_Length: str
+    Minimum_Exiting_Fluid_Temperature_for_Sizing: str
+    Maximum_Exiting_Fluid_Temperature_for_Sizing: str
 
 class GroundheattransferBasementAutogridType(TypedDict, total=False):
     """"dict for GroundheattransferBasementAutogrid"""
@@ -9250,6 +9336,114 @@ class HeatexchangerFluidtofluidType(TypedDict, total=False):
     Operation_Minimum_Temperature_Limit: str
     Operation_Maximum_Temperature_Limit: str
 
+class HeatpumpAirtowaterType(TypedDict, total=False):
+    """"dict for HeatpumpAirtowater"""
+    Name: str
+    Availability_Schedule_Name_Heating: str
+    Availability_Schedule_Name_Cooling: str
+    Operating_Mode_Control_Method: str
+    Operating_Mode_Control_Option_for_Multiple_Unit: str
+    Operating_Mode_Control_Schedule_Name: str
+    Minimum_Part_Load_Ratio: str
+    Rated_Inlet_Air_Temperature_in_Heating_Mode: str
+    Rated_Air_Flow_Rate_in_Heating_Mode: str
+    Rated_Leaving_Water_Temperature_in_Heating_Mode: str
+    Rated_Water_Flow_Rate_in_Heating_Mode: str
+    Minimum_Outdoor_Air_Temperature_in_Heating_Mode: str
+    Maximum_Outdoor_Air_Temperature_in_Heating_Mode: str
+    Minimum_Leaving_Water_Temperature_Curve_Name_in_Heating_Mode: str
+    Maximum_Leaving_Water_Temperature_Curve_Name_in_Heating_Mode: str
+    Sizing_Factor_for_Heating: str
+    Rated_Inlet_Air_Temperature_in_Cooling_Mode: str
+    Rated_Air_Flow_Rate_in_Cooling_Mode: str
+    Rated_Leaving_Water_Temperature_in_Cooling_Mode: str
+    Rated_Water_Flow_Rate_in_Cooling_Mode: str
+    Minimum_Outdoor_Air_Temperature_in_Cooling_Mode: str
+    Maximum_Outdoor_Air_Temperature_in_Cooling_Mode: str
+    Minimum_Leaving_Water_Temperature_Curve_Name_in_Cooling_Mode: str
+    Maximum_Leaving_Water_Temperature_Curve_Name_in_Cooling_Mode: str
+    Sizing_Factor_for_Cooling: str
+    Air_Inlet_Node_Name: str
+    Air_Outlet_Node_Name: str
+    Hot_Water_Inlet_Node_Name: str
+    Hot_Water_Outlet_Node_Name: str
+    Chilled_Water_Inlet_Node_Name: str
+    Chilled_Water_Outlet_Node_Name: str
+    Maximum_Outdoor_Dry_Bulb_Temperature_For_Defrost_Operation: str
+    Heat_Pump_Defrost_Control: str
+    Heat_Pump_Defrost_Time_Period_Fraction: str
+    Resistive_Defrost_Heater_Capacity: str
+    Defrost_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
+    Heat_Pump_Multiplier: str
+    Control_Type: str
+    Crankcase_Heater_Capacity: str
+    Crankcase_Heater_Capacity_Function_of_Temperature_Curve_Name: str
+    Maximum_Ambient_Temperature_for_Crankcase_Heater_Operation: str
+    Number_of_Speeds_for_Heating: str
+    Rated_Heating_Capacity_at_Speed_1: str
+    Rated_COP_for_Heating_at_Speed_1: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_at_Speed_1: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_1: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_1: str
+    Rated_Heating_Capacity_at_Speed_2: str
+    Rated_COP_for_Heating_at_Speed_2: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_at_Speed_2: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_2: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_2: str
+    Rated_Heating_Capacity_at_Speed_3: str
+    Rated_COP_for_Heating_at_Speed_3: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_at_Speed_3: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_3: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_3: str
+    Rated_Heating_Capacity_at_Speed_4: str
+    Rated_COP_for_Heating_at_Speed_4: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_at_Speed_4: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_4: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_4: str
+    Rated_Heating_Capacity_at_Speed_5: str
+    Rated_COP_for_Heating_at_Speed_5: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_at_Speed_5: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_5: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_5: str
+    Booster_Mode_On_Heating: str
+    Rated_Heating_Capacity_in_Booster_Mode: str
+    Rated_Heating_COP_in_Booster_Mode: str
+    Normalized_Heating_Capacity_Function_of_Temperature_Curve_Name_in_Booster_Mode: str
+    Heating_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_in_Booster_Mode: str
+    Heating_Energy_Input_Ratio_Function_of_PLR_Curve_Name_in_Booster_Mode: str
+    Number_of_Speeds_for_Cooling: str
+    Rated_Cooling_Capacity_at_Speed_1: str
+    Rated_COP_for_Cooling_at_Speed_1: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_at_Speed_1: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_1: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_1: str
+    Rated_Cooling_Capacity_at_Speed_2: str
+    Rated_COP_for_Cooling_at_Speed_2: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_at_Speed_2: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_2: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_2: str
+    Rated_Cooling_Capacity_at_Speed_3: str
+    Rated_COP_for_Cooling_at_Speed_3: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_at_Speed_3: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_3: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_3: str
+    Rated_Cooling_Capacity_at_Speed_4: str
+    Rated_COP_for_Cooling_at_Speed_4: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_at_Speed_4: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_4: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_4: str
+    Rated_Cooling_Capacity_at_Speed_5: str
+    Rated_COP_for_Cooling_at_Speed_5: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_at_Speed_5: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_at_Speed_5: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_at_Speed_5: str
+    Booster_Mode_On_Cooling: str
+    Rated_Cooling_Capacity_in_Booster_Mode: str
+    Rated_Cooling_COP_in_Booster_Mode: str
+    Normalized_Cooling_Capacity_Function_of_Temperature_Curve_Name_in_Booster_Mode: str
+    Cooling_Energy_Input_Ratio_Function_of_Temperature_Curve_Name_in_Booster_Mode: str
+    Cooling_Energy_Input_Ratio_Function_of_PLR_Curve_Name_in_Booster_Mode: str
+
 class HeatpumpAirtowaterFuelfiredCoolingType(TypedDict, total=False):
     """"dict for HeatpumpAirtowaterFuelfiredCooling"""
     Name: str
@@ -9278,6 +9472,7 @@ class HeatpumpAirtowaterFuelfiredCoolingType(TypedDict, total=False):
     Auxiliary_Electric_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Auxiliary_Electric_Energy_Input_Ratio_Function_of_PLR_Curve_Name: str
     Standby_Electric_Power: str
+    Minimum_Unloading_Ratio: str
 
 class HeatpumpAirtowaterFuelfiredHeatingType(TypedDict, total=False):
     """"dict for HeatpumpAirtowaterFuelfiredHeating"""
@@ -9312,6 +9507,7 @@ class HeatpumpAirtowaterFuelfiredHeatingType(TypedDict, total=False):
     Auxiliary_Electric_Energy_Input_Ratio_Function_of_Temperature_Curve_Name: str
     Auxiliary_Electric_Energy_Input_Ratio_Function_of_PLR_Curve_Name: str
     Standby_Electric_Power: str
+    Minimum_Unloading_Ratio: str
 
 class HeatpumpPlantloopEirCoolingType(TypedDict, total=False):
     """"dict for HeatpumpPlantloopEirCooling"""
@@ -9321,9 +9517,12 @@ class HeatpumpPlantloopEirCoolingType(TypedDict, total=False):
     Condenser_Type: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
+    Heat_Recovery_Inlet_Node_Name: str
+    Heat_Recovery_Outlet_Node_Name: str
     Companion_Heat_Pump_Name: str
     Load_Side_Reference_Flow_Rate: str
     Source_Side_Reference_Flow_Rate: str
+    Heat_Recovery_Reference_Flow_Rate: str
     Reference_Capacity: str
     Reference_Coefficient_of_Performance: str
     Sizing_Factor: str
@@ -9337,6 +9536,11 @@ class HeatpumpPlantloopEirCoolingType(TypedDict, total=False):
     Maximum_Source_Inlet_Temperature: str
     Minimum_Supply_Water_Temperature_Curve_Name: str
     Maximum_Supply_Water_Temperature_Curve_Name: str
+    Maximum_Heat_Recovery_Outlet_Temperature: str
+    Heat_Recovery_Capacity_Modifier_Function_of_Temperature_Curve_Name: str
+    Heat_Recovery_Electric_Input_to_Output_Ratio_Modifier_Function_of_Temperature_Curve_Name: str
+    Thermosiphon_Capacity_Fraction_Curve_Name: str
+    Thermosiphon_Minimum_Temperature_Difference: str
 
 class HeatpumpPlantloopEirHeatingType(TypedDict, total=False):
     """"dict for HeatpumpPlantloopEirHeating"""
@@ -9346,9 +9550,12 @@ class HeatpumpPlantloopEirHeatingType(TypedDict, total=False):
     Condenser_Type: str
     Source_Side_Inlet_Node_Name: str
     Source_Side_Outlet_Node_Name: str
+    Heat_Recovery_Inlet_Node_Name: str
+    Heat_Recovery_Outlet_Node_Name: str
     Companion_Heat_Pump_Name: str
     Load_Side_Reference_Flow_Rate: str
     Source_Side_Reference_Flow_Rate: str
+    Heat_Recovery_Reference_Flow_Rate: str
     Reference_Capacity: str
     Reference_Coefficient_of_Performance: str
     Sizing_Factor: str
@@ -9372,6 +9579,9 @@ class HeatpumpPlantloopEirHeatingType(TypedDict, total=False):
     Timed_Empirical_Defrost_Frequency_Curve_Name: str
     Timed_Empirical_Defrost_Heat_Load_Penalty_Curve_Name: str
     Timed_Empirical_Defrost_Heat_Input_Energy_Fraction_Curve_Name: str
+    Minimum_Heat_Recovery_Outlet_Temperature: str
+    Heat_Recovery_Capacity_Modifier_Function_of_Temperature_Curve_Name: str
+    Heat_Recovery_Electric_Input_to_Output_Ratio_Modifier_Function_of_Temperature_Curve_Name: str
 
 class HeatpumpWatertowaterEquationfitCoolingType(TypedDict, total=False):
     """"dict for HeatpumpWatertowaterEquationfitCooling"""
@@ -11502,6 +11712,72 @@ class MaterialpropertyPhasechangeType(TypedDict, total=False):
     Enthalpy_15: str
     Temperature_16: str
     Enthalpy_16: str
+    Temperature_17: str
+    Enthalpy_17: str
+    Temperature_18: str
+    Enthalpy_18: str
+    Temperature_19: str
+    Enthalpy_19: str
+    Temperature_20: str
+    Enthalpy_20: str
+    Temperature_21: str
+    Enthalpy_21: str
+    Temperature_22: str
+    Enthalpy_22: str
+    Temperature_23: str
+    Enthalpy_23: str
+    Temperature_24: str
+    Enthalpy_24: str
+    Temperature_25: str
+    Enthalpy_25: str
+    Temperature_26: str
+    Enthalpy_26: str
+    Temperature_27: str
+    Enthalpy_27: str
+    Temperature_28: str
+    Enthalpy_28: str
+    Temperature_29: str
+    Enthalpy_29: str
+    Temperature_30: str
+    Enthalpy_30: str
+    Temperature_31: str
+    Enthalpy_31: str
+    Temperature_32: str
+    Enthalpy_32: str
+    Temperature_33: str
+    Enthalpy_33: str
+    Temperature_34: str
+    Enthalpy_34: str
+    Temperature_35: str
+    Enthalpy_35: str
+    Temperature_36: str
+    Enthalpy_36: str
+    Temperature_37: str
+    Enthalpy_37: str
+    Temperature_38: str
+    Enthalpy_38: str
+    Temperature_39: str
+    Enthalpy_39: str
+    Temperature_40: str
+    Enthalpy_40: str
+    Temperature_41: str
+    Enthalpy_41: str
+    Temperature_42: str
+    Enthalpy_42: str
+    Temperature_43: str
+    Enthalpy_43: str
+    Temperature_44: str
+    Enthalpy_44: str
+    Temperature_45: str
+    Enthalpy_45: str
+    Temperature_46: str
+    Enthalpy_46: str
+    Temperature_47: str
+    Enthalpy_47: str
+    Temperature_48: str
+    Enthalpy_48: str
+    Temperature_49: str
+    Enthalpy_49: str
 
 class MaterialpropertyPhasechangehysteresisType(TypedDict, total=False):
     """"dict for MaterialpropertyPhasechangehysteresis"""
@@ -11553,6 +11829,84 @@ class MaterialpropertyVariablethermalconductivityType(TypedDict, total=False):
     Thermal_Conductivity_9: str
     Temperature_10: str
     Thermal_Conductivity_10: str
+    Temperature_11: str
+    Thermal_Conductivity_11: str
+    Temperature_12: str
+    Thermal_Conductivity_12: str
+    Temperature_13: str
+    Thermal_Conductivity_13: str
+    Temperature_14: str
+    Thermal_Conductivity_14: str
+    Temperature_15: str
+    Thermal_Conductivity_15: str
+    Temperature_16: str
+    Thermal_Conductivity_16: str
+    Temperature_17: str
+    Thermal_Conductivity_17: str
+    Temperature_18: str
+    Thermal_Conductivity_18: str
+    Temperature_19: str
+    Thermal_Conductivity_19: str
+    Temperature_20: str
+    Thermal_Conductivity_20: str
+    Temperature_21: str
+    Thermal_Conductivity_21: str
+    Temperature_22: str
+    Thermal_Conductivity_22: str
+    Temperature_23: str
+    Thermal_Conductivity_23: str
+    Temperature_24: str
+    Thermal_Conductivity_24: str
+    Temperature_25: str
+    Thermal_Conductivity_25: str
+    Temperature_26: str
+    Thermal_Conductivity_26: str
+    Temperature_27: str
+    Thermal_Conductivity_27: str
+    Temperature_28: str
+    Thermal_Conductivity_28: str
+    Temperature_29: str
+    Thermal_Conductivity_29: str
+    Temperature_30: str
+    Thermal_Conductivity_30: str
+    Temperature_31: str
+    Thermal_Conductivity_31: str
+    Temperature_32: str
+    Thermal_Conductivity_32: str
+    Temperature_33: str
+    Thermal_Conductivity_33: str
+    Temperature_34: str
+    Thermal_Conductivity_34: str
+    Temperature_35: str
+    Thermal_Conductivity_35: str
+    Temperature_36: str
+    Thermal_Conductivity_36: str
+    Temperature_37: str
+    Thermal_Conductivity_37: str
+    Temperature_38: str
+    Thermal_Conductivity_38: str
+    Temperature_39: str
+    Thermal_Conductivity_39: str
+    Temperature_40: str
+    Thermal_Conductivity_40: str
+    Temperature_41: str
+    Thermal_Conductivity_41: str
+    Temperature_42: str
+    Thermal_Conductivity_42: str
+    Temperature_43: str
+    Thermal_Conductivity_43: str
+    Temperature_44: str
+    Thermal_Conductivity_44: str
+    Temperature_45: str
+    Thermal_Conductivity_45: str
+    Temperature_46: str
+    Thermal_Conductivity_46: str
+    Temperature_47: str
+    Thermal_Conductivity_47: str
+    Temperature_48: str
+    Thermal_Conductivity_48: str
+    Temperature_49: str
+    Thermal_Conductivity_49: str
 
 class MatrixTwodimensionType(TypedDict, total=False):
     """"dict for MatrixTwodimension"""
@@ -11938,7 +12292,7 @@ class OutputEnvironmentalimpactfactorsType(TypedDict, total=False):
 class OutputIlluminancemapType(TypedDict, total=False):
     """"dict for OutputIlluminancemap"""
     Name: str
-    Zone_Name: str
+    Zone_or_Space_Name: str
     Z_height: str
     X_Minimum_Coordinate: str
     X_Maximum_Coordinate: str
@@ -11953,6 +12307,8 @@ class OutputJsonType(TypedDict, total=False):
     Output_JSON: str
     Output_CBOR: str
     Output_MessagePack: str
+    Unit_Conversion_for_Tabular_Data: str
+    Format_Numeric_Values_for_Tabular_Data: str
 
 class OutputMeterType(TypedDict, total=False):
     """"dict for OutputMeter"""
@@ -11997,6 +12353,7 @@ class OutputSqliteType(TypedDict, total=False):
     """"dict for OutputSqlite"""
     Option_Type: str
     Unit_Conversion_for_Tabular_Data: str
+    Format_Numeric_Values_for_Tabular_Data: str
 
 class OutputSurfacesDrawingType(TypedDict, total=False):
     """"dict for OutputSurfacesDrawing"""
@@ -12188,6 +12545,7 @@ class OutputcontrolFilesType(TypedDict, total=False):
     Output_SQLite: str
     Output_JSON: str
     Output_AUDIT: str
+    Output_Space_Sizing: str
     Output_Zone_Sizing: str
     Output_System_Sizing: str
     Output_DXF: str
@@ -12211,6 +12569,7 @@ class OutputcontrolFilesType(TypedDict, total=False):
     Output_Screen: str
     Output_ExtShd: str
     Output_Tarcog: str
+    Output_Plant_Component_Sizing: str
 
 class OutputcontrolIlluminancemapStyleType(TypedDict, total=False):
     """"dict for OutputcontrolIlluminancemapStyle"""
@@ -12220,6 +12579,10 @@ class OutputcontrolReportingtolerancesType(TypedDict, total=False):
     """"dict for OutputcontrolReportingtolerances"""
     Tolerance_for_Time_Heating_Setpoint_Not_Met: str
     Tolerance_for_Time_Cooling_Setpoint_Not_Met: str
+
+class OutputcontrolResiliencesummariesType(TypedDict, total=False):
+    """"dict for OutputcontrolResiliencesummaries"""
+    Heat_Index_Algorithm: str
 
 class OutputcontrolSizingStyleType(TypedDict, total=False):
     """"dict for OutputcontrolSizingStyle"""
@@ -12263,6 +12626,7 @@ class OutputcontrolTableStyleType(TypedDict, total=False):
     """"dict for OutputcontrolTableStyle"""
     Column_Separator: str
     Unit_Conversion: str
+    Format_Numeric_Values: str
 
 class OutputcontrolTimestampType(TypedDict, total=False):
     """"dict for OutputcontrolTimestamp"""
@@ -15884,6 +16248,7 @@ class SiteLocationType(TypedDict, total=False):
     Longitude: str
     Time_Zone: str
     Elevation: str
+    Keep_Site_Location_Information: str
 
 class SitePrecipitationType(TypedDict, total=False):
     """"dict for SitePrecipitation"""
@@ -16131,6 +16496,8 @@ class SiteWatermainstemperatureType(TypedDict, total=False):
     Temperature_Schedule_Name: str
     Annual_Average_Outdoor_Air_Temperature: str
     Maximum_Difference_In_Monthly_Average_Outdoor_Air_Temperatures: str
+    Temperature_Multiplier: str
+    Temperature_Offset: str
 
 class SiteWeatherstationType(TypedDict, total=False):
     """"dict for SiteWeatherstation"""
@@ -16195,6 +16562,8 @@ class SizingSystemType(TypedDict, total=False):
     Fraction_of_Autosized_Heating_Design_Capacity: str
     Central_Cooling_Capacity_Control_Method: str
     Occupant_Diversity: str
+    Heating_Coil_Sizing_Method: str
+    Maximum_Heating_Capacity_To_Cooling_Capacity_Sizing_Ratio: str
 
 class SizingZoneType(TypedDict, total=False):
     """"dict for SizingZone"""
@@ -16234,6 +16603,9 @@ class SizingZoneType(TypedDict, total=False):
     Zone_Humidification_Design_Supply_Air_Humidity_Ratio_Difference: str
     Zone_Humidistat_Dehumidification_Set_Point_Schedule_Name: str
     Zone_Humidistat_Humidification_Set_Point_Schedule_Name: str
+    Type_of_Space_Sum_to_Use: str
+    Heating_Coil_Sizing_Method: str
+    Maximum_Heating_Capacity_To_Cooling_Load_Sizing_Ratio: str
 
 class SizingperiodDesigndayType(TypedDict, total=False):
     """"dict for SizingperiodDesignday"""
@@ -16497,6 +16869,22 @@ class SpacehvacZoneequipmentsplitterType(TypedDict, total=False):
     Space_3_Name: str
     Space_3_Fraction: str
     Space_3_Supply_Node_Name: str
+
+class SpacehvacZonereturnmixerType(TypedDict, total=False):
+    """"dict for SpacehvacZonereturnmixer"""
+    Name: str
+    Zone_Name: str
+    Zone_Return_Air_Node_Name: str
+    Space_1_Name: str
+    Space_1_Return_Air_Node_Name: str
+    Space_2_Name: str
+    Space_2_Return_Air_Node_Name: str
+    Space_3_Name: str
+    Space_3_Return_Air_Node_Name: str
+    Space_4_Name: str
+    Space_4_Return_Air_Node_Name: str
+    Space_5_Name: str
+    Space_5_Return_Air_Node_Name: str
 
 class SpacelistType(TypedDict, total=False):
     """"dict for Spacelist"""
@@ -17002,6 +17390,40 @@ class TableIndependentvariableType(TypedDict, total=False):
     Value_13: str
     Value_14: str
     Value_15: str
+    Value_16: str
+    Value_17: str
+    Value_18: str
+    Value_19: str
+    Value_20: str
+    Value_21: str
+    Value_22: str
+    Value_23: str
+    Value_24: str
+    Value_25: str
+    Value_26: str
+    Value_27: str
+    Value_28: str
+    Value_29: str
+    Value_30: str
+    Value_31: str
+    Value_32: str
+    Value_33: str
+    Value_34: str
+    Value_35: str
+    Value_36: str
+    Value_37: str
+    Value_38: str
+    Value_39: str
+    Value_40: str
+    Value_41: str
+    Value_42: str
+    Value_43: str
+    Value_44: str
+    Value_45: str
+    Value_46: str
+    Value_47: str
+    Value_48: str
+    Value_49: str
 
 class TableIndependentvariablelistType(TypedDict, total=False):
     """"dict for TableIndependentvariablelist"""
@@ -17155,6 +17577,56 @@ class ThermalstorageChilledwaterStratifiedType(TypedDict, total=False):
     Node_9_Additional_Loss_Coefficient: str
     Node_10_Additional_Loss_Coefficient: str
 
+class ThermalstorageHotwaterStratifiedType(TypedDict, total=False):
+    """"dict for ThermalstorageHotwaterStratified"""
+    Name: str
+    Tank_Volume: str
+    Tank_Height: str
+    Tank_Shape: str
+    Tank_Perimeter: str
+    Top_Setpoint_Temperature_Schedule_Name: str
+    Bottom_Setpoint_Temperature_Schedule_Name: str
+    Deadband_Temperature_Difference: str
+    Top_Temperature_Sensor_Height: str
+    Bottom_Temperature_Sensor_Height: str
+    Maximum_Temperature_Limit: str
+    Nominal_Heating_Capacity: str
+    Ambient_Temperature_Indicator: str
+    Ambient_Temperature_Schedule_Name: str
+    Ambient_Temperature_Zone_Name: str
+    Ambient_Temperature_Outdoor_Air_Node_Name: str
+    Uniform_Skin_Loss_Coefficient_per_Unit_Area_to_Ambient_Temperature: str
+    Use_Side_Inlet_Node_Name: str
+    Use_Side_Outlet_Node_Name: str
+    Use_Side_Flow_Direction_Schedule: str
+    Use_Side_Heat_Transfer_Effectiveness: str
+    Use_Side_Availability_Schedule_Name: str
+    Use_Side_Inlet_Height: str
+    Use_Side_Outlet_Height: str
+    Use_Side_Design_Flow_Rate: str
+    Source_Side_Inlet_Node_Name: str
+    Source_Side_Outlet_Node_Name: str
+    Source_Side_Flow_Direction_Schedule: str
+    Source_Side_Heat_Transfer_Effectiveness: str
+    Source_Side_Availability_Schedule_Name: str
+    Source_Side_Inlet_Height: str
+    Source_Side_Outlet_Height: str
+    Source_Side_Design_Flow_Rate: str
+    Tank_Recovery_Time: str
+    Inlet_Mode: str
+    Number_of_Nodes: str
+    Additional_Destratification_Conductivity: str
+    Node_1_Additional_Loss_Coefficient: str
+    Node_2_Additional_Loss_Coefficient: str
+    Node_3_Additional_Loss_Coefficient: str
+    Node_4_Additional_Loss_Coefficient: str
+    Node_5_Additional_Loss_Coefficient: str
+    Node_6_Additional_Loss_Coefficient: str
+    Node_7_Additional_Loss_Coefficient: str
+    Node_8_Additional_Loss_Coefficient: str
+    Node_9_Additional_Loss_Coefficient: str
+    Node_10_Additional_Loss_Coefficient: str
+
 class ThermalstorageIceDetailedType(TypedDict, total=False):
     """"dict for ThermalstorageIceDetailed"""
     Name: str
@@ -17172,6 +17644,7 @@ class ThermalstorageIceDetailedType(TypedDict, total=False):
     Tank_Loss_Coefficient: str
     Freezing_Temperature_of_Storage_Medium: str
     Thaw_Process_Indicator: str
+    Thermal_Storage_Sizing_Object_Name: str
 
 class ThermalstorageIceSimpleType(TypedDict, total=False):
     """"dict for ThermalstorageIceSimple"""
@@ -17180,6 +17653,28 @@ class ThermalstorageIceSimpleType(TypedDict, total=False):
     Capacity: str
     Inlet_Node_Name: str
     Outlet_Node_Name: str
+    Thermal_Storage_Sizing_Object_Name: str
+
+class ThermalstoragePcmType(TypedDict, total=False):
+    """"dict for ThermalstoragePcm"""
+    Name: str
+    Availability_Schedule_Name: str
+    Plant_Side_Inlet_Node_Name: str
+    Plant_Side_Outlet_Node_Name: str
+    Use_Side_Inlet_Node_Name: str
+    Use_Side_Outlet_Node_Name: str
+    PCM_Material_Name: str
+    Tank_Capacity: str
+    Heat_Loss_Rate: str
+    Use_Side_Design_Flow_Rate: str
+    Plant_Side_Design_Flow_Rate: str
+
+class ThermalstorageSizingType(TypedDict, total=False):
+    """"dict for ThermalstorageSizing"""
+    Name: str
+    On_Peak_Period_Start_Time: str
+    On_Peak_Period_End_Time: str
+    Sizing_Factor: str
 
 class ThermostatsetpointDualsetpointType(TypedDict, total=False):
     """"dict for ThermostatsetpointDualsetpoint"""
@@ -18534,7 +19029,7 @@ class ZonecooltowerShowerType(TypedDict, total=False):
     """"dict for ZonecooltowerShower"""
     Name: str
     Availability_Schedule_Name: str
-    Zone_Name: str
+    Zone_or_Space_Name: str
     Water_Supply_Storage_Tank_Name: str
     Flow_Control_Type: str
     Pump_Flow_Rate_Schedule_Name: str
@@ -20182,6 +20677,10 @@ class ZonehvacIdealloadsairsystemType(TypedDict, total=False):
     Sensible_Heat_Recovery_Effectiveness: str
     Latent_Heat_Recovery_Effectiveness: str
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
+    Heating_Fuel_Efficiency_Schedule_Name: str
+    Heating_Fuel_Type: str
+    Cooling_Fuel_Efficiency_Schedule_Name: str
+    Cooling_Fuel_Type: str
 
 class ZonehvacLowtemperatureradiantConstantflowType(TypedDict, total=False):
     """"dict for ZonehvacLowtemperatureradiantConstantflow"""
@@ -20489,6 +20988,7 @@ class ZonehvacPackagedterminalheatpumpType(TypedDict, total=False):
     Capacity_Control_Method: str
     Minimum_Supply_Air_Temperature_in_Cooling_Mode: str
     Maximum_Supply_Air_Temperature_in_Heating_Mode: str
+    DX_Heating_Coil_Sizing_Ratio: str
 
 class ZonehvacRefrigerationchillersetType(TypedDict, total=False):
     """"dict for ZonehvacRefrigerationchillerset"""
@@ -20780,6 +21280,7 @@ class ZonehvacWatertoairheatpumpType(TypedDict, total=False):
     Design_Specification_ZoneHVAC_Sizing_Object_Name: str
     Design_Specification_Multispeed_Object_Type: str
     Design_Specification_Multispeed_Object_Name: str
+    DX_Heating_Coil_Sizing_Ratio: str
 
 class ZonehvacWindowairconditionerType(TypedDict, total=False):
     """"dict for ZonehvacWindowairconditioner"""
@@ -20815,6 +21316,7 @@ class ZoneinfiltrationDesignflowrateType(TypedDict, total=False):
     Temperature_Term_Coefficient: str
     Velocity_Term_Coefficient: str
     Velocity_Squared_Term_Coefficient: str
+    Density_Basis: str
 
 class ZoneinfiltrationEffectiveleakageareaType(TypedDict, total=False):
     """"dict for ZoneinfiltrationEffectiveleakagearea"""
@@ -21069,8 +21571,8 @@ class ZonepropertyUserviewfactorsBysurfacenameType(TypedDict, total=False):
 class ZonerefrigerationdoormixingType(TypedDict, total=False):
     """"dict for Zonerefrigerationdoormixing"""
     Name: str
-    Zone_1_Name: str
-    Zone_2_Name: str
+    Zone_or_Space_Name_1: str
+    Zone_or_Space_Name_2: str
     Schedule_Name: str
     Door_Height: str
     Door_Area: str
@@ -21108,85 +21610,85 @@ class ZonethermalchimneyType(TypedDict, total=False):
     Width_of_the_Absorber_Wall: str
     Cross_Sectional_Area_of_Air_Channel_Outlet: str
     Discharge_Coefficient: str
-    Zone_1_Name: str
+    Zone_or_Space_Name_1: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_1: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_1: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_1: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_1: str
-    Zone_2_Name: str
+    Zone_or_Space_Name_2: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_2: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_2: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_2: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_2: str
-    Zone_3_Name: str
+    Zone_or_Space_Name_3: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_3: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_3: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_3: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_3: str
-    Zone_4_Name: str
+    Zone_or_Space_Name_4: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_4: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_4: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_4: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_4: str
-    Zone_5_Name: str
+    Zone_or_Space_Name_5: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_5: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_5: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_5: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_5: str
-    Zone_6_Name: str
+    Zone_or_Space_Name_6: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_6: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_6: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_6: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_6: str
-    Zone_7_Name: str
+    Zone_or_Space_Name_7: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_7: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_7: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_7: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_7: str
-    Zone_8_Name: str
+    Zone_or_Space_Name_8: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_8: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_8: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_8: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_8: str
-    Zone_9_Name: str
+    Zone_or_Space_Name_9: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_9: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_9: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_9: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_9: str
-    Zone_10_Name: str
+    Zone_or_Space_Name_10: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_10: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_10: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_10: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_10: str
-    Zone_11_Name: str
+    Zone_or_Space_Name_11: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_11: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_11: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_11: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_11: str
-    Zone_12_Name: str
+    Zone_or_Space_Name_12: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_12: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_12: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_12: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_12: str
-    Zone_13_Name: str
+    Zone_or_Space_Name_13: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_13: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_13: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_13: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_13: str
-    Zone_14_Name: str
+    Zone_or_Space_Name_14: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_14: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_14: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_14: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_14: str
-    Zone_15_Name: str
+    Zone_or_Space_Name_15: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_15: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_15: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_15: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_15: str
-    Zone_16_Name: str
+    Zone_or_Space_Name_16: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_16: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_16: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_16: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_16: str
-    Zone_17_Name: str
+    Zone_or_Space_Name_17: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_17: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_17: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_17: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_17: str
-    Zone_18_Name: str
+    Zone_or_Space_Name_18: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_18: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_18: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_18: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_18: str
-    Zone_19_Name: str
+    Zone_or_Space_Name_19: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_19: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_19: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_19: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_19: str
-    Zone_20_Name: str
+    Zone_or_Space_Name_20: str
     Distance_from_Top_of_Thermal_Chimney_to_Inlet_20: str
-    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Zone_20: str
+    Relative_Ratios_of_Air_Flow_Rates_Passing_through_Inlet_20: str
     Cross_Sectional_Areas_of_Air_Channel_Inlet_20: str
 
 class ZoneventilationDesignflowrateType(TypedDict, total=False):
@@ -21217,6 +21719,7 @@ class ZoneventilationDesignflowrateType(TypedDict, total=False):
     Maximum_Outdoor_Temperature: str
     Maximum_Outdoor_Temperature_Schedule_Name: str
     Maximum_Wind_Speed: str
+    Density_Basis: str
 
 class ZoneventilationWindandstackopenareaType(TypedDict, total=False):
     """"dict for ZoneventilationWindandstackopenarea"""

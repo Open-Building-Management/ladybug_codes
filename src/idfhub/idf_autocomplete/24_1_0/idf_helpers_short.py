@@ -505,6 +505,10 @@ def CoilCoolingWatertoairheatpumpVariablespeedequationfit(idf, **kwargs: CoilCoo
     """"helper for CoilCoolingWatertoairheatpumpVariablespeedequationfit"""
     return idf.newidfobject('COIL:COOLING:WATERTOAIRHEATPUMP:VARIABLESPEEDEQUATIONFIT', **kwargs)
 
+def CoilDxAshrae205Performance(idf, **kwargs: CoilDxAshrae205PerformanceType):
+    """"helper for CoilDxAshrae205Performance"""
+    return idf.newidfobject('COIL:DX:ASHRAE205:PERFORMANCE', **kwargs)
+
 def CoilHeatingDesuperheater(idf, **kwargs: CoilHeatingDesuperheaterType):
     """"helper for CoilHeatingDesuperheater"""
     return idf.newidfobject('COIL:HEATING:DESUPERHEATER', **kwargs)
@@ -920,6 +924,18 @@ def DoorInterzone(idf, **kwargs: DoorInterzoneType):
 def Duct(idf, **kwargs: DuctType):
     """"helper for Duct"""
     return idf.newidfobject('DUCT', **kwargs)
+
+def DuctLossConduction(idf, **kwargs: DuctLossConductionType):
+    """"helper for DuctLossConduction"""
+    return idf.newidfobject('DUCT:LOSS:CONDUCTION', **kwargs)
+
+def DuctLossLeakage(idf, **kwargs: DuctLossLeakageType):
+    """"helper for DuctLossLeakage"""
+    return idf.newidfobject('DUCT:LOSS:LEAKAGE', **kwargs)
+
+def DuctLossMakeupair(idf, **kwargs: DuctLossMakeupairType):
+    """"helper for DuctLossMakeupair"""
+    return idf.newidfobject('DUCT:LOSS:MAKEUPAIR', **kwargs)
 
 def Electricequipment(idf, **kwargs: ElectricequipmentType):
     """"helper for Electricequipment"""
@@ -1401,6 +1417,10 @@ def GroundheatexchangerVerticalSingle(idf, **kwargs: GroundheatexchangerVertical
     """"helper for GroundheatexchangerVerticalSingle"""
     return idf.newidfobject('GROUNDHEATEXCHANGER:VERTICAL:SINGLE', **kwargs)
 
+def GroundheatexchangerVerticalSizingRectangle(idf, **kwargs: GroundheatexchangerVerticalSizingRectangleType):
+    """"helper for GroundheatexchangerVerticalSizingRectangle"""
+    return idf.newidfobject('GROUNDHEATEXCHANGER:VERTICAL:SIZING:RECTANGLE', **kwargs)
+
 def GroundheattransferBasementAutogrid(idf, **kwargs: GroundheattransferBasementAutogridType):
     """"helper for GroundheattransferBasementAutogrid"""
     return idf.newidfobject('GROUNDHEATTRANSFER:BASEMENT:AUTOGRID', **kwargs)
@@ -1540,6 +1560,10 @@ def HeatexchangerDesiccantBalancedflowPerformancedatatype1(idf, **kwargs: Heatex
 def HeatexchangerFluidtofluid(idf, **kwargs: HeatexchangerFluidtofluidType):
     """"helper for HeatexchangerFluidtofluid"""
     return idf.newidfobject('HEATEXCHANGER:FLUIDTOFLUID', **kwargs)
+
+def HeatpumpAirtowater(idf, **kwargs: HeatpumpAirtowaterType):
+    """"helper for HeatpumpAirtowater"""
+    return idf.newidfobject('HEATPUMP:AIRTOWATER', **kwargs)
 
 def HeatpumpAirtowaterFuelfiredCooling(idf, **kwargs: HeatpumpAirtowaterFuelfiredCoolingType):
     """"helper for HeatpumpAirtowaterFuelfiredCooling"""
@@ -1964,6 +1988,10 @@ def OutputcontrolIlluminancemapStyle(idf, **kwargs: OutputcontrolIlluminancemapS
 def OutputcontrolReportingtolerances(idf, **kwargs: OutputcontrolReportingtolerancesType):
     """"helper for OutputcontrolReportingtolerances"""
     return idf.newidfobject('OUTPUTCONTROL:REPORTINGTOLERANCES', **kwargs)
+
+def OutputcontrolResiliencesummaries(idf, **kwargs: OutputcontrolResiliencesummariesType):
+    """"helper for OutputcontrolResiliencesummaries"""
+    return idf.newidfobject('OUTPUTCONTROL:RESILIENCESUMMARIES', **kwargs)
 
 def OutputcontrolSizingStyle(idf, **kwargs: OutputcontrolSizingStyleType):
     """"helper for OutputcontrolSizingStyle"""
@@ -2689,6 +2717,10 @@ def SpacehvacZoneequipmentsplitter(idf, **kwargs: SpacehvacZoneequipmentsplitter
     """"helper for SpacehvacZoneequipmentsplitter"""
     return idf.newidfobject('SPACEHVAC:ZONEEQUIPMENTSPLITTER', **kwargs)
 
+def SpacehvacZonereturnmixer(idf, **kwargs: SpacehvacZonereturnmixerType):
+    """"helper for SpacehvacZonereturnmixer"""
+    return idf.newidfobject('SPACEHVAC:ZONERETURNMIXER', **kwargs)
+
 def Spacelist(idf, **kwargs: SpacelistType):
     """"helper for Spacelist"""
     return idf.newidfobject('SPACELIST', **kwargs)
@@ -2837,6 +2869,10 @@ def ThermalstorageChilledwaterStratified(idf, **kwargs: ThermalstorageChilledwat
     """"helper for ThermalstorageChilledwaterStratified"""
     return idf.newidfobject('THERMALSTORAGE:CHILLEDWATER:STRATIFIED', **kwargs)
 
+def ThermalstorageHotwaterStratified(idf, **kwargs: ThermalstorageHotwaterStratifiedType):
+    """"helper for ThermalstorageHotwaterStratified"""
+    return idf.newidfobject('THERMALSTORAGE:HOTWATER:STRATIFIED', **kwargs)
+
 def ThermalstorageIceDetailed(idf, **kwargs: ThermalstorageIceDetailedType):
     """"helper for ThermalstorageIceDetailed"""
     return idf.newidfobject('THERMALSTORAGE:ICE:DETAILED', **kwargs)
@@ -2844,6 +2880,14 @@ def ThermalstorageIceDetailed(idf, **kwargs: ThermalstorageIceDetailedType):
 def ThermalstorageIceSimple(idf, **kwargs: ThermalstorageIceSimpleType):
     """"helper for ThermalstorageIceSimple"""
     return idf.newidfobject('THERMALSTORAGE:ICE:SIMPLE', **kwargs)
+
+def ThermalstoragePcm(idf, **kwargs: ThermalstoragePcmType):
+    """"helper for ThermalstoragePcm"""
+    return idf.newidfobject('THERMALSTORAGE:PCM', **kwargs)
+
+def ThermalstorageSizing(idf, **kwargs: ThermalstorageSizingType):
+    """"helper for ThermalstorageSizing"""
+    return idf.newidfobject('THERMALSTORAGE:SIZING', **kwargs)
 
 def ThermostatsetpointDualsetpoint(idf, **kwargs: ThermostatsetpointDualsetpointType):
     """"helper for ThermostatsetpointDualsetpoint"""
