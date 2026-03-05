@@ -669,6 +669,13 @@ add_variable("Zone Air Temperature")
 add_variable("Ground Heat Exchanger Heat Transfer Rate")
 add_variable("Ground Heat Exchanger Inlet Temperature")
 add_variable("Ground Heat Exchanger Outlet Temperature")
+add_variable("Baseboard Total Heating Rate")
+add_variable("Baseboard Water Inlet Temperature")
+add_variable("Baseboard Water Outlet Temperature")
+add_variable("Heat Pump Load Side Outlet Temperature")
+add_variable("Heat Pump Load Side Inlet Temperature")
+add_variable("Heat Pump Source Side Outlet Temperature")
+add_variable("Heat Pump Source Side Inlet Temperature")
 
 OutputSqlite(
     idf,
