@@ -101,7 +101,7 @@ SizingperiodDesignday(
         Name="design_day",
         Month=1,
         Day_of_Month=1,
-        Day_Type="WinterDesignDay",
+        Day_Type=EPValues.WINTER_DESIGN_DAY,
         Maximum_DryBulb_Temperature=-5,
         Wind_Speed=0,
         Wind_Direction=0,
