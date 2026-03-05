@@ -2,7 +2,7 @@
 import os
 
 from idfhub.hvac import (
-    EPApi,
+    EPApi, EPValues,
     add_plant_loop,
     add_constant_pump, add_baseboard,
     create_branch,
@@ -140,9 +140,6 @@ Globalgeometryrules(
     )
 )
 
-
-DISCRETE = "Discrete"
-CONTINUOUS = "Continuous"
 #------------------------------------------------------------------------------
 # Schedules and Thermostats
 # on crée 2 schedules constants, 20°C chauffage et 25°C raffraichissement :
@@ -153,8 +150,8 @@ temperature_typelimits = Scheduletypelimits(
     idf,
     **ScheduletypelimitsType(
         Name="temperature",
-        Numeric_Type=CONTINUOUS,
-        Unit_Type="Temperature"
+        Numeric_Type=EPValues.CONTINUOUS,
+        Unit_Type=EPValues.TEMPERATURE
     )
 )
 
@@ -165,7 +162,7 @@ fractional_typelimits = Scheduletypelimits(
         Name="Fractional",
         Lower_Limit_Value=0,
         Upper_Limit_Value=1,
-        Numeric_Type=CONTINUOUS,
+        Numeric_Type=EPValues.CONTINUOUS,
     )
 )
 
@@ -202,7 +199,7 @@ control_types = Scheduletypelimits(
         Name="control_types",
         Lower_Limit_Value=0,
         Upper_Limit_Value=4,
-        Numeric_Type=DISCRETE
+        Numeric_Type=EPValues.DISCRETE
     )
 )
 
@@ -223,23 +220,23 @@ control_type_schedule = ScheduleCompact(
     **ScheduleCompactType(
         Name="control_type_schedule",
         Schedule_Type_Limits_Name=control_types.Name,
-        Field_1="Through: 12/31",
-        Field_2="For: Weekdays",
-        Field_3="Until: 07:00",
+        Field_1=f"{EPValues.THROUGH}: 12/31",
+        Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
+        Field_3=f"{EPValues.UNTIL}: 07:00",
         Field_4=0,
-        Field_5="Until: 17:00",
+        Field_5=f"{EPValues.UNTIL}: 17:00",
         Field_6=4,
-        Field_7="Until: 24:00",
+        Field_7=f"{EPValues.UNTIL}: 24:00",
         Field_8=0,
-        Field_9="For: Weekends",
-        Field_10="Until: 24:00",
+        Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
+        Field_10=f"{EPValues.UNTIL}: 24:00",
         Field_11=0,
-        Field_12="For:WinterDesignDay",
-        Field_13="Until: 07:00",
+        Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
+        Field_13=f"{EPValues.UNTIL}: 07:00",
         Field_14=0,
-        Field_15="Until: 17:00",
+        Field_15=f"{EPValues.UNTIL}: 17:00",
         Field_16=4,
-        Field_17="Until: 24:00",
+        Field_17=f"{EPValues.UNTIL}: 24:00",
         Field_18=0,
     )
 )
@@ -336,7 +333,7 @@ SetpointmanagerOutdoorairreset(
     idf,
     **SetpointmanagerOutdoorairresetType(
         Name="loi d'eau heating loop",
-        Control_Variable="Temperature",
+        Control_Variable=EPValues.TEMPERATURE,
         Setpoint_at_Outdoor_Low_Temperature=70,
         Outdoor_Low_Temperature=-5,
         Setpoint_at_Outdoor_High_Temperature=40,
@@ -348,7 +345,7 @@ SetpointmanagerScheduled(
     idf,
     **SetpointmanagerScheduledType(
         Name="set point soil loop",
-        Control_Variable="temperature",
+        Control_Variable=EPValues.TEMPERATURE,
         Schedule_Name=consigne_12deg.Name,
         Setpoint_Node_or_NodeList_Name=soil_loop_nodes.supply_outlet,
     )
@@ -446,9 +443,9 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
         Maximum_Value_of_z=1.0,
         Minimum_Curve_Output=0.5,
         Maximum_Curve_Output=1.5,
-        Input_Unit_Type_for_w="Temperature",
-        Input_Unit_Type_for_x="Temperature",
-        Input_Unit_Type_for_y="Temperature",
+        Input_Unit_Type_for_w=EPValues.TEMPERATURE,
+        Input_Unit_Type_for_x=EPValues.TEMPERATURE,
+        Input_Unit_Type_for_y=EPValues.TEMPERATURE,
         Input_Unit_Type_for_z="Dimensionless"
     )
 
@@ -473,11 +470,11 @@ hpwtw = HeatpumpWatertowaterEquationfitHeating(
     idf, 
     **HeatpumpWatertowaterEquationfitHeatingType(
         Name=hpwtw_name,
-        Reference_Load_Side_Flow_Rate=EPApi.AUTOSIZE,
-        Reference_Source_Side_Flow_Rate=EPApi.AUTOSIZE,
-        Reference_Heating_Capacity=EPApi.AUTOSIZE,
-        Reference_Heating_Power_Consumption=EPApi.AUTOSIZE,
         Reference_Coefficient_of_Performance=5,
+        Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
+        Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
+        Reference_Heating_Capacity=EPValues.AUTOSIZE,
+        Reference_Heating_Power_Consumption=EPValues.AUTOSIZE,
         Sizing_Factor=1,
         Heating_Capacity_Curve_Name=capacity_curve.Name,
         Heating_Compressor_Power_Curve_Name=power_curve.Name

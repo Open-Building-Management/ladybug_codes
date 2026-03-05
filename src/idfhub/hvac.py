@@ -51,10 +51,23 @@ class Branches:
         """Demand Branch List"""
         return f"{self.demand_branch} List"
 
+class EPValues(StrEnum):
+    """EnergyPlus possible values"""
+    AUTOSIZE = "Autosize"
+    DISCRETE = "Discrete"
+    CONTINUOUS = "Continuous"
+    TEMPERATURE = "Temperature"
+    WEEKDAYS = "Weekdays"
+    WEEKENDS = "Weekends"
+    SUMMER_DESIGN_DAY = "SummerDesignDay"
+    WINTER_DESIGN_DAY = "WinterDesignDay"
+    CUSTOM_DAY = "CustomDay1/2"
+    THROUGH = "Through"
+    FOR = "For"
+    UNTIL = "Until"
 
 class EPApi(StrEnum):
     "EnergyPlus consts"
-    AUTOSIZE = "Autosize"
     INLET_NODE_NAME = "Inlet_Node_Name"
     OUTLET_NODE_NAME = "Outlet_Node_Name"
     PLANT_SIDE = "Plant_Side"
@@ -110,7 +123,7 @@ def add_plant_loop(
         Loop_Temperature_Setpoint_Node_Name=nodes.supply_outlet,
         Maximum_Loop_Temperature=max_t,
         Minimum_Loop_Temperature=min_t,
-        Maximum_Loop_Flow_Rate=EPApi.AUTOSIZE,
+        Maximum_Loop_Flow_Rate=EPValues.AUTOSIZE,
         Minimum_Loop_Flow_Rate=0,
         Plant_Loop_Volume="Autocalculate",
         #Plant_Side_Connector_List_Name
@@ -202,9 +215,9 @@ def add_constant_pump(idf: IDF, name: str, inlet: str, outlet: str):
     pump = idf.newidfobject(
         "PUMP:CONSTANTSPEED",
         Name=name,
-        Design_Flow_Rate=EPApi.AUTOSIZE,
+        Design_Flow_Rate=EPValues.AUTOSIZE,
         Design_Pump_Head=179352,
-        Design_Power_Consumption=EPApi.AUTOSIZE,
+        Design_Power_Consumption=EPValues.AUTOSIZE,
         Motor_Efficiency=0.9,
         #Fraction_of_Motor_Inefficiencies_to_Fluid_Stream
         Pump_Control_Type="Intermittent",
@@ -243,8 +256,8 @@ def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_peo
         Availability_Schedule_Name="Always On",
         Rated_Average_Water_Temperature=87.78,
         Rated_Water_Mass_Flow_Rate=0.063,
-        Heating_Design_Capacity=EPApi.AUTOSIZE,
-        Maximum_Water_Flow_Rate=EPApi.AUTOSIZE,
+        Heating_Design_Capacity=EPValues.AUTOSIZE,
+        Maximum_Water_Flow_Rate=EPValues.AUTOSIZE,
     )
     zone_baseboard[EPApi.INLET_NODE_NAME] = inlet
     zone_baseboard[EPApi.OUTLET_NODE_NAME] = outlet
