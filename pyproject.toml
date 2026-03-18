@@ -39,7 +39,8 @@ dependencies = [
     "honeybee-core",
     "honeybee-energy",
     "honeybee",
-    "ladybug-geometry"
+    "ladybug-geometry",
+    "pyyaml"
 ]
 
 [tool.setuptools]

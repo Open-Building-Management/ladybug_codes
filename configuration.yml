@@ -1,0 +1,12 @@
+building_name: batiment_600m2
+
+hvac_setup: borehole
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+borehole:
+  suffix: no_bypass_setpoint_55_35 
+  Setpoint_at_Outdoor_Low_Temperature: 55
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 35
+  Outdoor_High_Temperature: 15

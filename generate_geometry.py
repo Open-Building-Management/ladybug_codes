@@ -35,9 +35,9 @@ from idfhub.helpers.geometry import (
     join_surface
 )
 
-get_logger("idfhub", level=logging.INFO)
+from common import BUILDING_NAME
 
-BUILDING_NAME = "batiment_600m2"
+get_logger("idfhub", level=logging.INFO)
 
 # Building global params
 ADMIN_WIDTH = 37.0

@@ -57,7 +57,7 @@ from idfhub.idf_autocomplete.idf_types_short import (
 
 from idfhub.helpers.common import get_logger
 
-from common import idf, BUILDING_NAME
+from common import idf, BUILDING_NAME, PROJECT_NAME, HVAC_USER_CONF
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -74,7 +74,6 @@ LOGGER.info(message)
 EP_SIM_PATH = "ep_simulations"
 SOIL_LOOP = "Soil Loop"
 HEAT_LOOP = "Heating Loop"
-PROJECT_NAME = "no_bypass_W_HVAC"
 
 Timestep(
     idf,
@@ -334,10 +333,14 @@ SetpointmanagerOutdoorairreset(
     **SetpointmanagerOutdoorairresetType(
         Name="loi d'eau heating loop",
         Control_Variable=EPValues.TEMPERATURE,
-        Setpoint_at_Outdoor_Low_Temperature=70,
-        Outdoor_Low_Temperature=-5,
-        Setpoint_at_Outdoor_High_Temperature=40,
-        Outdoor_High_Temperature=15,
+        Setpoint_at_Outdoor_Low_Temperature=HVAC_USER_CONF.get(
+            "Setpoint_at_Outdoor_Low_Temperature", 70),
+        Outdoor_Low_Temperature=HVAC_USER_CONF.get(
+            "Outdoor_Low_Temperature", -5),
+        Setpoint_at_Outdoor_High_Temperature=HVAC_USER_CONF.get(
+            "Setpoint_at_Outdoor_High_Temperature", 40),
+        Outdoor_High_Temperature=HVAC_USER_CONF.get(
+            "Outdoor_High_Temperature", 15),
         Setpoint_Node_or_NodeList_Name=heating_loop_nodes.supply_outlet
     )
 )
