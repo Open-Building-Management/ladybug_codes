@@ -10,3 +10,5 @@ borehole:
   Outdoor_Low_Temperature: -5
   Setpoint_at_Outdoor_High_Temperature: 35
   Outdoor_High_Temperature: 15
+  Number_of_Boreholes_in_XDirection: 5
+  Number_of_Boreholes_in_YDirection: 2

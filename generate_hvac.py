@@ -392,8 +392,10 @@ champ_de_sondes = GroundheatexchangerVerticalArray(
     **GroundheatexchangerVerticalArrayType(
         Name="champ de sondes",
         GHEVerticalProperties_Object_Name=hole.Name,
-        Number_of_Boreholes_in_XDirection=5,
-        Number_of_Boreholes_in_YDirection=2,
+        Number_of_Boreholes_in_XDirection=HVAC_USER_CONF.get(
+            "Number_of_Boreholes_in_XDirection", 5),
+        Number_of_Boreholes_in_YDirection=HVAC_USER_CONF.get(
+            "Number_of_Boreholes_in_YDirection", 2),
         Borehole_Spacing=6
     )
 )
