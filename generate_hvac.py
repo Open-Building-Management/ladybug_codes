@@ -10,7 +10,7 @@ from idfhub.hvac import (
     set_nodes, split_mix
 )
 # autocompletion use
-from idfhub.idf_autocomplete.idf_helpers_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
     Building, Globalgeometryrules,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
@@ -32,7 +32,7 @@ from idfhub.idf_autocomplete.idf_helpers_short import (
     OutputVariable, OutputSqlite,
     FluidpropertiesGlycolconcentration
 )
-from idfhub.idf_autocomplete.idf_types_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
     BuildingType, GlobalgeometryrulesType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
