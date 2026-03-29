@@ -68,11 +68,11 @@ def append(idf, c):
                 break
             py_name = clean_name(f)
             if py_name != "key":
-                types_lines.append(f"    {py_name}: str")
+                types_lines.append(f"    {py_name}: str | int | float")
     types_lines.append("")
 
     # ---------- Helper eppy ----------
-    helpers_lines.append(f"def {name}(idf, **kwargs: {name}Type):")
+    helpers_lines.append(f"def {name}(idf, **kwargs: Unpack[{name}Type]):")
     helpers_lines.append(f'    """"helper for {name}"""')
     helpers_lines.append(f"    return idf.newidfobject('{c}', **kwargs)")
     helpers_lines.append("")
@@ -133,5 +133,5 @@ if __name__ == "__main__":
     else:
         OUTPUT_DIR = f"{REPO_ROOT}/src/idfhub/idf_autocomplete"
         if args.version and version is not None:
-            OUTPUT_DIR = f"{OUTPUT_DIR}/{version}"
+            OUTPUT_DIR = f"{OUTPUT_DIR}/v{version}"
         main(Path(OUTPUT_DIR))
