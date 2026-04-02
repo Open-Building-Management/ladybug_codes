@@ -5,57 +5,70 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
+SUPPLY = "supply"
+DEMAND = "demand"
+INLET = "inlet"
+OUTLET = "outlet"
+BRANCH = "branch"
+LIST = "list"
 
 @dataclass(frozen=True)
 class LoopNodes:
     """Produces generic node names for a plantloop"""
     name: str
 
+    def get(self, *, side, port):
+        """get a node name on a loop side/port"""
+        return f"{self.name} {side} {port}"
     @property
     def supply_inlet(self):
         """Supply Inlet"""
-        return f"{self.name} Supply Inlet"
+        return self.get(side=SUPPLY, port=INLET)
     @property
     def supply_outlet(self):
         "Supply Outlet"
-        return f"{self.name} Supply Outlet"
+        return self.get(side=SUPPLY, port=OUTLET)
     @property
     def demand_inlet(self):
         """Demand Inlet"""
-        return f"{self.name} Demand Inlet"
+        return self.get(side=DEMAND, port=INLET)
     @property
     def demand_outlet(self):
         """Demand Outlet"""
-        return f"{self.name} Demand Outlet"
+        return self.get(side=DEMAND, port=OUTLET)
 
 @dataclass(frozen=True)
 class Branches:
     """Produces generic branch names for a plantloop"""
     name: str
 
+    def get(self, *, side, branch_list=False):
+        """get a branch or branch list name on a loop side"""
+        end = "" if not branch_list else LIST
+        return f"{self.name} {side} {BRANCH} {end}".strip()
     @property
     def supply_branch(self):
         """Supply Branch"""
-        return f"{self.name} Supply Branch"
+        return self.get(side=SUPPLY)
     @property
     def demand_branch(self):
         """Demand Branch"""
-        return f"{self.name} Demand Branch"
-
+        return self.get(side=DEMAND)
     @property
     def supply_branch_list(self):
         """Supply Branch List"""
-        return f"{self.supply_branch} List"
+        return self.get(side=SUPPLY, branch_list=True)
     @property
     def demand_branch_list(self):
         """Demand Branch List"""
-        return f"{self.demand_branch} List"
+        return self.get(side=DEMAND, branch_list=True)
 
 class EPValues(StrEnum):
     """EnergyPlus possible values"""
     AUTOSIZE = "Autosize"
     DISCRETE = "Discrete"
     CONTINUOUS = "Continuous"
+    INTERMITTENT = "Intermittent"
     TEMPERATURE = "Temperature"
     WEEKDAYS = "Weekdays"
     WEEKENDS = "Weekends"
@@ -80,10 +93,13 @@ class EPApi(StrEnum):
     OUTLET_BRANCH_NAME = "Outlet_Branch_Name"
 
 
-def set_nodes(obj, *, side, inlet, outlet):
-    """Set nodes on a loop side"""
-    obj[f"{side}_{EPApi.INLET_NODE_NAME}"] = inlet
-    obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"] = outlet
+def set_nodes(obj, *, inlet: str|None, outlet: str|None, side: str|None = None):
+    """Set object nodes - loop or equipment"""
+    prefix = f"{side}_" if side else ""
+    if inlet is not None:
+        obj[f"{prefix}{EPApi.INLET_NODE_NAME}"] = inlet
+    if outlet is not None:
+        obj[f"{prefix}{EPApi.OUTLET_NODE_NAME}"] = outlet
 
 
 def set_branch_list(obj, *, side, branch_list):
@@ -210,33 +226,6 @@ def create_pipe(idf: IDF, name: str, inlet: str, outlet: str):
     return pipe
 
 
-def add_constant_pump(idf: IDF, name: str, inlet: str, outlet: str):
-    """add a constant speed pump"""
-    pump = idf.newidfobject(
-        "PUMP:CONSTANTSPEED",
-        Name=name,
-        Design_Flow_Rate=EPValues.AUTOSIZE,
-        Design_Pump_Head=179352,
-        Design_Power_Consumption=EPValues.AUTOSIZE,
-        Motor_Efficiency=0.9,
-        #Fraction_of_Motor_Inefficiencies_to_Fluid_Stream
-        Pump_Control_Type="Intermittent",
-        #Pump_Flow_Rate_Schedule_Name
-        #Pump_Curve_Name
-        #Impeller_Diameter
-        #Rotational_Speed
-        #Zone_Name
-        #Skin_Loss_Radiative_Fraction
-        #Design_Power_Sizing_Method
-        #Design_Electric_Power_per_Unit_Flow_Rate
-        #Design_Shaft_Power_per_Unit_Flow_Rate_per_Unit_Head
-        #EndUse_Subcategory
-    )
-    pump[EPApi.INLET_NODE_NAME] = inlet
-    pump[EPApi.OUTLET_NODE_NAME] = outlet
-    return pump
-
-
 def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_people=0.3):
     """Add baseboards like (radiant and convective) EU heaters"""
     idf.newidfobject(
@@ -282,7 +271,7 @@ def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_peo
         w_roof = 0
     if nbs["Roof"] and not nbs["Ceiling"]:
         w_ceiling = 0
-        w_roof = 0.2 
+        w_roof = 0.2
     weights = {
         "Wall": 0.6,
         "Floor": 0.2,
@@ -359,7 +348,7 @@ def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
     )
     create_branch(
         idf,
-        name = splitter[EPApi.INLET_BRANCH_NAME], 
+        name = splitter[EPApi.INLET_BRANCH_NAME],
         objects = [inlet_pipe],
         sides = [None]
     )

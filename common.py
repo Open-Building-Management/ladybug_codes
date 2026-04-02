@@ -1,5 +1,6 @@
 """yml management"""
 import os
+import sys
 import yaml
 
 from eppy.modeleditor import IDF
@@ -15,12 +16,28 @@ def load_config(repo_root: str) -> dict:
     return {}
 
 CONF = load_config(REPO_ROOT)
+REQUIRED = [
+    "building_name",
+    "name",
+    "suffix",
+    "os_ep_path",
+    "zones",
+    "loops",
+    "branches",
+    "equipments"
+]
+for element in REQUIRED:
+    if element not in CONF:
+        sys.exit()
 
-BUILDING_NAME = CONF.get("building_name")
-hvac_setup = CONF.get("hvac_setup")
-HVAC_USER_CONF = CONF.get(hvac_setup)
+BUILDING_NAME: str = CONF["building_name"]
+ZONES = CONF["zones"]
+LOOPS: list[str] = CONF["loops"]
+BRANCHES: dict[str, dict[str, list[str]]] = CONF["branches"]
+EQUIPMENTS: list[str] = CONF["equipments"]
 
-PROJECT_NAME = f"{hvac_setup}_{HVAC_USER_CONF['suffix']}"
-OS_EP_PATH = CONF.get("os_ep_path")
+PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
+OS_EP_PATH = CONF["os_ep_path"]
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+

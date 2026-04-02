@@ -1,14 +1,53 @@
 building_name: batiment_600m2
 
-hvac_setup: borehole
+name: borehole
+suffix: no_bypass_setpoint_55_35
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
-borehole:
-  suffix: no_bypass_setpoint_55_35 
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - soil_loop
+  - water_heating_loop
+
+equipments:
+  - borehole
+  - soil_pump
+  - hpwtw
+  - inside_pump
+
+soil_loop:
+  - constant_set_point
+
+water_heating_loop:
+  - water_law_set_point
+
+branches:
+  soil_loop:
+    supply: [borehole, soil_pump]
+    demand: [hpwtw]
+    bypass: [supply, demand]
+  water_heating_loop:
+    supply: [hpwtw, inside_pump]
+    bypass: [supply]
+
+# below are setups
+constant_set_point:
+  temp: 12
+
+water_law_set_point:
   Setpoint_at_Outdoor_Low_Temperature: 55
   Outdoor_Low_Temperature: -5
   Setpoint_at_Outdoor_High_Temperature: 35
   Outdoor_High_Temperature: 15
+
+borehole:
   Number_of_Boreholes_in_XDirection: 5
   Number_of_Boreholes_in_YDirection: 2
+
+hpwtw:
+  Reference_Coefficient_of_Performance: 2.5
+  sides: 2
