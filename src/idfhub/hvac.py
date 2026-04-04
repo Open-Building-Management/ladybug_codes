@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
-SUPPLY = "supply"
+SUPPLY = "air_supply"
+RETURN = "air_return"
+PLANT = "plant"
 DEMAND = "demand"
 INLET = "inlet"
 OUTLET = "outlet"
@@ -14,7 +16,7 @@ LIST = "list"
 
 @dataclass(frozen=True)
 class LoopNodes:
-    """Produces generic node names for a plantloop"""
+    """Produces generic node names for a plant or air loop"""
     name: str
 
     def get(self, *, side, port):
@@ -29,6 +31,22 @@ class LoopNodes:
         "Supply Outlet"
         return self.get(side=SUPPLY, port=OUTLET)
     @property
+    def return_inlet(self):
+        """Return Inlet"""
+        return self.get(side=RETURN, port=INLET)
+    @property
+    def return_outlet(self):
+        "Return Outlet"
+        return self.get(side=RETURN, port=OUTLET)
+    @property
+    def plant_inlet(self):
+        """Plant Inlet"""
+        return self.get(side=PLANT, port=INLET)
+    @property
+    def plant_outlet(self):
+        "Plant Outlet"
+        return self.get(side=PLANT, port=OUTLET)
+    @property
     def demand_inlet(self):
         """Demand Inlet"""
         return self.get(side=DEMAND, port=INLET)
@@ -39,7 +57,7 @@ class LoopNodes:
 
 @dataclass(frozen=True)
 class Branches:
-    """Produces generic branch names for a plantloop"""
+    """Produces generic branch names for a plant or air loop"""
     name: str
 
     def get(self, *, side, branch_list=False):
@@ -51,6 +69,14 @@ class Branches:
         """Supply Branch"""
         return self.get(side=SUPPLY)
     @property
+    def return_branch(self):
+        """Return Branch"""
+        return self.get(side=RETURN)
+    @property
+    def plant_branch(self):
+        """Plant Branch"""
+        return self.get(side=PLANT)
+    @property
     def demand_branch(self):
         """Demand Branch"""
         return self.get(side=DEMAND)
@@ -58,6 +84,14 @@ class Branches:
     def supply_branch_list(self):
         """Supply Branch List"""
         return self.get(side=SUPPLY, branch_list=True)
+    @property
+    def return_branch_list(self):
+        """Return Branch List"""
+        return self.get(side=RETURN, branch_list=True)
+    @property
+    def plant_branch_list(self):
+        """Plant Branch List"""
+        return self.get(side=PLANT, branch_list=True)
     @property
     def demand_branch_list(self):
         """Demand Branch List"""
@@ -116,14 +150,14 @@ def add_plant_loop(
     """create a plant loop
     pour la robustesse, on ne crée aucune branche
     mais on crée les objets BRANCHLIST
-    On met le setpoint sur le supply outlet"""
+    On met le setpoint sur le plant outlet"""
     nodes = LoopNodes(name)
     branches = Branches(name)
 
     idf.newidfobject(
         "BRANCHLIST",
-        Name=branches.supply_branch_list,
-        Branch_1_Name=branches.supply_branch,
+        Name=branches.plant_branch_list,
+        Branch_1_Name=branches.plant_branch,
     )
     idf.newidfobject(
         "BRANCHLIST",
@@ -136,7 +170,7 @@ def add_plant_loop(
         Fluid_Type="Water",
         #User_Defined_Fluid_Type
         Plant_Equipment_Operation_Scheme_Name=name,
-        Loop_Temperature_Setpoint_Node_Name=nodes.supply_outlet,
+        Loop_Temperature_Setpoint_Node_Name=nodes.plant_outlet,
         Maximum_Loop_Temperature=max_t,
         Minimum_Loop_Temperature=min_t,
         Maximum_Loop_Flow_Rate=EPValues.AUTOSIZE,
@@ -154,13 +188,13 @@ def add_plant_loop(
     set_nodes(
         plantloop,
         side=EPApi.PLANT_SIDE,
-        inlet=nodes.supply_inlet,
-        outlet=nodes.supply_outlet,
+        inlet=nodes.plant_inlet,
+        outlet=nodes.plant_outlet,
     )
     set_branch_list(
         plantloop,
         side=EPApi.PLANT_SIDE,
-        branch_list=branches.supply_branch_list,
+        branch_list=branches.plant_branch_list,
     )
 
     set_nodes(

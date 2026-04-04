@@ -27,12 +27,12 @@ water_heating_loop:
 
 branches:
   soil_loop:
-    supply: [borehole, soil_pump]
+    plant: [borehole, soil_pump]
     demand: [hpwtw]
-    bypass: [supply, demand]
+    bypass: [plant, demand]
   water_heating_loop:
-    supply: [hpwtw, inside_pump]
-    bypass: [supply]
+    plant: [hpwtw, inside_pump]
+    bypass: [plant]
 
 # below are setups
 constant_set_point:

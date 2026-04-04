@@ -5,7 +5,7 @@ from typing import Any
 from eppy.bunch_subclass import BadEPFieldError
 
 from idfhub.hvac import (
-    SUPPLY, DEMAND, INLET, OUTLET,
+    PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET,
     EPApi, EPValues,
     add_plant_loop,
     add_baseboard,
@@ -345,9 +345,9 @@ for zone in ZONES:
 # SETPOINTS
 #------------------------------------------------------------------------------
 def water_law(loop_name: str, setup: str):
-    """add a waterlaw setpoint on a loop supply outlet"""
+    """add a waterlaw setpoint on a loop plant outlet"""
     loop_nodes = LoopNodes(loop_name)
-    message = f"waterlaw @ {loop_nodes.supply_outlet} with {CONF[setup]}"
+    message = f"waterlaw @ {loop_nodes.plant_outlet} with {CONF[setup]}"
     LOGGER.debug(message)
     SetpointmanagerOutdoorairreset(
         idf,
@@ -362,14 +362,14 @@ def water_law(loop_name: str, setup: str):
                 "Setpoint_at_Outdoor_High_Temperature", 40),
             Outdoor_High_Temperature=CONF[setup].get(
                 "Outdoor_High_Temperature", 15),
-            Setpoint_Node_or_NodeList_Name=loop_nodes.supply_outlet
+            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet
         )
     )
 
 def constant_set_point(loop_name: str, setup: str):
-    """add a constant setpoint on a loop supply outlet"""
+    """add a constant setpoint on a loop plant outlet"""
     loop_nodes = LoopNodes(loop_name)
-    message = f"constant setpoint @ {loop_nodes.supply_outlet} with {CONF[setup]}"
+    message = f"constant setpoint @ {loop_nodes.plant_outlet} with {CONF[setup]}"
     LOGGER.debug(message)
     consigne = ScheduleConstant(
         idf,
@@ -383,7 +383,7 @@ def constant_set_point(loop_name: str, setup: str):
             Name=f"{setup} {loop_name}",
             Control_Variable=EPValues.TEMPERATURE,
             Schedule_Name=consigne.Name,
-            Setpoint_Node_or_NodeList_Name=loop_nodes.supply_outlet,
+            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet,
         )
     )
 
@@ -556,7 +556,9 @@ def resolve_side(name, branch_type):
     if CONF[name].get("sides", 1) == 2:
         return {
             SUPPLY: EPApi.LOAD_SIDE,
+            PLANT: EPApi.LOAD_SIDE,
             DEMAND: EPApi.SOURCE_SIDE,
+            RETURN: EPApi.SOURCE_SIDE
         }[branch_type]
     return None
 
@@ -621,8 +623,8 @@ for loop in LOOPS:
             constant_set_point(loop, tune)
 
     if loop in BRANCHES:
-        if SUPPLY in BRANCHES[loop]:
-            adjust_nodes_branch(loop, SUPPLY)
+        if PLANT in BRANCHES[loop]:
+            adjust_nodes_branch(loop, PLANT)
         if DEMAND in BRANCHES[loop]:
             adjust_nodes_branch(loop, DEMAND)
 
