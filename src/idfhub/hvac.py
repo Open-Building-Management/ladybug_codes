@@ -328,17 +328,17 @@ def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
     )
     plantloop.Demand_Side_Connector_List_Name = connector_list_name
     # on récupère la branchlist du plantloop pour mise à jour !
-    plantloop_demand_branch_list = idf.getobject(
+    plantloop_branch_list = idf.getobject(
         "BRANCHLIST",
         plantloop[f"{side}_{EPApi.BRANCH_LIST_NAME}"]
     )
     i = 1
-    plantloop_demand_branch_list[f"Branch_{i}_Name"] = splitter[EPApi.INLET_BRANCH_NAME]
+    plantloop_branch_list[f"Branch_{i}_Name"] = splitter[EPApi.INLET_BRANCH_NAME]
     for branch in branches:
         i += 1
-        plantloop_demand_branch_list[f"Branch_{i}_Name"] = branch.Name
+        plantloop_branch_list[f"Branch_{i}_Name"] = branch.Name
     i += 1
-    plantloop_demand_branch_list[f"Branch_{i}_Name"] = mixer[EPApi.OUTLET_BRANCH_NAME]
+    plantloop_branch_list[f"Branch_{i}_Name"] = mixer[EPApi.OUTLET_BRANCH_NAME]
     plantloop_inlet_node_name = plantloop[f"{side}_{EPApi.INLET_NODE_NAME}"]
     inlet_pipe = create_pipe(
         idf,
