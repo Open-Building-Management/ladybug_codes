@@ -235,9 +235,8 @@ control_type_schedule = ScheduleCompact(
     )
 )
 
-thermostats = {}
 for zone in ZONES:
-    thermostats[zone] = ZonecontrolThermostat(
+    ZonecontrolThermostat(
         idf,
         **ZonecontrolThermostatType(
             Name=f"{zone}_thermostat",
