@@ -19,22 +19,20 @@ equipments:
   - hpwtw
   - inside_pump
 
+branches:
+  soil_loop:
+    plant: [soil_pump, borehole]
+    demand: [hpwtw]
+  water_heating_loop:
+    plant: [hpwtw, inside_pump]
+
+# below are setups
 soil_loop:
   - constant_set_point
 
 water_heating_loop:
   - water_law_set_point
 
-branches:
-  soil_loop:
-    plant: [borehole, soil_pump]
-    demand: [hpwtw]
-    bypass: [plant, demand]
-  water_heating_loop:
-    plant: [hpwtw, inside_pump]
-    bypass: [plant]
-
-# below are setups
 constant_set_point:
   temp: 12
 

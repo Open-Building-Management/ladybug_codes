@@ -1,4 +1,4 @@
-"""Manage hvac with eppy raw layer"""
+"""Manage hvac topology with eppy raw layer"""
 from enum import StrEnum
 from dataclasses import dataclass
 
@@ -141,15 +141,14 @@ def set_branch_list(obj, *, side, branch_list):
     obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
 
 
-def add_plant_loop(
+def add_plantloop(
     idf:IDF,
     name:str,
     max_t:int = 100,
     min_t:int = 0
 ):
     """create a plant loop
-    pour la robustesse, on ne crée aucune branche
-    mais on crée les objets BRANCHLIST
+    On crée les objets BRANCHLIST
     On met le setpoint sur le plant outlet"""
     nodes = LoopNodes(name)
     branches = Branches(name)
@@ -213,7 +212,7 @@ def add_plant_loop(
     return plantloop
 
 
-def create_splitter(idf: IDF, name: str, branches: list):
+def _create_splitter(idf: IDF, *, name: str, branches: list):
     """create a splitter"""
     splitter = idf.newidfobject(
         "CONNECTOR:SPLITTER",
@@ -225,7 +224,7 @@ def create_splitter(idf: IDF, name: str, branches: list):
     return splitter
 
 
-def create_mixer(idf: IDF, name: str, branches: list):
+def _create_mixer(idf: IDF, *, name: str, branches: list):
     """create a mixer"""
     mixer = idf.newidfobject(
         "CONNECTOR:MIXER",
@@ -237,7 +236,7 @@ def create_mixer(idf: IDF, name: str, branches: list):
     return mixer
 
 
-def create_connector_list(idf: IDF, name:str, connectors: list):
+def _create_connector_list(idf: IDF, *, name:str, connectors: list):
     """create a connector list"""
     connector_list = idf.newidfobject(
         "CONNECTORLIST",
@@ -249,18 +248,24 @@ def create_connector_list(idf: IDF, name:str, connectors: list):
     return connector_list
 
 
-def create_pipe(idf: IDF, name: str, inlet: str, outlet: str):
+def _create_pipe(
+    idf: IDF,
+    *,
+    name: str,
+    inlet_node_name: str,
+    outlet_node_name: str
+):
     """create an adiabatic pipe"""
     pipe = idf.newidfobject(
         "PIPE:ADIABATIC",
         Name=name
     )
-    pipe[EPApi.INLET_NODE_NAME] = inlet
-    pipe[EPApi.OUTLET_NODE_NAME] = outlet
+    pipe[EPApi.INLET_NODE_NAME] = inlet_node_name
+    pipe[EPApi.OUTLET_NODE_NAME] = outlet_node_name
     return pipe
 
 
-def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_people=0.3):
+def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
     """Add baseboards like (radiant and convective) EU heaters"""
     idf.newidfobject(
         "ZONEHVAC:BASEBOARD:RADIANTCONVECTIVE:WATER:DESIGN",
@@ -282,8 +287,8 @@ def add_baseboard(idf: IDF, zone_name, inlet, outlet, frac_rad=0.3, frac_rad_peo
         Heating_Design_Capacity=EPValues.AUTOSIZE,
         Maximum_Water_Flow_Rate=EPValues.AUTOSIZE,
     )
-    zone_baseboard[EPApi.INLET_NODE_NAME] = inlet
-    zone_baseboard[EPApi.OUTLET_NODE_NAME] = outlet
+    zone_baseboard[EPApi.INLET_NODE_NAME] = f"{zone_name} baseboards inlet"
+    zone_baseboard[EPApi.OUTLET_NODE_NAME] = f"{zone_name} baseboards outlet"
     surfaces = [
         s for s in idf.idfobjects["BUILDINGSURFACE:DETAILED"]
         if s.Zone_Name == zone_name
@@ -342,25 +347,48 @@ def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
     return branch
 
 
-def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
+def plantloop_split_mix(
+    idf: IDF,
+    *,
+    plantloop:EpBunch,
+    side: str,
+    branches: list[EpBunch],
+    bypass: bool = False
+):
     """split to branches and mix on a side of a plantloop"""
-    splitter = create_splitter(
+    if bypass:
+        # add a bypass branch if needed
+        bypass_name = f"{plantloop.Name} {side} bypass pipe"
+        bypass_pipe = _create_pipe(
+            idf,
+            name=bypass_name,
+            inlet_node_name=f"{bypass_name} inlet node",
+            outlet_node_name=f"{bypass_name} outlet node"
+        )
+        bypass_branch = create_branch(
+            idf,
+            name = f"{bypass_name} branch",
+            objects = [bypass_pipe],
+            sides = [None]
+        )
+        branches.append(bypass_branch)
+    splitter = _create_splitter(
         idf,
-        f"{plantloop.Name} {side} splitter",
-        branches
+        name=f"{plantloop.Name} {side} splitter",
+        branches=branches
     )
-    mixer = create_mixer(
+    mixer = _create_mixer(
         idf,
-        f"{plantloop.Name} {side} mixer",
-        branches
+        name=f"{plantloop.Name} {side} mixer",
+        branches=branches
     )
     connector_list_name = f"{plantloop.Name} {side} connector list"
-    create_connector_list(
+    _create_connector_list(
         idf,
-        connector_list_name,
-        [splitter, mixer]
+        name=connector_list_name,
+        connectors=[splitter, mixer]
     )
-    plantloop.Demand_Side_Connector_List_Name = connector_list_name
+    plantloop[f"{side}_{EPApi.CONNECTOR_LIST_NAME}"] = connector_list_name
     # on récupère la branchlist du plantloop pour mise à jour !
     plantloop_branch_list = idf.getobject(
         "BRANCHLIST",
@@ -374,11 +402,11 @@ def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
     i += 1
     plantloop_branch_list[f"Branch_{i}_Name"] = mixer[EPApi.OUTLET_BRANCH_NAME]
     plantloop_inlet_node_name = plantloop[f"{side}_{EPApi.INLET_NODE_NAME}"]
-    inlet_pipe = create_pipe(
+    inlet_pipe = _create_pipe(
         idf,
-        f"{plantloop_inlet_node_name} Pipe",
-        plantloop_inlet_node_name,
-        f"{plantloop_inlet_node_name} Pipe Node"
+        name=f"{plantloop_inlet_node_name} Pipe",
+        inlet_node_name=plantloop_inlet_node_name,
+        outlet_node_name=f"{plantloop_inlet_node_name} Pipe outlet"
     )
     create_branch(
         idf,
@@ -387,11 +415,11 @@ def split_mix(idf: IDF, plantloop:EpBunch, side: str, branches: list[EpBunch]):
         sides = [None]
     )
     plantloop_outlet_node_name = plantloop[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-    outlet_pipe = create_pipe(
+    outlet_pipe = _create_pipe(
         idf,
-        f"{plantloop_outlet_node_name} Pipe",
-        f"{plantloop_outlet_node_name} Pipe Node",
-        plantloop_outlet_node_name
+        name=f"{plantloop_outlet_node_name} Pipe",
+        inlet_node_name=f"{plantloop_outlet_node_name} Pipe inlet",
+        outlet_node_name=plantloop_outlet_node_name
     )
     create_branch(
         idf,

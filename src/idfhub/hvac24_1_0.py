@@ -1,0 +1,357 @@
+"""Manage hvac equipments"""
+from typing import Any
+from eppy.bunch_subclass import BadEPFieldError
+
+from idfhub.hvac import (
+    PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET,
+    EPApi, EPValues,
+    create_branch,
+    LoopNodes, Branches,
+    set_nodes, plantloop_split_mix
+)
+
+from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
+    Scheduletypelimits,ScheduleConstant,
+    SiteGroundtemperatureBuildingsurface,
+    SiteGroundtemperatureUndisturbedKusudaachenbach,
+    CurveQuadlinear,
+    HeatpumpWatertowaterEquationfitHeating,
+    GroundheatexchangerVerticalProperties,
+    GroundheatexchangerVerticalArray,
+    GroundheatexchangerSystem,
+    SetpointmanagerOutdoorairreset, SetpointmanagerScheduled,
+    PumpConstantspeed
+)
+
+from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
+    ScheduletypelimitsType,ScheduleConstantType,
+    SiteGroundtemperatureBuildingsurfaceType,
+    SiteGroundtemperatureUndisturbedKusudaachenbachType,
+    CurveQuadlinearType,
+    HeatpumpWatertowaterEquationfitHeatingType,
+    GroundheatexchangerVerticalPropertiesType,
+    GroundheatexchangerVerticalArrayType,
+    GroundheatexchangerSystemType,
+    SetpointmanagerOutdoorairresetType, SetpointmanagerScheduledType,
+    PumpConstantspeedType
+)
+
+from idfhub.helpers.common import get_logger
+
+from idfhub.common import (
+    idf,
+    CONF, BRANCHES
+)
+
+LOGGER = get_logger()
+BYPASS = "bypass"
+loops: dict = {}
+equipments: dict[str, Any] = {}
+
+
+#------------------------------------------------------------------------------
+# on crée 2 schedules constants, 20°C chauffage et 25°C raffraichissement :
+# - const_temp_sched_20deg
+# - const_temp_sched_25deg
+#------------------------------------------------------------------------------
+
+temperature_typelimits = Scheduletypelimits(
+    idf,
+    **ScheduletypelimitsType(
+        Name="temperature",
+        Numeric_Type=EPValues.CONTINUOUS,
+        Unit_Type=EPValues.TEMPERATURE
+    )
+)
+
+def create_const_sched(temp: int):
+    """create a constant schedule type"""
+    return ScheduleConstantType(
+        Name=f"const_temp_sched_{temp}deg",
+        Schedule_Type_Limits_Name=temperature_typelimits.Name,
+        Hourly_Value=temp
+    )
+
+consigne_cool = ScheduleConstant(idf, **create_const_sched(25))
+consigne_heat = ScheduleConstant(idf, **create_const_sched(20))
+
+#------------------------------------------------------------------------------
+# SETPOINTS
+#------------------------------------------------------------------------------
+def water_law(loop_name: str, setup: str):
+    """add a waterlaw setpoint on a loop plant outlet"""
+    loop_nodes = LoopNodes(loop_name)
+    message = f"waterlaw @ {loop_nodes.plant_outlet} with {CONF[setup]}"
+    LOGGER.debug(message)
+    SetpointmanagerOutdoorairreset(
+        idf,
+        **SetpointmanagerOutdoorairresetType(
+            Name=f"{setup} {loop_name}",
+            Control_Variable=EPValues.TEMPERATURE,
+            Setpoint_at_Outdoor_Low_Temperature=CONF[setup].get(
+                "Setpoint_at_Outdoor_Low_Temperature", 70),
+            Outdoor_Low_Temperature=CONF[setup].get(
+                "Outdoor_Low_Temperature", -5),
+            Setpoint_at_Outdoor_High_Temperature=CONF[setup].get(
+                "Setpoint_at_Outdoor_High_Temperature", 40),
+            Outdoor_High_Temperature=CONF[setup].get(
+                "Outdoor_High_Temperature", 15),
+            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet
+        )
+    )
+
+def constant_set_point(loop_name: str, setup: str):
+    """add a constant setpoint on a loop plant outlet"""
+    loop_nodes = LoopNodes(loop_name)
+    message = f"constant setpoint @ {loop_nodes.plant_outlet} with {CONF[setup]}"
+    LOGGER.debug(message)
+    consigne = ScheduleConstant(
+        idf,
+        **create_const_sched(
+            CONF[setup].get("temp", 12)
+        )
+    )
+    SetpointmanagerScheduled(
+        idf,
+        **SetpointmanagerScheduledType(
+            Name=f"{setup} {loop_name}",
+            Control_Variable=EPValues.TEMPERATURE,
+            Schedule_Name=consigne.Name,
+            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet,
+        )
+    )
+
+#------------------------------------------------------------------------------
+# SOIL, BOREHOLE, PRODUCTION SYSTEMS
+#------------------------------------------------------------------------------
+def ground_temperature():
+    """create a basic ground temperature for the building"""
+    SiteGroundtemperatureBuildingsurface(
+        idf,
+        **SiteGroundtemperatureBuildingsurfaceType(
+            January_Ground_Temperature=7.0,
+            February_Ground_Temperature=8.0,
+            March_Ground_Temperature=9.5,
+            April_Ground_Temperature=11.0,
+            May_Ground_Temperature=12.5,
+            June_Ground_Temperature=13.5,
+            July_Ground_Temperature=14.0,
+            August_Ground_Temperature=13.8,
+            September_Ground_Temperature=12.5,
+            October_Ground_Temperature=10.5,
+            November_Ground_Temperature=8.5,
+            December_Ground_Temperature=7.5,
+        )
+    )
+
+def vertical_geoexchanger(name: str):
+    """add a geoexchanger with vertical boreholes"""
+    soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
+        idf,
+        **SiteGroundtemperatureUndisturbedKusudaachenbachType(
+            Name="Sol_KA",
+            Soil_Thermal_Conductivity=2.5, # W/(m K)
+            Soil_Density=2000, # kg/m3
+            Soil_Specific_Heat=900, # J/(kg K)
+            Average_Soil_Surface_Temperature=11,
+            Average_Amplitude_of_Surface_Temperature=10,
+            Phase_Shift_of_Minimum_Surface_Temperature=45 #days
+        )
+    )
+    hole = GroundheatexchangerVerticalProperties(
+        idf,
+        **GroundheatexchangerVerticalPropertiesType(
+            Name="single typical hole",
+            Depth_of_Top_of_Borehole=0,
+            Borehole_Length=100,
+            Borehole_Diameter=0.15,
+            Grout_Thermal_Conductivity=1.2, # W / (m K)
+            Grout_Thermal_Heat_Capacity=3.0e6, # J / (m3 K)
+            Pipe_Thermal_Conductivity=0.4,
+            Pipe_Thermal_Heat_Capacity=2.0e6,
+            Pipe_Thickness=0.003,
+            Pipe_Outer_Diameter=0.032,
+            UTube_Distance=0.055,
+        )
+    )
+
+    boreholes = GroundheatexchangerVerticalArray(
+        idf,
+        **GroundheatexchangerVerticalArrayType(
+            Name="champ de sondes",
+            GHEVerticalProperties_Object_Name=hole.Name,
+            Number_of_Boreholes_in_XDirection=CONF[name].get(
+                "Number_of_Boreholes_in_XDirection", 5),
+            Number_of_Boreholes_in_YDirection=CONF[name].get(
+                "Number_of_Boreholes_in_YDirection", 2),
+            Borehole_Spacing=6
+        )
+    )
+
+    # 0.0033*3600 m3/h soit 11,88 m3/h pour 10 forages, soit 1.2 m3/h par forage
+    return GroundheatexchangerSystem(
+        idf,
+        **GroundheatexchangerSystemType(
+            Name="vertical geoexchanger",
+            Inlet_Node_Name="vertical geoexchanger inlet",
+            Outlet_Node_Name="vertical geoexchanger outlet",
+            Design_Flow_Rate=0.006, # m3/s before 0.0033
+            Undisturbed_Ground_Temperature_Model_Name=soil.Name,
+            Undisturbed_Ground_Temperature_Model_Type=soil.key,
+            Ground_Thermal_Conductivity=2.5, #W / (m K) - 0.69 serait une valeur médiocre
+            Ground_Thermal_Heat_Capacity=1.8e6, #Pa/K = J / (m3 K)
+            GHEVerticalArray_Object_Name=boreholes.Name
+        )
+    )
+
+def constant_pump(name):
+    """add a constant speed pump"""
+    return PumpConstantspeed(
+        idf,
+        **PumpConstantspeedType(
+            Name=name,
+            Inlet_Node_Name=f"{name} inlet",
+            Outlet_Node_Name=f"{name} outlet",
+            Design_Flow_Rate=EPValues.AUTOSIZE,
+            Design_Power_Consumption=EPValues.AUTOSIZE,
+            Motor_Efficiency=0.9,
+            Pump_Control_Type=EPValues.INTERMITTENT
+        )
+    )
+
+def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
+    """create a curve for heatpump configuration"""
+    return CurveQuadlinearType(
+        Name=name,
+        Coefficient1_Constant=coeff1,
+        Coefficient2_w=coeff2,
+        Coefficient3_x=coeff3,
+        Coefficient4_y=coeff4,
+        Coefficient5_z=0,
+        Minimum_Value_of_w=-5.0,
+        Maximum_Value_of_w=20.0,
+        Minimum_Value_of_x=30.0,
+        Maximum_Value_of_x=55.0,
+        Minimum_Value_of_y=-5.0,
+        Maximum_Value_of_y=20.0,
+        Minimum_Value_of_z=0.0,
+        Maximum_Value_of_z=1.0,
+        Minimum_Curve_Output=0.5,
+        Maximum_Curve_Output=1,
+        Input_Unit_Type_for_w=EPValues.TEMPERATURE,
+        Input_Unit_Type_for_x=EPValues.TEMPERATURE,
+        Input_Unit_Type_for_y=EPValues.TEMPERATURE,
+        Input_Unit_Type_for_z="Dimensionless"
+    )
+
+def water_to_water_heatpump(name):
+    """add a water to water heatpump"""
+    capacity_curve = CurveQuadlinear(
+        idf,
+        **create_quadlincurve(
+            f"{name} Heating capacity curve",
+            0.8, 0.002, 0.002, 0
+        )
+    )
+
+    power_curve = CurveQuadlinear(
+        idf,
+        **create_quadlincurve(
+            f"{name} Heating power curve",
+            0.4, 0.002, 0.002, 0
+        )
+    )
+
+    return HeatpumpWatertowaterEquationfitHeating(
+        idf,
+        **HeatpumpWatertowaterEquationfitHeatingType(
+            Name=name,
+            Source_Side_Inlet_Node_Name=f"{name} source side inlet",
+            Source_Side_Outlet_Node_Name=f"{name} source side outlet",
+            Load_Side_Inlet_Node_Name=f"{name} load side inlet",
+            Load_Side_Outlet_Node_Name=f"{name} load side outlet",
+            Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
+            Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
+            Reference_Heating_Capacity=EPValues.AUTOSIZE,
+            Reference_Heating_Power_Consumption=EPValues.AUTOSIZE,
+            Reference_Coefficient_of_Performance=CONF[name].get(
+                "Reference_Coefficient_of_Performance", 2.5),
+            Sizing_Factor=1,
+            Heating_Capacity_Curve_Name=capacity_curve.Name,
+            Heating_Compressor_Power_Curve_Name=power_curve.Name
+        )
+    )
+
+def resolve_side(name, branch_type):
+    """resolve equipment side
+    for two sided equipments like heat pumps"""
+    if name not in CONF:
+        return None
+    if CONF[name].get("sides", 1) == 2:
+        return {
+            SUPPLY: EPApi.LOAD_SIDE,
+            PLANT: EPApi.LOAD_SIDE,
+            DEMAND: EPApi.SOURCE_SIDE,
+            RETURN: EPApi.SOURCE_SIDE
+        }[branch_type]
+    return None
+
+
+def adjust_nodes_branch(loop_name: str, branch_type: str):
+    """use yaml declaration to organise a branch and relevant nodes on a side loop"""
+    object_names = BRANCHES[loop_name][branch_type]
+    bypass = False
+    if BYPASS in BRANCHES[loop_name]:
+        if branch_type in BRANCHES[loop_name][BYPASS]:
+            bypass = True
+    # we adjust the nodes
+    nb_objects = len(object_names)
+    for i, obj in enumerate(object_names):
+        inlet_node: str|None = None
+        outlet_node: str|None = None
+        # start and end of the loop side
+        if i == 0:
+            inlet_node = LoopNodes(loop_name).get(side=branch_type, port=INLET)
+        if i == nb_objects - 1:
+            outlet_node = LoopNodes(loop_name).get(side=branch_type, port=OUTLET)
+        # we only modify inlets using the previous equipement
+        if inlet_node is None:
+            # previous object exists
+            prev_name = object_names[i-1]
+            prev_obj = equipments[prev_name]
+            try:
+                inlet_node = prev_obj[EPApi.OUTLET_NODE_NAME]
+            except BadEPFieldError:
+                # we have a 2 sided equipment - heatpump
+                side = resolve_side(prev_name, branch_type)
+                inlet_node = prev_obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+        # if bypass, we dont modify inlet node of first equipment
+        if i == 0 and bypass:
+            inlet_node = None
+        # if bypass, we dont modify outlet node of last equipment
+        if i == nb_objects - 1 and bypass:
+            outlet_node = None
+        set_nodes(
+            equipments[obj],
+            inlet=inlet_node,
+            outlet=outlet_node,
+            side=resolve_side(obj, branch_type)
+        )
+    # we create the branch using the objects as nodes are now correct
+    objects = [equipments[obj] for obj in object_names]
+    sides = [resolve_side(obj, branch_type) for obj in object_names]
+    adjusted_branch = create_branch(
+        idf,
+        name = Branches(loop_name).get(side=branch_type),
+        objects = objects,
+        sides = sides
+    )
+    if bypass:
+        side = EPApi.DEMAND_SIDE if branch_type == DEMAND else EPApi.PLANT_SIDE
+        plantloop_split_mix(
+            idf=idf,
+            plantloop=loops[loop_name],
+            side=side,
+            branches=[adjusted_branch],
+            bypass=True
+        )
