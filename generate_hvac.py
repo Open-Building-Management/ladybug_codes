@@ -17,8 +17,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Scheduletypelimits,
     ScheduleCompact,
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
-    Plantequipmentlist, Plantequipmentoperationschemes,
-    PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
     SizingParameters, SizingZone, SizingPlant,
     ZonehvacEquipmentlist, ZonehvacEquipmentconnections,
     OutputVariabledictionary,
@@ -32,8 +30,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ScheduletypelimitsType,
     ScheduleCompactType,
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
-    PlantequipmentlistType, PlantequipmentoperationschemesType,
-    PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
     SizingParametersType, SizingZoneType, SizingPlantType,
     ZonehvacEquipmentlistType, ZonehvacEquipmentconnectionsType,
     OutputVariabledictionaryType,
@@ -59,7 +55,7 @@ from idfhub.hvac24_1_0 import (
     constant_pump,
     water_to_water_heatpump,
     water_law, constant_set_point,
-    adjust_nodes_branch
+    adjust_nodes_branch, generate_operation_list
 )
 
 FORMAT = (
@@ -76,9 +72,9 @@ LOGGER.info(MESSAGE)
 
 EP_SIM_PATH = "ep_simulations"
 SOIL_LOOP = "soil_loop"
-WATER_HEATING_LOOP = "water_heating_loop"
-WATER_LAW_SET_POINT = "water_law_set_point"
-CONSTANT_SET_POINT = "constant_set_point"
+WATER_HEATING = "water_heating"
+WATER_LAW = "water_law"
+CONSTANT = "constant"
 BOREHOLE = "borehole"
 PUMP = "pump"
 HPWTW = "hpwtw"
@@ -280,7 +276,7 @@ for loop in LOOPS:
                 Zone_Timesteps_in_Averaging_Window=1,
             )
         )
-    if loop == WATER_HEATING_LOOP:
+    if WATER_HEATING in loop:
         heating_loop = add_plantloop(idf, loop, 100, 0)
         loops[loop] = heating_loop
         SizingPlant(
@@ -312,23 +308,25 @@ for zone in ZONES:
     basic_zone_sizing(zone)
 
 for equipment_name in EQUIPMENTS:
-    if equipment_name == BOREHOLE:
+    if PUMP in equipment_name:
+        equipments[equipment_name] = constant_pump(equipment_name)
+        continue
+    if BOREHOLE in equipment_name:
         ground_temperature()
         borehole = vertical_geoexchanger(equipment_name)
         equipments[equipment_name] = borehole
-    if equipment_name == HPWTW:
+        continue
+    if HPWTW in equipment_name:
         hpwtw = water_to_water_heatpump(equipment_name)
         equipments[equipment_name] = hpwtw
-    if PUMP in equipment_name:
-        equipments[equipment_name] = constant_pump(equipment_name)
 
 for loop in LOOPS:
     setpoint = CONF[loop].get("setpoint")
     branches_descr: dict[str, list[str]]
     branches_descr = CONF[loop].get("branches", {})
-    if setpoint == WATER_LAW_SET_POINT:
+    if WATER_LAW in setpoint:
         water_law(loop, setpoint)
-    if setpoint == CONSTANT_SET_POINT:
+    if CONSTANT in setpoint:
         constant_set_point(loop, setpoint)
     for loop_side in [PLANT, DEMAND]:
         if loop_side in branches_descr:
@@ -337,63 +335,8 @@ for loop in LOOPS:
                 loop_side=loop_side,
                 branches_descr=branches_descr
             )
+    generate_operation_list(loop)
 
-#------------------------------------------------------------------------------
-# PLANT EQUIPEMENTS
-#------------------------------------------------------------------------------
-soil_loop_equipement_list = Plantequipmentlist(
-    idf,
-    **PlantequipmentlistType(
-        Name=f"{soil_loop.Name} Equipment List",
-        Equipment_1_Object_Type=borehole.key,
-        Equipment_1_Name=borehole.Name
-    )
-)
-
-soil_loop_operation = PlantequipmentoperationCoolingload(
-    idf,
-    **PlantequipmentoperationCoolingloadType(
-        Name=f"{soil_loop.Name} cooling operation",
-        Load_Range_1_Lower_Limit=0,
-        Load_Range_1_Upper_Limit=1e9,
-        Range_1_Equipment_List_Name=soil_loop_equipement_list.Name
-    )
-)
-heating_loop_equipement_list = Plantequipmentlist(
-    idf,
-    **PlantequipmentlistType(
-        Name=f"{heating_loop.Name} Equipment List",
-        Equipment_1_Object_Type=hpwtw.key,
-        Equipment_1_Name=hpwtw.Name
-    )
-)
-heating_loop_operation = PlantequipmentoperationHeatingload(
-    idf,
-    **PlantequipmentoperationHeatingloadType(
-        Name=f"{heating_loop.Name} heating operation",
-        Load_Range_1_Lower_Limit=0,
-        Load_Range_1_Upper_Limit=1e9,
-        Range_1_Equipment_List_Name=heating_loop_equipement_list.Name
-    )
-)
-Plantequipmentoperationschemes(
-    idf,
-    **PlantequipmentoperationschemesType(
-        Name=SOIL_LOOP,
-        Control_Scheme_1_Object_Type=soil_loop_operation.key,
-        Control_Scheme_1_Name=soil_loop_operation.Name,
-        Control_Scheme_1_Schedule_Name="Always On"
-    )
-)
-Plantequipmentoperationschemes(
-    idf,
-    **PlantequipmentoperationschemesType(
-        Name=WATER_HEATING_LOOP,
-        Control_Scheme_1_Object_Type=heating_loop_operation.key,
-        Control_Scheme_1_Name=heating_loop_operation.Name,
-        Control_Scheme_1_Schedule_Name="Always On"
-    )
-)
 
 #------------------------------------------------------------------------------
 # EMISSION SYSTEMS

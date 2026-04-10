@@ -20,7 +20,9 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
     SetpointmanagerOutdoorairreset, SetpointmanagerScheduled,
-    PumpConstantspeed
+    PumpConstantspeed,
+    Plantequipmentlist, Plantequipmentoperationschemes,
+    PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -33,7 +35,9 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
     SetpointmanagerOutdoorairresetType, SetpointmanagerScheduledType,
-    PumpConstantspeedType
+    PumpConstantspeedType,
+    PlantequipmentlistType, PlantequipmentoperationschemesType,
+    PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
 )
 
 from idfhub.helpers.common import get_logger
@@ -360,3 +364,47 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
             branches=[adjusted_branch],
             bypass=True
         )
+
+
+def generate_operation_list(loop_name:str):
+    """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
+    loop_equipment_list = Plantequipmentlist(
+        idf,
+        **PlantequipmentlistType(
+            Name=f"{loop_name} Equipment List",
+        )
+    )
+    for i, obj_name in enumerate(CONF[loop_name].get("operation", [])):
+        loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
+        loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
+    loop_mode = "heating" if "heating" in loop_name else "cooling"
+    operation_name = f"{loop_name} {loop_mode} operation"
+    if loop_mode == "cooling":
+        loop_operation = PlantequipmentoperationCoolingload(
+            idf,
+            **PlantequipmentoperationCoolingloadType(
+                Name=operation_name,
+                Load_Range_1_Lower_Limit=0,
+                Load_Range_1_Upper_Limit=1e9,
+                Range_1_Equipment_List_Name=loop_equipment_list.Name
+            )
+        )
+    else:
+        loop_operation = PlantequipmentoperationHeatingload(
+            idf,
+            **PlantequipmentoperationHeatingloadType(
+                Name=operation_name,
+                Load_Range_1_Lower_Limit=0,
+                Load_Range_1_Upper_Limit=1e9,
+                Range_1_Equipment_List_Name=loop_equipment_list.Name
+            )
+        )
+    Plantequipmentoperationschemes(
+        idf,
+        **PlantequipmentoperationschemesType(
+            Name=loop_name,
+            Control_Scheme_1_Object_Type=loop_operation.key,
+            Control_Scheme_1_Name=loop_operation.Name,
+            Control_Scheme_1_Schedule_Name="Always On"
+        )
+    )
