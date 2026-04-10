@@ -165,7 +165,7 @@ def vertical_geoexchanger(name: str):
     hole = GroundheatexchangerVerticalProperties(
         idf,
         **GroundheatexchangerVerticalPropertiesType(
-            Name="single typical hole",
+            Name=f"single vertical hole for {name}",
             Depth_of_Top_of_Borehole=0,
             Borehole_Length=100,
             Borehole_Diameter=0.15,
@@ -182,7 +182,7 @@ def vertical_geoexchanger(name: str):
     boreholes = GroundheatexchangerVerticalArray(
         idf,
         **GroundheatexchangerVerticalArrayType(
-            Name="champ de sondes",
+            Name=f"{name} field array",
             GHEVerticalProperties_Object_Name=hole.Name,
             Number_of_Boreholes_in_XDirection=CONF[name].get(
                 "Number_of_Boreholes_in_XDirection", 5),
@@ -196,9 +196,9 @@ def vertical_geoexchanger(name: str):
     return GroundheatexchangerSystem(
         idf,
         **GroundheatexchangerSystemType(
-            Name="vertical geoexchanger",
-            Inlet_Node_Name="vertical geoexchanger inlet",
-            Outlet_Node_Name="vertical geoexchanger outlet",
+            Name=f"{name} vertical geoexchanger",
+            Inlet_Node_Name=f"{name} vertical geoexchanger inlet",
+            Outlet_Node_Name=f"{name} vertical geoexchanger outlet",
             Design_Flow_Rate=0.006, # m3/s before 0.0033
             Undisturbed_Ground_Temperature_Model_Name=soil.Name,
             Undisturbed_Ground_Temperature_Model_Type=soil.key,
