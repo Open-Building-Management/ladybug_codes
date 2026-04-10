@@ -38,10 +38,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 
 from idfhub.helpers.common import get_logger
 
-from idfhub.common import (
-    idf,
-    CONF, BRANCHES
-)
+from idfhub.common import idf, CONF
 
 LOGGER = get_logger()
 BYPASS = "bypass"
@@ -64,10 +61,12 @@ temperature_typelimits = Scheduletypelimits(
     )
 )
 
-def create_const_sched(temp: int):
+def create_const_sched(temp: int, name: str|None = None):
     """create a constant schedule type"""
+    if name is None:
+        name = f"const_temp_sched_{temp}deg"
     return ScheduleConstantType(
-        Name=f"const_temp_sched_{temp}deg",
+        Name=name,
         Schedule_Type_Limits_Name=temperature_typelimits.Name,
         Hourly_Value=temp
     )
@@ -105,12 +104,17 @@ def constant_set_point(loop_name: str, setup: str):
     loop_nodes = LoopNodes(loop_name)
     message = f"constant setpoint @ {loop_nodes.plant_outlet} with {CONF[setup]}"
     LOGGER.debug(message)
-    consigne = ScheduleConstant(
-        idf,
-        **create_const_sched(
-            CONF[setup].get("temp", 12)
-        )
+    temp = CONF[setup].get("temp", 12)
+    name = f"const_temp_sched_{temp}deg"
+    consigne = idf.getobject(
+        "SCHEDULE:CONSTANT",
+        name
     )
+    if consigne is None:
+        consigne = ScheduleConstant(
+            idf,
+            **create_const_sched(12, name)
+        )
     SetpointmanagerScheduled(
         idf,
         **SetpointmanagerScheduledType(
@@ -287,7 +291,8 @@ def resolve_side(name, branch_type):
     for two sided equipments like heat pumps"""
     if name not in CONF:
         return None
-    if CONF[name].get("sides", 1) == 2:
+    equipment_type = CONF[name].get("type")
+    if equipment_type == "heatpump":
         return {
             SUPPLY: EPApi.LOAD_SIDE,
             PLANT: EPApi.LOAD_SIDE,
@@ -297,12 +302,12 @@ def resolve_side(name, branch_type):
     return None
 
 
-def adjust_nodes_branch(loop_name: str, branch_type: str):
+def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[str, list[str]]):
     """use yaml declaration to organise a branch and relevant nodes on a side loop"""
-    object_names = BRANCHES[loop_name][branch_type]
+    object_names = branches_descr[loop_side]
     bypass = False
-    if BYPASS in BRANCHES[loop_name]:
-        if branch_type in BRANCHES[loop_name][BYPASS]:
+    if BYPASS in branches_descr:
+        if loop_side in branches_descr[BYPASS]:
             bypass = True
     # we adjust the nodes
     nb_objects = len(object_names)
@@ -311,9 +316,9 @@ def adjust_nodes_branch(loop_name: str, branch_type: str):
         outlet_node: str|None = None
         # start and end of the loop side
         if i == 0:
-            inlet_node = LoopNodes(loop_name).get(side=branch_type, port=INLET)
+            inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
         if i == nb_objects - 1:
-            outlet_node = LoopNodes(loop_name).get(side=branch_type, port=OUTLET)
+            outlet_node = LoopNodes(loop_name).get(side=loop_side, port=OUTLET)
         # we only modify inlets using the previous equipement
         if inlet_node is None:
             # previous object exists
@@ -323,7 +328,7 @@ def adjust_nodes_branch(loop_name: str, branch_type: str):
                 inlet_node = prev_obj[EPApi.OUTLET_NODE_NAME]
             except BadEPFieldError:
                 # we have a 2 sided equipment - heatpump
-                side = resolve_side(prev_name, branch_type)
+                side = resolve_side(prev_name, loop_side)
                 inlet_node = prev_obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
         # if bypass, we dont modify inlet node of first equipment
         if i == 0 and bypass:
@@ -335,19 +340,19 @@ def adjust_nodes_branch(loop_name: str, branch_type: str):
             equipments[obj],
             inlet=inlet_node,
             outlet=outlet_node,
-            side=resolve_side(obj, branch_type)
+            side=resolve_side(obj, loop_side)
         )
     # we create the branch using the objects as nodes are now correct
     objects = [equipments[obj] for obj in object_names]
-    sides = [resolve_side(obj, branch_type) for obj in object_names]
+    sides = [resolve_side(obj, loop_side) for obj in object_names]
     adjusted_branch = create_branch(
         idf,
-        name = Branches(loop_name).get(side=branch_type),
+        name = Branches(loop_name).get(side=loop_side),
         objects = objects,
         sides = sides
     )
     if bypass:
-        side = EPApi.DEMAND_SIDE if branch_type == DEMAND else EPApi.PLANT_SIDE
+        side = EPApi.DEMAND_SIDE if loop_side == DEMAND else EPApi.PLANT_SIDE
         plantloop_split_mix(
             idf=idf,
             plantloop=loops[loop_name],

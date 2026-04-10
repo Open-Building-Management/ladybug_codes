@@ -47,7 +47,7 @@ from idfhub.helpers.common import get_logger
 from idfhub.common import (
     idf,
     BUILDING_NAME, PROJECT_NAME,
-    CONF, ZONES, LOOPS, BRANCHES,
+    CONF, ZONES, LOOPS,
     EQUIPMENTS
 )
 
@@ -316,24 +316,27 @@ for equipment_name in EQUIPMENTS:
         ground_temperature()
         borehole = vertical_geoexchanger(equipment_name)
         equipments[equipment_name] = borehole
-    if PUMP in equipment_name:
-        equipments[equipment_name] = constant_pump(equipment_name)
     if equipment_name == HPWTW:
         hpwtw = water_to_water_heatpump(equipment_name)
         equipments[equipment_name] = hpwtw
+    if PUMP in equipment_name:
+        equipments[equipment_name] = constant_pump(equipment_name)
 
 for loop in LOOPS:
-    for tune in CONF[loop]:
-        if tune == WATER_LAW_SET_POINT:
-            water_law(loop, tune)
-        if tune == CONSTANT_SET_POINT:
-            constant_set_point(loop, tune)
-
-    if loop in BRANCHES:
-        if PLANT in BRANCHES[loop]:
-            adjust_nodes_branch(loop, PLANT)
-        if DEMAND in BRANCHES[loop]:
-            adjust_nodes_branch(loop, DEMAND)
+    setpoint = CONF[loop].get("setpoint")
+    branches_descr: dict[str, list[str]]
+    branches_descr = CONF[loop].get("branches", {})
+    if setpoint == WATER_LAW_SET_POINT:
+        water_law(loop, setpoint)
+    if setpoint == CONSTANT_SET_POINT:
+        constant_set_point(loop, setpoint)
+    for loop_side in [PLANT, DEMAND]:
+        if loop_side in branches_descr:
+            adjust_nodes_branch(
+                loop,
+                loop_side=loop_side,
+                branches_descr=branches_descr
+            )
 
 #------------------------------------------------------------------------------
 # PLANT EQUIPEMENTS

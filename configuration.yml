@@ -17,21 +17,21 @@ equipments:
   - borehole
   - soil_pump
   - hpwtw
-  - inside_pump
-
-branches:
-  soil_loop:
-    plant: [soil_pump, borehole]
-    demand: [hpwtw]
-  water_heating_loop:
-    plant: [hpwtw, inside_pump]
+  - inside_pump    
 
 # below are setups
 soil_loop:
-  - constant_set_point
+  setpoint: constant_set_point
+  operation: [borehole]
+  branches:
+    plant: [soil_pump, borehole]
+    demand: [hpwtw]
 
 water_heating_loop:
-  - water_law_set_point
+  setpoint: water_law_set_point
+  operation: [hpwtw]
+  branches:
+    plant: [hpwtw, inside_pump]
 
 constant_set_point:
   temp: 12
@@ -48,4 +48,4 @@ borehole:
 
 hpwtw:
   Reference_Coefficient_of_Performance: 2.5
-  sides: 2
+  type: heatpump

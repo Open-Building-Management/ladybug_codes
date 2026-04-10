@@ -23,7 +23,6 @@ REQUIRED = [
     "os_ep_path",
     "zones",
     "loops",
-    "branches",
     "equipments"
 ]
 for element in REQUIRED:
@@ -33,11 +32,9 @@ for element in REQUIRED:
 BUILDING_NAME: str = CONF["building_name"]
 ZONES = CONF["zones"]
 LOOPS: list[str] = CONF["loops"]
-BRANCHES: dict[str, dict[str, list[str]]] = CONF["branches"]
 EQUIPMENTS: list[str] = CONF["equipments"]
 
 PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
 OS_EP_PATH = CONF["os_ep_path"]
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
-
