@@ -11,7 +11,7 @@ from idfhub.hvac import (
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
-    Scheduletypelimits,ScheduleConstant,
+    Scheduletypelimits,ScheduleConstant,ScheduleConstantMeta,
     SiteGroundtemperatureBuildingsurface,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
     CurveQuadlinear,
@@ -111,7 +111,7 @@ def constant_set_point(loop_name: str, setup: str):
     temp = CONF[setup].get("temp", 12)
     name = f"const_temp_sched_{temp}deg"
     consigne = idf.getobject(
-        "SCHEDULE:CONSTANT",
+        ScheduleConstantMeta.idf_name,
         name
     )
     if consigne is None:

@@ -75,6 +75,8 @@ def append(idf, c):
     helpers_lines.append(f"def {name}(idf, **kwargs: Unpack[{name}Type]):")
     helpers_lines.append(f'    """"helper for {name}"""')
     helpers_lines.append(f"    return idf.newidfobject('{c}', **kwargs)")
+    helpers_lines.append(f"class {name}Meta:")
+    helpers_lines.append(f"    idf_name = '{c}'")
     helpers_lines.append("")
 
 def get_ep_version(idd_file: str) -> str | None:

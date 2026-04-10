@@ -22,7 +22,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     OutputVariabledictionary,
     OutputTableSummaryreports, OutputcontrolTableStyle,
     OutputVariable, OutputSqlite,
-    FluidpropertiesGlycolconcentration,
+    FluidpropertiesGlycolconcentration,FluidpropertiesGlycolconcentrationMeta
 )
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
@@ -253,18 +253,24 @@ for zone in ZONES:
 #------------------------------------------------------------------------------
 for loop in LOOPS:
     if loop == SOIL_LOOP:
-        glycol_water_30 = FluidpropertiesGlycolconcentration(
-            idf,
-            **FluidpropertiesGlycolconcentrationType(
-                Name="eau glycol 30pourcent",
-                Glycol_Type="PropyleneGlycol",
-                Glycol_Concentration=0.3
-            )
+        liquid_name = "eau glycol 30pourcent"
+        glycol_water_30 = idf.getobject(
+            FluidpropertiesGlycolconcentrationMeta.idf_name,
+            liquid_name
         )
-        soil_loop = add_plantloop(idf, loop, 35, -5)
-        soil_loop.Fluid_Type = "UserDefinedFluidType"
-        soil_loop.User_Defined_Fluid_Type = glycol_water_30.Name
-        loops[loop] = soil_loop
+        if glycol_water_30 is None:
+            glycol_water_30 = FluidpropertiesGlycolconcentration(
+                idf,
+                **FluidpropertiesGlycolconcentrationType(
+                    Name=liquid_name,
+                    Glycol_Type="PropyleneGlycol",
+                    Glycol_Concentration=0.3
+                )
+            )
+        plant_loop = add_plantloop(idf, loop, 35, -5)
+        plant_loop.Fluid_Type = "UserDefinedFluidType"
+        plant_loop.User_Defined_Fluid_Type = glycol_water_30.Name
+        loops[loop] = plant_loop
         SizingPlant(
             idf,
             **SizingPlantType(
