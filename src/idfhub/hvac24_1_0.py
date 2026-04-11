@@ -117,7 +117,7 @@ def constant_set_point(loop_name: str, setup: str):
     if consigne is None:
         consigne = ScheduleConstant(
             idf,
-            **create_const_sched(12, name)
+            **create_const_sched(temp, name)
         )
     SetpointmanagerScheduled(
         idf,
