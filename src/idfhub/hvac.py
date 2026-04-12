@@ -106,6 +106,7 @@ class EPValues(StrEnum):
     TEMPERATURE = "Temperature"
     WEEKDAYS = "Weekdays"
     WEEKENDS = "Weekends"
+    ALLDAYS = "AllDays"
     SUMMER_DESIGN_DAY = "SummerDesignDay"
     WINTER_DESIGN_DAY = "WinterDesignDay"
     CUSTOM_DAY = "CustomDay1/2"

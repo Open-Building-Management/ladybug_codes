@@ -1,6 +1,7 @@
 """yml management"""
 import os
 import sys
+from typing import Any
 import yaml
 
 from eppy.modeleditor import IDF
@@ -23,18 +24,27 @@ REQUIRED = [
     "os_ep_path",
     "zones",
     "loops",
-    "equipments"
+    "equipments",
+    "sensors"
 ]
-for element in REQUIRED:
-    if element not in CONF:
+for key in REQUIRED:
+    if key not in CONF:
+        print("exiting - check conf")
         sys.exit()
 
 BUILDING_NAME: str = CONF["building_name"]
 ZONES = CONF["zones"]
 LOOPS: list[str] = CONF["loops"]
 EQUIPMENTS: list[str] = CONF["equipments"]
+SENSORS: dict[str, dict[str, Any]] = CONF["sensors"]
 
 PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
 OS_EP_PATH = CONF["os_ep_path"]
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+
+for conf in SENSORS.values():
+    for key in ["loop", "port", "side", "type"]:
+        if key not in conf:
+            print("exiting - check conf")
+            sys.exit()

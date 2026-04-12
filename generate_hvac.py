@@ -44,7 +44,7 @@ from idfhub.common import (
     idf,
     BUILDING_NAME, PROJECT_NAME,
     CONF, ZONES, LOOPS,
-    EQUIPMENTS
+    EQUIPMENTS, SENSORS
 )
 
 from idfhub.hvac24_1_0 import (
@@ -55,7 +55,8 @@ from idfhub.hvac24_1_0 import (
     constant_pump,
     water_to_water_heatpump,
     water_law, constant_set_point,
-    adjust_nodes_branch, generate_operation_list
+    adjust_nodes_branch, generate_operation_list,
+    control_manager
 )
 
 FORMAT = (
@@ -326,6 +327,9 @@ for equipment_name in EQUIPMENTS:
         hpwtw = water_to_water_heatpump(equipment_name)
         equipments[equipment_name] = hpwtw
 
+for sensor, conf in SENSORS.items():
+    control_manager(sensor, conf)
+
 for loop in LOOPS:
     setpoint = CONF[loop].get("setpoint")
     branches_descr: dict[str, list[str]]
@@ -425,6 +429,7 @@ add_variable("Heat Pump Load Side Outlet Temperature")
 add_variable("Heat Pump Load Side Inlet Temperature")
 add_variable("Heat Pump Source Side Outlet Temperature")
 add_variable("Heat Pump Source Side Inlet Temperature")
+add_variable("Pump Mass Flow Rate")
 
 OutputSqlite(
     idf,
