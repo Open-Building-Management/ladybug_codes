@@ -20,7 +20,7 @@ equipments:
   - inside_pump    
 
 sensors:
-  soil_inlet_sensor:
+  soil_sensor:
     loop: soil_loop
     side: plant
     port: inlet
