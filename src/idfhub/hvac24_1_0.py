@@ -1,6 +1,5 @@
 """Manage hvac equipments"""
 from typing import Any
-from eppy.bunch_subclass import BadEPFieldError
 from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
 from idfhub.hvac import (
