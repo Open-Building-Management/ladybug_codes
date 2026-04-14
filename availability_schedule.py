@@ -10,7 +10,7 @@ from idfhub.idf_autocomplete.idf_types_short import(
     ScheduleDayIntervalType, ScheduleWeekDailyType, ScheduleYearType,
 )
 
-from common import idf
+from src.idfhub.common import idf
 DISCRETE = "Discrete"
 
 #---------------------------------------------------------------------------------------------------

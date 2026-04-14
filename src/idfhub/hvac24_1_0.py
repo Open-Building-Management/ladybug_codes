@@ -1,6 +1,7 @@
 """Manage hvac equipments"""
 from typing import Any
 from eppy.bunch_subclass import BadEPFieldError
+from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
 from idfhub.hvac import (
     PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET,
@@ -56,19 +57,18 @@ loops: dict = {}
 equipments: dict[str, Any] = {}
 
 
-def create_sensor(*, sensor_name, sensor_type, loop_name, side, port):
+def create_sensor(*, sensor_name, sensor_type, location_name):
     """create a sensor"""
     sensor = idf.getobject(
         EnergymanagementsystemSensorMeta.idf_name,
         sensor_name
     )
     if sensor is None:
-        node_name = LoopNodes(loop_name).get(side=side, port=port)
         EnergymanagementsystemSensor(
             idf,
             **EnergymanagementsystemSensorType(
                 Name=sensor_name,
-                OutputVariable_or_OutputMeter_Index_Key_Name=node_name,
+                OutputVariable_or_OutputMeter_Index_Key_Name=location_name,
                 OutputVariable_or_OutputMeter_Name=sensor_type
             )
         )
@@ -76,12 +76,14 @@ def create_sensor(*, sensor_name, sensor_type, loop_name, side, port):
 
 def control_manager(sensor_name, conf: dict[str, Any]):
     """manage equipment availability using a sensor"""
+    node_name = LoopNodes(conf["loop"]).get(
+         side=conf["side"],
+         port=conf["port"]
+    )
     create_sensor(
         sensor_name = sensor_name,
         sensor_type = conf["type"],
-        loop_name = conf["loop"],
-        side = conf["side"],
-        port = conf["port"]
+        location_name = node_name,
     )
     for equipment_name in conf.get("controls", []):
         if "pump" not in equipment_name:
@@ -154,18 +156,26 @@ temperature_typelimits = Scheduletypelimits(
     )
 )
 
-def create_const_sched(temp: int, name: str|None = None):
+def create_const_sched(
+    value: int,
+    *,
+    name: str|None = None,
+    typelimits:EpBunch = temperature_typelimits
+):
     """create a constant schedule type"""
     if name is None:
-        name = f"const_temp_sched_{temp}deg"
-    return ScheduleConstantType(
-        Name=name,
-        Schedule_Type_Limits_Name=temperature_typelimits.Name,
-        Hourly_Value=temp
+        name = f"const_temp_sched_{value}deg"
+    return ScheduleConstant(
+        idf,
+        **ScheduleConstantType(
+            Name=name,
+            Schedule_Type_Limits_Name=typelimits.Name,
+            Hourly_Value=value
+        )
     )
 
-consigne_cool = ScheduleConstant(idf, **create_const_sched(25))
-consigne_heat = ScheduleConstant(idf, **create_const_sched(20))
+consigne_cool = create_const_sched(25)
+consigne_heat = create_const_sched(20)
 
 #------------------------------------------------------------------------------
 # SETPOINTS
@@ -204,10 +214,7 @@ def constant_set_point(loop_name: str, setup: str):
         name
     )
     if consigne is None:
-        consigne = ScheduleConstant(
-            idf,
-            **create_const_sched(temp, name)
-        )
+        consigne = create_const_sched(temp, name=name)
     SetpointmanagerScheduled(
         idf,
         **SetpointmanagerScheduledType(
