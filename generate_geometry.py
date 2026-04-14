@@ -35,7 +35,7 @@ from idfhub.helpers.geometry import (
     join_surface
 )
 
-from common import BUILDING_NAME
+from src.idfhub.common import BUILDING_NAME
 
 get_logger("idfhub", level=logging.INFO)
 
