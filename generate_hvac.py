@@ -15,7 +15,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
     Building, Globalgeometryrules,
     Scheduletypelimits,
-    ScheduleCompact,
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     SizingParameters, SizingZone, SizingPlant,
     ZonehvacEquipmentlist, ZonehvacEquipmentconnections,
@@ -28,7 +27,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
     BuildingType, GlobalgeometryrulesType,
     ScheduletypelimitsType,
-    ScheduleCompactType,
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     SizingParametersType, SizingZoneType, SizingPlantType,
     ZonehvacEquipmentlistType, ZonehvacEquipmentconnectionsType,
@@ -56,7 +54,8 @@ from idfhub.hvac24_1_0 import (
     water_to_water_heatpump,
     water_law, constant_set_point,
     adjust_nodes_branch, generate_operation_list,
-    control_manager
+    control_manager,
+    constant_schedule, basic_compact_schedule
 )
 
 FORMAT = (
@@ -184,7 +183,7 @@ zone_thermostat = ThermostatsetpointDualsetpoint(
 # 2 = ThermostatSetpoint:SingleCooling,
 # 3 = ThermostatSetpoint:SingleHeatingOrCooling,
 # 4 = ThermostatSetpoint:DualSetpoint
-control_types = Scheduletypelimits(
+control_typelimits = Scheduletypelimits(
     idf,
     **ScheduletypelimitsType(
         Name="control_types",
@@ -194,42 +193,11 @@ control_types = Scheduletypelimits(
     )
 )
 
-# on utilise un schedule compact
-# Mots-clés utiles dans For:
-# Weekdays
-# Weekends
-# AllDays
-# Monday
-# Tuesday
-# ...
-# Holidays
-# SummerDesignDay
-# WinterDesignDay
-# CustomDay1/2
-control_type_schedule = ScheduleCompact(
-    idf,
-    **ScheduleCompactType(
-        Name="control_type_schedule",
-        Schedule_Type_Limits_Name=control_types.Name,
-        Field_1=f"{EPValues.THROUGH}: 12/31",
-        Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
-        Field_3=f"{EPValues.UNTIL}: 07:00",
-        Field_4=0,
-        Field_5=f"{EPValues.UNTIL}: 17:00",
-        Field_6=4,
-        Field_7=f"{EPValues.UNTIL}: 24:00",
-        Field_8=0,
-        Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
-        Field_10=f"{EPValues.UNTIL}: 24:00",
-        Field_11=0,
-        Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
-        Field_13=f"{EPValues.UNTIL}: 07:00",
-        Field_14=0,
-        Field_15=f"{EPValues.UNTIL}: 17:00",
-        Field_16=4,
-        Field_17=f"{EPValues.UNTIL}: 24:00",
-        Field_18=0,
-    )
+control_type_schedule = basic_compact_schedule(
+    4,
+    schedule_name="control_type_schedule",
+    typelimits=control_typelimits
+)
 )
 
 for zone in ZONES:

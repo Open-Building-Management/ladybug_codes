@@ -155,7 +155,59 @@ temperature_typelimits = Scheduletypelimits(
     )
 )
 
-def create_const_sched(
+# on utilise un schedule compact
+# Mots-clés utiles dans For:
+# Weekdays
+# Weekends
+# AllDays
+# Monday
+# Tuesday
+# ...
+# Holidays
+# SummerDesignDay
+# WinterDesignDay
+# CustomDay1/2
+def basic_compact_schedule(
+    value: float,
+    *,
+    schedule_name: str,
+    typelimits: EpBunch = temperature_typelimits
+):
+    """create a compact schedule"""
+    return ScheduleCompact(
+        idf,
+        **ScheduleCompactType(
+            Name=schedule_name,
+            Schedule_Type_Limits_Name=typelimits.Name,
+            Field_1=f"{EPValues.THROUGH}: 12/31",
+            Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
+            Field_3=f"{EPValues.UNTIL}: 07:00",
+            Field_4=0,
+            Field_5=f"{EPValues.UNTIL}: 17:00",
+            Field_6=value,
+            Field_7=f"{EPValues.UNTIL}: 24:00",
+            Field_8=0,
+            Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
+            Field_10=f"{EPValues.UNTIL}: 24:00",
+            Field_11=0,
+            Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
+            Field_13=f"{EPValues.UNTIL}: 07:00",
+            Field_14=0,
+            Field_15=f"{EPValues.UNTIL}: 17:00",
+            Field_16=value,
+            Field_17=f"{EPValues.UNTIL}: 24:00",
+            Field_18=0,
+            Field_19=f"{EPValues.FOR}:{EPValues.SUMMER_DESIGN_DAY}",
+            Field_20=f"{EPValues.UNTIL}: 07:00",
+            Field_21=0,
+            Field_22=f"{EPValues.UNTIL}: 17:00",
+            Field_23=value,
+            Field_24=f"{EPValues.UNTIL}: 24:00",
+            Field_25=0,
+        )
+    )
+
+def constant_schedule(
     value: int,
     *,
     name: str|None = None,
@@ -173,8 +225,8 @@ def create_const_sched(
         )
     )
 
-consigne_cool = create_const_sched(25)
-consigne_heat = create_const_sched(20)
+consigne_cool = constant_schedule(25)
+consigne_heat = constant_schedule(20)
 
 #------------------------------------------------------------------------------
 # SETPOINTS
@@ -213,7 +265,7 @@ def constant_set_point(loop_name: str, setup: str):
         name
     )
     if consigne is None:
-        consigne = create_const_sched(temp, name=name)
+        consigne = constant_schedule(temp, name=name)
     SetpointmanagerScheduled(
         idf,
         **SetpointmanagerScheduledType(
