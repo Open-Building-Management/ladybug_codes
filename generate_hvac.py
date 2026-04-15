@@ -50,7 +50,7 @@ from idfhub.hvac24_1_0 import (
     consigne_cool, consigne_heat,
     ground_temperature,
     vertical_geoexchanger,
-    constant_pump,
+    pump,
     water_to_water_heatpump,
     water_law, constant_set_point,
     adjust_nodes_branch, generate_operation_list,
@@ -284,7 +284,10 @@ for zone in ZONES:
 
 for equipment_name in EQUIPMENTS:
     if PUMP in equipment_name:
-        equipments[equipment_name] = constant_pump(equipment_name)
+        pump_type = "constant"
+        if "variable" in equipment_name:
+            pump_type = "variable"
+        equipments[equipment_name] = pump(equipment_name, pump_type=pump_type)
         continue
     if BOREHOLE in equipment_name:
         ground_temperature()

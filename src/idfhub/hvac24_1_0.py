@@ -38,7 +38,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
     SetpointmanagerOutdoorairresetType, SetpointmanagerScheduledType,
-    PumpConstantspeedType,
+    PumpConstantspeedType, PumpVariablespeedType,
     ScheduleCompactType,
     PlantequipmentlistType, PlantequipmentoperationschemesType,
     PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
@@ -359,8 +359,27 @@ def vertical_geoexchanger(name: str):
         )
     )
 
-def constant_pump(name):
-    """add a constant speed pump"""
+def pump(name, pump_type="constant"):
+    """add a pump"""
+    if pump_type == "variable":
+        return PumpVariablespeed(
+            idf,
+            **PumpVariablespeedType(
+                Name=name,
+                Inlet_Node_Name=f"{name} inlet",
+                Outlet_Node_Name=f"{name} outlet",
+                Design_Maximum_Flow_Rate=EPValues.AUTOSIZE,
+                Design_Power_Consumption=EPValues.AUTOSIZE,
+                Motor_Efficiency=0.9,
+                Design_Minimum_Flow_Rate=0,
+                Fraction_of_Motor_Inefficiencies_to_Fluid_Stream=0,
+                Coefficient_1_of_the_Part_Load_Performance_Curve=0,
+                Coefficient_2_of_the_Part_Load_Performance_Curve=1,
+                Coefficient_3_of_the_Part_Load_Performance_Curve=0,
+                Coefficient_4_of_the_Part_Load_Performance_Curve=0,
+                Pump_Control_Type=EPValues.INTERMITTENT,
+            )
+        )
     return PumpConstantspeed(
         idf,
         **PumpConstantspeedType(
@@ -370,7 +389,7 @@ def constant_pump(name):
             Design_Flow_Rate=EPValues.AUTOSIZE,
             Design_Power_Consumption=EPValues.AUTOSIZE,
             Motor_Efficiency=0.9,
-            Pump_Control_Type=EPValues.INTERMITTENT
+            Pump_Control_Type=EPValues.INTERMITTENT,
         )
     )
 

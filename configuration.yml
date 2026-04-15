@@ -17,7 +17,7 @@ equipments:
   - borehole
   - soil_pump
   - hpwtw
-  - inside_pump    
+  - inside_variable_pump    
 
 sensors:
   soil_sensor:
@@ -25,7 +25,7 @@ sensors:
     side: plant
     port: inlet
     type: "System Node Temperature"
-    controls: [soil_pump, inside_pump]
+    controls: [soil_pump, inside_variable_pump]
     stop_below: -5
     start_above: -2
     min_flow: 0.1
@@ -42,7 +42,7 @@ water_heating_loop:
   setpoint: water_law_set_point
   operation: [hpwtw]
   branches:
-    plant: [hpwtw, inside_pump]
+    plant: [hpwtw, inside_variable_pump]
 
 constant_set_point:
   temp: -10
