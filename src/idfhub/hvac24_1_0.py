@@ -20,7 +20,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
     SetpointmanagerOutdoorairreset, SetpointmanagerScheduled,
-    PumpConstantspeed,
+    PumpConstantspeed, PumpVariablespeed,
     ScheduleCompact,
     Plantequipmentlist, Plantequipmentoperationschemes,
     PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
