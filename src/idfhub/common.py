@@ -1,4 +1,5 @@
 """yml management"""
+import argparse
 import os
 import sys
 from typing import Any
@@ -8,15 +9,26 @@ from eppy.modeleditor import IDF
 
 from idfhub.helpers.consts import REPO_ROOT
 
-def load_config(repo_root: str) -> dict:
+def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
     """Load configuration.yml."""
-    yaml_path = f"{repo_root}/configuration.yml"
+    yaml_path = f"{repo_root}/{file_name}"
     if os.path.exists(yaml_path):
         with open(yaml_path, "r", encoding="utf-8") as f:
             return dict(yaml.safe_load(f))
     return {}
 
-CONF = load_config(REPO_ROOT)
+hvac_parser = argparse.ArgumentParser(description='hvac configuration')
+
+hvac_parser.add_argument(
+    "--conf",
+    action="store",
+    help="yml configuration file",
+    default="configuration.yml"
+)
+
+args = hvac_parser.parse_args()
+
+CONF = load_config(REPO_ROOT, args.conf)
 REQUIRED = [
     "building_name",
     "name",
