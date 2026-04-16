@@ -100,10 +100,12 @@ class Branches:
 class EPValues(StrEnum):
     """EnergyPlus possible values"""
     AUTOSIZE = "Autosize"
+    AUTOCALCULATE = "Autocalculate"
     DISCRETE = "Discrete"
     CONTINUOUS = "Continuous"
     INTERMITTENT = "Intermittent"
     TEMPERATURE = "Temperature"
+    DIMENSIONLESS = "Dimensionless"
     WEEKDAYS = "Weekdays"
     WEEKENDS = "Weekends"
     ALLDAYS = "AllDays"
@@ -113,6 +115,7 @@ class EPValues(StrEnum):
     THROUGH = "Through"
     FOR = "For"
     UNTIL = "Until"
+    YES = "Yes"
 
 class EPApi(StrEnum):
     "EnergyPlus consts"
@@ -175,7 +178,7 @@ def add_plantloop(
         Minimum_Loop_Temperature=min_t,
         Maximum_Loop_Flow_Rate=EPValues.AUTOSIZE,
         Minimum_Loop_Flow_Rate=0,
-        Plant_Loop_Volume="Autocalculate",
+        Plant_Loop_Volume=EPValues.AUTOCALCULATE,
         #Plant_Side_Connector_List_Name
         #Demand_Side_Connector_List_Name
         #Load_Distribution_Scheme

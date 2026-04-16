@@ -26,6 +26,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
     EnergymanagementsystemSensor, EnergymanagementsystemSensorMeta, EnergymanagementsystemActuator,
     EnergymanagementsystemProgram, EnergymanagementsystemProgramcallingmanager,
+    CoilWaterheatingAirtowaterheatpumpPumped, OutdoorairNode,
+    CurveBiquadratic, CurveQuadratic
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -44,6 +46,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
     EnergymanagementsystemSensorType, EnergymanagementsystemActuatorType,
     EnergymanagementsystemProgramType, EnergymanagementsystemProgramcallingmanagerType,
+    CoilWaterheatingAirtowaterheatpumpPumpedType, OutdoorairNodeType,
+    CurveBiquadraticType, CurveQuadraticType
 )
 
 from idfhub.helpers.common import get_logger
@@ -139,6 +143,93 @@ def control_manager(sensor_name, conf: dict[str, Any]):
         )
         equipments[equipment_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
 
+
+def air_to_water_heatpump(name):
+    """add an air to water heatpump"""
+    air_node_name = f"{name}_InputOutdoorAirNode"
+    input_air_node = OutdoorairNode(
+        idf,
+        **OutdoorairNodeType(
+            Name=air_node_name,
+            Height_Above_Ground=10
+        )
+    )
+    # un set de courbes théoriques pour fonctionner avec une loi d'eau de type 35/55
+    heating_capacity_curve = CurveBiquadratic(
+        idf,
+        **CurveBiquadraticType(
+            Name=f"{name}_HP_AW_HeatingCapFTemp",
+            Coefficient1_Constant=0.88,
+            Coefficient2_x=0.02, # x=air
+            Coefficient3_x2=-0.0002,
+            Coefficient4_y=-0.015, # y=water
+            Coefficient5_y2=-0.00015,
+            Coefficient6_xy=-0.0004,
+            Minimum_Value_of_x=-10,
+            Maximum_Value_of_x=20,
+            Minimum_Value_of_y=20,
+            Maximum_Value_of_y=60,
+            Input_Unit_Type_for_X=EPValues.TEMPERATURE,
+            Input_Unit_Type_for_Y=EPValues.TEMPERATURE,
+            Output_Unit_Type=EPValues.DIMENSIONLESS
+        )
+    )
+    cop_curve = CurveBiquadratic(
+        idf,
+        **CurveBiquadraticType(
+            Name=f"{name}_HP_AW_HeatingCOPFTemp",
+            Coefficient1_Constant=1.192,
+            Coefficient2_x=0.050, # x=air
+            Coefficient3_x2=-0.0007,
+            Coefficient4_y=-0.035, #y=water
+            Coefficient5_y2=0.00025,
+            Coefficient6_xy=-0.0012,
+            Minimum_Value_of_x=-10,
+            Maximum_Value_of_x=20,
+            Minimum_Value_of_y=20,
+            Maximum_Value_of_y=60,
+            Minimum_Curve_Output=0.4,
+            Maximum_Curve_Output=2,
+            Input_Unit_Type_for_X=EPValues.TEMPERATURE,
+            Input_Unit_Type_for_Y=EPValues.TEMPERATURE,
+            Output_Unit_Type=EPValues.DIMENSIONLESS
+        )
+    )
+    plf = CurveQuadratic(
+        idf,
+        **CurveQuadraticType(
+            Name=f"{name}_HP_PLF",
+            Coefficient1_Constant=0.85,
+            Coefficient2_x=0.15,
+            Coefficient3_x2=0.0,
+            Minimum_Value_of_x=0.0,
+            Maximum_Value_of_x=1.0
+        )
+    )
+    # cf EN14511 (PAC chauffage)
+    CoilWaterheatingAirtowaterheatpumpPumped(
+        idf,
+        **CoilWaterheatingAirtowaterheatpumpPumpedType(
+            Name=f"{name}_AirToWaterHP",
+            Rated_Heating_Capacity=30000,
+            Rated_Sensible_Heat_Ratio=1,
+            Rated_COP=3.2,
+            Rated_Evaporator_Air_Flow_Rate=EPValues.AUTOCALCULATE,
+            Rated_Condenser_Water_Flow_Rate=EPValues.AUTOCALCULATE,
+            Evaporator_Fan_Power_Included_in_Rated_COP=EPValues.YES,
+            Fraction_of_Condenser_Pump_Heat_to_Water=1,
+            Rated_Evaporator_Inlet_Air_DryBulb_Temperature=7,
+            Rated_Evaporator_Inlet_Air_WetBulb_Temperature=6,
+            Rated_Condenser_Inlet_Water_Temperature=35,
+            Evaporator_Air_Inlet_Node_Name=input_air_node.Name,
+            Evaporator_Air_Outlet_Node_Name=f"{name}_OutputOutdoorAirNode",
+            Condenser_Water_Inlet_Node_Name=f"{name}_WaterInletNode",
+            Condenser_Water_Outlet_Node_Name=f"{name}_WaterOutletNode",
+            Heating_Capacity_Function_of_Temperature_Curve_Name=heating_capacity_curve.Name,
+            Heating_COP_Function_of_Temperature_Curve_Name=cop_curve.Name,
+            Part_Load_Fraction_Correlation_Curve_Name=plf.Name
+        )
+    )
 
 #------------------------------------------------------------------------------
 # on crée 2 schedules constants, 20°C chauffage et 25°C raffraichissement :
@@ -415,7 +506,7 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
         Input_Unit_Type_for_w=EPValues.TEMPERATURE,
         Input_Unit_Type_for_x=EPValues.TEMPERATURE,
         Input_Unit_Type_for_y=EPValues.TEMPERATURE,
-        Input_Unit_Type_for_z="Dimensionless"
+        Input_Unit_Type_for_z=EPValues.DIMENSIONLESS
     )
 
 def water_to_water_heatpump(name):
