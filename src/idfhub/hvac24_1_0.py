@@ -208,7 +208,7 @@ def air_to_water_heatpump(name):
         )
     )
     # cf EN14511 (PAC chauffage)
-    CoilWaterheatingAirtowaterheatpumpPumped(
+    return CoilWaterheatingAirtowaterheatpumpPumped(
         idf,
         **CoilWaterheatingAirtowaterheatpumpPumpedType(
             Name=f"{name}_AirToWaterHP",
