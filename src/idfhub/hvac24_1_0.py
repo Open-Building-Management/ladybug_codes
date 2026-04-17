@@ -561,6 +561,9 @@ def resolve_side(name, branch_type):
             DEMAND: EPApi.SOURCE_SIDE,
             RETURN: EPApi.SOURCE_SIDE
         }[branch_type]
+    force_side = CONF[name].get("force_side")
+    if force_side:
+        return force_side
     return None
 
 
