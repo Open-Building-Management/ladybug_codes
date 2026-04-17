@@ -4,6 +4,7 @@ from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
 from idfhub.hvac import (
     PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET,
+    ALWAYS_ON,
     EPApi, EPValues,
     create_branch,
     LoopNodes, Branches,
@@ -662,6 +663,6 @@ def generate_operation_list(loop_name:str):
             Name=loop_name,
             Control_Scheme_1_Object_Type=loop_operation.key,
             Control_Scheme_1_Name=loop_operation.Name,
-            Control_Scheme_1_Schedule_Name="Always On"
+            Control_Scheme_1_Schedule_Name=ALWAYS_ON
         )
     )

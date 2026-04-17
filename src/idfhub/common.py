@@ -55,8 +55,9 @@ OS_EP_PATH = CONF["os_ep_path"]
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
 idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
 
-for conf in SENSORS.values():
-    for key in ["loop", "port", "side", "type"]:
-        if key not in conf:
-            print("exiting - check conf")
-            sys.exit()
+if SENSORS:
+    for conf in SENSORS.values():
+        for key in ["loop", "port", "side", "type"]:
+            if key not in conf:
+                print("exiting - check conf")
+                sys.exit()

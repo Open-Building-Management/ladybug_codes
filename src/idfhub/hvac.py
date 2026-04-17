@@ -13,6 +13,7 @@ INLET = "inlet"
 OUTLET = "outlet"
 BRANCH = "branch"
 LIST = "list"
+ALWAYS_ON ="Always On"
 
 @dataclass(frozen=True)
 class LoopNodes:
@@ -285,7 +286,7 @@ def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
         "ZONEHVAC:BASEBOARD:RADIANTCONVECTIVE:WATER",
         Name=f"{zone_name} Baseboard",
         Design_Object=f"{zone_name} Baseboard Design",
-        Availability_Schedule_Name="Always On",
+        Availability_Schedule_Name=ALWAYS_ON,
         Rated_Average_Water_Temperature=87.78,
         Rated_Water_Mass_Flow_Rate=0.063,
         Heating_Design_Capacity=EPValues.AUTOSIZE,
