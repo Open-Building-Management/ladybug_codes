@@ -55,7 +55,8 @@ from idfhub.hvac24_1_0 import (
     water_law, constant_set_point,
     adjust_nodes_branch, generate_operation_list,
     control_manager,
-    constant_schedule, basic_compact_schedule
+    constant_schedule, basic_compact_schedule,
+    air_to_water_heatpump_ems
 )
 
 FORMAT = (
@@ -78,6 +79,7 @@ CONSTANT = "constant"
 BOREHOLE = "borehole"
 PUMP = "pump"
 HPWTW = "hpwtw"
+HPATW = "hpatw"
 
 
 Timestep(
@@ -303,6 +305,10 @@ for equipment_name in EQUIPMENTS:
     if HPWTW in equipment_name:
         hpwtw = water_to_water_heatpump(equipment_name)
         equipments[equipment_name] = hpwtw
+        continue
+    if HPATW in equipment_name:
+        hpatw = air_to_water_heatpump_ems(equipment_name)
+        equipments[equipment_name] = hpatw
 
 if SENSORS:
     for sensor, conf in SENSORS.items():
@@ -385,6 +391,11 @@ OutputVariabledictionary(
 )
 OutputTableSummaryreports(idf, **OutputTableSummaryreportsType(Report_1_Name="AllSummary"))
 OutputcontrolTableStyle(idf, **OutputcontrolTableStyleType(Column_Separator="HTML"))
+OutputEnergymanagementsystem(idf, **OutputEnergymanagementsystemType(
+    Actuator_Availability_Dictionary_Reporting="Verbose",
+    Internal_Variable_Availability_Dictionary_Reporting="Verbose",
+    EMS_Runtime_Language_Debug_Output_Level="None"
+))
 
 def add_variable(name):
     """add a variable to the ep output"""
@@ -412,6 +423,9 @@ for equipment_name in EQUIPMENTS:
         add_variable("Heat Pump Source Side Outlet Temperature")
         add_variable("Heat Pump Source Side Inlet Temperature")
         add_variable("Heat Pump Source Side Mass Flow Rate")
+    if HPATW in equipment_name:
+        add_variable("Boiler Heating Rate")
+
 add_variable("Baseboard Total Heating Rate")
 add_variable("Baseboard Water Inlet Temperature")
 add_variable("Baseboard Water Outlet Temperature")
