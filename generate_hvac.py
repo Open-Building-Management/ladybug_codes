@@ -167,6 +167,7 @@ fractional_typelimits = Scheduletypelimits(
 )
 
 
+consigne_heat = basic_compact_schedule(20, schedule_name="heating_schedule")
 
 zone_thermostat = ThermostatsetpointDualsetpoint(
     idf,
@@ -198,6 +199,11 @@ control_type_schedule = basic_compact_schedule(
     schedule_name="control_type_schedule",
     typelimits=control_typelimits
 )
+
+control_type_constant_schedule = constant_schedule(
+    4,
+    name= "AlwaysDualSetpoint",
+    typelimits=control_typelimits
 )
 
 for zone in ZONES:
@@ -206,7 +212,7 @@ for zone in ZONES:
         **ZonecontrolThermostatType(
             Name=f"{zone}_thermostat",
             Zone_or_ZoneList_Name=zone,
-            Control_Type_Schedule_Name=control_type_schedule.Name,
+            Control_Type_Schedule_Name=control_type_constant_schedule.Name,
             Control_1_Object_Type=zone_thermostat.key,
             Control_1_Name=zone_thermostat.Name
         )
