@@ -298,9 +298,10 @@ for equipment_name in EQUIPMENTS:
         hpwtw = water_to_water_heatpump(equipment_name)
         equipments[equipment_name] = hpwtw
 
-for sensor, conf in SENSORS.items():
-    if conf.get("active", 1):
-        control_manager(sensor, conf)
+if SENSORS:
+    for sensor, conf in SENSORS.items():
+        if conf.get("active", 1):
+            control_manager(sensor, conf)
 
 for loop in LOOPS:
     setpoint = CONF[loop].get("setpoint")
