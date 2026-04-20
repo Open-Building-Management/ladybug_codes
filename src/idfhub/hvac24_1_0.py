@@ -68,7 +68,7 @@ def create_sensor(*, sensor_name, sensor_type, location_name):
         sensor_name
     )
     if sensor is None:
-        EnergymanagementsystemSensor(
+        return EnergymanagementsystemSensor(
             idf,
             **EnergymanagementsystemSensorType(
                 Name=sensor_name,
@@ -76,7 +76,7 @@ def create_sensor(*, sensor_name, sensor_type, location_name):
                 OutputVariable_or_OutputMeter_Name=sensor_type
             )
         )
-
+    return sensor
 
 def control_manager(sensor_name, conf: dict[str, Any]):
     """manage equipment availability using a sensor"""
