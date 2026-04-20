@@ -389,18 +389,26 @@ def add_variable(name):
             Reporting_Frequency="Timestep"
         )
     )
+# tout ce tuning des variables de sortie peut être raisonnablement fait avec IDFEditor
 add_variable("Site Outdoor Air Drybulb Temperature")
 add_variable("Zone Air Temperature")
-add_variable("Ground Heat Exchanger Heat Transfer Rate")
-add_variable("Ground Heat Exchanger Inlet Temperature")
-add_variable("Ground Heat Exchanger Outlet Temperature")
+add_variable("Zone Thermostat Heating Setpoint Temperature")
+
+for equipment_name in EQUIPMENTS:
+    if BOREHOLE in equipment_name:
+        add_variable("Ground Heat Exchanger Heat Transfer Rate")
+        add_variable("Ground Heat Exchanger Inlet Temperature")
+        add_variable("Ground Heat Exchanger Outlet Temperature")
+    if HPWTW in equipment_name:
+        add_variable("Heat Pump Load Side Outlet Temperature")
+        add_variable("Heat Pump Load Side Inlet Temperature")
+        add_variable("Heat Pump Source Side Outlet Temperature")
+        add_variable("Heat Pump Source Side Inlet Temperature")
+        add_variable("Heat Pump Source Side Mass Flow Rate")
 add_variable("Baseboard Total Heating Rate")
 add_variable("Baseboard Water Inlet Temperature")
 add_variable("Baseboard Water Outlet Temperature")
-add_variable("Heat Pump Load Side Outlet Temperature")
-add_variable("Heat Pump Load Side Inlet Temperature")
-add_variable("Heat Pump Source Side Outlet Temperature")
-add_variable("Heat Pump Source Side Inlet Temperature")
+
 add_variable("Pump Mass Flow Rate")
 
 OutputSqlite(
