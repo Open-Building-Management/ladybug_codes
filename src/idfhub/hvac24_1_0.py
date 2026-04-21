@@ -539,6 +539,45 @@ def water_to_water_heatpump(name):
     )
 
 
+def gas_boiler(name):
+    """Add a classic gaz boiler"""
+    suffix = "efficiency"
+    conf = CONF[name]
+    boiler_efficiency = CurveBiquadratic(
+        idf,
+        **CurveBiquadraticType(
+            Name=f"{name}_efficiency_curve",
+            Coefficient1_Constant=conf.get(f"{suffix}_c", 1.02),
+            Coefficient2_x=conf.get(f"{suffix}_x", -0.02), # x=PLR
+            Coefficient3_x2=conf.get(f"{suffix}_x2", -0.05),
+            Coefficient4_y=conf.get(f"{suffix}_y", -0.002), # y=Twater
+            Coefficient5_y2=conf.get(f"{suffix}_y2", 0),
+            Coefficient6_xy=conf.get(f"{suffix}_xy", 0),
+            Minimum_Value_of_x=0.1,
+            Maximum_Value_of_x=1,
+            Minimum_Value_of_y=25,
+            Maximum_Value_of_y=80,
+            Input_Unit_Type_for_X=EPValues.TEMPERATURE,
+            Input_Unit_Type_for_Y=EPValues.TEMPERATURE,
+            Output_Unit_Type=EPValues.DIMENSIONLESS
+        )
+    )
+    return BoilerHotwater(
+        idf,
+        **BoilerHotwaterType(
+            Name=name,
+            Fuel_Type="NaturalGas",
+            Efficiency_Curve_Temperature_Evaluation_Variable="LeavingBoiler",
+            Normalized_Boiler_Efficiency_Curve_Name=boiler_efficiency.Name,
+            Nominal_Capacity=EPValues.AUTOSIZE,
+            Nominal_Thermal_Efficiency=0.8,
+            Boiler_Water_Inlet_Node_Name=f"{name}_InletNode",
+            Boiler_Water_Outlet_Node_Name=f"{name}_OutletNode",
+            Boiler_Flow_Mode="LeavingSetpointModulated"
+        )
+    )
+
+
 def air_to_water_heatpump_ems(name):
     """simulate an air to water heatpump using EMS"""
     conf = CONF[name]
