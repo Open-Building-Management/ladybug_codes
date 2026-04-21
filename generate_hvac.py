@@ -38,10 +38,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     FluidpropertiesGlycolconcentrationType,
 )
 
-from idfhub.helpers.common import get_logger
-
 from idfhub.common import (
-    idf,
+    idf, get_logger,
     BUILDING_NAME, PROJECT_NAME,
     CONF, ZONES, LOOPS,
     EQUIPMENTS, SENSORS

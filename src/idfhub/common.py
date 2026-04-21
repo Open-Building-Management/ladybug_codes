@@ -1,5 +1,6 @@
 """yml management"""
 import argparse
+import logging
 import os
 import sys
 from typing import Any
@@ -7,7 +8,57 @@ import yaml
 
 from eppy.modeleditor import IDF
 
-from idfhub.helpers.consts import REPO_ROOT
+FORMAT = (
+    '%(asctime)s | %(levelname).1s | '
+    '%(name)s:%(lineno)d | '
+    '%(funcName)s() | '
+    '%(message)s'
+)
+
+LOGGER = logging.getLogger(__name__)
+
+def parent_dir(path, levels=1) -> str:
+    """Retourne le path du répertoire parent 
+    jusqu'au niveau fourni en argument
+    """
+    for _ in range(levels):
+        path = os.path.dirname(path)
+    return path
+
+REPO_ROOT = parent_dir(__file__, 3)
+
+class ColorFormatter(logging.Formatter):
+    """logging color formatter"""
+    COLORS = {
+        logging.DEBUG: "\033[90m",   # gris
+        logging.INFO: "\033[36m",    # cyan
+        logging.WARNING: "\033[33m", # jaune
+        logging.ERROR: "\033[31m",   # rouge
+        logging.CRITICAL: "\033[41m",
+    }
+    RESET = "\033[0m"
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelno, "")
+        msg = super().format(record)
+        return f"{color}{msg}{self.RESET}"
+
+def get_logger(
+    name: str|None = None,
+    format: str = FORMAT,
+    level: int = logging.DEBUG,
+) -> logging.Logger:
+    """get a logger"""
+    handler = logging.StreamHandler()
+    handler.setFormatter(ColorFormatter(format))
+    handler.setLevel(level)
+    logger = logging.getLogger(name)
+    logger.handlers.clear()
+    logger.addHandler(handler)
+    logger.setLevel(level)
+    logger.propagate = False
+    return logger
+
 
 def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
     """Load configuration.yml."""
