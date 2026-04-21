@@ -56,7 +56,8 @@ from idfhub.hvac24_1_0 import (
     adjust_nodes_branch, generate_operation_list,
     control_manager,
     constant_schedule, basic_compact_schedule,
-    air_to_water_heatpump_ems
+    air_to_water_heatpump_ems,
+    gas_boiler
 )
 
 FORMAT = (
@@ -72,7 +73,7 @@ MESSAGE = f"idf hvac injection for energyplus {idf.idd_version}"
 LOGGER.info(MESSAGE)
 
 EP_SIM_PATH = "ep_simulations"
-SOIL_LOOP = "soil_loop"
+SOIL = "soil"
 WATER_HEATING = "water_heating"
 WATER_LAW = "water_law"
 CONSTANT = "constant"
@@ -80,6 +81,7 @@ BOREHOLE = "borehole"
 PUMP = "pump"
 HPWTW = "hpwtw"
 HPATW = "hpatw"
+BOILER = "boiler"
 
 
 Timestep(
@@ -261,7 +263,7 @@ for loop in LOOPS:
             Plant_or_Condenser_Loop_Name=loop,
             Loop_Type=conf.get("Loop_Type", "Heating"),
             Design_Loop_Exit_Temperature=conf.get("Design_Loop_Exit_Temperature", 70),
-            Loop_Design_Temperature_Difference=conf.get("Design_Loop_Exit_Temperature", 10),
+            Loop_Design_Temperature_Difference=conf.get("Loop_Design_Temperature_Difference", 10),
             Sizing_Option="NonCoincident",
             Zone_Timesteps_in_Averaging_Window=1,
         )
@@ -300,6 +302,10 @@ for equipment_name in EQUIPMENTS:
     if HPATW in equipment_name:
         hpatw = air_to_water_heatpump_ems(equipment_name)
         equipments[equipment_name] = hpatw
+        continue
+    if BOILER in equipment_name:
+        boiler = gas_boiler(equipment_name)
+        equipments[equipment_name] = boiler
 
 if SENSORS:
     for sensor, conf in SENSORS.items():
