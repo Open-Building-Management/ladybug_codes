@@ -229,7 +229,8 @@ for zone in ZONES:
 # Plant Loops
 #------------------------------------------------------------------------------
 for loop in LOOPS:
-    if loop == SOIL_LOOP:
+    conf = CONF.get(loop, {})
+    if SOIL in loop or TANK in loop:
         liquid_name = "eau glycol 30pourcent"
         glycol_water_30 = idf.getobject(
             FluidpropertiesGlycolconcentrationMeta.idf_name,
@@ -248,33 +249,23 @@ for loop in LOOPS:
         plant_loop.Fluid_Type = "UserDefinedFluidType"
         plant_loop.User_Defined_Fluid_Type = glycol_water_30.Name
         loops[loop] = plant_loop
-        SizingPlant(
-            idf,
-            **SizingPlantType(
-                Plant_or_Condenser_Loop_Name=loop,
-                Loop_Type="Cooling",
-                Design_Loop_Exit_Temperature=12,
-                Loop_Design_Temperature_Difference=5,
-                Sizing_Option="NonCoincident",
-                Zone_Timesteps_in_Averaging_Window=1,
-            )
-        )
     if WATER_HEATING in loop:
         heating_loop = add_plantloop(idf, loop, 100, 0)
         loops[loop] = heating_loop
-        SizingPlant(
-            idf,
-            **SizingPlantType(
-                Plant_or_Condenser_Loop_Name=loop,
-                Loop_Type="Heating",
-                Design_Loop_Exit_Temperature=70,
-                Loop_Design_Temperature_Difference=10,
-                Sizing_Option="NonCoincident",
-                Zone_Timesteps_in_Averaging_Window=1,
-            )
-        )
-        # à supprimer
+         # à supprimer
         heating_loop_branches = Branches(loop)
+
+    SizingPlant(
+        idf,
+        **SizingPlantType(
+            Plant_or_Condenser_Loop_Name=loop,
+            Loop_Type=conf.get("Loop_Type", "Heating"),
+            Design_Loop_Exit_Temperature=conf.get("Design_Loop_Exit_Temperature", 70),
+            Loop_Design_Temperature_Difference=conf.get("Design_Loop_Exit_Temperature", 10),
+            Sizing_Option="NonCoincident",
+            Zone_Timesteps_in_Averaging_Window=1,
+        )
+    )
 
 def basic_zone_sizing(zone_name: str):
     """basic zone sizing"""
