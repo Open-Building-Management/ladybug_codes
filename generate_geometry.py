@@ -21,28 +21,37 @@ from honeybee.model import Model
 
 from honeybee_energy.writer import model_to_idf
 
-from idfhub.helpers.common import get_logger, view_boundaries
+from src.idfhub.common import get_logger, BUILDING_NAME
 
-from idfhub.helpers.material import (
+from src.idfhub.helpers.material import (
     wall_osb, wall_parpaing,
     floor_internal,
     window_pvc, simple_glass_wall
 )
-from idfhub.helpers.geometry import (
+from src.idfhub.helpers.geometry import (
     box_room, complex_room,
     get, get_from_pattern,
     ApertureManager, add_aperture,
     join_surface
 )
 
-from src.idfhub.common import BUILDING_NAME
-
-get_logger("idfhub", level=logging.INFO)
+LOGGER = get_logger("idfhub", level=logging.INFO)
 
 # Building global params
 ADMIN_WIDTH = 37.0
 ADMIN_DEPTH = 11.0
 LEVEL_HEIGHT = 3.0
+
+def view_boundaries(building: Model):
+    """check boundary conditions"""
+    for element in building:
+        for _face in element.faces:
+            message = f"id: {_face.identifier} type: {type(_face.type)}"
+            LOGGER.info(message)
+            message = f"bc: {_face.boundary_condition}"
+            LOGGER.info(message)
+            message = f"material: {_face.properties.energy.construction.identifier}"
+            LOGGER.info(message)
 
 print("-> Creating Honeybee Rooms.....")
 
