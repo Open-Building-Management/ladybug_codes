@@ -59,9 +59,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     OutputVariableType
 )
 
-from idfhub.helpers.common import get_logger
-
-from idfhub.common import idf, CONF
+from idfhub.common import get_logger, idf, CONF
 
 LOGGER = get_logger()
 BYPASS = "bypass"
