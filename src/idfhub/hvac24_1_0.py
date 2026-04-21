@@ -1,4 +1,5 @@
 """Manage hvac equipments"""
+import sys
 from typing import Any
 from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
@@ -65,6 +66,10 @@ LOGGER = get_logger()
 BYPASS = "bypass"
 loops: dict = {}
 equipments: dict[str, Any] = {}
+
+if not idf:
+    LOGGER.error("no idf > generate_geometry")
+    sys.exit()
 
 
 def create_sensor(*, sensor_name, sensor_type, location_name):
