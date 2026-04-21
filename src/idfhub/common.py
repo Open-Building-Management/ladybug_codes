@@ -104,7 +104,10 @@ SENSORS: dict[str, dict[str, Any]] = CONF["sensors"]
 PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
 OS_EP_PATH = CONF["os_ep_path"]
 IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
-idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+try:
+    idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
+except FileNotFoundError:
+    idf = None
 
 if SENSORS:
     for conf in SENSORS.values():
