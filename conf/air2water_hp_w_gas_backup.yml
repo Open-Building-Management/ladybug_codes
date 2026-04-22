@@ -1,0 +1,61 @@
+building_name: batiment_600m2
+
+name: air2water_hp_w_gas_backup
+suffix: single_loop
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - water_heating_loop
+
+equipments:
+  - hpatw_ems
+  - gas_boiler
+  - inside_variable_pump  
+
+sensors:
+
+water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [hpatw_ems, gas_boiler]
+  branches:
+    plant: [inside_variable_pump, hpatw_ems, gas_boiler]
+
+water_law_set_point:
+  Setpoint_at_Outdoor_Low_Temperature: 55
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 35
+  Outdoor_High_Temperature: 15
+
+hpatw_ems:
+  loop: water_heating_loop
+  water_node_side: plant
+  water_node_port: inlet
+  Nominal_Capacity : 30000
+  cop: 3.2
+  capacity_c: 0.88
+  capacity_x: 0.02
+  capacity_x2: -0.0002
+  capacity_y: -0.015
+  capacity_y2: -0.00015
+  capacity_xy: -0.0004
+  cop_c: 1.05
+  cop_x: 0.04
+  cop_x2: -0.0005
+  cop_y: -0.015
+  cop_y2: 0.0001
+  cop_xy: -0.0005
+  force_side: Boiler_Water
+
+gas_boiler:
+  force_side: Boiler_Water
+  efficiency_c: 0.96
+  efficiency_x: 0.04 # x=PLR
+  efficiency_x2: -0.03
+  efficiency_y: -0.004 # y=Twater
+  efficiency_y2: -0.00004
+  efficiency_xy: 0
