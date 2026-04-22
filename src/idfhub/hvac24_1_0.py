@@ -881,6 +881,7 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
 
 def generate_operation_list(loop_name:str):
     """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
+    conf = CONF.get(loop_name, {})
     loop_equipment_list = Plantequipmentlist(
         idf,
         **PlantequipmentlistType(
@@ -890,9 +891,9 @@ def generate_operation_list(loop_name:str):
     for i, obj_name in enumerate(CONF[loop_name].get("operation", [])):
         loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
         loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
-    loop_mode = "heating" if "heating" in loop_name else "cooling"
-    operation_name = f"{loop_name} {loop_mode} operation"
-    if loop_mode == "cooling":
+    loop_type = conf.get("Loop_Type", "heating")
+    operation_name = f"{loop_name} {loop_type} operation"
+    if loop_type == "cooling":
         loop_operation = PlantequipmentoperationCoolingload(
             idf,
             **PlantequipmentoperationCoolingloadType(
