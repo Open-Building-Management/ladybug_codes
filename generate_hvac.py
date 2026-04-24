@@ -56,9 +56,10 @@ from idfhub.hvac24_1_0 import (
     adjust_nodes_branch, generate_operation_list,
     control_manager,
     constant_schedule, basic_compact_schedule,
-    air_to_water_heatpump_ems,
     gas_boiler
 )
+
+from src.idfhub.hvac24_1_0_secondary import air_to_water_heatpump_ems
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
