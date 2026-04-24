@@ -81,9 +81,6 @@ def create_sensor(*, sensor_name, sensor_type, location_name):
         )
     return sensor
 
-    )
-        )
-        )
 
 def control_manager(sensor_name, conf: dict[str, Any]):
     """manage equipment availability using a sensor"""
