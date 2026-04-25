@@ -56,7 +56,8 @@ from idfhub.hvac24_1_0 import (
     adjust_nodes_branch, generate_operation_list,
     control_manager,
     constant_schedule, basic_compact_schedule,
-    gas_boiler
+    gas_boiler,
+    air_to_water_heatpump_eir
 )
 
 from src.idfhub.hvac24_1_0_secondary import air_to_water_heatpump_ems
@@ -80,6 +81,7 @@ WATER_LAW = "water_law"
 CONSTANT = "constant"
 BOREHOLE = "borehole"
 PUMP = "pump"
+HP = "hp"
 HPWTW = "hpwtw"
 HPATW = "hpatw"
 BOILER = "boiler"
@@ -301,7 +303,7 @@ for equipment_name in EQUIPMENTS:
         equipments[equipment_name] = hpwtw
         continue
     if HPATW in equipment_name:
-        hpatw = air_to_water_heatpump_ems(equipment_name)
+        hpatw = air_to_water_heatpump_eir(equipment_name)
         equipments[equipment_name] = hpatw
         continue
     if BOILER in equipment_name:
@@ -415,13 +417,17 @@ for equipment_name in EQUIPMENTS:
         add_variable("Ground Heat Exchanger Heat Transfer Rate")
         add_variable("Ground Heat Exchanger Inlet Temperature")
         add_variable("Ground Heat Exchanger Outlet Temperature")
-    if HPWTW in equipment_name:
-        add_variable("Heat Pump Load Side Outlet Temperature")
-        add_variable("Heat Pump Load Side Inlet Temperature")
-        add_variable("Heat Pump Source Side Outlet Temperature")
-        add_variable("Heat Pump Source Side Inlet Temperature")
-        add_variable("Heat Pump Source Side Mass Flow Rate")
-    if HPATW in equipment_name:
+    if HP in equipment_name:
+        suffix = "Heat Pump"
+        add_variable(f"{suffix} Load Side Outlet Temperature")
+        add_variable(f"{suffix} Load Side Inlet Temperature")
+        add_variable(f"{suffix} Source Side Outlet Temperature")
+        add_variable(f"{suffix} Source Side Inlet Temperature")
+        add_variable(f"{suffix} Source Side Mass Flow Rate")
+        add_variable(f"{suffix} Electricity Rate")
+        add_variable(f"{suffix} Load Side Heat Transfer Rate")
+        add_variable(f"{suffix} Source Side Heat Transfer Rate")
+    if BOILER in equipment_name:
         add_variable("Boiler Heating Rate")
 
 add_variable("Baseboard Total Heating Rate")
