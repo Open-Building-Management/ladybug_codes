@@ -60,7 +60,6 @@ from idfhub.hvac24_1_0 import (
     air_to_water_heatpump_eir
 )
 
-from src.idfhub.hvac24_1_0_secondary import air_to_water_heatpump_ems
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
