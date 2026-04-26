@@ -358,7 +358,9 @@ def plantloop_split_mix(
     plantloop:EpBunch,
     side: str,
     branches: list[EpBunch],
-    bypass: bool = False
+    bypass: bool = False,
+    inlet: str|None = None,
+    outlet: str|None = None
 ):
     """split to branches and mix on a side of a plantloop"""
     if bypass:
@@ -394,41 +396,52 @@ def plantloop_split_mix(
         connectors=[splitter, mixer]
     )
     plantloop[f"{side}_{EPApi.CONNECTOR_LIST_NAME}"] = connector_list_name
-    # on récupère la branchlist du plantloop pour mise à jour !
-    plantloop_branch_list = idf.getobject(
-        "BRANCHLIST",
-        plantloop[f"{side}_{EPApi.BRANCH_LIST_NAME}"]
-    )
-    i = 1
-    plantloop_branch_list[f"Branch_{i}_Name"] = splitter[EPApi.INLET_BRANCH_NAME]
-    for branch in branches:
-        i += 1
-        plantloop_branch_list[f"Branch_{i}_Name"] = branch.Name
-    i += 1
-    plantloop_branch_list[f"Branch_{i}_Name"] = mixer[EPApi.OUTLET_BRANCH_NAME]
     plantloop_inlet_node_name = plantloop[f"{side}_{EPApi.INLET_NODE_NAME}"]
+    if inlet:
+        plantloop_inlet_node_name = inlet
     inlet_pipe = _create_pipe(
         idf,
         name=f"{plantloop_inlet_node_name} Pipe",
         inlet_node_name=plantloop_inlet_node_name,
         outlet_node_name=f"{plantloop_inlet_node_name} Pipe outlet"
     )
-    create_branch(
+    splitter_branch = create_branch(
         idf,
         name = splitter[EPApi.INLET_BRANCH_NAME],
         objects = [inlet_pipe],
         sides = [None]
     )
     plantloop_outlet_node_name = plantloop[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+    if outlet:
+        plantloop_outlet_node_name = outlet
     outlet_pipe = _create_pipe(
         idf,
         name=f"{plantloop_outlet_node_name} Pipe",
         inlet_node_name=f"{plantloop_outlet_node_name} Pipe inlet",
         outlet_node_name=plantloop_outlet_node_name
     )
-    create_branch(
+    mixer_branch = create_branch(
         idf,
         name = mixer[EPApi.OUTLET_BRANCH_NAME],
         objects = [outlet_pipe],
         sides = [None]
     )
+    create_branch_list(
+        idf,
+        plantloop[f"{side}_{EPApi.BRANCH_LIST_NAME}"],
+        [splitter_branch, *branches, mixer_branch]
+    )
+    return [splitter_branch, *branches, mixer_branch]
+
+
+def create_branch_list(idf, branch_name, branches):
+    """manage a branch list"""
+     # on récupère la branchlist pour mise à jour !
+    plantloop_branch_list = idf.getobject(
+        "BRANCHLIST",
+        branch_name
+    )
+    i = 0
+    for branch in branches:
+        i += 1
+        plantloop_branch_list[f"Branch_{i}_Name"] = branch.Name
