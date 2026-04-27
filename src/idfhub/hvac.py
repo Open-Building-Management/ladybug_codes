@@ -434,14 +434,13 @@ def plantloop_split_mix(
     return [splitter_branch, *branches, mixer_branch]
 
 
-def create_branch_list(idf, branch_name, branches):
+def create_branch_list(idf, branch_list_name, branches):
     """manage a branch list"""
-     # on récupère la branchlist pour mise à jour !
+    # on récupère la branchlist pour mise à jour !
+    # les branchlist sont toutes construites à l'initialisation des plantloop 
     plantloop_branch_list = idf.getobject(
         "BRANCHLIST",
-        branch_name
+        branch_list_name
     )
-    i = 0
-    for branch in branches:
-        i += 1
-        plantloop_branch_list[f"Branch_{i}_Name"] = branch.Name
+    for i, branch in enumerate(branches):
+        plantloop_branch_list[f"Branch_{i+1}_Name"] = branch.Name
