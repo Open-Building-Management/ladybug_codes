@@ -410,6 +410,9 @@ def add_variable(name):
 add_variable("Site Outdoor Air Drybulb Temperature")
 add_variable("Zone Air Temperature")
 add_variable("Zone Thermostat Heating Setpoint Temperature")
+if CONF.get("verbose"):
+    add_variable("System Node Setpoint Temperature")
+    add_variable("System Node Temperature")
 
 for equipment_name in EQUIPMENTS:
     if BOREHOLE in equipment_name:
