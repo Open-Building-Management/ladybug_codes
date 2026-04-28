@@ -712,54 +712,67 @@ def resolve_side(name, branch_type):
     return None
 
 
+def process_serie(
+    branch_name: str,
+    loop_side: str,
+    *,
+    structure_serie: list[str],
+    inlet_node: str|None = None,
+    outlet_node: str|None = None
+):
+    """process a serie and return a branch"""
+    if inlet_node is None:
+        inlet_node = f"branch {branch_name} inlet node"
+    if outlet_node is None:
+        outlet_node = f"branch {branch_name} outlet node"
+    current_inlet = inlet_node
+    _objects = []
+    _sides = []
+    for i, obj_name in enumerate(structure_serie):
+        is_last = (i == len(structure_serie) - 1)
+        next_outlet = outlet_node if is_last else None
+
+        obj = equipments[obj_name]
+        side = resolve_side(obj_name, loop_side)
+        set_nodes(
+            obj,
+            inlet=current_inlet,
+            outlet=next_outlet,
+            side=side
+        )
+        _objects.append(obj)
+        _sides.append(side)
+        try:
+            current_inlet = obj[EPApi.OUTLET_NODE_NAME]
+        except BadEPFieldError:
+            current_inlet = obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+    branch = create_branch(
+        idf,
+        name=branch_name,
+        objects=_objects,
+        sides=_sides
+    )
+    return branch, inlet_node, outlet_node
+    
+
 def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[str, list[str]]):
     """use yaml declaration to organise a branch and relevant nodes on a side loop"""
     object_names = branches_descr[loop_side]
     bypass = False
+    inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
+    outlet_node = LoopNodes(loop_name).get(side=loop_side, port=OUTLET)
+    branch_name = Branches(loop_name).get(side=loop_side)
     if BYPASS in branches_descr:
         if loop_side in branches_descr[BYPASS]:
             bypass = True
-    # we adjust the nodes
-    nb_objects = len(object_names)
-    for i, obj in enumerate(object_names):
-        inlet_node: str|None = None
-        outlet_node: str|None = None
-        # start and end of the loop side
-        if i == 0:
-            inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
-        if i == nb_objects - 1:
-            outlet_node = LoopNodes(loop_name).get(side=loop_side, port=OUTLET)
-        # we only modify inlets using the previous equipement
-        if inlet_node is None:
-            # previous object exists
-            prev_name = object_names[i-1]
-            prev_obj = equipments[prev_name]
-            try:
-                inlet_node = prev_obj[EPApi.OUTLET_NODE_NAME]
-            except BadEPFieldError:
-                # we have a 2 sided equipment - heatpump
-                side = resolve_side(prev_name, loop_side)
-                inlet_node = prev_obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-        # if bypass, we dont modify inlet node of first equipment
-        if i == 0 and bypass:
             inlet_node = None
-        # if bypass, we dont modify outlet node of last equipment
-        if i == nb_objects - 1 and bypass:
             outlet_node = None
-        set_nodes(
-            equipments[obj],
-            inlet=inlet_node,
-            outlet=outlet_node,
-            side=resolve_side(obj, loop_side)
-        )
-    # we create the branch using the objects as nodes are now correct
-    objects = [equipments[obj] for obj in object_names]
-    sides = [resolve_side(obj, loop_side) for obj in object_names]
-    adjusted_branch = create_branch(
-        idf,
-        name = Branches(loop_name).get(side=loop_side),
-        objects = objects,
-        sides = sides
+    branch, _, _ = process_serie(
+        branch_name,
+        loop_side,
+        structure_serie=object_names,
+        inlet_node=inlet_node,
+        outlet_node=outlet_node
     )
     if bypass:
         side = EPApi.DEMAND_SIDE if loop_side == DEMAND else EPApi.PLANT_SIDE
@@ -767,7 +780,7 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
             idf=idf,
             plantloop=loops[loop_name],
             side=side,
-            branches=[adjusted_branch],
+            branches=[branch],
             bypass=True
         )
 
