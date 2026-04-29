@@ -9,7 +9,8 @@ from idfhub.hvac import (
     EPApi, EPValues,
     create_branch,
     LoopNodes, Branches,
-    set_nodes, plantloop_split_mix
+    set_nodes, plantloop_split_mix,
+    branchlist_update,
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
@@ -773,6 +774,12 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
         structure_serie=object_names,
         inlet_node=inlet_node,
         outlet_node=outlet_node
+    )
+    branchlist_update(
+        idf,
+        loop_name=loop_name,
+        loop_side=loop_side,
+        branches=branch
     )
     if bypass:
         side = EPApi.DEMAND_SIDE if loop_side == DEMAND else EPApi.PLANT_SIDE
