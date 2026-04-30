@@ -753,8 +753,25 @@ def process_serie(
         objects=_objects,
         sides=_sides
     )
-    return branch, inlet_node, outlet_node
-    
+    return branch
+
+
+def get_branch_inlet_outlet_nodes(branch: EpBunch):
+    """branch inlet and outlet nodes"""
+    # inlet = premier composant
+    inlet = getattr(branch, "Component_1_Inlet_Node_Name", None)
+    # outlet = dernier composant
+    i = 1
+    last_outlet = None
+    while True:
+        outlet = getattr(branch, f"Component_{i}_Outlet_Node_Name", None)
+        if not outlet:
+            break
+        last_outlet = outlet
+        i += 1
+    return inlet, last_outlet
+
+
 
 def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[str, list[str]]):
     """use yaml declaration to organise a branch and relevant nodes on a side loop"""
@@ -768,7 +785,7 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
             bypass = True
             inlet_node = None
             outlet_node = None
-    branch, _, _ = process_serie(
+    branch = process_serie(
         branch_name,
         loop_side,
         structure_serie=object_names,
