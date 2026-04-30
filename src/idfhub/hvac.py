@@ -463,15 +463,47 @@ def branchlist_update(
         branch_list[f"Branch_{start_index}_Name"] = branches.Name
 
 
+def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
+    """create pipe and return a pipe splitter branch"""
+    inlet_pipe = _create_pipe(
+        idf,
+        name=f"{inlet_node} Pipe",
+        inlet_node_name=inlet_node,
+        outlet_node_name=f"{inlet_node} Pipe outlet"
+    )
+    return create_branch(
+        idf,
+        name = branch_name,
+        objects = [inlet_pipe],
+        sides = [None]
+    )
+
+
+def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
+    """create pipe and return a pipe mixer branch"""
+    outlet_pipe = _create_pipe(
+        idf,
+        name=f"{outlet_node} Pipe",
+        inlet_node_name=f"{outlet_node} Pipe inlet",
+        outlet_node_name=outlet_node
+    )
+    return create_branch(
+        idf,
+        name = branch_name,
+        objects = [outlet_pipe],
+        sides = [None]
+    )
+
+
 def plantloop_split_mix(
     idf: IDF,
     *,
     plantloop:EpBunch,
     side: str,
     branches: list[EpBunch],
-    bypass: bool = False,
     inlet: str|None = None,
-    outlet: str|None = None
+    outlet: str|None = None,
+    bypass: bool = False
 ):
     """split to branches and mix on a side of a plantloop"""
     if bypass:
@@ -491,37 +523,22 @@ def plantloop_split_mix(
         )
         branches.append(bypass_branch)
     nb = 0
+    loop_side = DEMAND if side == EPApi.DEMAND_SIDE else PLANT
     splitter_branch_name = f"{plantloop.Name}_{side}_splitter_branch_{nb}"
     mixer_branch_name = f"{plantloop.Name}_{side}_mixer_branch_{nb}"
-    plantloop_inlet_node_name = plantloop[f"{side}_{EPApi.INLET_NODE_NAME}"]
-    if inlet:
-        plantloop_inlet_node_name = inlet
-    inlet_pipe = _create_pipe(
+    if not inlet:
+        inlet = LoopNodes(plantloop.Name).get(side=loop_side, port=INLET)
+    splitter_branch = pipe_splitter(
         idf,
-        name=f"{plantloop_inlet_node_name} Pipe",
-        inlet_node_name=plantloop_inlet_node_name,
-        outlet_node_name=f"{plantloop_inlet_node_name} Pipe outlet"
-    )
-    splitter_branch = create_branch(
+        inlet_node=inlet,
+        branch_name=splitter_branch_name
+        )
+    if not outlet:
+        outlet = LoopNodes(plantloop.Name).get(side=loop_side, port=OUTLET) 
+    mixer_branch = pipe_mixer(
         idf,
-        name = splitter_branch_name,
-        objects = [inlet_pipe],
-        sides = [None]
-    )
-    plantloop_outlet_node_name = plantloop[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-    if outlet:
-        plantloop_outlet_node_name = outlet
-    outlet_pipe = _create_pipe(
-        idf,
-        name=f"{plantloop_outlet_node_name} Pipe",
-        inlet_node_name=f"{plantloop_outlet_node_name} Pipe inlet",
-        outlet_node_name=plantloop_outlet_node_name
-    )
-    mixer_branch = create_branch(
-        idf,
-        name = mixer_branch_name,
-        objects = [outlet_pipe],
-        sides = [None]
+        outlet_node=outlet,
+        branch_name=mixer_branch_name
     )
     split_mix(
         idf,
@@ -531,7 +548,6 @@ def plantloop_split_mix(
         branches=branches,
         outlet_branch=mixer_branch
     )
-    loop_side = DEMAND if side == EPApi.DEMAND_SIDE else PLANT
     branchlist_update(
         idf,
         loop_name=plantloop.Name,

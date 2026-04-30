@@ -2,6 +2,7 @@
 import os
 
 from idfhub.hvac import (
+    LoopNodes,
     PLANT, DEMAND,
     EPApi, EPValues,
     add_plantloop,
@@ -234,7 +235,7 @@ for zone in ZONES:
 #------------------------------------------------------------------------------
 for loop in LOOPS:
     conf = CONF.get(loop, {})
-    if SOIL in loop or TANK in loop:
+    if SOIL in loop:
         liquid_name = "eau glycol 30pourcent"
         glycol_water_30 = idf.getobject(
             FluidpropertiesGlycolconcentrationMeta.idf_name,
@@ -350,7 +351,9 @@ plantloop_split_mix(
     idf=idf,
     plantloop=heating_loop,
     side=EPApi.DEMAND_SIDE,
-    branches=list(baseboard_branches.values())
+    branches=list(baseboard_branches.values()),
+    inlet=LoopNodes(heating_loop.Name).demand_inlet,
+    outlet=LoopNodes(heating_loop.Name).demand_outlet
 )
 
 #------------------------------------------------------------------------------
