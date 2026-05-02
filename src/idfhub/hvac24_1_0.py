@@ -4,12 +4,11 @@ from typing import Any
 from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
 from idfhub.hvac import (
-    PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET,
-    ALWAYS_ON,
+    PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET, ALWAYS_ON,
     EPApi, EPValues,
     create_branch,
     LoopNodes, Branches,
-    set_nodes, plantloop_split_mix,
+    set_nodes, node_name, plantloop_split_mix,
     branchlist_update,
 )
 
@@ -17,8 +16,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Scheduletypelimits,ScheduleConstant,ScheduleConstantMeta,
     SiteGroundtemperatureBuildingsurface,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
-    CurveQuadlinear,
-    HeatpumpWatertowaterEquationfitHeating,
+    HeatpumpWatertowaterEquationfitHeating, HeatpumpPlantloopEirHeating,
     GroundheatexchangerVerticalProperties,
     GroundheatexchangerVerticalArray,
     GroundheatexchangerSystem,
@@ -30,17 +28,15 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     EnergymanagementsystemSensor, EnergymanagementsystemSensorMeta, EnergymanagementsystemActuator,
     EnergymanagementsystemProgram, EnergymanagementsystemProgramcallingmanager,
     OutdoorairNode,
-    CurveBiquadratic, CurveQuadratic,
+    CurveBiquadratic, CurveQuadratic, CurveQuadlinear,
     BoilerHotwater,
-    HeatpumpPlantloopEirHeating
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ScheduletypelimitsType,ScheduleConstantType,
     SiteGroundtemperatureBuildingsurfaceType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
-    CurveQuadlinearType,
-    HeatpumpWatertowaterEquationfitHeatingType,
+    HeatpumpWatertowaterEquationfitHeatingType, HeatpumpPlantloopEirHeatingType,
     GroundheatexchangerVerticalPropertiesType,
     GroundheatexchangerVerticalArrayType,
     GroundheatexchangerSystemType,
@@ -52,9 +48,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     EnergymanagementsystemSensorType, EnergymanagementsystemActuatorType,
     EnergymanagementsystemProgramType, EnergymanagementsystemProgramcallingmanagerType,
     OutdoorairNodeType,
-    CurveBiquadraticType, CurveQuadraticType,
+    CurveBiquadraticType, CurveQuadraticType,CurveQuadlinearType,
     BoilerHotwaterType,
-    HeatpumpPlantloopEirHeatingType
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -89,14 +84,14 @@ def create_sensor(*, sensor_name, sensor_type, location_name):
 
 def control_manager(sensor_name, conf: dict[str, Any]):
     """manage equipment availability using a sensor"""
-    node_name = LoopNodes(conf["loop"]).get(
+    _node_name = LoopNodes(conf["loop"]).get(
          side=conf["side"],
          port=conf["port"]
     )
     create_sensor(
         sensor_name = sensor_name,
         sensor_type = conf["type"],
-        location_name = node_name,
+        location_name = _node_name,
     )
     for equipment_name in conf.get("controls", []):
         if "pump" not in equipment_name:
@@ -723,14 +718,14 @@ def process_serie(
 ):
     """process a serie and return a branch"""
     if inlet_node is None:
-        inlet_node = f"branch {branch_name} inlet node"
+        inlet_node = node_name(branch_name, INLET)
     if outlet_node is None:
-        outlet_node = f"branch {branch_name} outlet node"
+        outlet_node = node_name(branch_name, OUTLET)
     current_inlet = inlet_node
     _objects = []
     _sides = []
     for i, obj_name in enumerate(structure_serie):
-        is_last = (i == len(structure_serie) - 1)
+        is_last = i == len(structure_serie) - 1
         next_outlet = outlet_node if is_last else None
 
         obj = equipments[obj_name]
@@ -756,20 +751,6 @@ def process_serie(
     return branch
 
 
-def get_branch_inlet_outlet_nodes(branch: EpBunch):
-    """branch inlet and outlet nodes"""
-    # inlet = premier composant
-    inlet = getattr(branch, "Component_1_Inlet_Node_Name", None)
-    # outlet = dernier composant
-    i = 1
-    last_outlet = None
-    while True:
-        outlet = getattr(branch, f"Component_{i}_Outlet_Node_Name", None)
-        if not outlet:
-            break
-        last_outlet = outlet
-        i += 1
-    return inlet, last_outlet
 
 
 
