@@ -151,6 +151,11 @@ def set_nodes(obj, *, inlet: str|None, outlet: str|None, side: str|None = None):
         obj[f"{prefix}{EPApi.OUTLET_NODE_NAME}"] = outlet
 
 
+def node_name(branch_name: str, port: str):
+    """set generic node name from a branch name"""
+    return f"{object_name(branch_name)}_{port}_node"
+
+
 def set_branch_list(obj, *, side, branch_list):
     """Set branch list on a loop side"""
     obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
@@ -363,9 +368,10 @@ def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
     return branch
 
 
-def connector_name(branch: EpBunch):
-    """from branch to connector name"""
-    return f"{branch.Name}".replace("_branch","").strip()
+def object_name(branch: EpBunch|str):
+    """from branch to object name"""
+    branch_name = branch if isinstance(branch, str) else branch.Name
+    return f"{branch_name}".replace("_branch","").strip()
 
 
 def split_mix(
@@ -382,7 +388,7 @@ def split_mix(
     splitter = ConnectorSplitter(
         idf,
         **ConnectorSplitterType(
-            Name=connector_name(inlet_branch),
+            Name=object_name(inlet_branch),
             Inlet_Branch_Name=inlet_branch.Name
         )
     )
@@ -391,7 +397,7 @@ def split_mix(
     mixer = ConnectorMixer(
         idf,
         **ConnectorMixerType(
-            Name=connector_name(outlet_branch),
+            Name=object_name(outlet_branch),
             Outlet_Branch_Name=outlet_branch.Name
         )
     )
@@ -465,11 +471,12 @@ def branchlist_update(
 
 def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
     """create pipe and return a pipe splitter branch"""
+    pipe_name = object_name(branch_name)
     inlet_pipe = _create_pipe(
         idf,
-        name=f"{inlet_node} Pipe",
+        name=f"{pipe_name} Pipe",
         inlet_node_name=inlet_node,
-        outlet_node_name=f"{inlet_node} Pipe outlet"
+        outlet_node_name=f"{pipe_name} Pipe outlet"
     )
     return create_branch(
         idf,
@@ -481,10 +488,11 @@ def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
 
 def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
     """create pipe and return a pipe mixer branch"""
+    pipe_name = object_name(branch_name)
     outlet_pipe = _create_pipe(
         idf,
-        name=f"{outlet_node} Pipe",
-        inlet_node_name=f"{outlet_node} Pipe inlet",
+        name=f"{pipe_name} Pipe",
+        inlet_node_name=f"{pipe_name} Pipe inlet",
         outlet_node_name=outlet_node
     )
     return create_branch(
@@ -534,7 +542,7 @@ def plantloop_split_mix(
         branch_name=splitter_branch_name
         )
     if not outlet:
-        outlet = LoopNodes(plantloop.Name).get(side=loop_side, port=OUTLET) 
+        outlet = LoopNodes(plantloop.Name).get(side=loop_side, port=OUTLET)
     mixer_branch = pipe_mixer(
         idf,
         outlet_node=outlet,
@@ -555,3 +563,19 @@ def plantloop_split_mix(
         branches = [splitter_branch, *branches, mixer_branch]
     )
     return [splitter_branch, *branches, mixer_branch]
+
+
+def get_branch_inlet_outlet_nodes(branch: EpBunch):
+    """branch inlet and outlet nodes"""
+    # inlet = premier composant
+    inlet = getattr(branch, "Component_1_Inlet_Node_Name", None)
+    # outlet = dernier composant
+    i = 1
+    last_outlet = None
+    while True:
+        outlet = getattr(branch, f"Component_{i}_Outlet_Node_Name", None)
+        if not outlet:
+            break
+        last_outlet = outlet
+        i += 1
+    return inlet, last_outlet
