@@ -503,6 +503,23 @@ def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
     )
 
 
+def bypass_branch(idf: IDF, bypass_branch_name: str):
+    """add a bypass branch to be used with split/mix"""
+    bypass_name = f"{object_name(bypass_branch_name)}_pipe"
+    bypass_pipe = _create_pipe(
+        idf,
+        name=bypass_name,
+        inlet_node_name=node_name(bypass_branch_name, INLET),
+        outlet_node_name=node_name(bypass_branch_name, OUTLET)
+    )
+    return create_branch(
+        idf,
+        name = bypass_branch_name,
+        objects = [bypass_pipe],
+        sides = [None]
+    )
+
+
 def plantloop_split_mix(
     idf: IDF,
     *,
@@ -516,20 +533,13 @@ def plantloop_split_mix(
     """split to branches and mix on a side of a plantloop"""
     if bypass:
         # add a bypass branch if needed
-        bypass_name = f"{plantloop.Name} {side} bypass pipe"
-        bypass_pipe = _create_pipe(
-            idf,
-            name=bypass_name,
-            inlet_node_name=f"{bypass_name} inlet node",
-            outlet_node_name=f"{bypass_name} outlet node"
+        bypass_branch_name = f"{plantloop.Name}_{side}_bypass_branch"
+        branches.append(
+            bypass_branch(
+                idf,
+                bypass_branch_name
+            )
         )
-        bypass_branch = create_branch(
-            idf,
-            name = f"{bypass_name} branch",
-            objects = [bypass_pipe],
-            sides = [None]
-        )
-        branches.append(bypass_branch)
     nb = 0
     loop_side = DEMAND if side == EPApi.DEMAND_SIDE else PLANT
     splitter_branch_name = f"{plantloop.Name}_{side}_splitter_branch_{nb}"
