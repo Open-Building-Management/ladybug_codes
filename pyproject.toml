@@ -26,6 +26,7 @@ ignore = ["idf_autocomplete"]
 max-locals = 20
 max-args = 7
 max-positional-arguments = 6
+max-branches = 20
 
 [build-system]
 requires = ["setuptools"]
