@@ -48,18 +48,18 @@ from idfhub.common import (
 
 from idfhub.hvac24_1_0 import (
     loops, equipments,
-    consigne_cool, consigne_heat,
     ground_temperature,
     vertical_geoexchanger,
     pump,
     water_to_water_heatpump,
     water_law, constant_set_point,
     adjust_nodes_branch, generate_operation_list,
-    control_manager,
     constant_schedule, basic_compact_schedule,
     gas_boiler,
     air_to_water_heatpump_eir
 )
+
+from idfhub.hvac24_1_0_secondary import control_manager
 
 
 FORMAT = (
@@ -159,8 +159,8 @@ Globalgeometryrules(
 
 #------------------------------------------------------------------------------
 # Schedules and Thermostats
+# 20°C chauffage et 25°C raffraichissement
 #------------------------------------------------------------------------------
-
 
 # generate_geometry nécessite un schedule constant appelé Always On utilisant Fractional ????
 fractional_typelimits = Scheduletypelimits(
@@ -173,8 +173,10 @@ fractional_typelimits = Scheduletypelimits(
     )
 )
 
-
+#consigne_heat = constant_schedule(20)
 consigne_heat = basic_compact_schedule(20, schedule_name="heating_schedule")
+consigne_cool = constant_schedule(25)
+#consigne_cool = basic_compact_schedule(25, schedule_name="cooling_schedule")
 
 zone_thermostat = ThermostatsetpointDualsetpoint(
     idf,
