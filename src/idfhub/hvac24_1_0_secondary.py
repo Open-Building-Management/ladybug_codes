@@ -69,12 +69,35 @@ class EmsProgram():
     """manage ems instructions"""
     def __init__(self, name):
         """initialization"""
-        self.conf = CONF[name]
+        self.name = name
         self.ems_instructions = []
+        try:
+            self.conf = CONF[name]
+        except KeyError:
+            self.conf = None
 
     def append(self, instruction):
         """add an instruction to the list"""
         self.ems_instructions.append(instruction)
+
+    def generate(self, calling_point="InsideHVACSystemIterationLoop"):
+        """generate the system program & the calling manager"""
+        program = EnergymanagementsystemProgram(
+            idf,
+            **EnergymanagementsystemProgramType(
+                Name=f"{self.name}_program"
+            )
+        )
+        for i, instruction in enumerate(self.ems_instructions):
+            program[f"Program_Line_{i+1}"] = instruction
+        EnergymanagementsystemProgramcallingmanager(
+            idf,
+            **EnergymanagementsystemProgramcallingmanagerType(
+                Name=f"{self.name}_control",
+                EnergyPlus_Model_Calling_Point=calling_point,
+                Program_Name_1=program.Name
+            )
+        )
 
     def upper_limit(self, var_name, upper_limit):
         """upper limit a var"""
@@ -94,11 +117,14 @@ class EmsProgram():
         self.upper_limit(var_name, upper_limit)
 
     def get(self):
-        """return the instructions array"""
+        """return the instructions array
+        rubbish if using generate"""
         return self.ems_instructions
 
     def biquadratic_on_x_y(self, *, key, var_name):
         """add a biquadratic formula on ems variables x and y"""
+        if not self.conf:
+            return
         c = self.conf.get(f"{key}_c", 1.192)
         x = self.conf.get(f"{key}_x", 0.05)
         x2 = self.conf.get(f"{key}_x2", -0.0007)
@@ -108,6 +134,7 @@ class EmsProgram():
         formula = f"{c}+{x}*x+{x2}*x*x+{y}*y+{y2}*y*y+{xy}*x*y"
         formula = formula.replace("+-","-")
         self.ems_instructions.append(f"SET {var_name} = {formula}")
+
 
 def add_ems_vars_to_output(ems_var_names: list[str], name_suffix: str):
     """add ems variables to the outputs"""
@@ -137,72 +164,104 @@ def add_ems_vars_to_output(ems_var_names: list[str], name_suffix: str):
         )
 
 
+def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
+    """control a pump through availability schedule
+    a sensor called sensor_name must prexist"""
+    actuator_name = f"{pump_name}_availability"
+    schedule_name = f"{pump_name}_availability_schedule"
+    schedule = ScheduleCompact(
+        idf,
+        **ScheduleCompactType(
+            Name=schedule_name,
+            Schedule_Type_Limits_Name="Fractional",
+            Field_1=f"{EPValues.THROUGH}: 12/31",
+            Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+            Field_3=f"{EPValues.UNTIL}: 24:00",
+            Field_4=1
+        )
+    )
+    EnergymanagementsystemActuator(
+        idf,
+        **EnergymanagementsystemActuatorType(
+            Name=actuator_name,
+            Actuated_Component_Unique_Name=schedule.Name,
+            Actuated_Component_Type=schedule.key,
+            Actuated_Component_Control_Type="Schedule Value"
+        )
+    )
+    ems_program = EmsProgram(pump_name)
+    value = conf.get("stop_below", -5)
+    ems_program.append(f"IF {sensor_name} < {value}")
+    value = conf.get("min_flow", 0.1)
+    ems_program.append(f"SET {actuator_name} = {value}")
+    ems_program.append("ENDIF")
+    value = conf.get("start_above", -5)
+    ems_program.append(f"IF {sensor_name} >= {value}")
+    value = conf.get("normal_flow")
+    ems_program.append(f"SET {actuator_name} = {value}")
+    ems_program.append("ENDIF")
+    ems_program.generate()
+
+    equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
+
+
+def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
+    """control a heat machine through On/Off supervisory
+    a sensor called sensor_name must prexist"""
+    actuator_name = f"{machine_name}_actuator"
+    stop = conf.get("stop_below", 0)
+    start = conf.get("start_above", 2)
+
+    EnergymanagementsystemActuator(
+        idf,
+        **EnergymanagementsystemActuatorType(
+            Name=actuator_name,
+            Actuated_Component_Unique_Name=equipments[machine_name].Name,
+            Actuated_Component_Type=f"Plant Component {equipments[machine_name].key}",
+            Actuated_Component_Control_Type="On/Off Supervisory"
+        )
+    )
+    hp_off = conf.get('hp_off', 0)
+    hp_on = conf.get('hp_on', 1)
+    boiler_on = conf.get('boiler_on', 1)
+    boiler_off = conf.get('boiler_off', 0)
+    ems_program = EmsProgram(machine_name)
+    if "hp" in machine_name:
+        ems_program.append(f"IF {sensor_name} < {stop}")
+        ems_program.append(f"SET {actuator_name} = {hp_off}")
+        ems_program.append("ENDIF")
+        ems_program.append(f"IF {sensor_name} >= {start}")
+        ems_program.append(f"SET {actuator_name} = {hp_on}")
+        ems_program.append("ENDIF")
+    if "boiler" in machine_name:
+        ems_program.append(f"IF {sensor_name} < {stop}")
+        ems_program.append(f"SET {actuator_name} = {boiler_on}")
+        ems_program.append("ENDIF")
+        ems_program.append(f"IF {sensor_name} >= {start}")
+        ems_program.append(f"SET {actuator_name} = {boiler_off}")
+        ems_program.append("ENDIF")
+    ems_program.generate()
+
 
 def control_manager(sensor_name, conf: dict[str, Any]):
     """manage equipment availability using a sensor"""
-    _node_name = LoopNodes(conf["loop"]).get(
-         side=conf["side"],
-         port=conf["port"]
-    )
+    if conf["type"] == "Site Outdoor Air Drybulb Temperature":
+        location_name = "Environment"
+    else:
+        location_name = LoopNodes(conf["loop"]).get(
+            side=conf.get("side", "plant"),
+            port=conf.get("port", "inlet")
+        )
     create_sensor(
         sensor_name = sensor_name,
         sensor_type = conf["type"],
-        location_name = _node_name,
+        location_name = location_name
     )
     for equipment_name in conf.get("controls", []):
-        if "pump" not in equipment_name:
-            continue
-        actuator_name = f"{equipment_name}_availability"
-        program_name = f"{equipment_name}_program"
-        schedule_name = f"{equipment_name}_availability_schedule"
-        schedule = ScheduleCompact(
-            idf,
-            **ScheduleCompactType(
-                Name=schedule_name,
-                Schedule_Type_Limits_Name="Fractional",
-                Field_1=f"{EPValues.THROUGH}: 12/31",
-                Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                Field_3=f"{EPValues.UNTIL}: 24:00",
-                Field_4=1
-            )
-        )
-        EnergymanagementsystemActuator(
-            idf,
-            **EnergymanagementsystemActuatorType(
-                Name=actuator_name,
-                Actuated_Component_Unique_Name=schedule.Name,
-                Actuated_Component_Type=schedule.key,
-                Actuated_Component_Control_Type="Schedule Value"
-            )
-        )
-        ems_instructions = []
-        value = conf.get("stop_below", -5)
-        ems_instructions.append(f"IF {sensor_name} < {value}")
-        value = conf.get("min_flow", 0.1)
-        ems_instructions.append(f"SET {actuator_name} = {value}")
-        ems_instructions.append("ENDIF")
-        value = conf.get("start_above", -5)
-        ems_instructions.append(f"IF {sensor_name} >= {value}")
-        value = conf.get("normal_flow")
-        ems_instructions.append(f"SET {actuator_name} = {value}")
-        ems_instructions.append("ENDIF")
-
-        program = EnergymanagementsystemProgram(
-            idf,
-            **EnergymanagementsystemProgramType(
-                Name=program_name)
-        )
-        for i, instruction in enumerate(ems_instructions):
-            program[f"Program_Line_{i+1}"] = instruction
-        EnergymanagementsystemProgramcallingmanager(
-            idf,
-            **EnergymanagementsystemProgramcallingmanagerType(
-                Name=f"{equipment_name}_control",
-                EnergyPlus_Model_Calling_Point="InsideHVACSystemIterationLoop",
-                Program_Name_1=program_name
-            )
-        )
-        equipments[equipment_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
+        if "pump" in equipment_name:
+            pump_control(equipment_name, sensor_name, conf)
+        if "hp" in equipment_name or "boiler" in equipment_name:
+            heat_machine_control(equipment_name, sensor_name, conf)
 
 
 def air_to_water_heatpump_ems(name):
