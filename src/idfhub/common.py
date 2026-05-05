@@ -111,7 +111,10 @@ except FileNotFoundError:
 
 if SENSORS:
     for conf in SENSORS.values():
-        for key in ["loop", "port", "side", "type"]:
-            if key not in conf:
-                print("exiting - check conf")
+        if "type" not in conf:
+            print("exiting - specify sensor type")
+            sys.exit()
+        if conf["type"] != "Site Outdoor Air Drybulb Temperature":
+            if "loop" not in conf:
+                print("exiting - specify loop")
                 sys.exit()
