@@ -437,6 +437,7 @@ for equipment_name in EQUIPMENTS:
     if BOILER in equipment_name:
         add_variable("Boiler Heating Rate")
 
+add_variable("Plant Supply Side heating Demand Rate")
 add_variable("Baseboard Total Heating Rate")
 add_variable("Baseboard Water Inlet Temperature")
 add_variable("Baseboard Water Outlet Temperature")
