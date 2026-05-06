@@ -1,5 +1,17 @@
 # structure
 
+mandatory yaml keys :
+- building_name
+- name
+- suffix
+- os_ep_path
+- zones
+- loops
+- equipments
+- sensors
+
+sensors can be empty
+
 ## equipments
 
 In the energyplus initial API, inlet and outlet are usually fixed through `Inlet_Node_Name` and `Outlet_Node_Name`
