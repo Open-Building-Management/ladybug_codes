@@ -28,6 +28,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     OutdoorairNode,
     CurveBiquadratic, CurveQuadratic, CurveQuadlinear,
     BoilerHotwater,
+    PlantequipmentoperationOutdoordrybulb
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -46,6 +47,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     OutdoorairNodeType,
     CurveBiquadraticType, CurveQuadraticType,CurveQuadlinearType,
     BoilerHotwaterType,
+    PlantequipmentoperationOutdoordrybulbType
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -571,7 +573,7 @@ def air_to_water_heatpump_eir(name):
             Electric_Input_to_Output_Ratio_Modifier_Function_of_Part_Load_Ratio_Curve_Name=
                 eir_f_plr.Name,
             Heat_Pump_Sizing_Method="GreaterOfHeatingOrCooling",
-            Control_Type="Setpoint",
+            Control_Type=conf.get("Control_Type", "Setpoint"),
             Flow_Mode="VariableSpeedPumping",
             Minimum_Part_Load_Ratio=0.2,
             Minimum_Source_Inlet_Temperature=-25.0,
@@ -697,46 +699,96 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
         )
 
 
-def generate_operation_list(loop_name:str):
+def generate_operation(
+    *, 
+    operation_name:str, loop_type: str,
+    names: list[str],
+    ranges: list[list[float]]
+):
+    """return operation object"""
+    if "load" in loop_type:
+        if "heating" in loop_type:
+            operation = PlantequipmentoperationHeatingload(
+                idf,
+                **PlantequipmentoperationHeatingloadType(
+                    Name=operation_name)
+            )
+        else:
+            operation = PlantequipmentoperationCoolingload(
+                idf,
+                **PlantequipmentoperationCoolingloadType(
+                    Name=operation_name)
+            )
+        for i, limits in enumerate(ranges):
+            operation[f"Range_{i+1}_Equipment_List_Name"] = names[i]
+            operation[f"Load_Range_{i+1}_Lower_Limit"] = limits[0]
+            operation[f"Load_Range_{i+1}_Upper_Limit"] = limits[1]
+        return operation
+    # temperature control...
+    operation = PlantequipmentoperationOutdoordrybulb(
+        idf,
+        **PlantequipmentoperationOutdoordrybulbType(
+            Name=operation_name)
+    )
+    for i, limits in enumerate(ranges):
+        operation[f"Range_{i+1}_Equipment_List_Name"] = names[i]
+        operation[f"DryBulb_Temperature_Range_{i+1}_Lower_Limit"] = limits[0]
+        operation[f"DryBulb_Temperature_Range_{i+1}_Upper_Limit"] = limits[1]
+    return operation
+
+
+def operation_list_scheme(loop_name:str):
     """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
     conf = CONF.get(loop_name, {})
-    loop_equipment_list = Plantequipmentlist(
-        idf,
-        **PlantequipmentlistType(
-            Name=f"{loop_name} Equipment List",
-        )
-    )
-    for i, obj_name in enumerate(CONF[loop_name].get("operation", [])):
-        loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
-        loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
-    loop_type = conf.get("Loop_Type", "heating")
-    operation_name = f"{loop_name} {loop_type} operation"
-    if loop_type == "cooling":
-        loop_operation = PlantequipmentoperationCoolingload(
-            idf,
-            **PlantequipmentoperationCoolingloadType(
-                Name=operation_name,
-                Load_Range_1_Lower_Limit=0,
-                Load_Range_1_Upper_Limit=1e9,
-                Range_1_Equipment_List_Name=loop_equipment_list.Name
+    loop_type = str(conf.get("Loop_Type", "heating"))
+    mix = True if "mix" in loop_type else False
+    def_range = [0, 1e9] if "load" in loop_type else [0, 20]
+    names = []
+    ranges = []
+    loop_machines = CONF[loop_name].get("operation", [])
+    if mix:
+        # a list for each machine referenced in the operation loop
+        for i, obj_name in enumerate(loop_machines):
+            list_name = f"{obj_name}_Only"
+            Plantequipmentlist(
+                idf,
+                **PlantequipmentlistType(
+                    Name=list_name,
+                    Equipment_1_Object_Type = equipments[obj_name].key,
+                    Equipment_1_Name = equipments[obj_name].Name
+                )
             )
-        )
+            names.append(list_name)
+            op_range = CONF[obj_name].get("operation_range", def_range)
+            ranges.append(op_range)
     else:
-        loop_operation = PlantequipmentoperationHeatingload(
+        # a single list with all the machines
+        list_name = f"{loop_name} Equipment List"
+        loop_equipment_list = Plantequipmentlist(
             idf,
-            **PlantequipmentoperationHeatingloadType(
-                Name=operation_name,
-                Load_Range_1_Lower_Limit=0,
-                Load_Range_1_Upper_Limit=1e9,
-                Range_1_Equipment_List_Name=loop_equipment_list.Name
+            **PlantequipmentlistType(
+                Name=list_name
             )
         )
+        for i, obj_name in enumerate(loop_machines):
+            loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
+            loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
+        names.append(list_name)
+        ranges.append(def_range)
+    # a single operation for the loop
+    operation = generate_operation(
+        operation_name = f"{loop_name} operation",
+        loop_type=loop_type,
+        names=names,
+        ranges=ranges
+    )
+    # a single scheme for the loop
     Plantequipmentoperationschemes(
         idf,
         **PlantequipmentoperationschemesType(
             Name=loop_name,
-            Control_Scheme_1_Object_Type=loop_operation.key,
-            Control_Scheme_1_Name=loop_operation.Name,
+            Control_Scheme_1_Object_Type=operation.key,
+            Control_Scheme_1_Name=operation.Name,
             Control_Scheme_1_Schedule_Name=ALWAYS_ON
         )
     )
