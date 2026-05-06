@@ -21,8 +21,6 @@ https://code.visualstudio.com/download
 
 # openstudio and energyplus
 
-install openstudio first !
-
 for openstudio 1.8.0 :
 - https://github.com/openstudiocoalition/OpenStudioApplication/releases/tag/v1.8.0
 - https://github.com/openstudiocoalition/OpenStudioApplication/releases/download/v1.8.0/OpenStudioApplication-1.8.0+2722e3e751-Windows.exe
