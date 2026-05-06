@@ -53,7 +53,7 @@ from idfhub.hvac24_1_0 import (
     pump,
     water_to_water_heatpump,
     water_law, constant_set_point,
-    adjust_nodes_branch, generate_operation_list,
+    adjust_nodes_branch, operation_list_scheme,
     constant_schedule, basic_compact_schedule,
     gas_boiler,
     air_to_water_heatpump_eir
@@ -266,7 +266,7 @@ for loop in LOOPS:
         idf,
         **SizingPlantType(
             Plant_or_Condenser_Loop_Name=loop,
-            Loop_Type=conf.get("Loop_Type", "Heating"),
+            Loop_Type=conf.get("Loop_Type", "Heating").split("_")[0],
             Design_Loop_Exit_Temperature=conf.get("Design_Loop_Exit_Temperature", 70),
             Loop_Design_Temperature_Difference=conf.get("Loop_Design_Temperature_Difference", 10),
             Sizing_Option="NonCoincident",
@@ -332,7 +332,7 @@ for loop in LOOPS:
                 loop_side=loop_side,
                 branches_descr=branches_descr
             )
-    generate_operation_list(loop)
+    operation_list_scheme(loop)
 
 
 #------------------------------------------------------------------------------
