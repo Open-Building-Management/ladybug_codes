@@ -289,7 +289,8 @@ def pump(name, pump_type="constant"):
                 Design_Maximum_Flow_Rate=EPValues.AUTOSIZE,
                 Design_Power_Consumption=EPValues.AUTOSIZE,
                 Motor_Efficiency=0.9,
-                Design_Minimum_Flow_Rate=0,
+                Design_Minimum_Flow_Rate=CONF.get(name, {}).get(
+                    "Design_Minimum_Flow_Rate", 0),
                 Fraction_of_Motor_Inefficiencies_to_Fluid_Stream=0,
                 Coefficient_1_of_the_Part_Load_Performance_Curve=0,
                 Coefficient_2_of_the_Part_Load_Performance_Curve=1,
