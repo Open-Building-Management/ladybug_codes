@@ -10,6 +10,8 @@ from idfhub.hvac import (
     LoopNodes, Branches,
     set_nodes, node_name, plantloop_split_mix,
     branchlist_update,
+    split_mix, pipe_splitter, pipe_mixer,
+    get_branch_inlet_outlet_nodes
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
@@ -661,10 +663,160 @@ def process_serie(
     return branch
 
 
+def process_series(
+    loop_name,
+    loop_side,
+    *,
+    structure,
+    inlet_node=None,
+    outlet_node=None,
+    branch_name=None,
+    from_parallel=False
+):
+    """process a complex structure"""
+    if not branch_name:
+        branch_name = f"{loop_name}_{loop_side}_branch"
+    if not inlet_node:
+        inlet_node = node_name(branch_name, INLET)
+    if not outlet_node:
+        outlet_node = node_name(branch_name, OUTLET)
+    _parallel = False
+    for elem in structure:
+        if isinstance(elem, dict) and "parallel" in elem:
+            _parallel = True
+    if not _parallel:
+        if from_parallel:
+            inlet_node = node_name(branch_name, INLET)
+            outlet_node = node_name(branch_name, OUTLET)
+        branch = process_serie(
+            branch_name,
+            loop_side,
+            structure_serie=structure,
+            inlet_node=inlet_node,
+            outlet_node=outlet_node
+        )
+        branchlist_update(
+            idf,
+            loop_name=loop_name,
+            loop_side=loop_side,
+            branches=branch
+        )
+        return branch
+    # on a des structures parallèles
+    # on traite d'abord les structures de type liste
+    split_branch = None
+    mix_branch = None
+    for i, elem in enumerate(structure):
+        if isinstance(elem, list):
+            if not split_branch:
+                split_branch = process_serie(
+                    f"{branch_name}_{i}_splitter",
+                    loop_side,
+                    structure_serie=elem,
+                    inlet_node=inlet_node
+                )
+            else:
+                mix_branch = process_serie(
+                    f"{branch_name}_{i}_mixer",
+                    loop_side,
+                    structure_serie=elem,
+                    outlet_node=outlet_node
+                )
+    if not split_branch:
+        split_branch = pipe_splitter(
+            idf,
+            inlet_node=inlet_node,
+            branch_name=f"{branch_name}_splitter"
+        )
+    if not mix_branch:
+        mix_branch = pipe_mixer(
+            idf,
+            outlet_node=outlet_node,
+            branch_name=f"{branch_name}_mixer"
+        )
+    for i, elem in enumerate(structure):
+        if isinstance(elem, dict) and "parallel" in elem:
+            process_parallel(
+                loop_name,
+                loop_side,
+                structure_parallele=elem["parallel"],
+                split_branch=split_branch,
+                mix_branch=mix_branch,
+                branch_name=f"{branch_name}_{i}",
+            )
+    return [split_branch, mix_branch]
 
+
+def process_parallel(
+    loop_name: str,
+    loop_side: str,
+    *,
+    structure_parallele: list,
+    split_branch: EpBunch,
+    mix_branch: EpBunch,
+    branch_name: str
+):
+    """organise parallel branches
+    given a structure read from the yaml"""
+    branchlist_update(
+        idf,
+        loop_name=loop_name,
+        loop_side=loop_side,
+        branches=split_branch
+    )
+    branch_list = []
+    # on récupère inlet et outlet depuis les split et mix branch
+    _, inlet_node = get_branch_inlet_outlet_nodes(split_branch)
+    outlet_node, _ = get_branch_inlet_outlet_nodes(mix_branch)
+    for i, struct in enumerate(structure_parallele):
+        branch = process_series(
+            loop_name,
+            loop_side,
+            structure=struct,
+            inlet_node=inlet_node,
+            outlet_node=outlet_node,
+            branch_name=f"{branch_name}_{i}",
+            from_parallel = True
+        )
+        if branch:
+            branch_list.append(branch)
+    side = EPApi.DEMAND_SIDE if loop_side == DEMAND else EPApi.PLANT_SIDE
+    split_mix(
+        idf=idf,
+        plantloop=loops[loop_name],
+        side=side,
+        inlet_branch=split_branch,
+        branches=branch_list,
+        outlet_branch=mix_branch
+    )
+    branchlist_update(
+        idf,
+        loop_name=loop_name,
+        loop_side=loop_side,
+        branches=mix_branch
+    )
 
 
 def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[str, list[str]]):
+    """use yaml declaration to organise a branch and relevant nodes on a side loop"""
+    object_names = branches_descr[loop_side]
+    inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
+    outlet_node = LoopNodes(loop_name).get(side=loop_side, port=OUTLET)
+    process_series(
+        loop_name,
+        loop_side,
+        structure=object_names,
+        inlet_node=inlet_node,
+        outlet_node=outlet_node
+    )
+
+
+def adjust_nodes_branch_old(
+    loop_name: str,
+    *,
+    loop_side: str,
+    branches_descr: dict[str, list[str]]
+):
     """use yaml declaration to organise a branch and relevant nodes on a side loop"""
     object_names = branches_descr[loop_side]
     bypass = False
