@@ -269,7 +269,7 @@ def _create_connector_list(idf: IDF, *, name:str, connectors: list):
     return connector_list
 
 
-def _create_pipe(
+def create_pipe(
     idf: IDF,
     *,
     name: str,
@@ -472,7 +472,7 @@ def branchlist_update(
 def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
     """create pipe and return a pipe splitter branch"""
     pipe_name = object_name(branch_name)
-    inlet_pipe = _create_pipe(
+    inlet_pipe = create_pipe(
         idf,
         name=f"{pipe_name} Pipe",
         inlet_node_name=inlet_node,
@@ -489,7 +489,7 @@ def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
 def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
     """create pipe and return a pipe mixer branch"""
     pipe_name = object_name(branch_name)
-    outlet_pipe = _create_pipe(
+    outlet_pipe = create_pipe(
         idf,
         name=f"{pipe_name} Pipe",
         inlet_node_name=f"{pipe_name} Pipe inlet",
@@ -506,7 +506,7 @@ def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
 def bypass_branch(idf: IDF, bypass_branch_name: str):
     """add a bypass branch to be used with split/mix"""
     bypass_name = f"{object_name(bypass_branch_name)}_pipe"
-    bypass_pipe = _create_pipe(
+    bypass_pipe = create_pipe(
         idf,
         name=bypass_name,
         inlet_node_name=node_name(bypass_branch_name, INLET),

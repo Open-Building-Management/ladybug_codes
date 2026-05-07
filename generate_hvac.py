@@ -10,6 +10,7 @@ from idfhub.hvac import (
     create_branch,
     Branches,
     plantloop_split_mix
+    create_pipe
 )
 # autocompletion use
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
@@ -311,6 +312,15 @@ for equipment_name in EQUIPMENTS:
     if BOILER in equipment_name:
         boiler = gas_boiler(equipment_name)
         equipments[equipment_name] = boiler
+        continue
+    if "pipe" in equipment_name:
+        pipe = create_pipe(
+            idf, 
+            name=equipment_name,
+            inlet_node_name=f"{equipment_name}_inlet_node",
+            outlet_node_name=f"{equipment_name}_outlet_node"
+        )
+        equipments[equipment_name] = pipe
 
 if SENSORS:
     for sensor, conf in SENSORS.items():
