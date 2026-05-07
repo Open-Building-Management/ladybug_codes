@@ -4,6 +4,8 @@ caution : current work in progress !
 
 > how to generate idf files for energyplus ?
 
+[more on the energyplus ecosystem](BACKGROUND.md)
+
 [honeybee](https://github.com/ladybug-tools/honeybee) is very convenient for geometry and materials.
 
 The idfhub lib provides some helpers to go even faster and to easily add custom hvac through simple yaml declaration
