@@ -267,7 +267,7 @@ for loop in LOOPS:
         idf,
         **SizingPlantType(
             Plant_or_Condenser_Loop_Name=loop,
-            Loop_Type=conf.get("Loop_Type", "Heating").split("_")[0],
+            Loop_Type=conf.get("Loop_Type", EPValues.HEATING).split("_")[0],
             Design_Loop_Exit_Temperature=conf.get("Design_Loop_Exit_Temperature", 70),
             Loop_Design_Temperature_Difference=conf.get("Loop_Design_Temperature_Difference", 10),
             Sizing_Option="NonCoincident",

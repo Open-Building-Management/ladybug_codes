@@ -127,6 +127,9 @@ class EPValues(StrEnum):
     FOR = "For"
     UNTIL = "Until"
     YES = "Yes"
+    HEATING = "Heating"
+    COOLING = "Cooling"
+    LOAD = "Load"
 
 class EPApi(StrEnum):
     "EnergyPlus consts"

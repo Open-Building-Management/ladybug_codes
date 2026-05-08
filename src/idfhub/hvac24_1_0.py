@@ -817,7 +817,7 @@ def adjust_nodes_branch_old(
     loop_side: str,
     branches_descr: dict[str, list[str]]
 ):
-    """use yaml declaration to organise a branch and relevant nodes on a side loop"""
+    """first attempt"""
     object_names = branches_descr[loop_side]
     bypass = False
     inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
@@ -859,8 +859,8 @@ def generate_operation(
     ranges: list[list[float]]
 ):
     """return operation object"""
-    if "load" in loop_type:
-        if "heating" in loop_type:
+    if EPValues.LOAD in loop_type:
+        if EPValues.HEATING in loop_type:
             operation = PlantequipmentoperationHeatingload(
                 idf,
                 **PlantequipmentoperationHeatingloadType(
@@ -893,9 +893,11 @@ def generate_operation(
 def operation_list_scheme(loop_name:str):
     """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
     conf = CONF.get(loop_name, {})
-    loop_type = str(conf.get("Loop_Type", "heating"))
+    loop_type = str(conf.get("Loop_Type", EPValues.HEATING)).capitalize()
+    if loop_type in [EPValues.HEATING, EPValues.COOLING]:
+        loop_type = f"{loop_type}_{EPValues.LOAD}"
     mix = True if "mix" in loop_type else False
-    def_range = [0, 1e9] if "load" in loop_type else [0, 20]
+    def_range = [0, 1e9] if EPValues.LOAD in loop_type else [0, 20]
     names = []
     ranges = []
     loop_machines = CONF[loop_name].get("operation", [])
