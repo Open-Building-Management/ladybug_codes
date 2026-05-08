@@ -12,6 +12,10 @@ mandatory yaml keys :
 
 sensors can be empty
 
+loops, zones and equipments are really straightforward to configure.
+
+To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heat pump, use the `hpwtw` suffix, and so on....
+
 ## sensors
 
 sensors can be used for ems control
@@ -42,7 +46,30 @@ sensors:
     min_flow: 0.1
     normal_flow: 1.0
 ```
+## loops
 
+A loop configuration requires 3 mandatory keys:
+- a setpoint name
+- the list of the equipments operating on the loop
+- the branches, structured as list of equipments
+
+The `parallel` keyword permits to manage parallel branches
+
+To add a bypass in a parallel structure, add something with a `pipe` suffix in the equipments list and drop it as the last item of the parallel structure. Even if you use in the name something that may let think it is a baseboard equipment. the `pipe` suffix will fully determine the type.
+
+```
+water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [hpatw_eir, gas_boiler]
+  Loop_Type: heating_mix_DBOAT
+  branches:
+    plant: [inside_variable_pump, hpatw_eir, gas_boiler]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+        - [baseboards_bypass_pipe]
+```
 
 ## equipments
 
