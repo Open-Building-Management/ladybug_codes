@@ -14,7 +14,9 @@ loops:
 
 equipments:
   - hpatw_eir
-  - inside_variable_pump  
+  - inside_variable_pump
+  - baseboards_RDC
+  - baseboards_RPLUS1
 
 sensors:
 
@@ -23,6 +25,10 @@ water_heating_loop:
   operation: [hpatw_eir]
   branches:
     plant: [inside_variable_pump, hpatw_eir]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
 
 water_law_set_point:
   Setpoint_at_Outdoor_Low_Temperature: 55

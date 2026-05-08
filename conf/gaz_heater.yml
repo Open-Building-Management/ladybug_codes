@@ -14,7 +14,9 @@ loops:
 
 equipments:
   - gas_boiler
-  - inside_variable_pump  
+  - inside_variable_pump
+  - baseboards_RDC
+  - baseboards_RPLUS1
 
 sensors:
 
@@ -23,6 +25,10 @@ water_heating_loop:
   operation: [gas_boiler]
   branches:
     plant: [inside_variable_pump, gas_boiler]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
   Loop_Design_Temperature_Difference: 20
 
 water_law_set_point:
