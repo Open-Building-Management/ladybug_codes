@@ -853,7 +853,7 @@ def adjust_nodes_branch_old(
 
 
 def generate_operation(
-    *, 
+    *,
     operation_name:str, loop_type: str,
     names: list[str],
     ranges: list[list[float]]
@@ -893,10 +893,17 @@ def generate_operation(
 def operation_list_scheme(loop_name:str):
     """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
     conf = CONF.get(loop_name, {})
-    loop_type = str(conf.get("Loop_Type", EPValues.HEATING)).capitalize()
-    if loop_type in [EPValues.HEATING, EPValues.COOLING]:
-        loop_type = f"{loop_type}_{EPValues.LOAD}"
-    mix = True if "mix" in loop_type else False
+    loop_type = conf.get("Loop_Type", EPValues.HEATING)
+    loop_types = [str(el).capitalize() for el in loop_type.split("_")]
+    add_load = False
+    if len(loop_types) == 1:
+        add_load = True
+    if len(loop_types) == 2 and loop_types[1] == "Mix":
+        add_load = True
+    if add_load:
+        loop_types.append(EPValues.LOAD)
+    loop_type = "_".join(loop_types)
+    mix = "Mix" in loop_type
     def_range = [0, 1e9] if EPValues.LOAD in loop_type else [0, 20]
     names = []
     ranges = []
