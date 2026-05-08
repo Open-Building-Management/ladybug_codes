@@ -38,6 +38,7 @@ py .\generate_hvac.py
 py .\generate_hvac.py --conf=conf/air2water_hp_w_gas_backup.yml
 py .\generate_hvac.py --conf=conf/borehole_500ml_tubes.yml
 ```
+[more on yml conf](conf)
 
 # DVIEW
 
