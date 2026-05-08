@@ -14,7 +14,7 @@ sensors can be empty
 
 ## sensors
 
-sensors can be used for an ems control
+sensors can be used for ems control
 
 The following yaml : 
 - activates a temperature sensor on the plant_inlet of a loop called soil_loop
