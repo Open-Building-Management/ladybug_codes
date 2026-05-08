@@ -1,0 +1,76 @@
+building_name: batiment_600m2
+
+verbose:
+
+name: air2water_hp_35KW_w_gas_backup_oat_ctrl
+suffix: single_loop
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+sensors:
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - water_heating_loop
+
+equipments:
+  - hpatw_eir
+  - inside_variable_pump
+  - gas_boiler
+  - baseboards_RDC
+  - baseboards_RPLUS1
+  - demand_bypass_pipe
+
+water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [hpatw_eir, gas_boiler]
+  Loop_Type: heating_mix_DBOAT
+  branches:
+    plant: [inside_variable_pump, hpatw_eir, gas_boiler]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+        - [demand_bypass_pipe]
+
+water_law_set_point:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+inside_variable_pump:
+  Design_Minimum_Flow_Rate: 0.00001
+
+hpatw_eir:
+  force_side: Load_Side
+  operation_range: [0, 18]
+  Control_Type: Load
+  Reference_Capacity : 35000
+  cop: 3.2
+  # x = water temp / y = air temp
+  capacity_c: 0.794900878202383
+  capacity_x: 0.00388524034840032
+  capacity_x2: -0.0000575169230965453
+  capacity_y: 0.0278109488428528
+  capacity_y2: 0.000318168
+  capacity_xy: -0.000130572089253355
+  eir_c:  0.530730392560108
+  eir_x: 0.00655164780603528
+  eir_x2: 0.000263599226028026
+  eir_y: -0.03620668194737
+  eir_y2: 0.00126617163409192
+  eir_xy: -0.000791224057761721
+
+gas_boiler:
+  force_side: Boiler_Water
+  operation_range: [-15, 0]
+  efficiency_c: 0.96
+  efficiency_x: 0.04 # x=PLR
+  efficiency_x2: -0.03
+  efficiency_y: -0.004 # y=Twater
+  efficiency_y2: -0.00004
+  efficiency_xy: 0
