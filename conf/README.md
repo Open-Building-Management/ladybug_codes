@@ -71,6 +71,23 @@ water_heating_loop:
         - [baseboards_bypass_pipe]
 ```
 
+## setpoints
+
+only 2 available right now : 
+- a outdoor air reset with a `water_law` suffix
+- a constant setpoint with a `constant` suffix
+
+```
+water_law_set_point:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+constant_set_point:
+  temp: -10
+```
+
 ## equipments
 
 In the energyplus initial API, inlet and outlet are usually fixed through `Inlet_Node_Name` and `Outlet_Node_Name`
