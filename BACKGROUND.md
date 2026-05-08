@@ -13,12 +13,6 @@ So a toolkit for autocompletion has been produced :-)
 
 ![](https://github.com/user-attachments/assets/1d899391-1820-4541-933c-3667d51e8685)
 
-# basic autocompletion in vscode
-
-https://code.visualstudio.com/download
-
-![](https://github.com/user-attachments/assets/2f84fcaf-1d63-4512-90f6-ea1fb404a3c0)
-
 # openstudio and energyplus
 
 for openstudio 1.8.0 :
