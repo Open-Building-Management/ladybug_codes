@@ -18,6 +18,8 @@ equipments:
   - soil_pump
   - hpwtw
   - inside_variable_pump    
+  - baseboards_RDC
+  - baseboards_RPLUS1
 
 sensors:
   soil_sensor:
@@ -47,6 +49,10 @@ water_heating_loop:
   operation: [hpwtw]
   branches:
     plant: [hpwtw, inside_variable_pump]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
 
 constant_set_point:
   temp: -10

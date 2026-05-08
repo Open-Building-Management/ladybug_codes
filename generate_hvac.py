@@ -2,14 +2,10 @@
 import os
 
 from idfhub.hvac import (
-    LoopNodes,
     PLANT, DEMAND,
-    EPApi, EPValues,
+    EPValues,
     add_plantloop,
     add_baseboard,
-    create_branch,
-    Branches,
-    plantloop_split_mix
     create_pipe
 )
 # autocompletion use
@@ -260,8 +256,6 @@ for loop in LOOPS:
     if WATER_HEATING in loop:
         heating_loop = add_plantloop(idf, loop, 100, 0)
         loops[loop] = heating_loop
-         # à supprimer
-        heating_loop_branches = Branches(loop)
 
     SizingPlant(
         idf,
@@ -321,6 +315,36 @@ for equipment_name in EQUIPMENTS:
             outlet_node_name=f"{equipment_name}_outlet_node"
         )
         equipments[equipment_name] = pipe
+        continue
+    if "baseboards" in equipment_name:
+        try:
+            zone = equipment_name.split("_")[1]
+        except IndexError:
+            zone = None
+        if zone in ZONES:
+            baseboards = add_baseboard(idf, zone)
+            equipments[equipment_name] = baseboards
+            #----------------------------------------------------------------
+            # ZONE EQUIPMENTS DECLARATION
+            #----------------------------------------------------------------
+            zone_equipment_list = ZonehvacEquipmentlist(
+                idf,
+                **ZonehvacEquipmentlistType(
+                    Name=f"{zone} equipment list",
+                    Zone_Equipment_1_Name=baseboards.Name,
+                    Zone_Equipment_1_Object_Type=baseboards.key,
+                    Zone_Equipment_1_Cooling_Sequence=1,
+                    Zone_Equipment_1_Heating_or_NoLoad_Sequence=1
+                )
+            )
+            ZonehvacEquipmentconnections(
+                idf,
+                **ZonehvacEquipmentconnectionsType(
+                    Zone_Name=zone,
+                    Zone_Conditioning_Equipment_List_Name=zone_equipment_list.Name,
+                    Zone_Air_Node_Name=f"{zone} air node"
+                )
+            )
 
 if SENSORS:
     for sensor, conf in SENSORS.items():
@@ -343,54 +367,6 @@ for loop in LOOPS:
                 branches_descr=branches_descr
             )
     operation_list_scheme(loop)
-
-
-#------------------------------------------------------------------------------
-# EMISSION SYSTEMS
-#------------------------------------------------------------------------------
-baseboards = {}
-baseboard_branches = {}
-for zone in ZONES:
-    baseboards[zone] =  add_baseboard(idf, zone)
-    baseboard_branches[zone] = create_branch(
-        idf,
-        name = f"{heating_loop_branches.demand_branch} {zone}",
-        objects = [baseboards[zone]],
-        sides = [None]
-    )
-
-plantloop_split_mix(
-    idf=idf,
-    plantloop=heating_loop,
-    side=EPApi.DEMAND_SIDE,
-    branches=list(baseboard_branches.values()),
-    inlet=LoopNodes(heating_loop.Name).demand_inlet,
-    outlet=LoopNodes(heating_loop.Name).demand_outlet
-)
-
-#------------------------------------------------------------------------------
-# ZONE EQUIPMENTS DECLARATION
-#------------------------------------------------------------------------------
-equipment_list = {}
-for zone in ZONES:
-    equipment_list[zone] = ZonehvacEquipmentlist(
-        idf,
-        **ZonehvacEquipmentlistType(
-            Name=f"{zone} equipment list",
-            Zone_Equipment_1_Name=baseboards[zone].Name,
-            Zone_Equipment_1_Object_Type=baseboards[zone].key,
-            Zone_Equipment_1_Cooling_Sequence=1,
-            Zone_Equipment_1_Heating_or_NoLoad_Sequence=1
-        )
-    )
-    ZonehvacEquipmentconnections(
-        idf,
-        **ZonehvacEquipmentconnectionsType(
-            Zone_Name=zone,
-            Zone_Conditioning_Equipment_List_Name=equipment_list[zone].Name,
-            Zone_Air_Node_Name=f"{zone} air node"
-        )
-    )
 
 
 #------------------------------------------------------------------------------

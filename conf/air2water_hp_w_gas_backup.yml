@@ -20,6 +20,8 @@ equipments:
   - hpatw_eir
   - inside_variable_pump
   - gas_boiler
+  - baseboards_RDC
+  - baseboards_RPLUS1
 
 water_heating_loop:
   setpoint: water_law_set_point
@@ -27,6 +29,10 @@ water_heating_loop:
   Loop_Type: heating_mix_load
   branches:
     plant: [inside_variable_pump, hpatw_eir, gas_boiler]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
 
 water_law_set_point:
   Setpoint_at_Outdoor_Low_Temperature: 70
