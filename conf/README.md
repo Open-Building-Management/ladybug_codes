@@ -77,7 +77,7 @@ If mentionned, `Loop_Type` must begin with the loop type as required by the `Pla
 
 It can also include the operation method : `Load` is the default, anything else will lead for now to `OutdoorDryBulb` temperature control.
 
-If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list.
+If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list. This is the way to go to manage energy mix.
 
 ## setpoints
 
