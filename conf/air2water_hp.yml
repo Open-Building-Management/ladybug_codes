@@ -39,7 +39,7 @@ water_law_set_point:
 hpatw_eir:
   force_side: Load_Side
   Reference_Capacity : 35000
-  cop: 3.2
+  Reference_Coefficient_Of_Performance: 3.2
   # x = water temp / y = air temp
   capacity_c: 0.794900878202383
   capacity_x: 0.00388524034840032
