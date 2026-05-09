@@ -566,7 +566,8 @@ def air_to_water_heatpump_eir(name):
             Condenser_Type="AirSource",
             Source_Side_Inlet_Node_Name=input_air_node.Name,
             Source_Side_Outlet_Node_Name=f"{name}_source_outlet_air_node",
-            Reference_Coefficient_of_Performance=conf.get("cop", 3.2),
+            Reference_Coefficient_of_Performance=conf.get(
+                "Reference_Coefficient_Of_Performance", 3.2),
             Reference_Capacity=conf.get("Reference_Capacity", EPValues.AUTOSIZE),
             Sizing_Factor=1,
             Capacity_Modifier_Function_of_Temperature_Curve_Name=
