@@ -79,8 +79,6 @@ It can also include the operation method : `Load` is the default, anything else 
 
 If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list.
 
-
-
 ## setpoints
 
 only 2 available right now : 
@@ -100,6 +98,8 @@ constant_set_point:
 
 ## equipments
 
+### type and force_side
+
 In the energyplus initial API, inlet and outlet are usually fixed through `Inlet_Node_Name` and `Outlet_Node_Name`
 
 But some equipments may have two sides : Source and Load, such as heatpumps.
@@ -117,3 +117,10 @@ For heatpumps, `type: heatpump` will lead to :
 - `Load_Side_Outlet_Node_Name` if side is `Plant` or `Supply`
 
 `force_side: Boiler_Water` will override things and lead to `Boiler_Water_Outlet_Node_Name` which is the field to use for a `BoilerHotWater`
+
+### operation_range
+
+To define the operating range of the equipment, as required for energy mix
+
+If you use an `HeatpumpPlantloopEirHeating` (through the `hpatw` suffix) , you need `Control_Type: Load`in the equipment conf, otherwise the mix will not be successfull and energymix will only use the most efficient equipment
+
