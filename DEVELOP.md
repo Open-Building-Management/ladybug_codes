@@ -1,4 +1,4 @@
-It is quite a lot of job to find how to configure an idf object
+It is quite a lot of job to find how to configure an idf object. Of course, you can use the IDFEditor and reproduce all the fields one by one, but it is fastidious...
 
 [feed_idf_autocomplete.py](src/idfhub/feed_idf_autocomplete.py) permits to generate helpers for any version of energyplus
 
