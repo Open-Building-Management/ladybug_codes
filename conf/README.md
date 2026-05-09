@@ -55,7 +55,9 @@ A loop configuration requires 3 mandatory keys:
 
 The `parallel` keyword permits to manage parallel branches
 
-To add a bypass in a parallel structure, add something with a `pipe` suffix in the equipments list and drop it as the last item of the parallel structure. Even if you use in the name something that may let think it is a baseboard equipment. the `pipe` suffix will fully determine the type.
+To add a bypass in a parallel structure, add something with a `pipe` suffix in the equipments list and drop it as the last item of the parallel structure. 
+
+Even if you use in the name something that may let think it is a baseboard equipment. the `pipe` suffix will fully determine the type.
 
 ```
 water_heating_loop:
@@ -70,6 +72,14 @@ water_heating_loop:
         - [baseboards_RPLUS1]
         - [baseboards_bypass_pipe]
 ```
+
+If mentionned, `Loop_Type` must begin with the loop type as required by the `PlantSizing` method, so `heating` or `cooling`.
+
+It can also include the operation method : `Load` is the default, anything else will lead for now to `OutdoorDryBulb` temperature control.
+
+If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list.
+
+
 
 ## setpoints
 
