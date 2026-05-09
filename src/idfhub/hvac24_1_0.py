@@ -331,7 +331,7 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
         Maximum_Value_of_y=20.0,
         Minimum_Value_of_z=0.0,
         Maximum_Value_of_z=1.0,
-        Minimum_Curve_Output=0.5,
+        Minimum_Curve_Output=0.1,
         Maximum_Curve_Output=1,
         Input_Unit_Type_for_w=EPValues.TEMPERATURE,
         Input_Unit_Type_for_x=EPValues.TEMPERATURE,
