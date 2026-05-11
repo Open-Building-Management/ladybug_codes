@@ -1,0 +1,93 @@
+building_name: batiment_600m2
+
+verbose:
+
+name: air2water_hp_gas_backup_oat_EMS_ctrl
+suffix: single_loop
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+sensors:
+  outdoor_air:
+    type: "Site Outdoor Air Drybulb Temperature"
+    controls: [hpatw_eir]
+    stop_below: 0
+    start_above: 0
+  outdoor_air_pac:
+    type: "Site Outdoor Air Drybulb Temperature"
+    controls: [inside_variable_pump_pac]
+    stop_below: 0
+    start_above: 0
+    min_flow: 0
+    normal_flow: 1.0
+  outdoor_air_gas:
+    type: "Site Outdoor Air Drybulb Temperature"
+    controls: [inside_variable_pump_gas]
+    stop_above: 0
+    start_below: 0
+    min_flow: 0
+    normal_flow: 1.0
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - water_heating_loop
+
+equipments:
+  - hpatw_eir
+  - inside_variable_pump_pac
+  - inside_variable_pump_gas
+  - gas_boiler
+  - baseboards_RDC
+  - baseboards_RPLUS1
+  - demand_bypass_pipe
+
+water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [hpatw_eir, gas_boiler]
+  branches:
+    plant:
+      - parallel:
+        - [inside_variable_pump_gas, gas_boiler]
+        - [inside_variable_pump_pac, hpatw_eir]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+        - [demand_bypass_pipe]
+
+water_law_set_point:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+hpatw_eir:
+  force_side: Load_Side
+  Control_Type: Load
+  Reference_Capacity : 35000
+  Reference_Coefficient_Of_Performance: 3.2
+  # x = water temp / y = air temp
+  capacity_c: 0.794900878202383
+  capacity_x: 0.00388524034840032
+  capacity_x2: -0.0000575169230965453
+  capacity_y: 0.0278109488428528
+  capacity_y2: 0.000318168
+  capacity_xy: -0.000130572089253355
+  eir_c:  0.530730392560108
+  eir_x: 0.00655164780603528
+  eir_x2: 0.000263599226028026
+  eir_y: -0.03620668194737
+  eir_y2: 0.00126617163409192
+  eir_xy: -0.000791224057761721
+
+gas_boiler:
+  force_side: Boiler_Water
+  efficiency_c: 0.96
+  efficiency_x: 0.04 # x=PLR
+  efficiency_x2: -0.03
+  efficiency_y: -0.004 # y=Twater
+  efficiency_y2: -0.00004
+  efficiency_xy: 0
