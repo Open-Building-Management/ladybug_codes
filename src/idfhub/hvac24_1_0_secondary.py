@@ -190,16 +190,21 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
         )
     )
     ems_program = EmsProgram(pump_name)
-    value = conf.get("stop_below", -5)
-    ems_program.append(f"IF {sensor_name} < {value}")
-    value = conf.get("min_flow", 0.1)
-    ems_program.append(f"SET {actuator_name} = {value}")
-    ems_program.append("ENDIF")
-    value = conf.get("start_above", -5)
-    ems_program.append(f"IF {sensor_name} >= {value}")
-    value = conf.get("normal_flow")
-    ems_program.append(f"SET {actuator_name} = {value}")
-    ems_program.append("ENDIF")
+    min_flow = conf.get("min_flow", 0.1)
+    normal_flow = conf.get("normal_flow", 1)
+    for key in conf:
+        if "start" not in key and "stop" not in key:
+            continue
+        value = conf[key]
+        if "below" in key:
+            ems_program.append(f"IF {sensor_name} < {value}")
+        if "above" in key:
+            ems_program.append(f"IF {sensor_name} >= {value}")
+        if "stop" in key:
+            ems_program.append(f"SET {actuator_name} = {min_flow}")
+        if "start" in key:
+            ems_program.append(f"SET {actuator_name} = {normal_flow}")    
+        ems_program.append("ENDIF")
     ems_program.generate()
 
     equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
