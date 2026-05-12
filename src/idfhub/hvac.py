@@ -130,6 +130,9 @@ class EPValues(StrEnum):
     HEATING = "Heating"
     COOLING = "Cooling"
     LOAD = "Load"
+    IDEAL = "Ideal"
+    UNCONTROLLED_ON = "UncontrolledOn"
+    LOOPTOLOOP ="LoopToLoop"
 
 class EPApi(StrEnum):
     "EnergyPlus consts"
@@ -143,6 +146,8 @@ class EPApi(StrEnum):
     LOAD_SIDE = "Load_Side"
     INLET_BRANCH_NAME = "Inlet_Branch_Name"
     OUTLET_BRANCH_NAME = "Outlet_Branch_Name"
+    LOOP_DEMAND_SIDE = "Loop_Demand_Side"
+    LOOP_SUPPLY_SIDE = "Loop_Supply_Side"
 
 
 def set_nodes(obj, *, inlet: str|None, outlet: str|None, side: str|None = None):
