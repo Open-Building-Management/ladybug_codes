@@ -44,18 +44,18 @@ class ColorFormatter(logging.Formatter):
         return f"{color}{msg}{self.RESET}"
 
 def get_logger(
-    name: str|None = None,
-    format: str = FORMAT,
-    level: int = logging.DEBUG,
+    log_name: str|None = None,
+    log_format: str = FORMAT,
+    log_level: int = logging.DEBUG,
 ) -> logging.Logger:
     """get a logger"""
     handler = logging.StreamHandler()
-    handler.setFormatter(ColorFormatter(format))
-    handler.setLevel(level)
-    logger = logging.getLogger(name)
+    handler.setFormatter(ColorFormatter(log_format))
+    handler.setLevel(log_level)
+    logger = logging.getLogger(log_name)
     logger.handlers.clear()
     logger.addHandler(handler)
-    logger.setLevel(level)
+    logger.setLevel(log_level)
     logger.propagate = False
     return logger
 
