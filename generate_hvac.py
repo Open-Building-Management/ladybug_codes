@@ -57,6 +57,7 @@ from idfhub.hvac24_1_0 import (
 )
 
 from idfhub.hvac24_1_0_secondary import control_manager
+from idfhub.hvac24_1_0_exchanger import heat_exchanger
 
 
 FORMAT = (
@@ -82,6 +83,7 @@ HP = "hp"
 HPWTW = "hpwtw"
 HPATW = "hpatw"
 BOILER = "boiler"
+EXCHANGER = "exchanger"
 
 
 Timestep(
@@ -307,6 +309,10 @@ for equipment_name in EQUIPMENTS:
         boiler = gas_boiler(equipment_name)
         equipments[equipment_name] = boiler
         continue
+    if EXCHANGER in equipment_name:
+        exchanger = heat_exchanger(equipment_name)
+        equipments[equipment_name] = exchanger
+        continue
     if "pipe" in equipment_name:
         pipe = create_pipe(
             idf, 
@@ -422,6 +428,14 @@ for equipment_name in EQUIPMENTS:
         add_variable(f"{suffix} Source Side Heat Transfer Rate")
     if BOILER in equipment_name:
         add_variable("Boiler Heating Rate")
+    if EXCHANGER in equipment_name:
+        add_variable("Fluid Heat Exchanger Heat Transfer Rate")
+        add_variable("Fluid Heat Exchanger Loop Supply Side Mass Flow Rate")
+        add_variable("Fluid Heat Exchanger Loop Supply Side Inlet Temperature")
+        add_variable("Fluid Heat Exchanger Loop Supply Side Outlet Temperature")
+        add_variable("Fluid Heat Exchanger Loop Demand Side Mass Flow Rate")
+        add_variable("Fluid Heat Exchanger Loop Demand Side Inlet Temperature")
+        add_variable("Fluid Heat Exchanger Loop Demand Side Outlet Temperature")
 
 add_variable("Plant Supply Side heating Demand Rate")
 add_variable("Baseboard Total Heating Rate")
