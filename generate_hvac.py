@@ -79,6 +79,7 @@ WATER_LAW = "water_law"
 CONSTANT = "constant"
 BOREHOLE = "borehole"
 PUMP = "pump"
+PIPE = "pipe"
 HP = "hp"
 HPWTW = "hpwtw"
 HPATW = "hpatw"
@@ -292,6 +293,15 @@ for equipment_name in EQUIPMENTS:
             pump_type = "variable"
         equipments[equipment_name] = pump(equipment_name, pump_type=pump_type)
         continue
+    if PIPE in equipment_name:
+        pipe = create_pipe(
+            idf, 
+            name=equipment_name,
+            inlet_node_name=f"{equipment_name}_inlet_node",
+            outlet_node_name=f"{equipment_name}_outlet_node"
+        )
+        equipments[equipment_name] = pipe
+        continue
     if BOREHOLE in equipment_name:
         ground_temperature()
         borehole = vertical_geoexchanger(equipment_name)
@@ -312,15 +322,6 @@ for equipment_name in EQUIPMENTS:
     if EXCHANGER in equipment_name:
         exchanger = heat_exchanger(equipment_name)
         equipments[equipment_name] = exchanger
-        continue
-    if "pipe" in equipment_name:
-        pipe = create_pipe(
-            idf, 
-            name=equipment_name,
-            inlet_node_name=f"{equipment_name}_inlet_node",
-            outlet_node_name=f"{equipment_name}_outlet_node"
-        )
-        equipments[equipment_name] = pipe
         continue
     if "baseboards" in equipment_name:
         try:
