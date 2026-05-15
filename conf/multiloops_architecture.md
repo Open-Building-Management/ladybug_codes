@@ -24,6 +24,8 @@
 
 ## building loop
 
+not sure a bypass has to be inserted on the exchanger....
+
 ```
  --gaz_pump-->exchgr-->boiler->
 |           |        |         |
