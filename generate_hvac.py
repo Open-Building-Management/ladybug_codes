@@ -66,7 +66,7 @@ FORMAT = (
     '%(message)s'
 )
 
-LOGGER = get_logger(format=FORMAT)
+LOGGER = get_logger(log_format=FORMAT)
 
 
 MESSAGE = f"idf hvac injection for energyplus {idf.idd_version}"
