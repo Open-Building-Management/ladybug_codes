@@ -99,6 +99,28 @@ class EmsProgram():
             )
         )
 
+    def discrete(
+        self,
+        *,
+        command,
+        sensor_name, value,
+        actuator_name, low_value, high_value
+    ):
+        """discrete control
+        command is a string like :
+        start_above, stop_above, start_below, stop_below"""
+        if "start" not in command and "stop" not in command:
+            return
+        if "below" in command:
+            self.append(f"IF {sensor_name} < {value}")
+        if "above" in command:
+            self.append(f"IF {sensor_name} >= {value}")
+        if "stop" in command:
+            self.append(f"SET {actuator_name} = {low_value}")
+        if "start" in command:
+            self.append(f"SET {actuator_name} = {high_value}")
+        self.append("ENDIF")
+
     def upper_limit(self, var_name, upper_limit):
         """upper limit a var"""
         self.ems_instructions.append(f"IF {var_name} > {upper_limit}")
@@ -193,18 +215,15 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
     min_flow = conf.get("min_flow", 0.1)
     normal_flow = conf.get("normal_flow", 1)
     for key in conf:
-        if "start" not in key and "stop" not in key:
-            continue
-        value = conf[key]
-        if "below" in key:
-            ems_program.append(f"IF {sensor_name} < {value}")
-        if "above" in key:
-            ems_program.append(f"IF {sensor_name} >= {value}")
-        if "stop" in key:
-            ems_program.append(f"SET {actuator_name} = {min_flow}")
-        if "start" in key:
-            ems_program.append(f"SET {actuator_name} = {normal_flow}")    
-        ems_program.append("ENDIF")
+        # some keys may not be a program_code
+        ems_program.discrete(
+            command=key,
+            sensor_name=sensor_name,
+            value=conf[key],
+            actuator_name=actuator_name,
+            low_value=min_flow,
+            high_value=normal_flow
+        )
     ems_program.generate()
 
     equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
@@ -214,8 +233,6 @@ def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, An
     """control a heat machine through On/Off supervisory
     a sensor called sensor_name must prexist"""
     actuator_name = f"{machine_name}_actuator"
-    stop = conf.get("stop_below", 0)
-    start = conf.get("start_above", 2)
 
     EnergymanagementsystemActuator(
         idf,
@@ -226,25 +243,16 @@ def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, An
             Actuated_Component_Control_Type="On/Off Supervisory"
         )
     )
-    hp_off = conf.get('hp_off', 0)
-    hp_on = conf.get('hp_on', 1)
-    boiler_on = conf.get('boiler_on', 1)
-    boiler_off = conf.get('boiler_off', 0)
     ems_program = EmsProgram(machine_name)
-    if "hp" in machine_name:
-        ems_program.append(f"IF {sensor_name} < {stop}")
-        ems_program.append(f"SET {actuator_name} = {hp_off}")
-        ems_program.append("ENDIF")
-        ems_program.append(f"IF {sensor_name} >= {start}")
-        ems_program.append(f"SET {actuator_name} = {hp_on}")
-        ems_program.append("ENDIF")
-    if "boiler" in machine_name:
-        ems_program.append(f"IF {sensor_name} < {stop}")
-        ems_program.append(f"SET {actuator_name} = {boiler_on}")
-        ems_program.append("ENDIF")
-        ems_program.append(f"IF {sensor_name} >= {start}")
-        ems_program.append(f"SET {actuator_name} = {boiler_off}")
-        ems_program.append("ENDIF")
+    for key in conf:
+        ems_program.discrete(
+            command=key,
+            sensor_name=sensor_name,
+            value=conf[key],
+            actuator_name=actuator_name,
+            low_value=conf.get('off', 0),
+            high_value=conf.get('hp_on', 1)
+        )
     ems_program.generate()
 
 
