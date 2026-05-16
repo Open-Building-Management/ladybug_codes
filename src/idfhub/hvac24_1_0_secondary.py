@@ -3,6 +3,8 @@ around EMS
 """
 from typing import Any
 
+from eppy.bunch_subclass import EpBunch
+
 from idfhub.hvac import (
     PLANT, INLET, OUTLET,
     EPValues,
@@ -229,8 +231,8 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
     equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
 
 
-def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
-    """control a heat machine through On/Off supervisory
+def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
+    """control a machine through On/Off supervisory
     a sensor called sensor_name must prexist"""
     actuator_name = f"{machine_name}_actuator"
 
@@ -256,25 +258,39 @@ def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, An
     ems_program.generate()
 
 
-def control_manager(sensor_name, conf: dict[str, Any]):
-    """manage equipment availability using a sensor"""
-    if conf["type"] == "Site Outdoor Air Drybulb Temperature":
-        location_name = "Environment"
-    else:
-        location_name = LoopNodes(conf["loop"]).get(
-            side=conf.get("side", "plant"),
-            port=conf.get("port", "inlet")
+def initialise_sensors(
+    conf: dict[str, dict[str, str]]
+) -> dict[str, EpBunch]:
+    """initialise all sensors"""
+    sensor_dict: dict[str, EpBunch] = {}
+    for sensor_name, sensor_conf in conf.items():
+        sensor_type = sensor_conf.get(
+            "type",
+            "System Node Temperature"
         )
-    create_sensor(
-        sensor_name = sensor_name,
-        sensor_type = conf["type"],
-        location_name = location_name
-    )
-    for equipment_name in conf.get("controls", []):
-        if "pump" in equipment_name:
-            pump_control(equipment_name, sensor_name, conf)
-        if "hp" in equipment_name or "boiler" in equipment_name:
-            heat_machine_control(equipment_name, sensor_name, conf)
+        location_name = None
+        if sensor_type == "Site Outdoor Air Drybulb Temperature":
+            location_name = "Environment"
+        if not location_name:
+            location_name = LoopNodes(sensor_conf["loop"]).get(
+                side=sensor_conf.get("side", "plant"),
+                port=sensor_conf.get("port", "inlet")
+            )
+        sensor_object = create_sensor(
+            sensor_name = sensor_name,
+            sensor_type = sensor_type,
+            location_name = location_name
+        )
+        sensor_dict[sensor_name] = sensor_object
+    return sensor_dict
+
+
+def control(machine_name, sensor_name, conf: dict[str, Any]):
+    """equipment control through sensor"""
+    if "pump" in machine_name:
+        pump_control(machine_name, sensor_name, conf)
+    if "hp" in machine_name or "boiler" in machine_name:
+        on_off_control(machine_name, sensor_name, conf)
 
 
 def air_to_water_heatpump_ems(name):

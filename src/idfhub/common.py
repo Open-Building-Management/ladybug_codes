@@ -88,7 +88,6 @@ REQUIRED = [
     "zones",
     "loops",
     "equipments",
-    "sensors"
 ]
 for key in REQUIRED:
     if key not in CONF:
@@ -99,7 +98,6 @@ BUILDING_NAME: str = CONF["building_name"]
 ZONES = CONF["zones"]
 LOOPS: list[str] = CONF["loops"]
 EQUIPMENTS: list[str] = CONF["equipments"]
-SENSORS: dict[str, dict[str, Any]] = CONF["sensors"]
 
 PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
 OS_EP_PATH = CONF["os_ep_path"]
@@ -108,13 +106,3 @@ try:
     idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
 except FileNotFoundError:
     idf = None
-
-if SENSORS:
-    for conf in SENSORS.values():
-        if "type" not in conf:
-            print("exiting - specify sensor type")
-            sys.exit()
-        if conf["type"] != "Site Outdoor Air Drybulb Temperature":
-            if "loop" not in conf:
-                print("exiting - specify loop")
-                sys.exit()

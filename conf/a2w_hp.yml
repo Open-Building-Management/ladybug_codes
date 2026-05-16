@@ -18,8 +18,6 @@ equipments:
   - baseboards_RDC
   - baseboards_RPLUS1
 
-sensors:
-
 water_heating_loop:
   setpoint: water_law_set_point
   operation: [hpatw_eir]
