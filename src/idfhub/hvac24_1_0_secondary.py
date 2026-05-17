@@ -188,11 +188,12 @@ def add_ems_vars_to_output(ems_var_names: list[str], name_suffix: str):
         )
 
 
-def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
-    """control a pump through availability schedule
-    a sensor called sensor_name must prexist"""
-    actuator_name = f"{pump_name}_availability"
-    schedule_name = f"{pump_name}_availability_schedule"
+def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
+    """control through availability schedule
+    a sensor called sensor_name must prexist
+    """
+    actuator_name = f"{name}_availability"
+    schedule_name = f"{name}_availability_schedule"
     schedule = ScheduleCompact(
         idf,
         **ScheduleCompactType(
@@ -213,9 +214,14 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
             Actuated_Component_Control_Type="Schedule Value"
         )
     )
-    ems_program = EmsProgram(pump_name)
-    min_flow = conf.get("min_flow", 0.1)
-    normal_flow = conf.get("normal_flow", 1)
+    ems_program = EmsProgram(name)
+    lower_limit = None
+    upper_limit = None
+    if "pump" in name:
+        lower_limit = conf.get("min_flow", 0.1)
+        upper_limit = conf.get("normal_flow", 1)
+    if not lower_limit or not upper_limit:
+        return
     for key in conf:
         # some keys may not be a program_code
         ems_program.discrete(
@@ -223,12 +229,12 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
             sensor_name=sensor_name,
             value=conf[key],
             actuator_name=actuator_name,
-            low_value=min_flow,
-            high_value=normal_flow
+            low_value=lower_limit,
+            high_value=upper_limit
         )
     ems_program.generate()
-
-    equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
+    if "pump" in name:
+        equipments[name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
 
 
 def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
@@ -253,7 +259,7 @@ def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
             value=conf[key],
             actuator_name=actuator_name,
             low_value=conf.get('off', 0),
-            high_value=conf.get('hp_on', 1)
+            high_value=conf.get('on', 1)
         )
     ems_program.generate()
 
@@ -287,10 +293,10 @@ def initialise_sensors(
 
 def control(machine_name, sensor_name, conf: dict[str, Any]):
     """equipment control through sensor"""
-    if "pump" in machine_name:
-        pump_control(machine_name, sensor_name, conf)
     if "hp" in machine_name or "boiler" in machine_name:
         on_off_control(machine_name, sensor_name, conf)
+        return
+    schedule_control(machine_name, sensor_name, conf)
 
 
 def air_to_water_heatpump_ems(name):
