@@ -349,7 +349,7 @@ for equipment_name in EQUIPMENTS:
                 **ZonehvacEquipmentconnectionsType(
                     Zone_Name=zone,
                     Zone_Conditioning_Equipment_List_Name=zone_equipment_list.Name,
-                    Zone_Air_Node_Name=f"{zone} air node"
+                    Zone_Air_Node_Name=f"{zone}_air_node"
                 )
             )
 
