@@ -3,6 +3,8 @@ around EMS
 """
 from typing import Any
 
+from eppy.bunch_subclass import EpBunch
+
 from idfhub.hvac import (
     PLANT, INLET, OUTLET,
     EPValues,
@@ -186,11 +188,12 @@ def add_ems_vars_to_output(ems_var_names: list[str], name_suffix: str):
         )
 
 
-def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
-    """control a pump through availability schedule
-    a sensor called sensor_name must prexist"""
-    actuator_name = f"{pump_name}_availability"
-    schedule_name = f"{pump_name}_availability_schedule"
+def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
+    """control through availability schedule
+    a sensor called sensor_name must prexist
+    """
+    actuator_name = f"{name}_availability"
+    schedule_name = f"{name}_availability_schedule"
     schedule = ScheduleCompact(
         idf,
         **ScheduleCompactType(
@@ -211,9 +214,14 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
             Actuated_Component_Control_Type="Schedule Value"
         )
     )
-    ems_program = EmsProgram(pump_name)
-    min_flow = conf.get("min_flow", 0.1)
-    normal_flow = conf.get("normal_flow", 1)
+    ems_program = EmsProgram(name)
+    lower_limit = None
+    upper_limit = None
+    if "pump" in name:
+        lower_limit = conf.get("min_flow", 0.1)
+        upper_limit = conf.get("normal_flow", 1)
+    if not lower_limit or not upper_limit:
+        return
     for key in conf:
         # some keys may not be a program_code
         ems_program.discrete(
@@ -221,16 +229,16 @@ def pump_control(pump_name: str, sensor_name: str, conf: dict[str, Any]):
             sensor_name=sensor_name,
             value=conf[key],
             actuator_name=actuator_name,
-            low_value=min_flow,
-            high_value=normal_flow
+            low_value=lower_limit,
+            high_value=upper_limit
         )
     ems_program.generate()
+    if "pump" in name:
+        equipments[name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
 
-    equipments[pump_name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
 
-
-def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
-    """control a heat machine through On/Off supervisory
+def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
+    """control a machine through On/Off supervisory
     a sensor called sensor_name must prexist"""
     actuator_name = f"{machine_name}_actuator"
 
@@ -251,30 +259,44 @@ def heat_machine_control(machine_name: str, sensor_name: str, conf: dict[str, An
             value=conf[key],
             actuator_name=actuator_name,
             low_value=conf.get('off', 0),
-            high_value=conf.get('hp_on', 1)
+            high_value=conf.get('on', 1)
         )
     ems_program.generate()
 
 
-def control_manager(sensor_name, conf: dict[str, Any]):
-    """manage equipment availability using a sensor"""
-    if conf["type"] == "Site Outdoor Air Drybulb Temperature":
-        location_name = "Environment"
-    else:
-        location_name = LoopNodes(conf["loop"]).get(
-            side=conf.get("side", "plant"),
-            port=conf.get("port", "inlet")
+def initialise_sensors(
+    conf: dict[str, dict[str, str]]
+) -> dict[str, EpBunch]:
+    """initialise all sensors"""
+    sensor_dict: dict[str, EpBunch] = {}
+    for sensor_name, sensor_conf in conf.items():
+        sensor_type = sensor_conf.get(
+            "type",
+            "System Node Temperature"
         )
-    create_sensor(
-        sensor_name = sensor_name,
-        sensor_type = conf["type"],
-        location_name = location_name
-    )
-    for equipment_name in conf.get("controls", []):
-        if "pump" in equipment_name:
-            pump_control(equipment_name, sensor_name, conf)
-        if "hp" in equipment_name or "boiler" in equipment_name:
-            heat_machine_control(equipment_name, sensor_name, conf)
+        location_name = None
+        if sensor_type == "Site Outdoor Air Drybulb Temperature":
+            location_name = "Environment"
+        if not location_name:
+            location_name = LoopNodes(sensor_conf["loop"]).get(
+                side=sensor_conf.get("side", "plant"),
+                port=sensor_conf.get("port", "inlet")
+            )
+        sensor_object = create_sensor(
+            sensor_name = sensor_name,
+            sensor_type = sensor_type,
+            location_name = location_name
+        )
+        sensor_dict[sensor_name] = sensor_object
+    return sensor_dict
+
+
+def control(machine_name, sensor_name, conf: dict[str, Any]):
+    """equipment control through sensor"""
+    if "hp" in machine_name or "boiler" in machine_name:
+        on_off_control(machine_name, sensor_name, conf)
+        return
+    schedule_control(machine_name, sensor_name, conf)
 
 
 def air_to_water_heatpump_ems(name):

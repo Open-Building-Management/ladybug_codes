@@ -7,8 +7,6 @@ suffix: single_loop
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
-sensors:
-
 zones:
   - "RDC"
   - "RPLUS1"

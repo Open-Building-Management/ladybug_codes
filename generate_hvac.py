@@ -40,7 +40,7 @@ from idfhub.common import (
     idf, get_logger,
     BUILDING_NAME, PROJECT_NAME,
     CONF, ZONES, LOOPS,
-    EQUIPMENTS, SENSORS
+    EQUIPMENTS,
 )
 
 from idfhub.hvac24_1_0 import (
@@ -56,7 +56,7 @@ from idfhub.hvac24_1_0 import (
     air_to_water_heatpump_eir
 )
 
-from idfhub.hvac24_1_0_secondary import control_manager
+from idfhub.hvac24_1_0_secondary import initialise_sensors, control
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 
 
@@ -295,7 +295,7 @@ for equipment_name in EQUIPMENTS:
         continue
     if PIPE in equipment_name:
         pipe = create_pipe(
-            idf, 
+            idf,
             name=equipment_name,
             inlet_node_name=f"{equipment_name}_inlet_node",
             outlet_node_name=f"{equipment_name}_outlet_node"
@@ -353,10 +353,26 @@ for equipment_name in EQUIPMENTS:
                 )
             )
 
-if SENSORS:
-    for sensor, conf in SENSORS.items():
-        if conf.get("active", 1):
-            control_manager(sensor, conf)
+sensors = initialise_sensors(CONF.get("sensors", {}))
+controls = CONF.get("controls", {})
+for control_conf in controls.values():
+    sensor_name = control_conf.get("sensor")
+    if not sensor_name:
+        LOGGER.error("mention a sensor !")
+        continue
+    if sensor_name not in sensors:
+        LOGGER.error("unknown sensor")
+        continue
+    machines = control_conf.get("pilot", [])
+    if isinstance(machines, str):
+        machines = [machines]
+    for machine in machines:
+        if machine in equipments:
+            LOGGER.debug(
+                "Adding control on %s through sensor %s",
+                machine, sensor_name
+            )
+            control(machine, sensor_name, control_conf)
 
 for loop in LOOPS:
     setpoint = CONF[loop].get("setpoint")
