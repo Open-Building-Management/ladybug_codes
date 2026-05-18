@@ -268,8 +268,8 @@ def vertical_geoexchanger(name: str):
         idf,
         **GroundheatexchangerSystemType(
             Name=f"{name} vertical geoexchanger",
-            Inlet_Node_Name=f"{name} vertical geoexchanger inlet",
-            Outlet_Node_Name=f"{name} vertical geoexchanger outlet",
+            Inlet_Node_Name=f"{name}_vertical_geoexchanger_inlet_node",
+            Outlet_Node_Name=f"{name}_vertical_geoexchanger_outlet_node",
             Design_Flow_Rate=0.006, # m3/s before 0.0033
             Undisturbed_Ground_Temperature_Model_Name=soil.Name,
             Undisturbed_Ground_Temperature_Model_Type=soil.key,
@@ -286,10 +286,10 @@ def pump(name, pump_type="constant"):
             idf,
             **PumpVariablespeedType(
                 Name=name,
-                Inlet_Node_Name=f"{name} inlet",
-                Outlet_Node_Name=f"{name} outlet",
                 Design_Maximum_Flow_Rate=EPValues.AUTOSIZE,
                 Design_Power_Consumption=EPValues.AUTOSIZE,
+                Inlet_Node_Name=f"{name}_inlet_node",
+                Outlet_Node_Name=f"{name}_outlet_node",
                 Motor_Efficiency=0.9,
                 Design_Minimum_Flow_Rate=CONF.get(name, {}).get(
                     "Design_Minimum_Flow_Rate", 0),
@@ -305,10 +305,10 @@ def pump(name, pump_type="constant"):
         idf,
         **PumpConstantspeedType(
             Name=name,
-            Inlet_Node_Name=f"{name} inlet",
-            Outlet_Node_Name=f"{name} outlet",
             Design_Flow_Rate=EPValues.AUTOSIZE,
             Design_Power_Consumption=EPValues.AUTOSIZE,
+            Inlet_Node_Name=f"{name}_inlet_node",
+            Outlet_Node_Name=f"{name}_outlet_node",
             Motor_Efficiency=0.9,
             Pump_Control_Type=EPValues.INTERMITTENT,
         )
@@ -361,10 +361,10 @@ def water_to_water_heatpump(name):
         idf,
         **HeatpumpWatertowaterEquationfitHeatingType(
             Name=name,
-            Source_Side_Inlet_Node_Name=f"{name} source side inlet",
-            Source_Side_Outlet_Node_Name=f"{name} source side outlet",
-            Load_Side_Inlet_Node_Name=f"{name} load side inlet",
-            Load_Side_Outlet_Node_Name=f"{name} load side outlet",
+            Source_Side_Inlet_Node_Name=f"{name}_source_side_inlet_node",
+            Source_Side_Outlet_Node_Name=f"{name}_source_side_outlet_node",
+            Load_Side_Inlet_Node_Name=f"{name}_load_side_inlet_node",
+            Load_Side_Outlet_Node_Name=f"{name}_load_side_outlet_node",
             Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
             Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
             Reference_Heating_Capacity=EPValues.AUTOSIZE,
@@ -410,8 +410,8 @@ def gas_boiler(name):
             Normalized_Boiler_Efficiency_Curve_Name=boiler_efficiency.Name,
             Nominal_Capacity=EPValues.AUTOSIZE,
             Nominal_Thermal_Efficiency=0.8,
-            Boiler_Water_Inlet_Node_Name=f"{name}_InletNode",
-            Boiler_Water_Outlet_Node_Name=f"{name}_OutletNode",
+            Boiler_Water_Inlet_Node_Name=f"{name}_inlet_node",
+            Boiler_Water_Outlet_Node_Name=f"{name}_outlet_node",
             Boiler_Flow_Mode="LeavingSetpointModulated"
         )
     )
@@ -549,7 +549,7 @@ def air_to_water_heatpump_eir(name):
             Maximum_Value_of_x=26.6666667
         )
     )
-    air_node_name = f"{name}_InputOutdoorAirNode"
+    air_node_name = f"{name}_source_inlet_outdoor_air_node"
     input_air_node = OutdoorairNode(
         idf,
         **OutdoorairNodeType(
@@ -565,7 +565,7 @@ def air_to_water_heatpump_eir(name):
             Load_Side_Outlet_Node_Name=f"{name}_load_outlet_node",
             Condenser_Type="AirSource",
             Source_Side_Inlet_Node_Name=input_air_node.Name,
-            Source_Side_Outlet_Node_Name=f"{name}_source_outlet_air_node",
+            Source_Side_Outlet_Node_Name=f"{name}_source_outlet_outdoor_air_node",
             Reference_Coefficient_of_Performance=conf.get(
                 "Reference_Coefficient_Of_Performance", 3.2),
             Reference_Capacity=conf.get("Reference_Capacity", EPValues.AUTOSIZE),
