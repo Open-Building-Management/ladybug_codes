@@ -32,7 +32,7 @@ class LoopNodes:
 
     def get(self, *, side, port):
         """get a node name on a loop side/port"""
-        return f"{self.name} {side} {port}"
+        return f"{self.name}_{side}_{port}_node"
     @property
     def supply_inlet(self):
         """Supply Inlet"""
