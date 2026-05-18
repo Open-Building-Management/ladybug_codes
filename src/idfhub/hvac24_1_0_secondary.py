@@ -274,7 +274,7 @@ def initialise_sensors(
             "type",
             "System Node Temperature"
         )
-        location_name = None
+        location_name = sensor_conf.get("location_name")
         if sensor_type == "Site Outdoor Air Drybulb Temperature":
             location_name = "Environment"
         if not location_name:
@@ -288,6 +288,15 @@ def initialise_sensors(
             location_name = location_name
         )
         sensor_dict[sensor_name] = sensor_object
+        # add sensor to output for simple ctrl
+        OutputVariable(
+            idf,
+            **OutputVariableType(
+                Key_Value=location_name,
+                Variable_Name=sensor_type,
+                Reporting_Frequency="Timestep"
+            )
+        )
     return sensor_dict
 
 

@@ -30,7 +30,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     OutdoorairNode,
     CurveBiquadratic, CurveQuadratic, CurveQuadlinear,
     BoilerHotwater,
-    PlantequipmentoperationOutdoordrybulb
+    PlantequipmentoperationOutdoordrybulb,
+    OutputVariable,
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -49,7 +50,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     OutdoorairNodeType,
     CurveBiquadraticType, CurveQuadraticType,CurveQuadlinearType,
     BoilerHotwaterType,
-    PlantequipmentoperationOutdoordrybulbType
+    PlantequipmentoperationOutdoordrybulbType,
+    OutputVariableType,
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -170,6 +172,14 @@ def water_law(loop_name: str, setup: str):
             Outdoor_High_Temperature=CONF[setup].get(
                 "Outdoor_High_Temperature", 15),
             Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet
+        )
+    )
+    OutputVariable(
+        idf,
+        **OutputVariableType(
+            Key_Value=loop_nodes.plant_outlet,
+            Variable_Name="System Node Setpoint Temperature",
+            Reporting_Frequency="Timestep"
         )
     )
 
