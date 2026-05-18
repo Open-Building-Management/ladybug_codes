@@ -445,6 +445,8 @@ for equipment_name in EQUIPMENTS:
         add_variable(f"{suffix} Source Side Heat Transfer Rate")
     if BOILER in equipment_name:
         add_variable("Boiler Heating Rate")
+        add_variable("Boiler Inlet Temperature")
+        add_variable("Boiler Outlet Temperature")
     if EXCHANGER in equipment_name:
         add_variable("Fluid Heat Exchanger Heat Transfer Rate")
         add_variable("Fluid Heat Exchanger Loop Supply Side Mass Flow Rate")
