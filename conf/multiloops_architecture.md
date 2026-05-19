@@ -5,7 +5,7 @@
 
 
 ```
- -----pump ------> borehole--->
+ ---soil_pump ---> borehole--->
 |                              |
 |                              |
  <-----------heat pump<--------
@@ -15,7 +15,7 @@
 ## heatpump loop
 
 ```
- ---hp_pump>---->heat pump---->
+ -----hp_pump>----->hpwtw----->
 |                              |
 |                              |
  <----------exchanger<---------
@@ -24,12 +24,8 @@
 
 ## building loop
 
-not sure a bypass has to be inserted on the exchanger....
-
 ```
- --gaz_pump-->exchgr-->boiler->
-|           |        |         |
-|	         -bypass-          |
+ -----zone_pump-->exchgr------>
 |                              |
 |        ------RDC------       |
 |-------|               |------ 
