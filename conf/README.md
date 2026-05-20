@@ -9,9 +9,15 @@ mandatory yaml keys :
 - loops
 - equipments
 
-loops and zones are really straightforward to configure.
+zones are really straightforward to configure.
 
-Some reserved keys are to be used for equipments declaration.
+Some reserved keys are to be used for loops and equipments declaration.
+
+reserved keys|loop type
+--|--
+`*soil*` | plant loop with glycol 30%
+`*water_heating*` | plant loop with water
+
 
 reserved keys|equipments
 --|--
@@ -20,7 +26,7 @@ reserved keys|equipments
 `*boiler*` | gaz boiler
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
-`*borehole*` | field of vertical geothermal probes
+`*borehole*` | field of vertical geothermal probes (using a Kusudaachenbach ground model)
 `*baseboards*` | baseboards radiant and convective heaters
 
 Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
