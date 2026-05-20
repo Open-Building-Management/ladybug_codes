@@ -17,6 +17,7 @@ reserved keys|equipments
 --|--
 `*pump*` or `*pump_variable*` | constant or variable pumps
 `*pipe*` | pipe connectors
+`*boiler*` | gaz boiler
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
 `*borehole*` | field of vertical geothermal probes
