@@ -84,7 +84,7 @@ HP = "hp"
 HPWTW = "hpwtw"
 HPATW = "hpatw"
 BOILER = "boiler"
-EXCHANGER = "exchanger"
+EXCHANGER = "HX"
 
 
 Timestep(
