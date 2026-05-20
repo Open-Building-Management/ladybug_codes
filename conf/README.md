@@ -9,18 +9,20 @@ mandatory yaml keys :
 - loops
 - equipments
 
-loops, zones and equipments are really straightforward to configure.
+loops and zones are really straightforward to configure.
+
+Some reserved keys are to be used for equipments declaration.
 
 reserved keys|equipments
 --|--
 `*pump*` or `*pump_variable*` | constant or variable pumps
 `*hp*` | heatpump
-`*HX*` | exchanger
+`*HX*` | fluid to fluid exchanger
 `*borehole*` | vertical geothermal probes
 
 Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
 
-To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heat pump, use the `hpwtw` suffix, and so on....
+To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heatpump, use the `hpwtw` suffix, for an air to water heatpump, use the `hpatw` suffix, and so on....
 
 ## sensors and controls
 
