@@ -16,9 +16,10 @@ Some reserved keys are to be used for equipments declaration.
 reserved keys|equipments
 --|--
 `*pump*` or `*pump_variable*` | constant or variable pumps
+`*pipe*` | pipe connectors
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
-`*borehole*` | vertical geothermal probes
+`*borehole*` | field of vertical geothermal probes
 
 Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
 
