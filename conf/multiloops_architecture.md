@@ -33,7 +33,7 @@ HX can be used in energyplus to implement a behaviour similar to a 3 way valve.
  -----zone_pump----->HX----->
 |                            |
 |       ------RDC------      |
-|------|               |----- 
+ ------|               |----- 
         ----RPLUS1-----
 ```
 
