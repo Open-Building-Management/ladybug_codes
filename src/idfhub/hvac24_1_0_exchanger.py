@@ -29,7 +29,7 @@ def heat_exchanger(name: str):
             Heat_Exchanger_UFactor_Times_Area_Value=conf.get(
                 "Heat_Exchanger_UFactor_Times_Area_Value", EPValues.AUTOSIZE),
             Heat_Exchange_Model_Type=conf.get(
-                "Heat_Exchanger_Model_Type", EPValues.IDEAL),
+                "Heat_Exchange_Model_Type", EPValues.IDEAL),
             Control_Type=conf.get(
                 "Control_Type", EPValues.UNCONTROLLED_ON
             ),

@@ -291,17 +291,20 @@ def vertical_geoexchanger(name: str):
 
 def pump(name, pump_type="constant"):
     """add a pump"""
+    conf = CONF.get(name, {})
     if pump_type == "variable":
         return PumpVariablespeed(
             idf,
             **PumpVariablespeedType(
                 Name=name,
-                Design_Maximum_Flow_Rate=EPValues.AUTOSIZE,
-                Design_Power_Consumption=EPValues.AUTOSIZE,
                 Inlet_Node_Name=f"{name}_inlet_node",
                 Outlet_Node_Name=f"{name}_outlet_node",
+                Design_Maximum_Flow_Rate=conf.get(
+                    "Design_Maximum_Flow_Rate", EPValues.AUTOSIZE),
+                Design_Power_Consumption=conf.get(
+                    "Design_Power_Consumption", EPValues.AUTOSIZE),
                 Motor_Efficiency=0.9,
-                Design_Minimum_Flow_Rate=CONF.get(name, {}).get(
+                Design_Minimum_Flow_Rate=conf.get(
                     "Design_Minimum_Flow_Rate", 0),
                 Fraction_of_Motor_Inefficiencies_to_Fluid_Stream=0,
                 Coefficient_1_of_the_Part_Load_Performance_Curve=0,
@@ -315,10 +318,12 @@ def pump(name, pump_type="constant"):
         idf,
         **PumpConstantspeedType(
             Name=name,
-            Design_Flow_Rate=EPValues.AUTOSIZE,
-            Design_Power_Consumption=EPValues.AUTOSIZE,
             Inlet_Node_Name=f"{name}_inlet_node",
             Outlet_Node_Name=f"{name}_outlet_node",
+            Design_Flow_Rate=conf.get(
+                    "Design_Flow_Rate", EPValues.AUTOSIZE),
+            Design_Power_Consumption=conf.get(
+                    "Design_Power_Consumption", EPValues.AUTOSIZE),
             Motor_Efficiency=0.9,
             Pump_Control_Type=EPValues.INTERMITTENT,
         )
@@ -377,7 +382,8 @@ def water_to_water_heatpump(name):
             Load_Side_Outlet_Node_Name=f"{name}_load_side_outlet_node",
             Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
             Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
-            Reference_Heating_Capacity=EPValues.AUTOSIZE,
+            Reference_Heating_Capacity=CONF[name].get(
+                "Reference_Heating_Capacity", EPValues.AUTOSIZE),
             Reference_Heating_Power_Consumption=EPValues.AUTOSIZE,
             Reference_Coefficient_of_Performance=CONF[name].get(
                 "Reference_Coefficient_of_Performance", 2.5),
