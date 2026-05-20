@@ -1,0 +1,71 @@
+building_name: batiment_600m2
+
+name: gaz_boiler
+suffix: tri_loops_CounterFlowHX
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - boiler_water_heating_loop
+  - RDC_water_heating_loop
+  - RPLUS1_water_heating_loop
+
+equipments:
+  - gas_boiler
+  - boiler_variable_pump
+  - RDC_variable_pump
+  - RPLUS1_variable_pump
+  - HX_RDC
+  - HX_RPLUS1
+  - baseboards_RDC
+  - baseboards_RPLUS1
+
+boiler_water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [gas_boiler]
+  branches:
+    plant: [boiler_variable_pump, gas_boiler]
+    demand: [HX_RDC, HX_RPLUS1]
+
+RDC_water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [HX_RDC]
+  branches:
+    plant: [RDC_variable_pump, HX_RDC]
+    demand: [baseboards_RDC]
+
+RPLUS1_water_heating_loop:
+  setpoint: water_law_set_point
+  operation: [HX_RPLUS1]
+  branches:
+    plant: [RPLUS1_variable_pump, HX_RPLUS1]
+    demand: [baseboards_RPLUS1]
+
+water_law_set_point:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+gas_boiler:
+  force_side: Boiler_Water
+  efficiency_c: 0.96
+  efficiency_x: 0.04 # x=PLR
+  efficiency_x2: -0.03
+  efficiency_y: -0.004 # y=Twater
+  efficiency_y2: -0.00004
+  efficiency_xy: 0
+
+HX_RDC:
+  type: exchanger
+  Control_Type: OperationSchemeModulated
+  Heat_Exchange_Model_Type: CounterFlow
+
+HX_RPLUS1:
+  type: exchanger
+  Control_Type: OperationSchemeModulated
+  Heat_Exchange_Model_Type: CounterFlow
