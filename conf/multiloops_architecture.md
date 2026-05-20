@@ -10,31 +10,31 @@ HX can be used in energyplus to implement a behaviour similar to a 3 way valve.
 
 
 ```
- ---soil_pump ---> borehole--->
-|                              |
-|                              |
- <-----------heat pump<--------
+ ---soil_pump --> borehole-->
+|                            |
+|                            |
+ <-----------hpwtw<----------
 
 ```
 
 ## heatpump loop
 
 ```
- -----hp_pump>----->hpwtw----->
-|                              |
-|                              |
- <-------------HX<-------------
+ -----hp_pump>---->hpwtw---->
+|                            |
+|                            |
+ <-------------HX<-----------
 
 ```
 
 ## building loop
 
 ```
- -----zone_pump------>HX------>
-|                              |
-|        ------RDC------       |
-|-------|               |------ 
-         ----RPLUS1-----
+ -----zone_pump----->HX----->
+|                            |
+|       ------RDC------      |
+|------|               |----- 
+        ----RPLUS1-----
 ```
 
 # multiloops architecture
