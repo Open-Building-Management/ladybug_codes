@@ -21,6 +21,7 @@ reserved keys|equipments
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
 `*borehole*` | field of vertical geothermal probes
+`*baseboards*` | baseboards radiant and convective heaters
 
 Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
 
