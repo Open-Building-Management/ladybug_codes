@@ -835,47 +835,6 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
     )
 
 
-def adjust_nodes_branch_old(
-    loop_name: str,
-    *,
-    loop_side: str,
-    branches_descr: dict[str, list[str]]
-):
-    """first attempt"""
-    object_names = branches_descr[loop_side]
-    bypass = False
-    inlet_node = LoopNodes(loop_name).get(side=loop_side, port=INLET)
-    outlet_node = LoopNodes(loop_name).get(side=loop_side, port=OUTLET)
-    branch_name = Branches(loop_name).get(side=loop_side)
-    if BYPASS in branches_descr:
-        if loop_side in branches_descr[BYPASS]:
-            bypass = True
-            inlet_node = None
-            outlet_node = None
-    branch = process_serie(
-        branch_name,
-        loop_side,
-        structure_serie=object_names,
-        inlet_node=inlet_node,
-        outlet_node=outlet_node
-    )
-    branchlist_update(
-        idf,
-        loop_name=loop_name,
-        loop_side=loop_side,
-        branches=branch
-    )
-    if bypass:
-        side = EPApi.DEMAND_SIDE if loop_side == DEMAND else EPApi.PLANT_SIDE
-        plantloop_split_mix(
-            idf=idf,
-            plantloop=loops[loop_name],
-            side=side,
-            branches=[branch],
-            bypass=True
-        )
-
-
 def generate_operation(
     *,
     operation_name:str, loop_type: str,
