@@ -528,61 +528,6 @@ def bypass_branch(idf: IDF, bypass_branch_name: str):
     )
 
 
-def plantloop_split_mix(
-    idf: IDF,
-    *,
-    plantloop:EpBunch,
-    side: str,
-    branches: list[EpBunch],
-    inlet: str|None = None,
-    outlet: str|None = None,
-    bypass: bool = False
-):
-    """split to branches and mix on a side of a plantloop"""
-    if bypass:
-        # add a bypass branch if needed
-        bypass_branch_name = f"{plantloop.Name}_{side}_bypass_branch"
-        branches.append(
-            bypass_branch(
-                idf,
-                bypass_branch_name
-            )
-        )
-    nb = 0
-    loop_side = DEMAND if side == EPApi.DEMAND_SIDE else PLANT
-    splitter_branch_name = f"{plantloop.Name}_{side}_splitter_branch_{nb}"
-    mixer_branch_name = f"{plantloop.Name}_{side}_mixer_branch_{nb}"
-    if not inlet:
-        inlet = LoopNodes(plantloop.Name).get(side=loop_side, port=INLET)
-    splitter_branch = pipe_splitter(
-        idf,
-        inlet_node=inlet,
-        branch_name=splitter_branch_name
-        )
-    if not outlet:
-        outlet = LoopNodes(plantloop.Name).get(side=loop_side, port=OUTLET)
-    mixer_branch = pipe_mixer(
-        idf,
-        outlet_node=outlet,
-        branch_name=mixer_branch_name
-    )
-    split_mix(
-        idf,
-        plantloop=plantloop,
-        side=side,
-        inlet_branch=splitter_branch,
-        branches=branches,
-        outlet_branch=mixer_branch
-    )
-    branchlist_update(
-        idf,
-        loop_name=plantloop.Name,
-        loop_side=loop_side,
-        branches = [splitter_branch, *branches, mixer_branch]
-    )
-    return [splitter_branch, *branches, mixer_branch]
-
-
 def get_branch_inlet_outlet_nodes(branch: EpBunch):
     """branch inlet and outlet nodes"""
     # inlet = premier composant
