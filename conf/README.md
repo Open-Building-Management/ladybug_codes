@@ -8,15 +8,32 @@ mandatory yaml keys :
 - zones
 - loops
 - equipments
-- sensors
 
-sensors can be empty
+zones are really straightforward to configure.
 
-loops, zones and equipments are really straightforward to configure.
+Some reserved keys are to be used for loops and equipments declaration.
 
-To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heat pump, use the `hpwtw` suffix, and so on....
+reserved keys|loop type
+--|--
+`*soil*` | plant loop with glycol 30%
+`*water_heating*` | plant loop with water
 
-## sensors
+
+reserved keys|equipments
+--|--
+`*pump*` or `*pump_variable*` | constant or variable pumps
+`*pipe*` | pipe connectors
+`*boiler*` | gaz boiler
+`*hp*` | heatpump
+`*HX*` | fluid to fluid exchanger
+`*borehole*` | field of vertical geothermal probes (far-field ground model : Kusudaachenbach)
+`*baseboards*` | baseboards radiant and convective heaters
+
+Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
+
+To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heatpump, use the `hpwtw` suffix, for an air to water heatpump, use the `hpatw` suffix, and so on....
+
+## sensors and controls
 
 sensors can be used for ems control
 
@@ -24,29 +41,29 @@ The following yaml :
 - activates a temperature sensor on the plant_inlet of a loop called soil_loop
 - uses the sensor to control 2 pumps
 
-The pumps run with a 10% flow when temperature@soil_loop_plant_inlet < -5
+The pumps run with a 30% flow when temperature@soil_loop_plant_inlet < -5
 
-The pumps restart at normal flow when temperature@soil_loop_plant_inlet > -2
-
-The 10% reduced flow permits to stop the borehole, but to continue the simulation
-
-With a null flow, energyplus would stop the simulation, which would not be realistic  
+The pumps restart at 80% flow when temperature@soil_loop_plant_inlet > -2
 
 ```
 sensors:
-  soil_sensor:
-    active: 1
+  borehole_t:
+    type: "System Node Temperature"
     loop: soil_loop
     side: plant
     port: inlet
-    type: "System Node Temperature"
-    controls: [soil_pump, inside_variable_pump]
+
+controls:
+  borehole_pump_control:
+    sensor: borehole_t
+    pilot: [soil_pump, inside_variable_pump]
     stop_below: -5
     start_above: -2
-    min_flow: 0.1
-    normal_flow: 1.0
+    min_flow: 0.3
+    normal_flow: 0.8
 ```
-## loops
+
+## loops configuration
 
 A loop configuration requires 3 mandatory keys:
 - a setpoint name
