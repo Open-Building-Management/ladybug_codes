@@ -26,7 +26,7 @@ reserved keys|equipments
 `*boiler*` | gaz boiler
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
-`*borehole*` | field of vertical geothermal probes (using a Kusudaachenbach ground model)
+`*borehole*` | field of vertical geothermal probes (far-field ground model : Kusudaachenbach)
 `*baseboards*` | baseboards radiant and convective heaters
 
 Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
