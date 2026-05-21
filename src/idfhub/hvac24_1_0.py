@@ -7,8 +7,8 @@ from idfhub.hvac import (
     PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET, ALWAYS_ON,
     EPApi, EPValues,
     create_branch,
-    LoopNodes, Branches,
-    set_nodes, node_name, plantloop_split_mix,
+    LoopNodes,
+    set_nodes, node_name,
     branchlist_update,
     split_mix, pipe_splitter, pipe_mixer,
     get_branch_inlet_outlet_nodes
