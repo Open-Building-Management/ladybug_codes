@@ -63,7 +63,7 @@ controls:
     normal_flow: 0.8
 ```
 
-## loops
+## loops configuration
 
 A loop configuration requires 3 mandatory keys:
 - a setpoint name
