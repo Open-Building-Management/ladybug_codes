@@ -436,6 +436,7 @@ for equipment_name in EQUIPMENTS:
         add_variable("Ground Heat Exchanger Heat Transfer Rate")
         add_variable("Ground Heat Exchanger Inlet Temperature")
         add_variable("Ground Heat Exchanger Outlet Temperature")
+        add_variable("Ground Heat Exchanger Average Borehole Temperature")
     if HP in equipment_name:
         suffix = "Heat Pump"
         add_variable(f"{suffix} Load Side Outlet Temperature")
