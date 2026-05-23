@@ -86,6 +86,16 @@ HPATW = "hpatw"
 BOILER = "boiler"
 EXCHANGER = "HX"
 
+def add_variable(name, key="*"):
+    """add a variable to the ep output"""
+    OutputVariable(
+        idf,
+        **OutputVariableType(
+            Key_Value=key,
+            Variable_Name=name,
+            Reporting_Frequency="Timestep"
+        )
+    )
 
 Timestep(
     idf,
@@ -256,9 +266,11 @@ for loop in LOOPS:
         plant_loop.Fluid_Type = "UserDefinedFluidType"
         plant_loop.User_Defined_Fluid_Type = glycol_water_30.Name
         loops[loop] = plant_loop
+        add_variable("Plant Supply Side Cooling Demand Rate", key=loop)
     if WATER_HEATING in loop:
         heating_loop = add_plantloop(idf, loop, 100, 0)
         loops[loop] = heating_loop
+    add_variable("Plant Supply Side heating Demand Rate", key=loop)
 
     SizingPlant(
         idf,
@@ -375,7 +387,7 @@ for control_conf in controls.values():
             control(machine, sensor_name, control_conf)
 
 for loop in LOOPS:
-    setpoint = CONF[loop].get("setpoint")
+    setpoint = CONF[loop].get("setpoint", {})
     branches_descr: dict[str, list[str]]
     branches_descr = CONF[loop].get("branches", {})
     if WATER_LAW in setpoint:
@@ -410,16 +422,7 @@ OutputEnergymanagementsystem(idf, **OutputEnergymanagementsystemType(
     EMS_Runtime_Language_Debug_Output_Level="None"
 ))
 
-def add_variable(name):
-    """add a variable to the ep output"""
-    OutputVariable(
-        idf,
-        **OutputVariableType(
-            Key_Value="*",
-            Variable_Name=name,
-            Reporting_Frequency="Timestep"
-        )
-    )
+
 # tout ce tuning des variables de sortie peut être raisonnablement fait avec IDFEditor
 add_variable("Site Outdoor Air Drybulb Temperature")
 add_variable("Zone Air Temperature")
@@ -433,6 +436,7 @@ for equipment_name in EQUIPMENTS:
         add_variable("Ground Heat Exchanger Heat Transfer Rate")
         add_variable("Ground Heat Exchanger Inlet Temperature")
         add_variable("Ground Heat Exchanger Outlet Temperature")
+        add_variable("Ground Heat Exchanger Average Borehole Temperature")
     if HP in equipment_name:
         suffix = "Heat Pump"
         add_variable(f"{suffix} Load Side Outlet Temperature")
@@ -456,7 +460,6 @@ for equipment_name in EQUIPMENTS:
         add_variable("Fluid Heat Exchanger Loop Demand Side Inlet Temperature")
         add_variable("Fluid Heat Exchanger Loop Demand Side Outlet Temperature")
 
-add_variable("Plant Supply Side heating Demand Rate")
 add_variable("Baseboard Total Heating Rate")
 add_variable("Baseboard Water Inlet Temperature")
 add_variable("Baseboard Water Outlet Temperature")
