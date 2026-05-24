@@ -14,23 +14,26 @@ sensors:
 controls:
   pac_control:
     pilot: [hpatw_eir]
+    type: "On/Off Supervisory"
     sensor: outdoorT
     stop_below: 0
     start_above: 0
   pac_pump_ctrl:
     pilot: [inside_variable_pump_pac]
+    type: Pump_Flow_Rate_Schedule_Name
     sensor: outdoorT
     stop_below: 0
     start_above: 0
-    min_flow: 0
-    normal_flow: 1.0
+    min: 0
+    max: 1.0
   gas_pump_ctrl:
     pilot: [inside_variable_pump_gas]
+    type: Pump_Flow_Rate_Schedule_Name
     sensor: outdoorT
     stop_above: 0
     start_below: 0
-    min_flow: 0
-    normal_flow: 1.0
+    min: 0
+    max: 1.0
 
 zones:
   - "RDC"

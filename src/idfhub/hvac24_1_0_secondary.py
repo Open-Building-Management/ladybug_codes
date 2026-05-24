@@ -215,13 +215,8 @@ def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
         )
     )
     ems_program = EmsProgram(name)
-    lower_limit = None
-    upper_limit = None
-    if "pump" in name:
-        lower_limit = conf.get("min_flow", 0.1)
-        upper_limit = conf.get("normal_flow", 1)
-    if not lower_limit or not upper_limit:
-        return
+    lower_limit = conf.get("min", 0)
+    upper_limit = conf.get("max", 1)
     for key in conf:
         # some keys may not be a program_code
         ems_program.discrete(
@@ -233,11 +228,11 @@ def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
             high_value=upper_limit
         )
     ems_program.generate()
-    if "pump" in name:
-        equipments[name]["Pump_Flow_Rate_Schedule_Name"] = schedule.Name
+    schedule_name = conf.get("type", "Pump_Flow_Rate_Schedule_Name").replace(" ", "_")
+    equipments[name][schedule_name] = schedule.Name
 
 
-def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
+def ems_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
     """control a machine through On/Off supervisory
     a sensor called sensor_name must prexist"""
     actuator_name = f"{machine_name}_actuator"
@@ -248,7 +243,7 @@ def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
             Name=actuator_name,
             Actuated_Component_Unique_Name=equipments[machine_name].Name,
             Actuated_Component_Type=f"Plant Component {equipments[machine_name].key}",
-            Actuated_Component_Control_Type="On/Off Supervisory"
+            Actuated_Component_Control_Type=conf.get("type", "On/Off Supervisory")
         )
     )
     ems_program = EmsProgram(machine_name)
@@ -258,8 +253,8 @@ def on_off_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
             sensor_name=sensor_name,
             value=conf[key],
             actuator_name=actuator_name,
-            low_value=conf.get('off', 0),
-            high_value=conf.get('on', 1)
+            low_value=conf.get("min", 0),
+            high_value=conf.get("max", 1)
         )
     ems_program.generate()
 
@@ -302,10 +297,11 @@ def initialise_sensors(
 
 def control(machine_name, sensor_name, conf: dict[str, Any]):
     """equipment control through sensor"""
-    if "hp" in machine_name or "boiler" in machine_name:
-        on_off_control(machine_name, sensor_name, conf)
+    control_type = conf.get("type", "Pump_Flow_Rate_Schedule_Name")
+    if "Schedule" in control_type:
+        schedule_control(machine_name, sensor_name, conf)
         return
-    schedule_control(machine_name, sensor_name, conf)
+    ems_control(machine_name, sensor_name, conf)
 
 
 def air_to_water_heatpump_ems(name):
