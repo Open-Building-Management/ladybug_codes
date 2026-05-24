@@ -56,11 +56,12 @@ sensors:
 controls:
   borehole_pump_control:
     sensor: borehole_t
+    type: Pump_Flow_Rate_Schedule_Name
     pilot: [soil_pump, inside_variable_pump]
     stop_below: -5
     start_above: -2
-    min_flow: 0.3
-    normal_flow: 0.8
+    min: 0.3
+    max: 0.8
 ```
 
 ## loops configuration
