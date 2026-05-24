@@ -22,7 +22,7 @@ equipments:
   - baseboards_RPLUS1
 
 sensors:
-  boreholeT:
+  borehole_t:
     type: "System Node Temperature"
     loop: soil_loop
     side: plant
@@ -30,12 +30,13 @@ sensors:
 
 controls:
   borehole_pump_control:
-    sensor: boreholeT
+    sensor: borehole_t
+    type: Pump_Flow_Rate_Schedule_Name
     pilot: [soil_pump, inside_variable_pump]
     stop_below: -5
     start_above: -2
-    min_flow: 0.3
-    normal_flow: 0.8
+    min: 0.3
+    max: 0.8
 
 soil_loop:
   setpoint: constant_set_point

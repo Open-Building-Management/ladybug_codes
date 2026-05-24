@@ -32,11 +32,12 @@ sensors:
 controls:
   pump_control:
     pilot: [soil_pump, inside_variable_pump]
+    type: Pump_Flow_Rate_Schedule_Name
     sensor: soil_sensor
     stop_below: -5
     start_above: -2
-    min_flow: 0.1
-    normal_flow: 1.0
+    min: 0.1
+    max: 1.0
 
 soil_loop:
   setpoint: constant_set_point
