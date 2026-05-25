@@ -432,8 +432,14 @@ def gas_boiler(name):
             Fuel_Type="NaturalGas",
             Efficiency_Curve_Temperature_Evaluation_Variable="LeavingBoiler",
             Normalized_Boiler_Efficiency_Curve_Name=boiler_efficiency.Name,
-            Nominal_Capacity=EPValues.AUTOSIZE,
-            Nominal_Thermal_Efficiency=0.8,
+            Nominal_Capacity=conf.get(
+                "Nominal_Capacity",
+                EPValues.AUTOSIZE
+            ),
+            Nominal_Thermal_Efficiency=conf.get(
+                "Nominal_Thermal_Efficiency",
+                0.8
+            ),
             Boiler_Water_Inlet_Node_Name=f"{name}_inlet_node",
             Boiler_Water_Outlet_Node_Name=f"{name}_outlet_node",
             Boiler_Flow_Mode="LeavingSetpointModulated"
