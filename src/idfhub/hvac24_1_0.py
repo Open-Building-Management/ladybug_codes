@@ -153,10 +153,18 @@ def constant_schedule(
 #------------------------------------------------------------------------------
 # SETPOINTS
 #------------------------------------------------------------------------------
-def water_law(loop_name: str, setup: str):
+def water_law(loop_name: str, setup: str, node: str|None = None):
     """add a waterlaw setpoint on a loop plant outlet"""
-    loop_nodes = LoopNodes(loop_name)
-    message = f"waterlaw @ {loop_nodes.plant_outlet} with {CONF[setup]}"
+    if node is None:
+        node = LoopNodes(loop_name).plant_outlet
+    water_law_name = f"{setup} {loop_name}"
+    water_law_object = idf.getobject(
+        SetpointmanagerOutdoorairresetMeta.idf_name,
+        water_law_name
+    )
+    if water_law_object is not None:
+        return
+    message = f"waterlaw @ {node} with {CONF[setup]}"
     LOGGER.debug(message)
     SetpointmanagerOutdoorairreset(
         idf,
@@ -171,13 +179,13 @@ def water_law(loop_name: str, setup: str):
                 "Setpoint_at_Outdoor_High_Temperature", 40),
             Outdoor_High_Temperature=CONF[setup].get(
                 "Outdoor_High_Temperature", 15),
-            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet
+            Setpoint_Node_or_NodeList_Name=node
         )
     )
     OutputVariable(
         idf,
         **OutputVariableType(
-            Key_Value=loop_nodes.plant_outlet,
+            Key_Value=node,
             Variable_Name="System Node Setpoint Temperature",
             Reporting_Frequency="Timestep"
         )
@@ -185,8 +193,8 @@ def water_law(loop_name: str, setup: str):
 
 def constant_set_point(loop_name: str, setup: str):
     """add a constant setpoint on a loop plant outlet"""
-    loop_nodes = LoopNodes(loop_name)
-    message = f"constant setpoint @ {loop_nodes.plant_outlet} with {CONF[setup]}"
+    node = LoopNodes(loop_name).plant_outlet
+    message = f"constant setpoint @ {node} with {CONF[setup]}"
     LOGGER.debug(message)
     temp = CONF[setup].get("temp", 12)
     name = f"const_temp_sched_{temp}deg"
@@ -202,7 +210,7 @@ def constant_set_point(loop_name: str, setup: str):
             Name=f"{setup} {loop_name}",
             Control_Variable=EPValues.TEMPERATURE,
             Schedule_Name=consigne.Name,
-            Setpoint_Node_or_NodeList_Name=loop_nodes.plant_outlet,
+            Setpoint_Node_or_NodeList_Name=node,
         )
     )
 
