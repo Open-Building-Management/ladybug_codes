@@ -33,6 +33,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     BoilerHotwater,
     PlantequipmentoperationOutdoordrybulb,
     OutputVariable,
+    PlantequipmentoperationComponentsetpoint,
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -53,6 +54,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     BoilerHotwaterType,
     PlantequipmentoperationOutdoordrybulbType,
     OutputVariableType,
+    PlantequipmentoperationComponentsetpointType,
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -852,12 +854,63 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
 
 def generate_operation(
     *,
-    operation_name:str, loop_type: str,
+    loop_name:str,
+    staging_mode: str,
+    loop_type: str,
     names: list[str],
-    ranges: list[list[float]]
 ):
-    """return operation object"""
-    if EPValues.LOAD in loop_type:
+    """return operation object
+    names = list of equipment names"""
+    operation_name = f"{loop_name} operation"
+    if staging_mode == "ComponentSetpoint":
+        operation = PlantequipmentoperationComponentsetpoint(
+            idf,
+            **PlantequipmentoperationComponentsetpointType(
+                Name=operation_name)
+        )
+        for i, obj_name in enumerate(names):
+            side = resolve_side(obj_name, PLANT)
+            equipment = equipments[obj_name]
+            inlet = equipment[f"{side}_{EPApi.INLET_NODE_NAME}"]
+            outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+            water_law(loop_name, CONF[loop_name]["setpoints"][i], outlet)
+            operation[f"Equipment_{i+1}_Object_Type"] = equipment.key
+            operation[f"Equipment_{i+1}_Name"] = obj_name
+            operation[f"Demand_Calculation_{i+1}_Node_Name"] = inlet
+            operation[f"Setpoint_{i+1}_Node_Name"] = outlet
+            operation[f"Component_{i+1}_Flow_Rate"] = EPValues.AUTOSIZE
+            operation[f"Operation_{i+1}_Type"] = EPValues.HEATING
+        return operation
+    list_names = []
+    if "mix" in loop_type:
+        LOGGER.info("mix mode :-)")
+        # a list for each machine referenced in the operation loop
+        for i, obj_name in enumerate(names):
+            list_name = f"{obj_name}_Only"
+            Plantequipmentlist(
+                idf,
+                **PlantequipmentlistType(
+                    Name=list_name,
+                    Equipment_1_Object_Type = equipments[obj_name].key,
+                    Equipment_1_Name = equipments[obj_name].Name
+                )
+            )
+        list_names.append(list_name)
+    else:
+        # a single list with all the machines
+        list_name = f"{loop_name} Equipment List"
+        loop_equipment_list = Plantequipmentlist(
+            idf,
+            **PlantequipmentlistType(
+                Name=list_name
+            )
+        )
+        for i, obj_name in enumerate(names):
+            loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
+            loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
+        list_names.append(list_name)
+
+    if staging_mode == EPValues.LOAD:
         if EPValues.HEATING in loop_type:
             operation = PlantequipmentoperationHeatingload(
                 idf,
@@ -870,77 +923,45 @@ def generate_operation(
                 **PlantequipmentoperationCoolingloadType(
                     Name=operation_name)
             )
-        for i, limits in enumerate(ranges):
-            operation[f"Range_{i+1}_Equipment_List_Name"] = names[i]
-            operation[f"Load_Range_{i+1}_Lower_Limit"] = limits[0]
-            operation[f"Load_Range_{i+1}_Upper_Limit"] = limits[1]
+        for i, obj_name in enumerate(names):
+            op_range = CONF[obj_name].get(
+               "operation_range",
+               [0, 1e9]
+            )
+            operation[f"Range_{i+1}_Equipment_List_Name"] = list_names[i]
+            operation[f"Load_Range_{i+1}_Lower_Limit"] = op_range[0]
+            operation[f"Load_Range_{i+1}_Upper_Limit"] = op_range[1]
         return operation
-    # temperature control...
+    # on est en staging_mode == "OutdoorDryBulb":
     operation = PlantequipmentoperationOutdoordrybulb(
         idf,
         **PlantequipmentoperationOutdoordrybulbType(
             Name=operation_name)
     )
-    for i, limits in enumerate(ranges):
-        operation[f"Range_{i+1}_Equipment_List_Name"] = names[i]
-        operation[f"DryBulb_Temperature_Range_{i+1}_Lower_Limit"] = limits[0]
-        operation[f"DryBulb_Temperature_Range_{i+1}_Upper_Limit"] = limits[1]
+    for i, obj_name in enumerate(names):
+        op_range = CONF[obj_name].get(
+            "operation_range",
+            [-20, 20]
+        )
+        operation[f"Range_{i+1}_Equipment_List_Name"] = list_names[i]
+        operation[f"DryBulb_Temperature_Range_{i+1}_Lower_Limit"] = op_range[0]
+        operation[f"DryBulb_Temperature_Range_{i+1}_Upper_Limit"] = op_range[1]
     return operation
 
 
 def operation_list_scheme(loop_name:str):
-    """GENERATE LIST OF EQUIPMENTS & OPERATION SCHEMES FOR A PLANTLOOP"""
+    """GENERATE OPERATION SCHEMES FOR A PLANTLOOP"""
     conf = CONF.get(loop_name, {})
     loop_type = conf.get("Loop_Type", EPValues.HEATING)
-    loop_types = [str(el).capitalize() for el in loop_type.split("_")]
-    add_load = False
-    if len(loop_types) == 1:
-        add_load = True
-    if len(loop_types) == 2 and loop_types[1] == "Mix":
-        add_load = True
-    if add_load:
-        loop_types.append(EPValues.LOAD)
-    loop_type = "_".join(loop_types)
-    mix = "Mix" in loop_type
-    def_range = [0, 1e9] if EPValues.LOAD in loop_type else [0, 20]
-    names = []
-    ranges = []
-    loop_machines = CONF[loop_name].get("operation", [])
-    if mix:
-        # a list for each machine referenced in the operation loop
-        for i, obj_name in enumerate(loop_machines):
-            list_name = f"{obj_name}_Only"
-            Plantequipmentlist(
-                idf,
-                **PlantequipmentlistType(
-                    Name=list_name,
-                    Equipment_1_Object_Type = equipments[obj_name].key,
-                    Equipment_1_Name = equipments[obj_name].Name
-                )
-            )
-            names.append(list_name)
-            op_range = CONF[obj_name].get("operation_range", def_range)
-            ranges.append(op_range)
-    else:
-        # a single list with all the machines
-        list_name = f"{loop_name} Equipment List"
-        loop_equipment_list = Plantequipmentlist(
-            idf,
-            **PlantequipmentlistType(
-                Name=list_name
-            )
-        )
-        for i, obj_name in enumerate(loop_machines):
-            loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
-            loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
-        names.append(list_name)
-        ranges.append(def_range)
+    staging_mode = conf.get("staging_mode", EPValues.LOAD)
+    LOGGER.info("%s > %s", loop_type, staging_mode)
+    loop_machines = conf.get("operation", [])
     # a single operation for the loop
     operation = generate_operation(
-        operation_name = f"{loop_name} operation",
+        loop_name=loop_name,
+        staging_mode=staging_mode,
         loop_type=loop_type,
-        names=names,
-        ranges=ranges
+        names=loop_machines,
     )
     # a single scheme for the loop
     Plantequipmentoperationschemes(
