@@ -81,7 +81,7 @@ Even if you use in the name something that may let think it is a baseboard equip
 water_heating_loop:
   setpoint: water_law_set_point
   operation: [hpatw_eir, gas_boiler]
-  Loop_Type: heating_mix_DBOAT
+  Loop_Type: heating_mix
   branches:
     plant: [inside_variable_pump, hpatw_eir, gas_boiler]
     demand:
@@ -93,9 +93,20 @@ water_heating_loop:
 
 If mentionned, `Loop_Type` must begin with the loop type as required by the `PlantSizing` method, so `heating` or `cooling`.
 
-It can also include the operation method : `Load` is the default, anything else will lead for now to `OutdoorDryBulb` temperature control.
+If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list, and you will have the possibility to define an `operation_range` for each equipment of the loop
 
-If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list. This is the way to go to manage energy mix.
+You can use `setpoints` instead or in addition to `setpoint` to add a setpoint at the output/outlet of each equipment of the loop
+
+```
+setpoints: [water_law_set_point_5535, water_law_set_point_7040]
+```
+You may add a `staging_mode` key, not sure this term is correct
+
+The default staging_mode is Load and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingMode`
+
+Other operation modes are available :
+- `OutdoorDryBulb`
+- `ComponentSetpoint`
 
 ## setpoints
 
