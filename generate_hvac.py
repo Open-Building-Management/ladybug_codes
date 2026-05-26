@@ -3,7 +3,7 @@ import os
 
 from idfhub.hvac import (
     PLANT, DEMAND,
-    EPValues,
+    EPApi, EPValues,
     add_plantloop,
     add_baseboard,
     create_pipe
@@ -44,7 +44,7 @@ from idfhub.common import (
 )
 
 from idfhub.hvac24_1_0 import (
-    loops, equipments,
+    loops, equipments, resolve_side,
     ground_temperature,
     vertical_geoexchanger,
     pump,
@@ -403,6 +403,21 @@ for loop in LOOPS:
             )
     operation_list_scheme(loop)
 
+# machine level setpoints management
+# this can only to be done after all nodes and branches adjustments
+for loop in loops:
+    setpoints = CONF[loop].get("setpoints", [])
+    machines = CONF[loop].get("operation", [])
+    for i, obj_name in enumerate(machines):
+        try:
+            setpoint = setpoints[i]
+        except IndexError:
+            setpoint = None
+        if setpoint is not None:
+            side = resolve_side(obj_name, PLANT)
+            equipment = equipments[obj_name]
+            outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+            water_law(loop, setpoint, outlet)
 
 #------------------------------------------------------------------------------
 # OUTPUT CONFIGURATION
@@ -451,6 +466,7 @@ for equipment_name in EQUIPMENTS:
         add_variable("Boiler Heating Rate")
         add_variable("Boiler Inlet Temperature")
         add_variable("Boiler Outlet Temperature")
+        add_variable("Boiler Part Load Ratio")
     if EXCHANGER in equipment_name:
         add_variable("Fluid Heat Exchanger Heat Transfer Rate")
         add_variable("Fluid Heat Exchanger Loop Supply Side Mass Flow Rate")

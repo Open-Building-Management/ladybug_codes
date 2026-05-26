@@ -156,31 +156,31 @@ def constant_schedule(
 #------------------------------------------------------------------------------
 # SETPOINTS
 #------------------------------------------------------------------------------
-def water_law(loop_name: str, setup: str, node: str|None = None):
+def water_law(loop_name: str, setpoint_name: str, node: str|None = None):
     """add a waterlaw setpoint on a loop plant outlet"""
     if node is None:
         node = LoopNodes(loop_name).plant_outlet
-    water_law_name = f"{setup} {loop_name}"
+    water_law_name = f"{setpoint_name} {loop_name}"
     water_law_object = idf.getobject(
         SetpointmanagerOutdoorairresetMeta.idf_name,
         water_law_name
     )
     if water_law_object is not None:
         return
-    message = f"waterlaw @ {node} with {CONF[setup]}"
+    message = f"waterlaw @ {node} with {CONF[setpoint_name]}"
     LOGGER.debug(message)
     SetpointmanagerOutdoorairreset(
         idf,
         **SetpointmanagerOutdoorairresetType(
-            Name=f"{setup} {loop_name}",
+            Name=f"{setpoint_name} {loop_name}",
             Control_Variable=EPValues.TEMPERATURE,
-            Setpoint_at_Outdoor_Low_Temperature=CONF[setup].get(
+            Setpoint_at_Outdoor_Low_Temperature=CONF[setpoint_name].get(
                 "Setpoint_at_Outdoor_Low_Temperature", 70),
-            Outdoor_Low_Temperature=CONF[setup].get(
+            Outdoor_Low_Temperature=CONF[setpoint_name].get(
                 "Outdoor_Low_Temperature", -5),
-            Setpoint_at_Outdoor_High_Temperature=CONF[setup].get(
+            Setpoint_at_Outdoor_High_Temperature=CONF[setpoint_name].get(
                 "Setpoint_at_Outdoor_High_Temperature", 40),
-            Outdoor_High_Temperature=CONF[setup].get(
+            Outdoor_High_Temperature=CONF[setpoint_name].get(
                 "Outdoor_High_Temperature", 15),
             Setpoint_Node_or_NodeList_Name=node
         )
@@ -194,12 +194,12 @@ def water_law(loop_name: str, setup: str, node: str|None = None):
         )
     )
 
-def constant_set_point(loop_name: str, setup: str):
+def constant_set_point(loop_name: str, setpoint_name: str):
     """add a constant setpoint on a loop plant outlet"""
     node = LoopNodes(loop_name).plant_outlet
-    message = f"constant setpoint @ {node} with {CONF[setup]}"
+    message = f"constant setpoint @ {node} with {CONF[setpoint_name]}"
     LOGGER.debug(message)
-    temp = CONF[setup].get("temp", 12)
+    temp = CONF[setpoint_name].get("temp", 12)
     name = f"const_temp_sched_{temp}deg"
     consigne = idf.getobject(
         ScheduleConstantMeta.idf_name,
@@ -210,7 +210,7 @@ def constant_set_point(loop_name: str, setup: str):
     SetpointmanagerScheduled(
         idf,
         **SetpointmanagerScheduledType(
-            Name=f"{setup} {loop_name}",
+            Name=f"{setpoint_name} {loop_name}",
             Control_Variable=EPValues.TEMPERATURE,
             Schedule_Name=consigne.Name,
             Setpoint_Node_or_NodeList_Name=node,
@@ -873,7 +873,6 @@ def generate_operation(
             equipment = equipments[obj_name]
             inlet = equipment[f"{side}_{EPApi.INLET_NODE_NAME}"]
             outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-            water_law(loop_name, CONF[loop_name]["setpoints"][i], outlet)
             operation[f"Equipment_{i+1}_Object_Type"] = equipment.key
             operation[f"Equipment_{i+1}_Name"] = obj_name
             operation[f"Demand_Calculation_{i+1}_Node_Name"] = inlet
