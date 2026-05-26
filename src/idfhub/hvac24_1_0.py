@@ -895,7 +895,7 @@ def generate_operation(
                     Equipment_1_Name = equipments[obj_name].Name
                 )
             )
-        list_names.append(list_name)
+            list_names.append(list_name)
     else:
         # a single list with all the machines
         list_name = f"{loop_name} Equipment List"
@@ -923,12 +923,17 @@ def generate_operation(
                 **PlantequipmentoperationCoolingloadType(
                     Name=operation_name)
             )
-        for i, obj_name in enumerate(names):
-            op_range = CONF[obj_name].get(
-               "operation_range",
-               [0, 1e9]
-            )
-            operation[f"Range_{i+1}_Equipment_List_Name"] = list_names[i]
+        for i, list_name in enumerate(list_names):
+            try:
+                obj_name = names[i]
+            except IndexError:
+                op_range = [0, 1e9]
+            else:
+                op_range = CONF[obj_name].get(
+                    "operation_range",
+                    [0, 1e9]
+                )
+            operation[f"Range_{i+1}_Equipment_List_Name"] = list_name
             operation[f"Load_Range_{i+1}_Lower_Limit"] = op_range[0]
             operation[f"Load_Range_{i+1}_Upper_Limit"] = op_range[1]
         return operation
@@ -938,12 +943,17 @@ def generate_operation(
         **PlantequipmentoperationOutdoordrybulbType(
             Name=operation_name)
     )
-    for i, obj_name in enumerate(names):
-        op_range = CONF[obj_name].get(
-            "operation_range",
-            [-20, 20]
-        )
-        operation[f"Range_{i+1}_Equipment_List_Name"] = list_names[i]
+    for i, list_name in enumerate(list_names):
+        try:
+            obj_name = names[i]
+        except IndexError:
+            op_range = [-20, 20]
+        else:
+            op_range = CONF[obj_name].get(
+                "operation_range",
+                [-20, 20]
+            )
+        operation[f"Range_{i+1}_Equipment_List_Name"] = list_name
         operation[f"DryBulb_Temperature_Range_{i+1}_Lower_Limit"] = op_range[0]
         operation[f"DryBulb_Temperature_Range_{i+1}_Upper_Limit"] = op_range[1]
     return operation
