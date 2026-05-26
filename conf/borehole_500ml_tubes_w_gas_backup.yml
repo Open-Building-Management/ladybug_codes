@@ -48,6 +48,8 @@ soil_loop:
   Loop_Type: cooling
   Design_Loop_Exit_Temperature: 12
   Loop_Design_Temperature_Difference: 5
+  Maximum_Loop_Temperature: 35
+  Minimum_Loop_Temperature: -5
 
 water_heating_loop:
   setpoint: water_law_set_point

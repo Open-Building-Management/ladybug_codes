@@ -262,13 +262,13 @@ for loop in LOOPS:
                     Glycol_Concentration=0.3
                 )
             )
-        plant_loop = add_plantloop(idf, loop, 35, -5)
+        plant_loop = add_plantloop(idf, loop, conf)
         plant_loop.Fluid_Type = "UserDefinedFluidType"
         plant_loop.User_Defined_Fluid_Type = glycol_water_30.Name
         loops[loop] = plant_loop
         add_variable("Plant Supply Side Cooling Demand Rate", key=loop)
     if WATER_HEATING in loop:
-        heating_loop = add_plantloop(idf, loop, 100, 0)
+        heating_loop = add_plantloop(idf, loop, conf)
         loops[loop] = heating_loop
     add_variable("Plant Supply Side heating Demand Rate", key=loop)
 

@@ -172,14 +172,15 @@ def set_branch_list(obj, *, side, branch_list):
 def add_plantloop(
     idf:IDF,
     name:str,
-    max_t:int = 100,
-    min_t:int = 0
+    conf:dict|None = None
 ):
     """create a plant loop
     On crée les objets BRANCHLIST
     On met le setpoint sur le plant outlet"""
     nodes = LoopNodes(name)
     branches = Branches(name)
+    max_t = conf.get("Maximum_Loop_Temperature", 100)
+    min_t = conf.get("Minimum_Loop_Temperature", 0)
 
     idf.newidfobject(
         "BRANCHLIST",
@@ -203,7 +204,10 @@ def add_plantloop(
         Plant_Loop_Volume=EPValues.AUTOCALCULATE,
         #Plant_Side_Connector_List_Name
         #Demand_Side_Connector_List_Name
-        #Load_Distribution_Scheme
+        Load_Distribution_Scheme=conf.get(
+            "Load_Distribution_Scheme",
+            "SequentialLoad"
+        )
         #Availability_Manager_List_Name
         #Plant_Loop_Demand_Calculation_Scheme
         #Common_Pipe_Simulation
