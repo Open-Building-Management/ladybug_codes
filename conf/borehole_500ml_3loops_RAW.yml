@@ -1,0 +1,93 @@
+building_name: batiment_600m2
+
+name: borehole_3loops
+suffix: 500ml_1WL_only
+
+verbose: 0
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - soil_loop
+  - pac_water_heating_loop
+  - zone_water_heating_loop
+
+equipments:
+  - borehole
+  - soil_pump
+  - hpwtw
+  - pac_variable_pump
+  - zone_variable_pump
+  - HX
+  - baseboards_RDC
+  - baseboards_RPLUS1
+
+soil_loop:
+  setpoint: constant_set_point
+  operation: [borehole]
+  branches:
+    plant: [soil_pump, borehole]
+    demand: [hpwtw]
+  Loop_Type: cooling
+  Design_Loop_Exit_Temperature: 12
+  Loop_Design_Temperature_Difference: 5
+  Maximum_Loop_Temperature: 35
+  Minimum_Loop_Temperature: -5
+
+pac_water_heating_loop:
+  setpoint: water_law_set_point_5535
+  operation: [hpwtw]
+  branches:
+    plant: [pac_variable_pump, hpwtw]
+    demand: [HX]
+
+zone_water_heating_loop:
+  setpoint: water_law_set_point_5535
+  operation: [HX]
+  branches:
+    plant: [zone_variable_pump, HX]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+
+constant_set_point:
+  temp: -10
+
+water_law_set_point_7040:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+water_law_set_point_5535:
+  Setpoint_at_Outdoor_Low_Temperature: 55
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 35
+  Outdoor_High_Temperature: 15
+
+borehole:
+  Number_of_Boreholes_in_XDirection: 5
+  Number_of_Boreholes_in_YDirection: 1
+
+hpwtw:
+  Reference_Coefficient_of_Performance: 2.5
+  type: heatpump
+
+HX:
+  type: exchanger
+  Heat_Exchange_Model_Type: CounterFlow
+  Control_Type: OperationSchemeModulated
+
+gas_boiler:
+  force_side: Boiler_Water
+  efficiency_c: 0.96
+  efficiency_x: 0.04 # x=PLR
+  efficiency_x2: -0.03
+  efficiency_y: -0.004 # y=Twater
+  efficiency_y2: -0.00004
+  efficiency_xy: 0
