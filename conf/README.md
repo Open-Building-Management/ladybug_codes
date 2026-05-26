@@ -95,7 +95,7 @@ If mentionned, `Loop_Type` must begin with the loop type as required by the `Pla
 
 If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list, and you will have the possibility to define an `operation_range` for each equipment of the loop
 
-You can use `setpoints` instead or in addition to `setpoint` to add a setpoint at the output of each equipment of the loop
+You can use `setpoints` instead or in addition to `setpoint` to add a setpoint at the output/outlet of each equipment of the loop
 
 ```
 setpoints: [water_law_set_point_5535, water_law_set_point_7040]
