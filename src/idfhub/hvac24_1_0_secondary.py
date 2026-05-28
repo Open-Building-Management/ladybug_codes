@@ -100,6 +100,17 @@ class EmsProgram():
                 Program_Name_1=program.Name
             )
         )
+    
+    def calculate(
+        self,
+        *,
+        key,
+        formula
+    ):
+        """calculation tool"""
+        self.append(f"SET {key} = {formula}")
+        add_ems_vars_to_output([key], "audit")
+
 
     def discrete(
         self,
@@ -112,6 +123,8 @@ class EmsProgram():
         command is a string like :
         start_above, stop_above, start_below, stop_below"""
         if "start" not in command and "stop" not in command:
+            return
+        if "below" not in command and "above" not in command:
             return
         if "below" in command:
             self.append(f"IF {sensor_name} < {value}")
@@ -233,7 +246,7 @@ def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
 
 
 def ems_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
-    """control a machine through On/Off supervisory
+    """control a machine through an ems command (check in rdd files)
     a sensor called sensor_name must prexist"""
     actuator_name = f"{machine_name}_actuator"
 
@@ -256,6 +269,22 @@ def ems_control(machine_name: str, sensor_name: str, conf: dict[str, Any]):
             low_value=conf.get("min", 0),
             high_value=conf.get("max", 1)
         )
+    calling_point = conf.get(
+        "calling_point",
+        "InsideHVACSystemIterationLoop"
+    )
+    ems_program.generate(calling_point=calling_point)
+
+
+def compute(
+    conf: dict[str, str]
+):
+    """process to all calculations"""
+    if not conf:
+        return
+    ems_program = EmsProgram("audit")
+    for key, formula in conf.items():
+        ems_program.calculate(key=key, formula=formula)
     ems_program.generate()
 
 
