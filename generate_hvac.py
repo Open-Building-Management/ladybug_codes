@@ -56,7 +56,7 @@ from idfhub.hvac24_1_0 import (
     air_to_water_heatpump_eir
 )
 
-from idfhub.hvac24_1_0_secondary import initialise_sensors, control
+from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 
 
@@ -366,13 +366,16 @@ for equipment_name in EQUIPMENTS:
             )
 
 sensors = initialise_sensors(CONF.get("sensors", {}))
+process = CONF.get("process", {})
+compute(process)
+
 controls = CONF.get("controls", {})
 for control_conf in controls.values():
     sensor_name = control_conf.get("sensor")
     if not sensor_name:
         LOGGER.error("mention a sensor !")
         continue
-    if sensor_name not in sensors:
+    if sensor_name not in sensors and sensor_name not in process:
         LOGGER.error("unknown sensor")
         continue
     machines = control_conf.get("pilot", [])
@@ -385,6 +388,7 @@ for control_conf in controls.values():
                 machine, sensor_name
             )
             control(machine, sensor_name, control_conf)
+
 
 for loop in LOOPS:
     setpoint = CONF[loop].get("setpoint", {})

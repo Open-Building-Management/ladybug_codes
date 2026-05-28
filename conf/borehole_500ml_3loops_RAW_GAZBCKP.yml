@@ -1,0 +1,150 @@
+building_name: batiment_600m2
+
+name: borehole_3loops_PACON_CtrlDeltaSP
+suffix: 500ml_30KWPAC_Boiler45KW_nocond_SIGNLE_SP7040
+
+verbose: 0
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - soil_loop
+  - pac_water_heating_loop
+  - zone_water_heating_loop
+
+equipments:
+  - borehole
+  - soil_pump
+  - hpwtw
+  - gas_boiler
+  - pac_variable_pump
+  - zone_variable_pump
+  - HX
+  - baseboards_RDC
+  - baseboards_RPLUS1
+
+sensors:
+  outdoorT:
+    type: "Site Outdoor Air Drybulb Temperature"
+  borehole_t:
+    type: "System Node Temperature"
+    loop: soil_loop
+    side: plant
+    port: inlet
+  pac_outlet:
+    location_name: hpwtw_load_side_outlet_node
+    type: "System Node Temperature"
+  setpoint_sensor:
+    location_name: pac_water_heating_loop_plant_outlet_node
+    type: "System Node Setpoint Temperature"
+
+process:
+  deltaSP: "setpoint_sensor - pac_outlet"
+
+controls:
+  # first control = bivalence
+  # Text < -2 -> gaz
+  # -2 < Text < 0 -> pac+gaz < 0
+  # Text > 0 -> pac
+  # second control = PAC always ON
+  # gaz only if T < 0
+  # third control : PAC always ON, gaz if setpoint not met
+  boiler_availability:
+    sensor: deltaSP
+    #sensor: outdoorT
+    type: "On/Off Supervisory"
+    pilot: [gas_boiler]
+    start_above: 0
+    stop_below: 0
+    #start_below: 0
+    #stop_above: 0
+  #pac_availability:
+  #  sensor: outdoorT
+  #  type: "On/Off Supervisory"
+  #  pilot: [hpwtw]    
+  #  stop_below: -2
+  #  start_above: -2
+
+
+soil_loop:
+  setpoint: constant_set_point
+  operation: [borehole]
+  branches:
+    plant: [soil_pump, borehole]
+    demand: [hpwtw]
+  Loop_Type: cooling
+  Design_Loop_Exit_Temperature: 12
+  Loop_Design_Temperature_Difference: 5
+  Maximum_Loop_Temperature: 35
+  Minimum_Loop_Temperature: -5
+
+pac_water_heating_loop:
+  setpoint: water_law_set_point_7040
+  #setpoints: [water_law_set_point_5535, water_law_set_point_7040]
+  operation: [hpwtw, gas_boiler]
+  Loop_type: heating
+  #staging_mode: ComponentSetpoint
+  #Load_Distribution_Scheme: Optimal
+  branches:
+    plant: [pac_variable_pump, hpwtw, gas_boiler]
+    demand: [HX]
+
+zone_water_heating_loop:
+  setpoint: water_law_set_point_7040
+  operation: [HX]
+  branches:
+    plant: [zone_variable_pump, HX]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+
+constant_set_point:
+  temp: -10
+
+water_law_set_point_7040:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+water_law_set_point_6040:
+  Setpoint_at_Outdoor_Low_Temperature: 60
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+water_law_set_point_5535:
+  Setpoint_at_Outdoor_Low_Temperature: 55
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 35
+  Outdoor_High_Temperature: 15
+
+borehole:
+  Number_of_Boreholes_in_XDirection: 5
+  Number_of_Boreholes_in_YDirection: 1
+
+hpwtw:
+  Reference_Coefficient_of_Performance: 2.5
+  Reference_Heating_Capacity: 30000
+  type: heatpump
+
+HX:
+  type: exchanger
+  Heat_Exchange_Model_Type: CounterFlow
+  Control_Type: OperationSchemeModulated
+
+gas_boiler:
+  force_side: Boiler_Water
+  Nominal_Capacity: 45000
+  Nominal_Thermal_Efficiency: 0.87
+  efficiency_c: 1 #0.96
+  efficiency_x: 0.02 #0.04 # x=PLR
+  efficiency_x2: -0.04 #-0.03
+  efficiency_y: -0.0003 #-0.004 # y=Twater
+  efficiency_y2: 0 #-0.00004
+  efficiency_xy: 0
