@@ -45,14 +45,17 @@ from idfhub.common import (
 
 from idfhub.hvac24_1_0 import (
     loops, equipments, resolve_side,
-    ground_temperature,
-    vertical_geoexchanger,
     pump,
-    water_to_water_heatpump,
     water_law, constant_set_point,
     adjust_nodes_branch, operation_list_scheme,
     constant_schedule, basic_compact_schedule,
     gas_boiler,
+)
+
+from idfhub.hvac24_1_0_heatpump import (
+    ground_temperature,
+    vertical_geoexchanger,
+    water_to_water_heatpump,
     air_to_water_heatpump_eir
 )
 
