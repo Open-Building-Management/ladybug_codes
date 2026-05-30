@@ -45,14 +45,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 
 from idfhub.common import get_logger, idf, CONF
 
-# Import heatpump and geoexchanger functions from dedicated module
-from idfhub.hvac24_1_0_heatpump import (
-    ground_temperature,
-    vertical_geoexchanger,
-    water_to_water_heatpump,
-    air_to_water_heatpump_eir,
-)
-
 LOGGER = get_logger()
 BYPASS = "bypass"
 loops: dict = {}
