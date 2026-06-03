@@ -1,4 +1,4 @@
-name: Claude PR Review
+⁹name: Claude PR Review
 
 on:
   issue_comment:
@@ -32,19 +32,14 @@ jobs:
             const prNumber = context.issue.number;
             
             const comment = `## 🤖 Claude Review Initiated
-
-I'm analyzing PR #${prNumber}...
-
-To get my detailed review:
-1. Share the PR details in chat at https://github.com/copilot
-2. I'll provide comprehensive feedback
-3. You can then post my analysis here, or I can help implement suggested changes
-
-**PR Link**: https://github.com/${{ github.repository }}/pull/${prNumber}
-
-Let me know what you'd like me to focus on!
-`;
-            
+            I'm analyzing PR #${prNumber}...
+            To get my detailed review:
+            1. Share the PR details in chat at https://github.com/copilot
+            2. I'll provide comprehensive feedback
+            3. You can then post my analysis here, or I can help implement suggested changes
+            **PR Link**: https://github.com/${{ github.repository }}/pull/${prNumber}
+            Let me know what you'd like me to focus on!
+            `;
             github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
