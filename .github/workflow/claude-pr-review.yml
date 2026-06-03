@@ -1,0 +1,53 @@
+name: Claude PR Review
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  claude-review:
+    if: contains(github.event.comment.body, '@copilot') && github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+      issues: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR number
+        id: pr-info
+        run: |
+          echo "pr_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+
+      - name: Post acknowledgment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BOT_PAT_TOKEN }}
+          script: |
+            const prNumber = context.issue.number;
+            
+            const comment = `## 🤖 Claude Review Initiated
+
+I'm analyzing PR #${prNumber}...
+
+To get my detailed review:
+1. Share the PR details in chat at https://github.com/copilot
+2. I'll provide comprehensive feedback
+3. You can then post my analysis here, or I can help implement suggested changes
+
+**PR Link**: https://github.com/${{ github.repository }}/pull/${prNumber}
+
+Let me know what you'd like me to focus on!
+`;
+            
+            github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
