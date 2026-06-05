@@ -6,6 +6,7 @@ from honeybee.aperture import Aperture
 from honeybee.boundarycondition import Surface
 from honeybee.door import Door
 from honeybee.face import Face
+from honeybee.model import Model
 from honeybee.room import Room
 
 from honeybee_energy.construction.window import WindowConstruction
@@ -27,6 +28,17 @@ FLOOR = "floor"
 WALL = "wall"
 DOOR = "door"
 WIN = "win"
+
+def view_boundaries(building: Model):
+    """check boundary conditions"""
+    for element in building:
+        for _face in element.faces:
+            message = f"id: {_face.identifier} type: {type(_face.type)}"
+            LOGGER.info(message)
+            message = f"bc: {_face.boundary_condition}"
+            LOGGER.info(message)
+            message = f"material: {_face.properties.energy.construction.identifier}"
+            LOGGER.info(message)
 
 def box_room(
     name,
