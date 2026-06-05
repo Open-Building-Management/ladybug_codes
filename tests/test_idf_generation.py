@@ -336,25 +336,6 @@ class TestIDFArtifactGeneration:
             except UnicodeDecodeError:
                 pytest.fail(f"IDF file is not valid UTF-8: {idf_path}")
 
-    def test_idf_summary_generation(self, artifacts_dir):
-        """Generate a summary document of all produced IDFs"""
-        idf_files = list(artifacts_dir.glob("*.idf"))
-        
-        summary_path = artifacts_dir / "IDF_SUMMARY.md"
-        
-        with open(summary_path, "w") as f:
-            f.write("# Generated IDF Files\n\n")
-            f.write(f"Generated at: {Path(artifacts_dir).resolve()}\n\n")
-            
-            for idf_path in sorted(idf_files):
-                size_kb = idf_path.stat().st_size / 1024
-                f.write(f"## {idf_path.name}\n")
-                f.write(f"- **Size:** {size_kb:.1f} KB\n")
-                f.write(f"- **Path:** `{idf_path}`\n")
-        
-        print(f"\n📋 Generated summary: {summary_path}")
-        print(summary_path.read_text())
-
     def test_idf_directory_info(self, artifacts_dir):
         """Print directory information for GitHub Actions"""
         idf_files = list(artifacts_dir.glob("*.idf"))
