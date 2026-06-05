@@ -117,7 +117,12 @@ hvac_parser.add_argument(
     default="conf_geometry/agence.yml"
 )
 
-args = hvac_parser.parse_args()
+# Parse arguments, but catch errors (for pytest which passes its own args)
+try:
+    args = hvac_parser.parse_args()
+except SystemExit:
+    # Use defaults when argument parsing fails (e.g., in pytest)
+    args = argparse.Namespace(conf="configuration.yml", geoconf="conf_geometry/agence.yml")
 
 CONF = load_config(REPO_ROOT, args.conf)
 GEOMETRY = load_config(REPO_ROOT, args.geoconf)
