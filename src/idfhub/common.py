@@ -66,7 +66,7 @@ def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
     yaml_path = f"{repo_root}/{file_name}"
     if os.path.exists(yaml_path):
         with open(yaml_path, "r", encoding="utf-8") as f:
-            return dict(yaml.safe_load(f))
+            return yaml.safe_load(f) or {}
     return {}
 
 OPS = {
@@ -99,7 +99,7 @@ def eval_expr(expr, variables):
 
         raise TypeError(f"Unsupported Expression : {ast.dump(node)}")
 
-    return _eval(ast.parse(expr, mode="eval").body)
+    return _eval(ast.parse(expr.strip(), mode="eval").body)
 
 hvac_parser = argparse.ArgumentParser(description='hvac configuration')
 
