@@ -1,9 +1,10 @@
 """yml management"""
 import argparse
+import ast
 import logging
+import operator as op
 import os
 import sys
-from typing import Any
 import yaml
 
 from eppy.modeleditor import IDF
@@ -68,6 +69,38 @@ def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
             return dict(yaml.safe_load(f))
     return {}
 
+OPS = {
+    ast.Add: op.add,
+    ast.Sub: op.sub,
+    ast.Mult: op.mul,
+    ast.Div: op.truediv,
+    ast.USub: op.neg,
+    ast.UAdd: op.pos,
+}
+
+def eval_expr(expr, variables):
+    """secure resolution engine"""
+    def _eval(node):
+        """evaluation method"""
+        if isinstance(node, ast.Constant):
+            return node.value
+
+        if isinstance(node, ast.Name):
+            return variables[node.id]
+
+        if isinstance(node, ast.BinOp):
+            return OPS[type(node.op)](
+                _eval(node.left),
+                _eval(node.right)
+            )
+
+        if isinstance(node, ast.UnaryOp):
+            return OPS[type(node.op)](_eval(node.operand))
+
+        raise TypeError(f"Unsupported Expression : {ast.dump(node)}")
+
+    return _eval(ast.parse(expr, mode="eval").body)
+
 hvac_parser = argparse.ArgumentParser(description='hvac configuration')
 
 hvac_parser.add_argument(
@@ -77,9 +110,20 @@ hvac_parser.add_argument(
     default="configuration.yml"
 )
 
+hvac_parser.add_argument(
+    "--geoconf",
+    action="store",
+    help="geometry configuration file",
+    default="conf_geometry/agence.yml"
+)
+
 args = hvac_parser.parse_args()
 
 CONF = load_config(REPO_ROOT, args.conf)
+GEOMETRY = load_config(REPO_ROOT, args.geoconf)
+
+BLOCKS = GEOMETRY.get("blocks", {})
+
 REQUIRED = [
     "building_name",
     "name",

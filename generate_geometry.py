@@ -159,7 +159,7 @@ for pattern in ["wall8", "wall6", "wall4"]:
     apm.set(rdc, pattern, use_orientation=False)
     apm.add_from_center(simple_glass_wall, count=1)
 apm.fix_face("wall7", use_orientation=False)
-apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 apm.fix_dim(1.2,1.3,1)
 apm.fix_face("wall9", use_orientation=False)
 apm.add_from_border(window_pvc, count=22)
@@ -169,12 +169,12 @@ apm.fix_face("wall1", use_orientation=False)
 apm.add_from_border(window_pvc, count=24)
 apm.fix_dim(2,2,0)
 apm.fix_face("wall2", use_orientation=False)
-apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 
 apm.fix_dim(4,2,0)
 for pattern in ["Face3", "Face4"]:
     apm.set(meeting, pattern, use_orientation=False)
-    apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+    apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 
 
 geom = Face3D([
@@ -188,7 +188,7 @@ add_aperture(
     geometry=geom,
     construction=simple_glass_wall,
     label="porte_sous_sol",
-    aperture_type=Door,
+    aperture_type="door",
 )
 
 bat = [ss, rdc, rplus1, meeting]
