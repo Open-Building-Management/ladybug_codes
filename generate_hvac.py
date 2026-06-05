@@ -52,9 +52,12 @@ from idfhub.hvac24_1_0 import (
     gas_boiler,
 )
 
-from idfhub.hvac24_1_0_heatpump import (
+from idfhub.hvac24_1_0_geoexchanger import (
     ground_temperature,
     vertical_geoexchanger,
+)
+
+from idfhub.hvac24_1_0_heatpump import (
     water_to_water_heatpump,
     air_to_water_heatpump_eir
 )
