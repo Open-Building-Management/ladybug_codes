@@ -1,4 +1,4 @@
-name: Test & Generate IDF Artifacts
+name: Test and Generate IDF Artifacts
 
 on:
   workflow_dispatch:
