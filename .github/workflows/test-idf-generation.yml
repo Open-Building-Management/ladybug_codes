@@ -1,0 +1,72 @@
+name: Test & Generate IDF Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_idf_generation:
+        description: 'Generate IDF files'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: geometry_from_yaml
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov
+          pip install honeybee-core honeybee-energy ladybug-geometry eppy pyyaml
+      
+      - name: Run expression evaluator tests
+        run: pytest tests/test_eval_expr.py -v --tb=short
+      
+      - name: Run YAML integration tests
+        run: pytest tests/test_integration.py -v --tb=short
+      
+      - name: Generate IDF files
+        if: ${{ inputs.run_idf_generation == 'true' }}
+        run: pytest tests/test_idf_generation.py -v -s
+      
+      - name: Upload IDF artifact files
+        if: ${{ always() && inputs.run_idf_generation == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-idf-files
+          path: /tmp/ladybug_test_artifacts/*.idf
+          retention-days: 30
+          if-no-files-found: warn
+      
+      - name: Upload IDF summary
+        if: ${{ always() && inputs.run_idf_generation == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: idf-summary
+          path: /tmp/ladybug_test_artifacts/IDF_SUMMARY.md
+          retention-days: 30
+          if-no-files-found: warn
+      
+      - name: Test summary
+        if: always()
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Expression evaluator tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ YAML integration tests completed" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.run_idf_generation }}" = "true" ]; then
+            echo "✅ IDF generation tests completed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📦 Artifacts available for download" >> $GITHUB_STEP_SUMMARY
+          fi
