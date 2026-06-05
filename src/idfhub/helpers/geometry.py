@@ -6,6 +6,7 @@ from honeybee.aperture import Aperture
 from honeybee.boundarycondition import Surface
 from honeybee.door import Door
 from honeybee.face import Face
+from honeybee.model import Model
 from honeybee.room import Room
 
 from honeybee_energy.construction.window import WindowConstruction
@@ -27,6 +28,17 @@ FLOOR = "floor"
 WALL = "wall"
 DOOR = "door"
 WIN = "win"
+
+def view_boundaries(building: Model):
+    """check boundary conditions"""
+    for element in building:
+        for _face in element.faces:
+            message = f"id: {_face.identifier} type: {type(_face.type)}"
+            LOGGER.info(message)
+            message = f"bc: {_face.boundary_condition}"
+            LOGGER.info(message)
+            message = f"material: {_face.properties.energy.construction.identifier}"
+            LOGGER.info(message)
 
 def box_room(
     name,
@@ -181,9 +193,9 @@ def log_face_o_x_y(
     wall_plane = face.geometry.plane
     #message = dir(wall_plane)
     #LOGGER.debug(message)
-    LOGGER.debug(f"wall_plane.o is {wall_plane.o}")
-    LOGGER.debug(f"wall_plane.x is {wall_plane.x}")
-    LOGGER.debug(f"wall_plane.y is {wall_plane.y}")
+    LOGGER.debug("wall_plane.o is %s", wall_plane.o)
+    LOGGER.debug("wall_plane.x is %s", wall_plane.x)
+    LOGGER.debug("wall_plane.y is %s", wall_plane.y)
 
 
 def world_to_local(
@@ -246,23 +258,22 @@ def add_aperture(
     geometry: Face3D,
     construction: WindowConstruction|OpaqueConstruction,
     label: str,
-    aperture_type: Aperture|Door
+    aperture_type: str
 ):
     """create the aperture given its geometry"""
-    kwargs = {}
-    if aperture_type == Door and isinstance(construction, WindowConstruction):
-        kwargs={"is_glass":True}
-    aperture = aperture_type(
-        identifier=f"{face.identifier}_{label}",
-        geometry=geometry,
-        **kwargs
-    )
-    aperture.properties.energy.construction = construction
-    if aperture_type==Door:
+    if aperture_type == "door" and isinstance(construction, WindowConstruction):
+        aperture = Door(
+            identifier=f"{face.identifier}_{label}",
+            geometry=geometry,
+            is_glass=True
+        )
         face.add_door(aperture)
-    else:
+    if aperture_type != "door":
+        aperture = Aperture(
+            identifier=f"{face.identifier}_{label}",
+            geometry=geometry
+        )
         face.add_aperture(aperture)
-
 
 @dataclass
 class Dims:
@@ -324,6 +335,10 @@ class ApertureManager:
             self.face = get(self.room, pattern)
         else:
             self.face = get_from_pattern(self.room, pattern)
+        self.set_u_v_bounds()
+
+    def set_u_v_bounds(self):
+        """set u and v bounds presuming face is fixed"""
         self.u_min, self.u_max, v_min, v_max = get_face_u_v_bounds(self.face)
         if self.face.geometry.plane.y.z < 0:
             self.v = v_max - self.dims.height - self.dims.sill_height
@@ -335,7 +350,7 @@ class ApertureManager:
         origin: Point3D,
         construction: WindowConstruction,
         label: str,
-        aperture_type: Aperture|Door = Aperture,
+        aperture_type: str = "aperture",
     ):
         """add a single aperture"""
         geometry = aperture_geometry(
@@ -355,7 +370,7 @@ class ApertureManager:
     def add_from_center(
         self,
         construction: WindowConstruction,
-        aperture_type: Aperture|Door = Aperture,
+        aperture_type: str = "aperture",
         ecart:float|None = None,
         count:int = 1
     ):
@@ -365,18 +380,18 @@ class ApertureManager:
         for i in range(count):
             u = start_u + i * translate
             origin = local_to_world(self.face, u, self.v)
-            LOGGER.debug(f"i {i} > plane origin: {origin}")
+            LOGGER.debug("i %s > plane origin: %s", i, origin)
             self._add(
                 origin=origin,
                 construction=construction,
-                label=f"{DOOR}_{i}" if aperture_type==Door else f"{WIN}_{i}",
+                label=f"{DOOR}_{i}" if aperture_type=="door" else f"{WIN}_{i}",
                 aperture_type=aperture_type
             )
 
     def add_from_border(
         self,
         construction: WindowConstruction,
-        aperture_type: Aperture|Door = Aperture,
+        aperture_type: str = "aperture",
         ecart:float|None = None,
         count:int = 1
     ):
@@ -385,15 +400,15 @@ class ApertureManager:
             spacing = (self.u_max - self.u_min - count * self.dims.width) / (count + 1)
         else:
             spacing = ecart
-        LOGGER.info(f"{self.face.identifier} >>>> aperture spacing is {spacing:.2f} m")
+        LOGGER.info("%s >>>> aperture spacing is %.2f m", self.face.identifier, spacing)
         for i in range(count):
             u = self.u_min + i * (self.dims.width + spacing) + spacing
             origin = local_to_world(self.face, u, self.v)
-            LOGGER.debug(f"i {i} > plane origin: {origin}")
+            LOGGER.debug("i %s > plane origin: %s", i, origin)
             self._add(
                 origin=origin,
                 construction=construction,
-                label=f"{DOOR}_{i}" if aperture_type==Door else f"{WIN}_{i}",
+                label=f"{DOOR}_{i}" if aperture_type=="door" else f"{WIN}_{i}",
                 aperture_type=aperture_type
             )
 

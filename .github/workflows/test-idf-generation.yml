@@ -1,0 +1,48 @@
+name: Test and Generate IDF Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_idf_generation:
+        description: 'Generate IDF files'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov
+          pip install honeybee-core honeybee-energy ladybug-geometry eppy pyyaml
+      
+      - name: Run expression evaluator tests
+        run: pytest tests/test_eval_expr.py -v --tb=short
+      
+      - name: Run YAML integration tests
+        run: pytest tests/test_integration.py -v --tb=short
+      
+      - name: Generate IDF files
+        if: ${{ inputs.run_idf_generation == 'true' }}
+        run: pytest tests/test_idf_generation.py -v -s
+      
+      - name: Upload IDF artifact files
+        if: ${{ always() && inputs.run_idf_generation == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-idf-files
+          path: /tmp/ladybug_test_artifacts/*.idf
+          retention-days: 30
+          if-no-files-found: warn

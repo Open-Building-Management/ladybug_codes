@@ -32,26 +32,18 @@ from src.idfhub.helpers.geometry import (
     box_room, complex_room,
     get, get_from_pattern,
     ApertureManager, add_aperture,
-    join_surface
+    join_surface,
+    view_boundaries
 )
 
-LOGGER = get_logger("idfhub", level=logging.INFO)
+LOGGER = get_logger(log_level=logging.INFO)
 
 # Building global params
 ADMIN_WIDTH = 37.0
 ADMIN_DEPTH = 11.0
 LEVEL_HEIGHT = 3.0
 
-def view_boundaries(building: Model):
-    """check boundary conditions"""
-    for element in building:
-        for _face in element.faces:
-            message = f"id: {_face.identifier} type: {type(_face.type)}"
-            LOGGER.info(message)
-            message = f"bc: {_face.boundary_condition}"
-            LOGGER.info(message)
-            message = f"material: {_face.properties.energy.construction.identifier}"
-            LOGGER.info(message)
+
 
 print("-> Creating Honeybee Rooms.....")
 
@@ -167,7 +159,7 @@ for pattern in ["wall8", "wall6", "wall4"]:
     apm.set(rdc, pattern, use_orientation=False)
     apm.add_from_center(simple_glass_wall, count=1)
 apm.fix_face("wall7", use_orientation=False)
-apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 apm.fix_dim(1.2,1.3,1)
 apm.fix_face("wall9", use_orientation=False)
 apm.add_from_border(window_pvc, count=22)
@@ -177,12 +169,12 @@ apm.fix_face("wall1", use_orientation=False)
 apm.add_from_border(window_pvc, count=24)
 apm.fix_dim(2,2,0)
 apm.fix_face("wall2", use_orientation=False)
-apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 
 apm.fix_dim(4,2,0)
 for pattern in ["Face3", "Face4"]:
     apm.set(meeting, pattern, use_orientation=False)
-    apm.add_from_center(simple_glass_wall, aperture_type=Door, count=1)
+    apm.add_from_center(simple_glass_wall, aperture_type="door", count=1)
 
 
 geom = Face3D([
@@ -196,7 +188,7 @@ add_aperture(
     geometry=geom,
     construction=simple_glass_wall,
     label="porte_sous_sol",
-    aperture_type=Door,
+    aperture_type="door",
 )
 
 bat = [ss, rdc, rplus1, meeting]
