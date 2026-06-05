@@ -351,7 +351,6 @@ class TestIDFArtifactGeneration:
                 f.write(f"## {idf_path.name}\n")
                 f.write(f"- **Size:** {size_kb:.1f} KB\n")
                 f.write(f"- **Path:** `{idf_path}`\n")
-                f.write(f"- **Status:** ✅ Generated\n\n")
         
         print(f"\n📋 Generated summary: {summary_path}")
         print(summary_path.read_text())
@@ -361,15 +360,15 @@ class TestIDFArtifactGeneration:
         idf_files = list(artifacts_dir.glob("*.idf"))
         total_size = sum(f.stat().st_size for f in idf_files)
         
-        print(f"\n" + "="*60)
-        print(f"📦 IDF Artifacts Summary")
-        print(f"="*60)
+        print("\n" + "="*60)
+        print("📦 IDF Artifacts Summary")
+        print("="*60)
         print(f"Location: {artifacts_dir}")
         print(f"Total Files: {len(idf_files)}")
         print(f"Total Size: {total_size / 1024:.1f} KB")
-        print(f"{"="*60}")
+        print("="*60)
         
         for idf_path in sorted(idf_files):
             size_kb = idf_path.stat().st_size / 1024
             print(f"  ✅ {idf_path.name:<35} {size_kb:>8.1f} KB")
-        print(f"{"="*60}")
+        print("="*60)
