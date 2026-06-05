@@ -32,26 +32,18 @@ from src.idfhub.helpers.geometry import (
     box_room, complex_room,
     get, get_from_pattern,
     ApertureManager, add_aperture,
-    join_surface
+    join_surface,
+    view_boundaries
 )
 
-LOGGER = get_logger("idfhub", level=logging.INFO)
+LOGGER = get_logger(log_level=logging.INFO)
 
 # Building global params
 ADMIN_WIDTH = 37.0
 ADMIN_DEPTH = 11.0
 LEVEL_HEIGHT = 3.0
 
-def view_boundaries(building: Model):
-    """check boundary conditions"""
-    for element in building:
-        for _face in element.faces:
-            message = f"id: {_face.identifier} type: {type(_face.type)}"
-            LOGGER.info(message)
-            message = f"bc: {_face.boundary_condition}"
-            LOGGER.info(message)
-            message = f"material: {_face.properties.energy.construction.identifier}"
-            LOGGER.info(message)
+
 
 print("-> Creating Honeybee Rooms.....")
 
