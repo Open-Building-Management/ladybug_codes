@@ -46,25 +46,3 @@ jobs:
           path: /tmp/ladybug_test_artifacts/*.idf
           retention-days: 30
           if-no-files-found: warn
-      
-      - name: Upload IDF summary
-        if: ${{ always() && inputs.run_idf_generation == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: idf-summary
-          path: /tmp/ladybug_test_artifacts/IDF_SUMMARY.md
-          retention-days: 30
-          if-no-files-found: warn
-      
-      - name: Test summary
-        if: always()
-        run: |
-          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Expression evaluator tests completed" >> $GITHUB_STEP_SUMMARY
-          echo "✅ YAML integration tests completed" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ inputs.run_idf_generation }}" = "true" ]; then
-            echo "✅ IDF generation tests completed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "📦 Artifacts available for download" >> $GITHUB_STEP_SUMMARY
-          fi
