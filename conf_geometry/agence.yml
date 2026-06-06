@@ -116,3 +116,18 @@ admin:
       height: 1.3
       sill_height: 1
       construction: window_pvc
+
+pavin:
+  lab:
+    height: 7
+    altitude: &lab_alt -3
+    walls:
+      - ["37+45", 0, *lab_alt]
+      - ["37+45+8", 0, *lab_alt]
+      - ["37+45+8", 53, *lab_alt]
+      - ["37+45", 53, *lab_alt]
+    apertures:
+      numbers: [0, 6, 0, 6]
+      width: 4.5
+      height: 1.5
+      sill_height: 3.85

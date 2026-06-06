@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from eppy.modeleditor import IDF
 from eppy.bunch_subclass import EpBunch
 
-from .idf_autocomplete.v24_1_0.idf_helpers_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     ConnectorMixer, ConnectorSplitter, Connectorlist, ConnectorlistMeta,
     Branchlist, BranchlistMeta
 )
 
-from .idf_autocomplete.v24_1_0.idf_types_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ConnectorMixerType, ConnectorSplitterType, ConnectorlistType,
     BranchlistType
 )
