@@ -46,7 +46,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 )
 
 from idfhub.common import idf, CONF
-from .hvac24_1_0 import equipments
+from idfhub.hvac24_1_0 import equipments
 
 
 def create_sensor(*, sensor_name, sensor_type, location_name):

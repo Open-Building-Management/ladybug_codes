@@ -1,9 +1,9 @@
 """exchangers"""
-from .idf_autocomplete.idf_helpers_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     HeatexchangerFluidtofluid
 )
 
-from .idf_autocomplete.idf_types_short import (
+from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     HeatexchangerFluidtofluidType
 )
 
