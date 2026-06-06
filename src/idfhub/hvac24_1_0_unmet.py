@@ -11,8 +11,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import(
     EnergymanagementsystemProgramType
 )
 
-from .common import idf
-from .hvac24_1_0 import create_sensor
+from idfhub.common import idf
+from idfhub.hvac24_1_0 import create_sensor
 
 def evaluate_unmet(zone_name, schedule_name):
     """evaluate unmet hours"""
