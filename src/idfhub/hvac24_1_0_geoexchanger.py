@@ -10,7 +10,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
-    SiteGroundtemperatureBuildingSurfaceType,
+    SiteGroundtemperatureBuildingsurfaceType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
     GroundheatexchangerVerticalPropertiesType,
     GroundheatexchangerVerticalArrayType,
@@ -24,7 +24,7 @@ def ground_temperature():
     """create a basic ground temperature for the building"""
     SiteGroundtemperatureBuildingsurface(
         idf,
-        **SiteGroundtemperatureBuildingSurfaceType(
+        **SiteGroundtemperatureBuildingsurfaceType(
             January_Ground_Temperature=7.0,
             February_Ground_Temperature=8.0,
             March_Ground_Temperature=9.5,
