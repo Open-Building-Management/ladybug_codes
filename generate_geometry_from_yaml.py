@@ -112,23 +112,27 @@ for building_name, building_metadata in GEOMETRY.items():
         level_walls: list[Wall] = []
         for face in site[building_name][level_name].faces:
             if isinstance(face.type, Wall):
-                construction = constructions.get("walls", "wall_parpaing")
-                face.properties.energy.construction = CONSTLIB[construction]
+                construction_name = constructions.get("walls")
+                construction = CONSTLIB.get(construction_name)
+                if construction is not None:
+                    face.properties.energy.construction = construction
                 level_walls.append(face)
             if isinstance(face.type, Floor):
-                construction = constructions.get("floors")
-                if not construction or construction not in CONSTLIB:
+                construction_name = constructions.get("floors")
+                construction = CONSTLIB.get(construction_name)
+                if construction is None:
                     continue
                 if face.boundary_condition != Ground():
-                    LOGGER.info("Setting floor construction %s on %s", construction, face)
-                    face.properties.energy.construction = CONSTLIB[construction]
+                    LOGGER.info("Setting floor construction %s on %s", construction_name, face)
+                    face.properties.energy.construction = construction
             if isinstance(face.type, RoofCeiling):
-                construction = constructions.get("roofs")
-                if not construction or construction not in CONSTLIB:
+                construction_name = constructions.get("roofs")
+                construction = CONSTLIB.get(construction_name)
+                if construction is None:
                     continue
                 if face.boundary_condition != Outdoors():
-                    LOGGER.info("Setting roof construction %s on %s", construction, face)
-                    face.properties.energy.construction = CONSTLIB[construction]
+                    LOGGER.info("Setting roof construction %s on %s", construction_name, face)
+                    face.properties.energy.construction = construction
         # now we can add apertures
         apertures = level_metadata.get("apertures", {})
         if "numbers" not in apertures:
@@ -187,13 +191,14 @@ for building_name, building_metadata in GEOMETRY.items():
                     sill_height = sill_height
                 )
                 try:
-                    construction = constructions[i]
+                    construction_name = constructions[i]
                 except IndexError:
-                    construction = apertures.get("construction", "window_pvc")
+                    construction_name = apertures.get("construction")
+                construction=CONSTLIB.get(construction_name)
                 apm.face = face
                 apm.set_u_v_bounds()
                 apm.add_from_border(
-                    CONSTLIB[construction],
+                    construction=construction,
                     count=count,
                     aperture_type=aperture_type
                 )
@@ -204,18 +209,17 @@ for building_name, building_metadata in GEOMETRY.items():
             if "geometry" not in element_metadata:
                 continue
             face = level_walls[element_metadata.get("index", 0)]
-            # design choice, maybe not perfect
             # we add an aperture so boundary conditions need to be outdoors
+            # design choice, maybe not perfect, we could have an indoor aperture
             face.boundary_condition = Outdoors()
             points = prepare(element_metadata["geometry"], variables=level_variables)
-            construction = element_metadata.get("construction", "simple_glass_wall")
-            if construction not in CONSTLIB:
-                continue
+            construction_name = element_metadata.get("construction")
+            construction = CONSTLIB.get(construction_name)
             LOGGER.warning("GOT ELEMENT %s on %s", element_name, face)
             add_aperture(
                 face,
                 Face3D(points),
-                construction=CONSTLIB[construction],
+                construction=construction,
                 label=element_name,
                 aperture_type=element_metadata.get("type", "door")
             )

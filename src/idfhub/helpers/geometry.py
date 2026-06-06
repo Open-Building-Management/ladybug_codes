@@ -256,24 +256,30 @@ def aperture_geometry(
 def add_aperture(
     face: Face,
     geometry: Face3D,
-    construction: WindowConstruction|OpaqueConstruction,
+    construction: WindowConstruction | OpaqueConstruction | None,
     label: str,
     aperture_type: str
 ):
     """create the aperture given its geometry"""
-    if aperture_type == "door" and isinstance(construction, WindowConstruction):
+    identifier = f"{face.identifier}_{label}"
+    if aperture_type == "door" :
         aperture = Door(
-            identifier=f"{face.identifier}_{label}",
+            identifier=identifier,
             geometry=geometry,
-            is_glass=True
+            is_glass=isinstance(construction, WindowConstruction)
         )
-        face.add_door(aperture)
-    if aperture_type != "door":
+    else:
         aperture = Aperture(
-            identifier=f"{face.identifier}_{label}",
+            identifier=identifier,
             geometry=geometry
         )
+    if construction is not None:
+        aperture.properties.energy.construction = construction
+    if aperture_type == "door":
+        face.add_door(aperture)
+    else:
         face.add_aperture(aperture)
+
 
 @dataclass
 class Dims:
@@ -348,7 +354,7 @@ class ApertureManager:
     def _add(
         self,
         origin: Point3D,
-        construction: WindowConstruction,
+        construction: WindowConstruction | None,
         label: str,
         aperture_type: str = "aperture",
     ):
@@ -369,10 +375,10 @@ class ApertureManager:
 
     def add_from_center(
         self,
-        construction: WindowConstruction,
+        construction: WindowConstruction | None,
         aperture_type: str = "aperture",
-        ecart:float|None = None,
-        count:int = 1
+        ecart: float | None = None,
+        count: int = 1
     ):
         """ajoute les ouvertures symétriquement par rapport au centre"""
         translate = self.dims.width if not ecart else self.dims.width + ecart
@@ -390,10 +396,10 @@ class ApertureManager:
 
     def add_from_border(
         self,
-        construction: WindowConstruction,
+        construction: WindowConstruction | None,
         aperture_type: str = "aperture",
-        ecart:float|None = None,
-        count:int = 1
+        ecart: float | None = None,
+        count: int = 1
     ):
         """ajoute les ouvertures depuis un bord"""
         if not ecart:
