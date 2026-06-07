@@ -324,7 +324,7 @@ def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
     zone_baseboard[EPApi.OUTLET_NODE_NAME] = f"{zone_name} baseboards outlet"
     surfaces = [
         s for s in idf.idfobjects["BUILDINGSURFACE:DETAILED"]
-        if s.Zone_Name == zone_name
+        if s.Zone_Name.lower() == zone_name.lower()
     ]
     walls = [s for s in surfaces if s.Surface_Type == "Wall"]
     floors = [s for s in surfaces if s.Surface_Type == "Floor"]
