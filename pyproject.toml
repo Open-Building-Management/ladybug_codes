@@ -39,7 +39,6 @@ dependencies = [
     "eppy",
     "honeybee-core",
     "honeybee-energy",
-    "honeybee",
     "ladybug-geometry",
     "pyyaml"
 ]
