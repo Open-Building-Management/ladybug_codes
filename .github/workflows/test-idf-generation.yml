@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pytest pytest-cov
-          pip install -e
+          pip install -e .
       - name: Run expression evaluator tests
         run: pytest tests/test_eval_expr.py -v --tb=short
       - name: Run YAML integration tests

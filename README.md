@@ -16,7 +16,7 @@ To install :
 git clone https://github.com/Open-Building-Management/ladybug_codes
 cd ladybug_codes
 py -m pip install -e .
-pip install -e
+pip install -e .
 ```
 
 # Geometry
