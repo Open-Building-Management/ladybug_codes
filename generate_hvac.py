@@ -160,6 +160,7 @@ Building(
     idf,
     **BuildingType(
         Name="CeremaCF",
+        North_Axis=CONF.get("North_Axis", 0),
         Loads_Convergence_Tolerance_Value=0.04,
         Temperature_Convergence_Tolerance_Value=0.4
     )
