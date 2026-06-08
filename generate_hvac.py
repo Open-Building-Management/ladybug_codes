@@ -65,6 +65,8 @@ from idfhub.hvac24_1_0_heatpump import (
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 
+from idfhub.hvac24_1_0_photovoltaic import PV_plant
+
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -342,6 +344,8 @@ for equipment_name in EQUIPMENTS:
         exchanger = heat_exchanger(equipment_name)
         equipments[equipment_name] = exchanger
         continue
+    if "PV" in equipment_name:
+        pv_generator = PV_plant(equipment_name)
     if "baseboards" in equipment_name:
         try:
             zone = equipment_name.split("_")[1]

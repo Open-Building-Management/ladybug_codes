@@ -17,6 +17,8 @@ from ladybug_geometry.geometry3d import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
+from idfhub.common import COMMON_HEIGHT, eval_expr
+
 LOGGER = logging.getLogger(__name__)
 
 WIDTH = 37.0
@@ -103,6 +105,14 @@ def create_floors_roofs(
         message = f"roof {i} -> {f3d.normal}"
         LOGGER.debug(message)
     return all_floors, all_roofs
+
+def get_variables(metadata: dict) -> dict:
+    """return dict of variables"""
+    variables = {}
+    variables["height"] = metadata.get("height", COMMON_HEIGHT)
+    variables["altitude"] = metadata.get("altitude", 0)
+    return variables
+
 
 def complex_room(
     pts:list[Point3D],

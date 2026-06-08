@@ -1,4 +1,5 @@
 building_name: batiment_600m2
+North_Axis: 60
 
 name: borehole_3loops_PACON_CtrlDeltaSP
 suffix: 500ml_30KWPAC_Boiler45KW_nocond_SIGNLE_SP7040
@@ -26,6 +27,7 @@ equipments:
   - HX
   - baseboards_RDC
   - baseboards_RPLUS1
+  - PV_lab
 
 sensors:
   outdoorT:
@@ -148,3 +150,12 @@ gas_boiler:
   efficiency_y: -0.0003 #-0.004 # y=Twater
   efficiency_y2: 0 #-0.00004
   efficiency_xy: 0
+
+PV_lab:
+  height: 7
+  altitude: -3
+  surface:
+    - ["37+45", 0, "altitude+height"]
+    - ["37+45+8", 0, "altitude+height+0.45"]
+    - ["37+45+8", 53, "altitude+height+0.45"]
+    - ["37+45", 53, "altitude+height"]

@@ -11,7 +11,7 @@ from ladybug_geometry.geometry3d import Face3D, Point3D
 
 from src.idfhub.common import get_logger, eval_expr, GEOMETRY, BLOCKS
 
-from src.idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture
+from src.idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture, get_variables
 from src.idfhub.helpers.matlib import CONSTLIB
 
 LOGGER = get_logger(log_level=logging.INFO)
@@ -39,12 +39,6 @@ def prepare(
         for row in coordinates
     ]
 
-def get_variables(metadata: dict) -> dict:
-    """return dict of variables"""
-    variables = {}
-    variables["height"] = metadata.get("height", common_height)
-    variables["altitude"] = metadata.get("altitude", 0)
-    return variables
 
 for building_name, building_metadata in GEOMETRY.items():
     if not isinstance(building_metadata, dict):

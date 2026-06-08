@@ -126,7 +126,7 @@ except SystemExit:
 
 CONF = load_config(REPO_ROOT, args.conf)
 GEOMETRY = load_config(REPO_ROOT, args.geoconf)
-
+COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
 
 REQUIRED = [
