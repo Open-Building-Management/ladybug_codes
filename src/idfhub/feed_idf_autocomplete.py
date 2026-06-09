@@ -5,7 +5,7 @@ import re
 import argparse
 from eppy.modeleditor import IDF
 
-from idfhub.helpers.consts import REPO_ROOT
+from idfhub.common import REPO_ROOT
 
 # ---------------- CONFIG ----------------
 OS_EP_PATH = "C:/openstudioapplication-1.8.0/EnergyPlus"
