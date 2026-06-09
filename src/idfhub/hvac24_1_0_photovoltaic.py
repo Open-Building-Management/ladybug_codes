@@ -74,13 +74,20 @@ def PV_plant(equipment_name):
     """create a photovoltaic production plant"""    
     surface_name = surface(equipment_name)
     if surface_name:
+        conf = CONF.get(equipment_name, {})
         pv_perf = PhotovoltaicperformanceSimple(
             idf,
             **PhotovoltaicperformanceSimpleType(
                 Name=f"{equipment_name} performance",
-                Fraction_of_Surface_Area_with_Active_Solar_Cells=0.8,
+                Fraction_of_Surface_Area_with_Active_Solar_Cells=conf.get(
+                    "Fraction_of_Surface_Area_with_Active_Solar_Cells",
+                    0.8
+                ),
                 Conversion_Efficiency_Input_Mode="Fixed",
-                Value_for_Cell_Efficiency_if_Fixed=0.18
+                Value_for_Cell_Efficiency_if_Fixed=conf.get(
+                    "Value_for_Cell_Efficiency_if_Fixed",
+                    0.18
+                )
             )
         )
         pv_array = GeneratorPhotovoltaic(
