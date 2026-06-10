@@ -39,6 +39,6 @@ def heat_exchanger(name: str):
             Heat_Transfer_Metering_End_Use_Type=conf.get(
                 "Heat_Transfer_Metering_End_Use_Type", EPValues.LOOPTOLOOP
             ),
-            Sizing_Factor=conf.get("Siaing_Factor", 1)
+            Sizing_Factor=conf.get("Sizing_Factor", 1)
         )
     )
