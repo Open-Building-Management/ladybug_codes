@@ -242,45 +242,6 @@ def add_plantloop(
     return plantloop
 
 
-def _create_splitter(idf: IDF, *, name: str, branches: list):
-    """create a splitter
-    NO MORE USED"""
-    splitter = idf.newidfobject(
-        "CONNECTOR:SPLITTER",
-        Name=name
-    )
-    splitter[EPApi.INLET_BRANCH_NAME] = f"{name} inlet branch"
-    for i, branch in enumerate(branches):
-        splitter[f"Outlet_Branch_{i+1}_Name"] = branch.Name
-    return splitter
-
-
-def _create_mixer(idf: IDF, *, name: str, branches: list):
-    """create a mixer
-    NO MORE USED"""
-    mixer = idf.newidfobject(
-        "CONNECTOR:MIXER",
-        Name=name
-    )
-    mixer[EPApi.OUTLET_BRANCH_NAME] = f"{name} outlet branch"
-    for i, branch in enumerate(branches):
-        mixer[f"Inlet_Branch_{i+1}_Name"] = branch.Name
-    return mixer
-
-
-def _create_connector_list(idf: IDF, *, name:str, connectors: list):
-    """create a connector list
-    NO MORE USED"""
-    connector_list = idf.newidfobject(
-        "CONNECTORLIST",
-        Name=name
-    )
-    for i, connector in enumerate(connectors):
-        connector_list[f"Connector_{i+1}_Object_Type"] = connector.key
-        connector_list[f"Connector_{i+1}_Name"] = connector.Name
-    return connector_list
-
-
 def create_pipe(
     idf: IDF,
     *,
