@@ -15,7 +15,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Scheduletypelimits,
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     SizingParameters, SizingZone, SizingPlant,
-    ZonehvacEquipmentlist, ZonehvacEquipmentconnections,
+    ZonehvacEquipmentconnections,
     OutputEnergymanagementsystem,
     OutputVariabledictionary,
     OutputTableSummaryreports, OutputcontrolTableStyle,
@@ -28,7 +28,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ScheduletypelimitsType,
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     SizingParametersType, SizingZoneType, SizingPlantType,
-    ZonehvacEquipmentlistType, ZonehvacEquipmentconnectionsType,
+    ZonehvacEquipmentconnectionsType,
     OutputEnergymanagementsystemType,
     OutputVariabledictionaryType,
     OutputTableSummaryreportsType, OutputcontrolTableStyleType,
@@ -50,6 +50,7 @@ from idfhub.hvac24_1_0 import (
     adjust_nodes_branch, operation_list_scheme,
     constant_schedule, basic_compact_schedule,
     gas_boiler,
+    equipment_list
 )
 
 from idfhub.hvac24_1_0_geoexchanger import (
@@ -357,16 +358,7 @@ for equipment_name in EQUIPMENTS:
             #----------------------------------------------------------------
             # ZONE EQUIPMENTS DECLARATION
             #----------------------------------------------------------------
-            zone_equipment_list = ZonehvacEquipmentlist(
-                idf,
-                **ZonehvacEquipmentlistType(
-                    Name=f"{zone} equipment list",
-                    Zone_Equipment_1_Name=baseboards.Name,
-                    Zone_Equipment_1_Object_Type=baseboards.key,
-                    Zone_Equipment_1_Cooling_Sequence=1,
-                    Zone_Equipment_1_Heating_or_NoLoad_Sequence=1
-                )
-            )
+            zone_equipment_list = equipment_list(zone, baseboards)
             ZonehvacEquipmentconnections(
                 idf,
                 **ZonehvacEquipmentconnectionsType(
