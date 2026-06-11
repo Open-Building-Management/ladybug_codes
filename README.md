@@ -22,7 +22,7 @@ pip install -e .
 # Geometry
 
 ```
-py .\generate_geometry.py
+py .\generate_geometry_from_yam.py  --geoconf=conf_geometry/agence.yaml
 ```
 
 The idf produced in openstudio :

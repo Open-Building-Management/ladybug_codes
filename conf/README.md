@@ -27,9 +27,10 @@ reserved keys|equipments
 `*hp*` | heatpump
 `*HX*` | fluid to fluid exchanger
 `*borehole*` | field of vertical geothermal probes (far-field ground model : Kusudaachenbach)
+`*PV*` | photovoltaic production array
 `*baseboards*` | baseboards radiant and convective heaters
 
-Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
+Never use `heatpump` or `heat_pump` for a heatpump key or it will be seen as a pump :-)
 
 To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heatpump, use the `hpwtw` suffix, for an air to water heatpump, use the `hpatw` suffix, and so on....
 
@@ -102,7 +103,7 @@ setpoints: [water_law_set_point_5535, water_law_set_point_7040]
 ```
 You may add a `staging_mode` key, not sure this term is correct
 
-The default staging_mode is Load and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingMode`
+With no `staging_mode` defined, the default value will be `Load` and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingLoad`
 
 Other operation modes are available :
 - `OutdoorDryBulb`
@@ -153,3 +154,18 @@ To define the operating range of the equipment, as required for energy mix
 
 If you use an `HeatpumpPlantloopEirHeating` (through the `hpatw` suffix) , you need `Control_Type: Load`in the equipment conf, otherwise the mix will not be successfull and energymix will only use the most efficient equipment
 
+## PV
+
+For a PV on the `lab` zone :
+```
+PV_lab:
+  height: 7
+  altitude: -3
+  surface:
+    - ["37+45", 0, "altitude+height"]
+    - ["37+45+8", 0, "altitude+height+0.45"]
+    - ["37+45+8", 53, "altitude+height+0.45"]
+    - ["37+45", 53, "altitude+height"]
+```
+
+Without a `surface` defined, the PV array surface will be exactly the roof of the zone defined in the key. A `surface` key permits to add a specific inclination.
