@@ -27,6 +27,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     PlantequipmentoperationOutdoordrybulb,
     OutputVariable,
     PlantequipmentoperationComponentsetpoint,
+    ZonehvacEquipmentlist, ZonehvacEquipmentlistMeta
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -41,6 +42,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     PlantequipmentoperationOutdoordrybulbType,
     OutputVariableType,
     PlantequipmentoperationComponentsetpointType,
+    ZonehvacEquipmentlistType
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -640,3 +642,64 @@ def operation_list_scheme(loop_name:str):
             Control_Scheme_1_Schedule_Name=ALWAYS_ON
         )
     )
+
+
+def zone_list(
+    zone_name: str,
+    zone_equipments: EpBunch | list[EpBunch]
+) -> EpBunch:
+    """manage zone equipements"""
+    suffix = "Zone_Equipment"
+    equipment_list_name = f"{zone_name} equipment list"
+    zone_equipment_list = idf.getobject(
+        ZonehvacEquipmentlistMeta.idf_name,
+        equipment_list_name
+    )
+    start_index = 1
+    cooling_index = 1
+    heating_index = 1
+    if zone_equipment_list:
+        while True:
+            field = f"{suffix}_{start_index}_Name"
+            if field not in zone_equipment_list.fieldnames:
+                break
+            name = getattr(zone_equipment_list, field)
+            if not name:
+                break
+            start_index += 1
+    else:
+        zone_equipment_list = ZonehvacEquipmentlist(
+            idf,
+            **ZonehvacEquipmentlistType(
+                Name=equipment_list_name
+            )
+        )
+    def heating_field(i):
+        """heating field to search"""
+        return f"{suffix}_{i}_Heating_or_NoLoad_Sequence"
+    def cooling_field(i):
+        """cooling field to search"""
+        return f"{suffix}_{i}_Cooling_Sequence"
+    if start_index > 1:
+        cooling_indexes = [
+            int(getattr(zone_equipment_list, heating_field(i)))
+            for i in range(1, start_index)
+        ]
+        heating_indexes = [
+            int(getattr(zone_equipment_list, cooling_field(i)))
+            for i in range(1, start_index)
+        ]
+        cooling_index = max(cooling_indexes) + 1
+        heating_index = max(heating_indexes) + 1
+    if not isinstance(zone_equipments, list):
+        zone_equipments = [zone_equipments]
+    for i, equipment in enumerate(zone_equipments):
+        conf = CONF.get(equipment.Name, {})
+        process = conf.get("process", "heating")
+        cooling = 0 if process == "heating" else cooling_index + i
+        heating = 0 if process == "cooling" else heating_index + i
+        zone_equipment_list[f"{suffix}_{start_index}_Name"] = equipment.Name
+        zone_equipment_list[f"{suffix}_{start_index}_Object_Type"] = equipment.key
+        zone_equipment_list[cooling_field(start_index + i)] = cooling
+        zone_equipment_list[heating_field(start_index + i)] = heating
+    return zone_equipment_list
