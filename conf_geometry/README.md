@@ -4,8 +4,8 @@ Each building is composed of different levels
 
 mandatory level key | description
 --|--
-`height` | height of level walls, for example `height: 7`
-`altitude` | altitude of the level floor, for example `altitude: &lab_alt -3` which defines a `lab_alt` yml anchor
+`height` | height of walls, for example `height: 7`
+`altitude` | altitude of the floor, for example `altitude: &lab_alt -3` which defines a `lab_alt` yml anchor
 `walls` | list of points defining the level floor. The first wall bottom line is between the first and second point, and so on... 
 
 A point is a list of 3 coordinates : [X, Y, Z]
