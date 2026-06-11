@@ -29,7 +29,7 @@ reserved keys|equipments
 `*borehole*` | field of vertical geothermal probes (far-field ground model : Kusudaachenbach)
 `*baseboards*` | baseboards radiant and convective heaters
 
-Never use the suffix `pump` for a heatpump or it will be seen as a pump :-)
+Never use `heatpump` or `heat_pump` for a heatpump key or it will be seen as a pump :-)
 
 To add a pump in the equipments list, include the `pump` suffix. For a variable pump, include the `variable` suffix. To add a water to water heatpump, use the `hpwtw` suffix, for an air to water heatpump, use the `hpatw` suffix, and so on....
 
