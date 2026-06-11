@@ -21,8 +21,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ShadingBuildingDetailedType
 )
 
-from idfhub.helpers.geometry import get_variables, eval_expr
-from idfhub.common import idf, CONF
+from idfhub.common import idf, CONF, eval_expr, get_variables
 
 def surface(equipment_name):
     """get surface name for a photovoltaic equipment
