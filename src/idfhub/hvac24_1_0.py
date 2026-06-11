@@ -644,10 +644,11 @@ def operation_list_scheme(loop_name:str):
     )
 
 
-def equipment_list(zone_name: str, equipment: EpBunch):
+def zone_list(
+    zone_name: str,
+    zone_equipments: EpBunch | list[EpBunch]
+) -> EpBunch:
     """manage zone equipements"""
-    conf = CONF.get(equipment.Name, {})
-    process = conf.get("process", "heating")
     suffix = "Zone_Equipment"
     equipment_list_name = f"{zone_name} equipment list"
     zone_equipment_list = idf.getobject(
@@ -675,28 +676,30 @@ def equipment_list(zone_name: str, equipment: EpBunch):
         )
     def heating_field(i):
         """heating field to search"""
-        return f"{suffix}_{i+1}_Heating_or_NoLoad_Sequence"
+        return f"{suffix}_{i}_Heating_or_NoLoad_Sequence"
     def cooling_field(i):
         """cooling field to search"""
-        return f"{suffix}_{i+1}_Cooling_Sequence"
+        return f"{suffix}_{i}_Cooling_Sequence"
     if start_index > 1:
         cooling_indexes = [
             int(getattr(zone_equipment_list, heating_field(i)))
-            for i in range(start_index - 1)
+            for i in range(1, start_index)
         ]
         heating_indexes = [
             int(getattr(zone_equipment_list, cooling_field(i)))
-            for i in range(start_index - 1)
+            for i in range(1, start_index)
         ]
         cooling_index = max(cooling_indexes) + 1
         heating_index = max(heating_indexes) + 1
-    cooling = 0 if process == "heating" else cooling_index
-    heating = 0 if process == "cooling" else heating_index
-    print(cooling)
-    print(heating)
-    zone_equipment_list[f"{suffix}_{start_index}_Name"] = equipment.Name
-    zone_equipment_list[f"{suffix}_{start_index}_Object_Type"] = equipment.key
-    zone_equipment_list[f"{suffix}_{start_index}_Cooling_Sequence"] = cooling
-    zone_equipment_list[
-        f"{suffix}_{start_index}_Heating_or_NoLoad_Sequence"] = heating
+    if not isinstance(zone_equipments, list):
+        zone_equipments = [zone_equipments]
+    for i, equipment in enumerate(zone_equipments):
+        conf = CONF.get(equipment.Name, {})
+        process = conf.get("process", "heating")
+        cooling = 0 if process == "heating" else cooling_index + i
+        heating = 0 if process == "cooling" else heating_index + i
+        zone_equipment_list[f"{suffix}_{start_index}_Name"] = equipment.Name
+        zone_equipment_list[f"{suffix}_{start_index}_Object_Type"] = equipment.key
+        zone_equipment_list[cooling_field(start_index + i)] = cooling
+        zone_equipment_list[heating_field(start_index + i)] = heating
     return zone_equipment_list

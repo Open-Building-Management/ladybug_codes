@@ -50,7 +50,7 @@ from idfhub.hvac24_1_0 import (
     adjust_nodes_branch, operation_list_scheme,
     constant_schedule, basic_compact_schedule,
     gas_boiler,
-    equipment_list
+    zone_list
 )
 
 from idfhub.hvac24_1_0_geoexchanger import (
@@ -94,6 +94,8 @@ HPWTW = "hpwtw"
 HPATW = "hpatw"
 BOILER = "boiler"
 EXCHANGER = "HX"
+
+zone_equipments: dict[str, list] = {}
 
 def add_variable(name, key="*"):
     """add a variable to the ep output"""
@@ -307,6 +309,7 @@ def basic_zone_sizing(zone_name: str):
     )
 for zone in ZONES:
     basic_zone_sizing(zone)
+    zone_equipments[zone] = []
 
 for equipment_name in EQUIPMENTS:
     if PUMP in equipment_name:
@@ -355,18 +358,21 @@ for equipment_name in EQUIPMENTS:
         if zone in ZONES:
             baseboards = add_baseboard(idf, zone)
             equipments[equipment_name] = baseboards
-            #----------------------------------------------------------------
-            # ZONE EQUIPMENTS DECLARATION
-            #----------------------------------------------------------------
-            zone_equipment_list = equipment_list(zone, baseboards)
-            ZonehvacEquipmentconnections(
-                idf,
-                **ZonehvacEquipmentconnectionsType(
-                    Zone_Name=zone,
-                    Zone_Conditioning_Equipment_List_Name=zone_equipment_list.Name,
-                    Zone_Air_Node_Name=f"{zone}_air_node"
-                )
-            )
+            zone_equipments[zone].append(baseboards)
+
+#----------------------------------------------------------------
+# ZONE EQUIPMENTS DECLARATION
+#----------------------------------------------------------------
+for zone, equipment_list in zone_equipments.items():
+    zone_equipment_list = zone_list(zone, equipment_list)
+    ZonehvacEquipmentconnections(
+        idf,
+        **ZonehvacEquipmentconnectionsType(
+            Zone_Name=zone,
+            Zone_Conditioning_Equipment_List_Name=zone_equipment_list.Name,
+            Zone_Air_Node_Name=f"{zone}_air_node"
+        )
+    )
 
 sensors = initialise_sensors(CONF.get("sensors", {}))
 process = CONF.get("process", {})
