@@ -78,29 +78,6 @@ OPS = {
     ast.UAdd: op.pos,
 }
 
-def eval_expr(expr, variables):
-    """secure resolution engine"""
-    def _eval(node):
-        """evaluation method"""
-        if isinstance(node, ast.Constant):
-            return node.value
-
-        if isinstance(node, ast.Name):
-            return variables[node.id]
-
-        if isinstance(node, ast.BinOp):
-            return OPS[type(node.op)](
-                _eval(node.left),
-                _eval(node.right)
-            )
-
-        if isinstance(node, ast.UnaryOp):
-            return OPS[type(node.op)](_eval(node.operand))
-
-        raise TypeError(f"Unsupported Expression : {ast.dump(node)}")
-
-    return _eval(ast.parse(expr.strip(), mode="eval").body)
-
 hvac_parser = argparse.ArgumentParser(description='hvac configuration')
 
 hvac_parser.add_argument(
@@ -128,6 +105,36 @@ CONF = load_config(REPO_ROOT, args.conf)
 GEOMETRY = load_config(REPO_ROOT, args.geoconf)
 COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
+
+def get_variables(metadata: dict) -> dict:
+    """return dict of variables"""
+    variables = {}
+    variables["height"] = metadata.get("height", COMMON_HEIGHT)
+    variables["altitude"] = metadata.get("altitude", 0)
+    return variables
+
+def eval_expr(expr, variables):
+    """secure resolution engine"""
+    def _eval(node):
+        """evaluation method"""
+        if isinstance(node, ast.Constant):
+            return node.value
+
+        if isinstance(node, ast.Name):
+            return variables[node.id]
+
+        if isinstance(node, ast.BinOp):
+            return OPS[type(node.op)](
+                _eval(node.left),
+                _eval(node.right)
+            )
+
+        if isinstance(node, ast.UnaryOp):
+            return OPS[type(node.op)](_eval(node.operand))
+
+        raise TypeError(f"Unsupported Expression : {ast.dump(node)}")
+
+    return _eval(ast.parse(expr.strip(), mode="eval").body)
 
 REQUIRED = [
     "building_name",

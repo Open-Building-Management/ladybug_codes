@@ -14,7 +14,6 @@ import logging
 from ladybug_geometry.geometry3d import Point3D, Face3D
 
 from honeybee.boundarycondition import Ground, Outdoors
-from honeybee.door import Door
 from honeybee.face import Face, Wall, RoofCeiling
 from honeybee.facetype import Floor
 from honeybee.model import Model
