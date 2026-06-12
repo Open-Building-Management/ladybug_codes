@@ -510,5 +510,5 @@ if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}"):
 if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}"):
     os.mkdir(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}")
 
-final_name = f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}/{PROJECT_NAME}.idf"
+final_name = f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}/{BUILDING_NAME}.idf"
 idf.save(final_name)
