@@ -12,7 +12,6 @@ from idfhub.hvac import (
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
     Building, Globalgeometryrules,
-    Scheduletypelimits,
     ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     SizingParameters, SizingZone, SizingPlant,
     ZonehvacEquipmentconnections,
@@ -25,7 +24,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
     BuildingType, GlobalgeometryrulesType,
-    ScheduletypelimitsType,
     ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     SizingParametersType, SizingZoneType, SizingPlantType,
     ZonehvacEquipmentconnectionsType,
@@ -44,7 +42,9 @@ from idfhub.common import (
 )
 
 from idfhub.hvac24_1_0 import (
-    loops, equipments, resolve_side,
+    loops, equipments,
+    schedule_typelimits,
+    resolve_side,
     pump,
     water_law, constant_set_point,
     adjust_nodes_branch, operation_list_scheme,
@@ -179,62 +179,65 @@ Globalgeometryrules(
     )
 )
 
-#------------------------------------------------------------------------------
-# Schedules and Thermostats
-# 20°C chauffage et 25°C raffraichissement
-#------------------------------------------------------------------------------
-
-# generate_geometry nécessite un schedule constant appelé Always On utilisant Fractional ????
-fractional_typelimits = Scheduletypelimits(
-    idf,
-    **ScheduletypelimitsType(
-        Name="Fractional",
-        Lower_Limit_Value=0,
-        Upper_Limit_Value=1,
-        Numeric_Type=EPValues.CONTINUOUS,
-    )
-)
-
-#consigne_heat = constant_schedule(20)
-consigne_heat = basic_compact_schedule(20, schedule_name="heating_schedule")
-consigne_cool = constant_schedule(25)
-#consigne_cool = basic_compact_schedule(25, schedule_name="cooling_schedule")
-
-zone_thermostat = ThermostatsetpointDualsetpoint(
-    idf,
-    **ThermostatsetpointDualsetpointType(
-        Name="zone_thermostat",
-        Heating_Setpoint_Temperature_Schedule_Name=consigne_heat.Name,
-        Cooling_Setpoint_Temperature_Schedule_Name=consigne_cool.Name
-    )
-)
-
+# typelimits
+schedule_typelimits(EPValues.TEMPERATURE, unit_type=EPValues.TEMPERATURE)
+# honeybee (utilisé dans generate_geometry) crée un schedule constant appelé Always On
+# Always On utilise le typelimits Fractional, mais honeybee ne l'initialise pas ??
+schedule_typelimits("Fractional", lower_limit=0, upper_limit=1)
 # Control types are integers:
 # 0 - Uncontrolled (floating, no thermostat),
 # 1 = ThermostatSetpoint:SingleHeating,
 # 2 = ThermostatSetpoint:SingleCooling,
 # 3 = ThermostatSetpoint:SingleHeatingOrCooling,
 # 4 = ThermostatSetpoint:DualSetpoint
-control_typelimits = Scheduletypelimits(
+schedule_typelimits("control_types", lower_limit=0, upper_limit=4, numeric_type=EPValues.DISCRETE)
+
+
+#------------------------------------------------------------------------------
+# Schedules and Thermostats
+# 20°C chauffage et 25°C raffraichissement
+#------------------------------------------------------------------------------
+
+SCHEDULE = {
+    "heating": 20,
+    "cooling": 25
+}
+schedule_modes = CONF.get("schedules", {"heating": "compact", "cooling": "constant"})
+consignes = {}
+
+for sched_name, temp in SCHEDULE.items():
+    if schedule_modes[sched_name] == "compact":
+        consignes[sched_name] = basic_compact_schedule(
+            temp,
+            schedule_name=f"{sched_name}_schedule_{temp}",
+            typelimits_name=EPValues.TEMPERATURE
+        )
+    else:
+        consignes[sched_name] = constant_schedule(
+            temp,
+            typelimits_name=EPValues.TEMPERATURE
+        )
+
+zone_thermostat = ThermostatsetpointDualsetpoint(
     idf,
-    **ScheduletypelimitsType(
-        Name="control_types",
-        Lower_Limit_Value=0,
-        Upper_Limit_Value=4,
-        Numeric_Type=EPValues.DISCRETE
+    **ThermostatsetpointDualsetpointType(
+        Name="zone_thermostat",
+        Heating_Setpoint_Temperature_Schedule_Name=consignes["heating"].Name,
+        Cooling_Setpoint_Temperature_Schedule_Name=consignes["cooling"].Name
     )
 )
+
 
 control_type_schedule = basic_compact_schedule(
     4,
     schedule_name="control_type_schedule",
-    typelimits=control_typelimits
+    typelimits_name="control_types"
 )
 
 control_type_constant_schedule = constant_schedule(
     4,
     name= "AlwaysDualSetpoint",
-    typelimits=control_typelimits
+    typelimits_name="control_types"
 )
 
 for zone in ZONES:
@@ -349,7 +352,7 @@ for equipment_name in EQUIPMENTS:
         equipments[equipment_name] = exchanger
         continue
     if "PV" in equipment_name:
-        pv_generator = PV_plant(equipment_name)
+        PV_plant(equipment_name)
     if "baseboards" in equipment_name:
         try:
             zone = equipment_name.split("_")[1]
