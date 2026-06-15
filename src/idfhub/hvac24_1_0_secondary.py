@@ -211,7 +211,7 @@ def schedule_control(name: str, sensor_name: str, conf: dict[str, Any]):
         idf,
         **ScheduleCompactType(
             Name=schedule_name,
-            Schedule_Type_Limits_Name="Fractional",
+            Schedule_Type_Limits_Name=EPValues.FRACTIONAL,
             Field_1=f"{EPValues.THROUGH}: 12/31",
             Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
             Field_3=f"{EPValues.UNTIL}: 24:00",

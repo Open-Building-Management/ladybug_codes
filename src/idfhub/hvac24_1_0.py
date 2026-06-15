@@ -19,7 +19,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     SetpointmanagerOutdoorairreset,SetpointmanagerOutdoorairresetMeta,
     SetpointmanagerScheduled,
     PumpConstantspeed, PumpVariablespeed,
-    ScheduleCompact,
+    ScheduleCompact,ScheduleCompactMeta,
     Plantequipmentlist, Plantequipmentoperationschemes,
     PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
     CurveBiquadratic,
@@ -56,20 +56,36 @@ if not idf:
     LOGGER.error("no idf > generate_geometry")
     sys.exit()
 
-
-temperature_typelimits = idf.getobject(
+def schedule_typelimits(
+    name,
+    *,
+    lower_limit: float|None = None,
+    upper_limit: float|None = None,
+    numeric_type: str|None = EPValues.CONTINUOUS,
+    unit_type: str|None = None
+):
+    """create a typelimits object"""
+    typelimit = idf.getobject(
         ScheduletypelimitsMeta.idf_name,
-        "temperature"
+        name
     )
-if not temperature_typelimits:
-    temperature_typelimits = Scheduletypelimits(
-        idf,
-        **ScheduletypelimitsType(
-            Name="temperature",
-            Numeric_Type=EPValues.CONTINUOUS,
-            Unit_Type=EPValues.TEMPERATURE
+    if not typelimit:
+        typelimit = Scheduletypelimits(
+            idf,
+            **ScheduletypelimitsType(
+                Name=name
+            )
         )
-    )
+        if lower_limit is not None:
+            typelimit["Lower_Limit_Value"] = lower_limit
+        if upper_limit is not None:
+            typelimit["Upper_Limit_Value"] = upper_limit
+        if numeric_type:
+            typelimit["Numeric_Type"] = numeric_type
+        if unit_type:
+            typelimit["Unit_Type"] = unit_type
+    return typelimit
+
 
 # on utilise un schedule compact
 # Mots-clés utiles dans For:
@@ -87,59 +103,71 @@ def basic_compact_schedule(
     value: float,
     *,
     schedule_name: str,
-    typelimits: EpBunch = temperature_typelimits
+    typelimits_name: str
 ):
     """create a compact schedule"""
-    return ScheduleCompact(
-        idf,
-        **ScheduleCompactType(
-            Name=schedule_name,
-            Schedule_Type_Limits_Name=typelimits.Name,
-            Field_1=f"{EPValues.THROUGH}: 12/31",
-            Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
-            Field_3=f"{EPValues.UNTIL}: 07:00",
-            Field_4=0,
-            Field_5=f"{EPValues.UNTIL}: 17:00",
-            Field_6=value,
-            Field_7=f"{EPValues.UNTIL}: 24:00",
-            Field_8=0,
-            Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
-            Field_10=f"{EPValues.UNTIL}: 24:00",
-            Field_11=0,
-            Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
-            Field_13=f"{EPValues.UNTIL}: 07:00",
-            Field_14=0,
-            Field_15=f"{EPValues.UNTIL}: 17:00",
-            Field_16=value,
-            Field_17=f"{EPValues.UNTIL}: 24:00",
-            Field_18=0,
-            Field_19=f"{EPValues.FOR}:{EPValues.SUMMER_DESIGN_DAY}",
-            Field_20=f"{EPValues.UNTIL}: 07:00",
-            Field_21=0,
-            Field_22=f"{EPValues.UNTIL}: 17:00",
-            Field_23=value,
-            Field_24=f"{EPValues.UNTIL}: 24:00",
-            Field_25=0,
-        )
+    compact_sched = idf.getobject(
+        ScheduleCompactMeta.idf_name,
+        schedule_name
     )
+    if not compact_sched:
+        compact_sched = ScheduleCompact(
+            idf,
+            **ScheduleCompactType(
+                Name=schedule_name,
+                Schedule_Type_Limits_Name=typelimits_name,
+                Field_1=f"{EPValues.THROUGH}: 12/31",
+                Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
+                Field_3=f"{EPValues.UNTIL}: 07:00",
+                Field_4=0,
+                Field_5=f"{EPValues.UNTIL}: 17:00",
+                Field_6=value,
+                Field_7=f"{EPValues.UNTIL}: 24:00",
+                Field_8=0,
+                Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
+                Field_10=f"{EPValues.UNTIL}: 24:00",
+                Field_11=0,
+                Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
+                Field_13=f"{EPValues.UNTIL}: 07:00",
+                Field_14=0,
+                Field_15=f"{EPValues.UNTIL}: 17:00",
+                Field_16=value,
+                Field_17=f"{EPValues.UNTIL}: 24:00",
+                Field_18=0,
+                Field_19=f"{EPValues.FOR}:{EPValues.SUMMER_DESIGN_DAY}",
+                Field_20=f"{EPValues.UNTIL}: 07:00",
+                Field_21=0,
+                Field_22=f"{EPValues.UNTIL}: 17:00",
+                Field_23=value,
+                Field_24=f"{EPValues.UNTIL}: 24:00",
+                Field_25=0,
+            )
+        )
+    return compact_sched
 
 def constant_schedule(
     value: int,
     *,
-    name: str|None = None,
-    typelimits:EpBunch = temperature_typelimits
+    typelimits_name: str,
+    name: str|None = None
 ):
     """create a constant schedule type"""
     if name is None:
         name = f"const_temp_sched_{value}deg"
-    return ScheduleConstant(
-        idf,
-        **ScheduleConstantType(
-            Name=name,
-            Schedule_Type_Limits_Name=typelimits.Name,
-            Hourly_Value=value
-        )
+    constant_sched = idf.getobject(
+        ScheduleConstantMeta.idf_name,
+        name
     )
+    if not constant_sched:
+        constant_sched = ScheduleConstant(
+            idf,
+            **ScheduleConstantType(
+                Name=name,
+                Schedule_Type_Limits_Name=typelimits_name,
+                Hourly_Value=value
+            )
+        )
+    return constant_sched
 
 #------------------------------------------------------------------------------
 # SETPOINTS
@@ -194,7 +222,11 @@ def constant_set_point(loop_name: str, setpoint_name: str):
         name
     )
     if consigne is None:
-        consigne = constant_schedule(temp, name=name)
+        consigne = constant_schedule(
+            temp,
+            name=name,
+            typelimits_name=EPValues.TEMPERATURE
+        )
     SetpointmanagerScheduled(
         idf,
         **SetpointmanagerScheduledType(
