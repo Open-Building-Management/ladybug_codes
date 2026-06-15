@@ -8,6 +8,10 @@ verbose: 0
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
+schedules:
+  cooling:
+    mode: "compact"
+
 zones:
   - "RDC"
   - "RPLUS1"

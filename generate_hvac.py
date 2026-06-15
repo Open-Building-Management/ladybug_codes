@@ -195,19 +195,33 @@ schedule_typelimits("control_types", lower_limit=0, upper_limit=4, numeric_type=
 
 #------------------------------------------------------------------------------
 # Schedules and Thermostats
-# 20°C chauffage et 25°C raffraichissement
+# par défaut, 20°C chauffage et 25°C raffraichissement
 #------------------------------------------------------------------------------
 
-SCHEDULE = {
-    "heating": 20,
-    "cooling": 25
+DEF_SCHED = {
+    "mode": "compact",
+    "temp": 20
 }
-schedule_modes = CONF.get("schedules", {"heating": "compact", "cooling": "constant"})
+SCHEDULES: dict[str, dict] = {
+    "heating": DEF_SCHED,
+    "cooling": {
+        "mode": "constant",
+        "temp": 25
+    }
+}
+YML_SCHED = CONF.get("schedules", {})
+for sched_name, sched_conf in YML_SCHED.items():
+    if sched_name not in SCHEDULES:
+        SCHEDULES[sched_name] = DEF_SCHED
+    for key, value in sched_conf.items():
+        SCHEDULES[sched_name][key] = value
+
 consignes = {}
 
-for sched_name, temp in SCHEDULE.items():
-    if schedule_modes[sched_name] == "compact":
-        consignes[sched_name] = basic_compact_schedule(
+for sched_name, sched_conf in SCHEDULES.items():
+    temp = sched_conf["temp"]
+    if sched_conf["mode"] == "compact":
+         consignes[sched_name] = basic_compact_schedule(
             temp,
             schedule_name=f"{sched_name}_schedule_{temp}",
             typelimits_name=EPValues.TEMPERATURE
