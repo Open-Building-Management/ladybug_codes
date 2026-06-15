@@ -116,6 +116,8 @@ class EPValues(StrEnum):
     CONTINUOUS = "Continuous"
     INTERMITTENT = "Intermittent"
     TEMPERATURE = "Temperature"
+    FRACTIONAL = "Fractional"
+    CONTROL_TYPES = "Control_types"
     DIMENSIONLESS = "Dimensionless"
     WEEKDAYS = "Weekdays"
     WEEKENDS = "Weekends"

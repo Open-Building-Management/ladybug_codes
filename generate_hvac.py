@@ -183,14 +183,14 @@ Globalgeometryrules(
 schedule_typelimits(EPValues.TEMPERATURE, unit_type=EPValues.TEMPERATURE)
 # honeybee (utilisé dans generate_geometry) crée un schedule constant appelé Always On
 # Always On utilise le typelimits Fractional, mais honeybee ne l'initialise pas ??
-schedule_typelimits("Fractional", lower_limit=0, upper_limit=1)
+schedule_typelimits(EPValues.FRACTIONAL, lower_limit=0, upper_limit=1)
 # Control types are integers:
 # 0 - Uncontrolled (floating, no thermostat),
 # 1 = ThermostatSetpoint:SingleHeating,
 # 2 = ThermostatSetpoint:SingleCooling,
 # 3 = ThermostatSetpoint:SingleHeatingOrCooling,
 # 4 = ThermostatSetpoint:DualSetpoint
-schedule_typelimits("control_types", lower_limit=0, upper_limit=4, numeric_type=EPValues.DISCRETE)
+schedule_typelimits(EPValues.CONTROL_TYPES, lower_limit=0, upper_limit=4, numeric_type=EPValues.DISCRETE)
 
 
 #------------------------------------------------------------------------------
@@ -245,13 +245,13 @@ zone_thermostat = ThermostatsetpointDualsetpoint(
 control_type_schedule = basic_compact_schedule(
     4,
     schedule_name="control_type_schedule",
-    typelimits_name="control_types"
+    typelimits_name=EPValues.CONTROL_TYPES
 )
 
 control_type_constant_schedule = constant_schedule(
     4,
     name= "AlwaysDualSetpoint",
-    typelimits_name="control_types"
+    typelimits_name=EPValues.CONTROL_TYPES
 )
 
 for zone in ZONES:
