@@ -728,10 +728,16 @@ def zone_list(
     for i, equipment in enumerate(zone_equipments):
         conf = CONF.get(equipment.Name, {})
         process = conf.get("process", "heating")
-        cooling = 0 if process == "heating" else cooling_index + i
-        heating = 0 if process == "cooling" else heating_index + i
-        zone_equipment_list[f"{suffix}_{start_index}_Name"] = equipment.Name
-        zone_equipment_list[f"{suffix}_{start_index}_Object_Type"] = equipment.key
+        if process == "heating":
+            cooling = 0
+            heating = heating_index
+            heating_index += 1
+        else:
+            heating = 0
+            cooling = cooling_index
+            cooling_index += 1
+        zone_equipment_list[f"{suffix}_{start_index + i}_Name"] = equipment.Name
+        zone_equipment_list[f"{suffix}_{start_index + i}_Object_Type"] = equipment.key
         zone_equipment_list[cooling_field(start_index + i)] = cooling
         zone_equipment_list[heating_field(start_index + i)] = heating
     return zone_equipment_list
