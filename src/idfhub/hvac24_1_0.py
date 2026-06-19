@@ -573,7 +573,7 @@ def generate_operation(
             operation[f"Operation_{i+1}_Type"] = EPValues.HEATING
         return operation
     list_names = []
-    if "mix" in loop_type:
+    if "mix" in loop_type.lower():
         LOGGER.info("mix mode :-)")
         # a list for each machine referenced in the operation loop
         for i, obj_name in enumerate(names):
@@ -601,8 +601,8 @@ def generate_operation(
             loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
         list_names.append(list_name)
 
-    if staging_mode == EPValues.LOAD:
-        if EPValues.HEATING in loop_type:
+    if staging_mode.lower() == EPValues.LOAD.lower():
+        if EPValues.HEATING.lower() in loop_type.lower():
             operation = PlantequipmentoperationHeatingload(
                 idf,
                 **PlantequipmentoperationHeatingloadType(
