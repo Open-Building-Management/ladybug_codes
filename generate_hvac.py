@@ -52,7 +52,7 @@ from idfhub.hvac24_1_0 import (
     gas_boiler,
     zone_list
 )
-
+from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
     ground_temperature,
     vertical_geoexchanger,
@@ -62,12 +62,9 @@ from idfhub.hvac24_1_0_heatpump import (
     water_to_water_heatpump,
     air_to_water_heatpump_eir
 )
-
-from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
-from idfhub.hvac24_1_0_exchanger import heat_exchanger
-
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
 
+from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
