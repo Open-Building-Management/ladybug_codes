@@ -27,7 +27,11 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     PlantequipmentoperationOutdoordrybulb,
     OutputVariable,
     PlantequipmentoperationComponentsetpoint,
-    ZonehvacEquipmentlist, ZonehvacEquipmentlistMeta
+    ZonehvacEquipmentlist, ZonehvacEquipmentlistMeta,
+    ThermostatsetpointDualsetpoint,
+    ThermostatsetpointSingleheating,
+    ThermostatsetpointSinglecooling,
+    ZonecontrolThermostat,
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -42,7 +46,11 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     PlantequipmentoperationOutdoordrybulbType,
     OutputVariableType,
     PlantequipmentoperationComponentsetpointType,
-    ZonehvacEquipmentlistType
+    ZonehvacEquipmentlistType,
+    ThermostatsetpointDualsetpointType,
+    ThermostatsetpointSingleheatingType,
+    ThermostatsetpointSinglecoolingType,
+    ZonecontrolThermostatType,
 )
 
 from idfhub.common import get_logger, idf, CONF
@@ -100,7 +108,8 @@ def schedule_typelimits(
 # WinterDesignDay
 # CustomDay1/2
 def basic_compact_schedule(
-    value: float,
+    value_confort: float,
+    value_standby: float,
     *,
     schedule_name: str,
     typelimits_name: str
@@ -119,31 +128,32 @@ def basic_compact_schedule(
                 Field_1=f"{EPValues.THROUGH}: 12/31",
                 Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
                 Field_3=f"{EPValues.UNTIL}: 07:00",
-                Field_4=0,
+                Field_4=value_standby,
                 Field_5=f"{EPValues.UNTIL}: 17:00",
-                Field_6=value,
+                Field_6=value_confort,
                 Field_7=f"{EPValues.UNTIL}: 24:00",
-                Field_8=0,
+                Field_8=value_standby,
                 Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
                 Field_10=f"{EPValues.UNTIL}: 24:00",
-                Field_11=0,
+                Field_11=value_standby,
                 Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
                 Field_13=f"{EPValues.UNTIL}: 07:00",
-                Field_14=0,
+                Field_14=value_standby,
                 Field_15=f"{EPValues.UNTIL}: 17:00",
-                Field_16=value,
+                Field_16=value_confort,
                 Field_17=f"{EPValues.UNTIL}: 24:00",
-                Field_18=0,
+                Field_18=value_standby,
                 Field_19=f"{EPValues.FOR}:{EPValues.SUMMER_DESIGN_DAY}",
                 Field_20=f"{EPValues.UNTIL}: 07:00",
-                Field_21=0,
+                Field_21=value_standby,
                 Field_22=f"{EPValues.UNTIL}: 17:00",
-                Field_23=value,
+                Field_23=value_confort,
                 Field_24=f"{EPValues.UNTIL}: 24:00",
-                Field_25=0,
+                Field_25=value_standby,
             )
         )
     return compact_sched
+
 
 def constant_schedule(
     value: int,
@@ -168,6 +178,104 @@ def constant_schedule(
             )
         )
     return constant_sched
+
+
+def schedule_objects(conf: dict[str, dict]) -> dict[str, EpBunch]:
+    """build schedules idf objects from yml conf"""
+    schedules: dict[str, EpBunch] = {}
+    for sched_name, sched_conf in conf.items():
+        confort = sched_conf["confort"]
+        standby = sched_conf["standby"]
+        if sched_conf["mode"] == "compact":
+            schedules[sched_name] = basic_compact_schedule(
+                confort,
+                standby,
+                schedule_name=f"{sched_name}_schedule_{confort}",
+                typelimits_name=EPValues.TEMPERATURE
+            )
+        else:
+            schedules[sched_name] = constant_schedule(
+                confort,
+                typelimits_name=EPValues.TEMPERATURE
+            )
+    return schedules
+
+
+def zone_control(schedules: dict[str, EpBunch], zones: list[str], cooling_conf: dict):
+    """control zone schedule"""
+    required = ("from", "to")
+    thermostats: dict[str, EpBunch] = {}
+    if all(key in cooling_conf for key in required):
+        summer_start = cooling_conf["from"]
+        summer_end = cooling_conf["to"]
+        # 1 is heating and 2 is cooling in control types
+        control_schedule = idf.getobject(
+            ScheduleCompactMeta.idf_name,
+            "SeasonalSetpoint"
+        )
+        if not control_schedule:
+            control_schedule = ScheduleCompact(
+                idf,
+                **ScheduleCompactType(
+                    Name="SeasonalSetpoint",
+                    Schedule_Type_Limits_Name=EPValues.CONTROL_TYPES,
+                    Field_1=f"{EPValues.THROUGH}: {summer_start}",
+                    Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                    Field_3=f"{EPValues.UNTIL}: 24:00,1",
+                    Field_4=f"{EPValues.THROUGH}: {summer_end}",
+                    Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                    Field_6=f"{EPValues.UNTIL}: 24:00,2",
+                    Field_7=f"{EPValues.THROUGH}: 12/31",
+                    Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                    Field_9=f"{EPValues.UNTIL}: 24:00,1",
+                )
+            )
+        thermostats["heating"] = ThermostatsetpointSingleheating(
+            idf,
+            **ThermostatsetpointSingleheatingType(
+                Name="heating thermostat",
+                Setpoint_Temperature_Schedule_Name=schedules["heating"].Name
+            )
+        )
+        thermostats["cooling"] = ThermostatsetpointSinglecooling(
+            idf,
+            **ThermostatsetpointSinglecoolingType(
+                Name="cooling thermostat",
+                Setpoint_Temperature_Schedule_Name=schedules["cooling"].Name
+            )
+        )
+    else:
+        control_schedule = idf.getobject(
+            ScheduleCompactMeta.idf_name,
+            "AlwaysDualSetpoint"
+        )
+        if not control_schedule:
+            control_schedule = constant_schedule(
+                4,
+                name= "AlwaysDualSetpoint",
+                typelimits_name=EPValues.CONTROL_TYPES
+            )
+        thermostats["dual"] = ThermostatsetpointDualsetpoint(
+            idf,
+            **ThermostatsetpointDualsetpointType(
+                Name="dual_thermostat",
+                Heating_Setpoint_Temperature_Schedule_Name=schedules["heating"].Name,
+                Cooling_Setpoint_Temperature_Schedule_Name=schedules["cooling"].Name
+            )
+        )
+    for zone in zones:
+        controller = ZonecontrolThermostat(
+            idf,
+            **ZonecontrolThermostatType(
+                Name=f"{zone}_thermostat",
+                Zone_or_ZoneList_Name=zone,
+                Control_Type_Schedule_Name=control_schedule.Name,
+            )
+        )
+        for i, thermostat in enumerate(thermostats.values()):
+            controller[f"Control_{i+1}_Object_Type"] = thermostat.key
+            controller[f"Control_{i+1}_Name"] = thermostat.Name
+
 
 #------------------------------------------------------------------------------
 # SETPOINTS
