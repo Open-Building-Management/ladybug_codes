@@ -200,7 +200,7 @@ schedules = schedule_objects(SCHEDULES)
 zone_control(
     schedules,
     ZONES,
-    SCHEDULES.get("cooling", {})
+    SCHEDULES["cooling"]
 )
 
 
