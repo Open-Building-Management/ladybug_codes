@@ -12,7 +12,6 @@ from idfhub.hvac import (
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
     Building, Globalgeometryrules,
-    ThermostatsetpointDualsetpoint, ZonecontrolThermostat,
     SizingParameters, SizingZone, SizingPlant,
     ZonehvacEquipmentconnections,
     OutputEnergymanagementsystem,
@@ -24,7 +23,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
     BuildingType, GlobalgeometryrulesType,
-    ThermostatsetpointDualsetpointType, ZonecontrolThermostatType,
     SizingParametersType, SizingZoneType, SizingPlantType,
     ZonehvacEquipmentconnectionsType,
     OutputEnergymanagementsystemType,
@@ -39,6 +37,7 @@ from idfhub.common import (
     BUILDING_NAME, PROJECT_NAME,
     CONF, ZONES, LOOPS,
     EQUIPMENTS,
+    SCHEDULES
 )
 
 from idfhub.hvac24_1_0 import (
@@ -48,7 +47,7 @@ from idfhub.hvac24_1_0 import (
     pump,
     water_law, constant_set_point,
     adjust_nodes_branch, operation_list_scheme,
-    constant_schedule, basic_compact_schedule,
+    schedule_objects, zone_control,
     gas_boiler,
     zone_list
 )
@@ -187,85 +186,22 @@ schedule_typelimits(EPValues.FRACTIONAL, lower_limit=0, upper_limit=1)
 # 2 = ThermostatSetpoint:SingleCooling,
 # 3 = ThermostatSetpoint:SingleHeatingOrCooling,
 # 4 = ThermostatSetpoint:DualSetpoint
-schedule_typelimits(EPValues.CONTROL_TYPES, lower_limit=0, upper_limit=4, numeric_type=EPValues.DISCRETE)
-
-
-#------------------------------------------------------------------------------
-# Schedules and Thermostats
-# par défaut, 20°C chauffage et 25°C raffraichissement
-#------------------------------------------------------------------------------
-
-DEF_SCHED = {
-    "mode": "compact",
-    "temp": 20
-}
-SCHEDULES: dict[str, dict] = {
-    "heating": DEF_SCHED,
-    "cooling": {
-        "mode": "constant",
-        "temp": 25
-    }
-}
-YML_SCHED = CONF.get("schedules", {})
-for sched_name, sched_conf in YML_SCHED.items():
-    if sched_name not in SCHEDULES:
-        SCHEDULES[sched_name] = DEF_SCHED
-    for key, value in sched_conf.items():
-        SCHEDULES[sched_name][key] = value
-
-consignes = {}
-
-for sched_name, sched_conf in SCHEDULES.items():
-    temp = sched_conf["temp"]
-    if sched_conf["mode"] == "compact":
-         consignes[sched_name] = basic_compact_schedule(
-            temp,
-            schedule_name=f"{sched_name}_schedule_{temp}",
-            typelimits_name=EPValues.TEMPERATURE
-        )
-    else:
-        consignes[sched_name] = constant_schedule(
-            temp,
-            typelimits_name=EPValues.TEMPERATURE
-        )
-
-zone_thermostat = ThermostatsetpointDualsetpoint(
-    idf,
-    **ThermostatsetpointDualsetpointType(
-        Name="zone_thermostat",
-        Heating_Setpoint_Temperature_Schedule_Name=consignes["heating"].Name,
-        Cooling_Setpoint_Temperature_Schedule_Name=consignes["cooling"].Name
-    )
+schedule_typelimits(
+    EPValues.CONTROL_TYPES,
+    lower_limit=0, upper_limit=4,
+    numeric_type=EPValues.DISCRETE
 )
 
 
-control_type_schedule = basic_compact_schedule(
-    4,
-    schedule_name="control_type_schedule",
-    typelimits_name=EPValues.CONTROL_TYPES
-)
-
-control_type_constant_schedule = constant_schedule(
-    4,
-    name= "AlwaysDualSetpoint",
-    typelimits_name=EPValues.CONTROL_TYPES
-)
-
-for zone in ZONES:
-    ZonecontrolThermostat(
-        idf,
-        **ZonecontrolThermostatType(
-            Name=f"{zone}_thermostat",
-            Zone_or_ZoneList_Name=zone,
-            Control_Type_Schedule_Name=control_type_constant_schedule.Name,
-            Control_1_Object_Type=zone_thermostat.key,
-            Control_1_Name=zone_thermostat.Name
-        )
-    )
-
 #------------------------------------------------------------------------------
-# End Of Schedules and Thermostats
+# Schedules and zone controls
 #------------------------------------------------------------------------------
+schedules = schedule_objects(SCHEDULES)
+zone_control(
+    schedules,
+    ZONES,
+    SCHEDULES["cooling"]
+)
 
 
 #------------------------------------------------------------------------------

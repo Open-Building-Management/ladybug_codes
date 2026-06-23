@@ -162,3 +162,24 @@ try:
     idf = IDF(f"{REPO_ROOT}/{BUILDING_NAME}.idf")
 except FileNotFoundError:
     idf = None
+
+# par défaut, 20°C chauffage et 25°C raffraichissement
+SCHEDULES: dict[str, dict] = {
+    "heating": {
+        "mode": "compact",
+        "confort": 20,
+        "standby": 0
+    },
+    "cooling": {
+        "mode": "constant",
+        "confort": 25,
+        "standby": 25
+    }
+}
+
+YML_SCHED = CONF.get("schedules", {})
+for sched_name, sched_conf in YML_SCHED.items():
+    if sched_name not in ["heating", "cooling"]:
+        continue
+    for key, value in sched_conf.items():
+        SCHEDULES[sched_name][key] = value
