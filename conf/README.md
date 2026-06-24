@@ -101,9 +101,9 @@ You can use `setpoints` instead or in addition to `setpoint` to add a setpoint a
 ```
 setpoints: [water_law_set_point_5535, water_law_set_point_7040]
 ```
-You may add a `staging_mode` key, not sure this term is correct
+You may add a `control_mode` key
 
-With no `staging_mode` defined, the default value will be `Load` and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingLoad`
+With no `control_mode` defined, the default value will be `Load` and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingLoad`
 
 Other operation modes are available :
 - `OutdoorDryBulb`

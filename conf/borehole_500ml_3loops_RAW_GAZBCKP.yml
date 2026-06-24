@@ -93,7 +93,7 @@ pac_water_heating_loop:
   #setpoints: [water_law_set_point_5535, water_law_set_point_7040]
   operation: [hpwtw, gas_boiler]
   Loop_Type: heating
-  #staging_mode: ComponentSetpoint
+  #control_mode: ComponentSetpoint
   #Load_Distribution_Scheme: Optimal
   branches:
     plant: [pac_variable_pump, hpwtw, gas_boiler]

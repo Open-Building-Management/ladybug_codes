@@ -24,7 +24,7 @@ equipments:
 water_heating_loop:
   setpoint: water_law_set_point
   operation: [hpatw_eir, gas_boiler]
-  Loop_Type: heating_mix_load
+  Loop_Type: heating_mix
   branches:
     plant: [inside_variable_pump, hpatw_eir, gas_boiler]
     demand:
