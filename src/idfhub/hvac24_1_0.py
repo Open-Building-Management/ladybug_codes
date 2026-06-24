@@ -655,14 +655,14 @@ def adjust_nodes_branch(loop_name: str, *, loop_side: str, branches_descr: dict[
 def generate_operation(
     *,
     loop_name:str,
-    staging_mode: str,
+    control_mode: str,
     loop_type: str,
     names: list[str],
 ):
     """return operation object
     names = list of equipment names"""
     operation_name = f"{loop_name} operation"
-    if staging_mode == "ComponentSetpoint":
+    if control_mode == "ComponentSetpoint":
         operation = PlantequipmentoperationComponentsetpoint(
             idf,
             **PlantequipmentoperationComponentsetpointType(
@@ -709,7 +709,7 @@ def generate_operation(
             loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
         list_names.append(list_name)
 
-    if staging_mode.lower() == EPValues.LOAD.lower():
+    if control_mode.lower() == EPValues.LOAD.lower():
         if EPValues.HEATING.lower() in loop_type.lower():
             operation = PlantequipmentoperationHeatingload(
                 idf,
@@ -736,7 +736,7 @@ def generate_operation(
             operation[f"Load_Range_{i+1}_Lower_Limit"] = op_range[0]
             operation[f"Load_Range_{i+1}_Upper_Limit"] = op_range[1]
         return operation
-    # on est en staging_mode == "OutdoorDryBulb":
+    # on est en control_mode == "OutdoorDryBulb":
     operation = PlantequipmentoperationOutdoordrybulb(
         idf,
         **PlantequipmentoperationOutdoordrybulbType(
@@ -762,13 +762,13 @@ def operation_list_scheme(loop_name:str):
     """GENERATE OPERATION SCHEMES FOR A PLANTLOOP"""
     conf = CONF.get(loop_name, {})
     loop_type = conf.get("Loop_Type", EPValues.HEATING)
-    staging_mode = conf.get("staging_mode", EPValues.LOAD)
-    LOGGER.info("%s > %s", loop_type, staging_mode)
+    control_mode = conf.get("control_mode", EPValues.LOAD)
+    LOGGER.info("%s > %s", loop_type, control_mode)
     loop_machines = conf.get("operation", [])
     # a single operation for the loop
     operation = generate_operation(
         loop_name=loop_name,
-        staging_mode=staging_mode,
+        control_mode=control_mode,
         loop_type=loop_type,
         names=loop_machines,
     )
