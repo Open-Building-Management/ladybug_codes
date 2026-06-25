@@ -105,7 +105,7 @@ You may add a `control_mode` key
 
 With no `control_mode` defined, the default value will be `Load` and will lead to `PlantEquipmentOperation:HeatingLoad` or `PlantEquipmentOperation:CoolingLoad`
 
-Other operation modes are available :
+Other available control modes :
 - `OutdoorDryBulb`
 - `ComponentSetpoint`
 
