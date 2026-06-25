@@ -145,9 +145,10 @@ REQUIRED = [
     "loops",
     "equipments",
 ]
+
 for key in REQUIRED:
     if key not in CONF:
-        print("exiting - check conf")
+        print(f"exiting - check conf {key} is missing")
         sys.exit()
 
 BUILDING_NAME: str = CONF["building_name"]
