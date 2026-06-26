@@ -727,7 +727,9 @@ def generate_operation(
             operation = PlantequipmentoperationUncontrolled(
                 idf,
                 **PlantequipmentoperationUncontrolledType(
-                    Name=operation_name)
+                    Name=operation_name,
+                    Equipment_List_Name=list_names[0]
+                    )
             )
             return operation
         if operation_type == "heating":
