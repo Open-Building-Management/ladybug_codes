@@ -701,6 +701,8 @@ def generate_operation(
     else:
         # a single list with all the machines
         list_name = f"{loop_name} Equipment List"
+        if operation_type is not None:
+            list_name = f"{list_name} {operation_type}"
         loop_equipment_list = Plantequipmentlist(
             idf,
             **PlantequipmentlistType(
