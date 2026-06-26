@@ -787,7 +787,7 @@ def operation_list_scheme(loop_name:str):
     loop_machines = conf.get("operation", [])
     operations = []
     if isinstance(loop_machines, dict):
-        for operation_type, machines in loop_machines:
+        for operation_type, machines in loop_machines.items():
             operations.append(
                 generate_operation(
                     loop_name=loop_name,
