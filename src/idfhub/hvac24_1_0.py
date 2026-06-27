@@ -22,6 +22,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     ScheduleCompact,ScheduleCompactMeta,
     Plantequipmentlist, Plantequipmentoperationschemes,
     PlantequipmentoperationHeatingload, PlantequipmentoperationCoolingload,
+    PlantequipmentoperationUncontrolled,
     CurveBiquadratic,
     BoilerHotwater,
     PlantequipmentoperationOutdoordrybulb,
@@ -41,6 +42,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ScheduleCompactType,
     PlantequipmentlistType, PlantequipmentoperationschemesType,
     PlantequipmentoperationHeatingloadType, PlantequipmentoperationCoolingloadType,
+    PlantequipmentoperationUncontrolledType,
     CurveBiquadraticType,
     BoilerHotwaterType,
     PlantequipmentoperationOutdoordrybulbType,
@@ -658,6 +660,7 @@ def generate_operation(
     control_mode: str,
     loop_type: str,
     names: list[str],
+    operation_type: str|None = None
 ):
     """return operation object
     names = list of equipment names"""
@@ -698,6 +701,8 @@ def generate_operation(
     else:
         # a single list with all the machines
         list_name = f"{loop_name} Equipment List"
+        if operation_type is not None:
+            list_name = f"{list_name} {operation_type}"
         loop_equipment_list = Plantequipmentlist(
             idf,
             **PlantequipmentlistType(
@@ -710,7 +715,26 @@ def generate_operation(
         list_names.append(list_name)
 
     if control_mode.lower() == EPValues.LOAD.lower():
-        if EPValues.HEATING.lower() in loop_type.lower():
+        operation_types = [
+            "heating",
+            "cooling",
+            "uncontrolled"
+        ]
+        if operation_type is None:
+            for value in operation_types:
+                if value in loop_type.lower():
+                    operation_type = value
+                    break
+        if operation_type == "uncontrolled":
+            operation = PlantequipmentoperationUncontrolled(
+                idf,
+                **PlantequipmentoperationUncontrolledType(
+                    Name=operation_name,
+                    Equipment_List_Name=list_names[0]
+                    )
+            )
+            return operation
+        if operation_type == "heating":
             operation = PlantequipmentoperationHeatingload(
                 idf,
                 **PlantequipmentoperationHeatingloadType(
@@ -765,23 +789,39 @@ def operation_list_scheme(loop_name:str):
     control_mode = conf.get("control_mode", EPValues.LOAD)
     LOGGER.info("%s > %s", loop_type, control_mode)
     loop_machines = conf.get("operation", [])
-    # a single operation for the loop
-    operation = generate_operation(
-        loop_name=loop_name,
-        control_mode=control_mode,
-        loop_type=loop_type,
-        names=loop_machines,
-    )
-    # a single scheme for the loop
-    Plantequipmentoperationschemes(
+    operations = []
+    if isinstance(loop_machines, dict):
+        for operation_type, machines in loop_machines.items():
+            operations.append(
+                generate_operation(
+                    loop_name=loop_name,
+                    control_mode=control_mode,
+                    loop_type=loop_type,
+                    names=machines,
+                    operation_type=operation_type
+                )
+            )
+    else:
+        # a single operation
+        operations.append(
+            generate_operation(
+                loop_name=loop_name,
+                control_mode=control_mode,
+                loop_type=loop_type,
+                names=loop_machines,
+            )
+        )
+    # a single scheme for the loop with all operations
+    scheme = Plantequipmentoperationschemes(
         idf,
         **PlantequipmentoperationschemesType(
-            Name=loop_name,
-            Control_Scheme_1_Object_Type=operation.key,
-            Control_Scheme_1_Name=operation.Name,
-            Control_Scheme_1_Schedule_Name=ALWAYS_ON
+            Name=loop_name
         )
     )
+    for i, operation in enumerate(operations):
+        scheme[f"Control_Scheme_{i+1}_Object_Type"] = operation.key
+        scheme[f"Control_Scheme_{i+1}_Name"] = operation.Name
+        scheme[f"Control_Scheme_{i+1}_Schedule_Name"] = ALWAYS_ON
 
 
 def zone_list(
