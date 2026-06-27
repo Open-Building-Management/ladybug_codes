@@ -55,7 +55,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ZonecontrolThermostatType,
 )
 
-from idfhub.common import get_logger, idf, CONF
+from idfhub.common import get_logger, idf, CONF, SCHEDULES
 
 LOGGER = get_logger()
 BYPASS = "bypass"
@@ -203,13 +203,22 @@ def schedule_objects(conf: dict[str, dict]) -> dict[str, EpBunch]:
     return schedules
 
 
-def zone_control(schedules: dict[str, EpBunch], zones: list[str], cooling_conf: dict):
-    """control zone schedule"""
-    required = ("from", "to")
-    thermostats: dict[str, EpBunch] = {}
-    if all(key in cooling_conf for key in required):
+def summer():
+    """fetch summer start and end"""
+    cooling_conf = SCHEDULES["cooling"]
+    try:
         summer_start = cooling_conf["from"]
         summer_end = cooling_conf["to"]
+    except KeyError:
+        return None, None
+    return summer_start, summer_end
+
+
+def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
+    """control zone schedule"""
+    thermostats: dict[str, EpBunch] = {}
+    summer_start, summer_end = summer()
+    if summer_start and summer_end:
         # 1 is heating and 2 is cooling in control types
         control_schedule = idf.getobject(
             ScheduleCompactMeta.idf_name,
