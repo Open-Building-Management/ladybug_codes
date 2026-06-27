@@ -214,6 +214,32 @@ def summer():
     return summer_start, summer_end
 
 
+def two_season_schedule(
+    *,
+    name: str,
+    period_start: str,
+    period_end: str,
+    value_on_period: int,
+    value_out_period: int
+):
+    """return a 2 seasons schedule"""
+    return ScheduleCompact(
+        idf,
+        **ScheduleCompactType(
+            Name=name,
+            Schedule_Type_Limits_Name=EPValues.CONTROL_TYPES,
+            Field_1=f"{EPValues.THROUGH}: {period_start}",
+            Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+            Field_3=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+            Field_4=f"{EPValues.THROUGH}: {period_end}",
+            Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+            Field_6=f"{EPValues.UNTIL}: 24:00,{value_on_period}",
+            Field_7=f"{EPValues.THROUGH}: 12/31",
+            Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+            Field_9=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+        )
+    )
+
 def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
     """control zone schedule"""
     thermostats: dict[str, EpBunch] = {}
@@ -225,21 +251,12 @@ def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
             "SeasonalSetpoint"
         )
         if not control_schedule:
-            control_schedule = ScheduleCompact(
-                idf,
-                **ScheduleCompactType(
-                    Name="SeasonalSetpoint",
-                    Schedule_Type_Limits_Name=EPValues.CONTROL_TYPES,
-                    Field_1=f"{EPValues.THROUGH}: {summer_start}",
-                    Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_3=f"{EPValues.UNTIL}: 24:00,1",
-                    Field_4=f"{EPValues.THROUGH}: {summer_end}",
-                    Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_6=f"{EPValues.UNTIL}: 24:00,2",
-                    Field_7=f"{EPValues.THROUGH}: 12/31",
-                    Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_9=f"{EPValues.UNTIL}: 24:00,1",
-                )
+            control_schedule = two_season_schedule(
+                name="SeasonalSetpoint",
+                period_start=summer_start,
+                period_end=summer_end,
+                value_on_period=2,
+                value_out_period=1
             )
         thermostats["heating"] = ThermostatsetpointSingleheating(
             idf,
