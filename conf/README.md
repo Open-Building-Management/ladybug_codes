@@ -96,6 +96,18 @@ If mentionned, `Loop_Type` must begin with the loop type as required by the `Pla
 
 If `Loop_Type` includes `mix`, a PlantEquipmentList will be created for each equipment in the yaml operation list, and you will have the possibility to define an `operation_range` for each equipment of the loop
 
+`operation` permits to declare all the production equipments on the loop.
+
+you can define a specific operation type for a specific machine or group of machines.
+
+```
+operation:
+  uncontrolled: [borehole]
+  cooling: [...]
+  heating: [...]
+```
+If no operation type is defined, the *prefix* of `Loop_Type` is used
+
 You can use `setpoints` instead or in addition to `setpoint` to add a setpoint at the output/outlet of each equipment of the loop
 
 ```
