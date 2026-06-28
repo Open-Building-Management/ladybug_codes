@@ -220,14 +220,15 @@ def two_season_schedule(
     period_start: str,
     period_end: str,
     value_on_period: int,
-    value_out_period: int
+    value_out_period: int,
+    typelimits_name: str,
 ):
     """return a 2 seasons schedule"""
     return ScheduleCompact(
         idf,
         **ScheduleCompactType(
             Name=name,
-            Schedule_Type_Limits_Name=EPValues.CONTROL_TYPES,
+            Schedule_Type_Limits_Name=typelimits_name,
             Field_1=f"{EPValues.THROUGH}: {period_start}",
             Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
             Field_3=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
@@ -256,7 +257,8 @@ def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
                 period_start=summer_start,
                 period_end=summer_end,
                 value_on_period=2,
-                value_out_period=1
+                value_out_period=1,
+                typelimits_name=EPValues.CONTROL_TYPES
             )
         thermostats["heating"] = ThermostatsetpointSingleheating(
             idf,
