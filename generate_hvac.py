@@ -199,8 +199,7 @@ schedule_typelimits(
 schedules = schedule_objects(SCHEDULES)
 zone_control(
     schedules,
-    ZONES,
-    SCHEDULES["cooling"]
+    ZONES
 )
 
 

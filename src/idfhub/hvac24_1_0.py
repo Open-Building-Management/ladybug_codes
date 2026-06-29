@@ -55,7 +55,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ZonecontrolThermostatType,
 )
 
-from idfhub.common import get_logger, idf, CONF
+from idfhub.common import get_logger, idf, CONF, SCHEDULES
 
 LOGGER = get_logger()
 BYPASS = "bypass"
@@ -203,34 +203,69 @@ def schedule_objects(conf: dict[str, dict]) -> dict[str, EpBunch]:
     return schedules
 
 
-def zone_control(schedules: dict[str, EpBunch], zones: list[str], cooling_conf: dict):
-    """control zone schedule"""
-    required = ("from", "to")
-    thermostats: dict[str, EpBunch] = {}
-    if all(key in cooling_conf for key in required):
+def summer():
+    """fetch summer start and end"""
+    cooling_conf = SCHEDULES["cooling"]
+    try:
         summer_start = cooling_conf["from"]
         summer_end = cooling_conf["to"]
+    except KeyError:
+        return None, None
+    return summer_start, summer_end
+
+
+def two_season_schedule(
+    *,
+    name: str,
+    period_start: str,
+    period_end: str,
+    value_on_period: int,
+    value_out_period: int,
+    typelimits_name: str,
+):
+    """return a 2 seasons schedule"""
+    sched = idf.getobject(
+        ScheduleCompactMeta.idf_name,
+        name
+    )
+    if not sched:
+        return ScheduleCompact(
+            idf,
+            **ScheduleCompactType(
+                Name=name,
+                Schedule_Type_Limits_Name=typelimits_name,
+                Field_1=f"{EPValues.THROUGH}: {period_start}",
+                Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_3=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+                Field_4=f"{EPValues.THROUGH}: {period_end}",
+                Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_6=f"{EPValues.UNTIL}: 24:00,{value_on_period}",
+                Field_7=f"{EPValues.THROUGH}: 12/31",
+                Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_9=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+            )
+        )
+    return sched
+
+
+def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
+    """control zone schedule"""
+    thermostats: dict[str, EpBunch] = {}
+    summer_start, summer_end = summer()
+    if summer_start and summer_end:
         # 1 is heating and 2 is cooling in control types
         control_schedule = idf.getobject(
             ScheduleCompactMeta.idf_name,
             "SeasonalSetpoint"
         )
         if not control_schedule:
-            control_schedule = ScheduleCompact(
-                idf,
-                **ScheduleCompactType(
-                    Name="SeasonalSetpoint",
-                    Schedule_Type_Limits_Name=EPValues.CONTROL_TYPES,
-                    Field_1=f"{EPValues.THROUGH}: {summer_start}",
-                    Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_3=f"{EPValues.UNTIL}: 24:00,1",
-                    Field_4=f"{EPValues.THROUGH}: {summer_end}",
-                    Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_6=f"{EPValues.UNTIL}: 24:00,2",
-                    Field_7=f"{EPValues.THROUGH}: 12/31",
-                    Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-                    Field_9=f"{EPValues.UNTIL}: 24:00,1",
-                )
+            control_schedule = two_season_schedule(
+                name="SeasonalSetpoint",
+                period_start=summer_start,
+                period_end=summer_end,
+                value_on_period=2,
+                value_out_period=1,
+                typelimits_name=EPValues.CONTROL_TYPES
             )
         thermostats["heating"] = ThermostatsetpointSingleheating(
             idf,
