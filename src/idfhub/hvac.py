@@ -7,7 +7,8 @@ from eppy.bunch_subclass import EpBunch
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     ConnectorMixer, ConnectorSplitter, Connectorlist, ConnectorlistMeta,
-    Branchlist, BranchlistMeta
+    Branchlist, BranchlistMeta,
+    AirloophvacMeta
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -30,9 +31,9 @@ class LoopNodes:
     """Produces generic node names for a plant or air loop"""
     name: str
 
-    def get(self, *, side, port):
+    def get(self, *, side, port, end="node"):
         """get a node name on a loop side/port"""
-        return f"{self.name}_{side}_{port}_node"
+        return f"{self.name}_{side}_{port}_{end}"
     @property
     def supply_inlet(self):
         """Supply Inlet"""
@@ -41,6 +42,10 @@ class LoopNodes:
     def supply_outlet(self):
         "Supply Outlet"
         return self.get(side=SUPPLY, port=OUTLET)
+    @property
+    def supply_outlets(self):
+        "Supply Outlets"
+        return self.get(side=SUPPLY, port=OUTLET, end="Node_List")
     @property
     def return_inlet(self):
         """Return Inlet"""
@@ -61,6 +66,10 @@ class LoopNodes:
     def demand_inlet(self):
         """Demand Inlet"""
         return self.get(side=DEMAND, port=INLET)
+    @property
+    def demand_inlets(self):
+        """Demand Inlets"""
+        return self.get(side=DEMAND, port=INLET, end="Node_List")
     @property
     def demand_outlet(self):
         """Demand Outlet"""
@@ -140,7 +149,10 @@ class EPApi(StrEnum):
     "EnergyPlus consts"
     INLET_NODE_NAME = "Inlet_Node_Name"
     OUTLET_NODE_NAME = "Outlet_Node_Name"
+    INLET_NODE_NAMES = "Inlet_Node_Names"
+    OUTLET_NODE_NAMES = "Outlet_Node_Names"
     PLANT_SIDE = "Plant_Side"
+    SUPPLY_SIDE = "Supply_Side"
     DEMAND_SIDE = "Demand_Side"
     BRANCH_LIST_NAME = "Branch_List_Name"
     CONNECTOR_LIST_NAME = "Connector_List_Name"
@@ -152,13 +164,26 @@ class EPApi(StrEnum):
     LOOP_SUPPLY_SIDE = "Loop_Supply_Side"
 
 
-def set_nodes(obj, *, inlet: str|None, outlet: str|None, side: str|None = None):
+def set_nodes(
+    obj: EpBunch,
+    *,
+    inlet: str|None,
+    outlet: str|None,
+    side: str|None = None
+):
     """Set object nodes - loop or equipment"""
     prefix = f"{side}_" if side else ""
+    inlet_field = f"{prefix}{EPApi.INLET_NODE_NAME}"
+    outlet_field = f"{prefix}{EPApi.OUTLET_NODE_NAME}"
+    if obj.key == AirloophvacMeta.idf_name:
+        if side == EPApi.DEMAND_SIDE:
+            inlet_field = f"{prefix}{EPApi.INLET_NODE_NAMES}"
+        if side == EPApi.SUPPLY_SIDE:
+            outlet_field = f"{prefix}{EPApi.OUTLET_NODE_NAMES}"
     if inlet is not None:
-        obj[f"{prefix}{EPApi.INLET_NODE_NAME}"] = inlet
+        obj[inlet_field] = inlet
     if outlet is not None:
-        obj[f"{prefix}{EPApi.OUTLET_NODE_NAME}"] = outlet
+        obj[outlet_field] = outlet
 
 
 def node_name(branch_name: str, port: str):
