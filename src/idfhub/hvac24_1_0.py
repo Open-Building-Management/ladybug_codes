@@ -224,22 +224,29 @@ def two_season_schedule(
     typelimits_name: str,
 ):
     """return a 2 seasons schedule"""
-    return ScheduleCompact(
-        idf,
-        **ScheduleCompactType(
-            Name=name,
-            Schedule_Type_Limits_Name=typelimits_name,
-            Field_1=f"{EPValues.THROUGH}: {period_start}",
-            Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-            Field_3=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
-            Field_4=f"{EPValues.THROUGH}: {period_end}",
-            Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-            Field_6=f"{EPValues.UNTIL}: 24:00,{value_on_period}",
-            Field_7=f"{EPValues.THROUGH}: 12/31",
-            Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
-            Field_9=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
-        )
+    sched = idf.getobject(
+        ScheduleCompactMeta.idf_name,
+        name
     )
+    if not sched:
+        return ScheduleCompact(
+            idf,
+            **ScheduleCompactType(
+                Name=name,
+                Schedule_Type_Limits_Name=typelimits_name,
+                Field_1=f"{EPValues.THROUGH}: {period_start}",
+                Field_2=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_3=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+                Field_4=f"{EPValues.THROUGH}: {period_end}",
+                Field_5=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_6=f"{EPValues.UNTIL}: 24:00,{value_on_period}",
+                Field_7=f"{EPValues.THROUGH}: 12/31",
+                Field_8=f"{EPValues.FOR}: {EPValues.ALLDAYS}",
+                Field_9=f"{EPValues.UNTIL}: 24:00,{value_out_period}",
+            )
+        )
+    return sched
+
 
 def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
     """control zone schedule"""
