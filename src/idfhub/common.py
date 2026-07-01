@@ -184,3 +184,27 @@ for sched_name, sched_conf in YML_SCHED.items():
         continue
     for key, value in sched_conf.items():
         SCHEDULES[sched_name][key] = value
+
+RUN_PERIOD = CONF.get("run_period", {})
+
+required = [
+    "Begin_Month",
+    "Begin_Day_of_Month",
+    "Begin_Year",
+    "End_Month",
+    "End_Day_of_Month",
+    "End_Year"
+]
+
+DEF_RUN_PERIOD = {
+    "Begin_Month": 1,
+    "Begin_Day_of_Month": 1,
+    "Begin_Year": 2026,
+    "End_Month": 12,
+    "End_Day_of_Month": 31,
+    "End_Year": 2026
+}
+
+for el in required:
+    if el not in RUN_PERIOD:
+        RUN_PERIOD[el] = DEF_RUN_PERIOD[el]

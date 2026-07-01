@@ -18,7 +18,8 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     OutputVariabledictionary,
     OutputTableSummaryreports, OutputcontrolTableStyle,
     OutputVariable, OutputSqlite,
-    FluidpropertiesGlycolconcentration,FluidpropertiesGlycolconcentrationMeta
+    FluidpropertiesGlycolconcentration,FluidpropertiesGlycolconcentrationMeta,
+    DesignspecificationOutdoorair,
 )
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
@@ -30,6 +31,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     OutputTableSummaryreportsType, OutputcontrolTableStyleType,
     OutputVariableType, OutputSqliteType,
     FluidpropertiesGlycolconcentrationType,
+    DesignspecificationOutdoorairType,
 )
 
 from idfhub.common import (
@@ -37,7 +39,8 @@ from idfhub.common import (
     BUILDING_NAME, PROJECT_NAME,
     CONF, ZONES, LOOPS,
     EQUIPMENTS,
-    SCHEDULES
+    SCHEDULES,
+    RUN_PERIOD
 )
 
 from idfhub.hvac24_1_0 import (
@@ -61,8 +64,8 @@ from idfhub.hvac24_1_0_heatpump import (
     water_to_water_heatpump,
     air_to_water_heatpump_eir
 )
+from idfhub.hvac24_1_0_hydronic_cooling import fcu_cooling
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
-
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 
 FORMAT = (
@@ -90,8 +93,10 @@ HPWTW = "hpwtw"
 HPATW = "hpatw"
 BOILER = "boiler"
 EXCHANGER = "HX"
+FCU = "fcu"
 
 zone_equipments: dict[str, list] = {}
+air_nodes: dict[str, dict[str, str]] = {}
 
 def add_variable(name, key="*"):
     """add a variable to the ep output"""
@@ -126,7 +131,7 @@ Simulationcontrol(
 SizingperiodDesignday(
     idf,
     **SizingperiodDesigndayType(
-        Name="design_day",
+        Name="winter_design_day",
         Month=1,
         Day_of_Month=1,
         Day_Type=EPValues.WINTER_DESIGN_DAY,
@@ -138,14 +143,33 @@ SizingperiodDesignday(
     )
 )
 
+SizingperiodDesignday(
+    idf,
+    **SizingperiodDesigndayType(
+        Name="summer_design_day",
+        Month=7,
+        Day_of_Month=21,
+        Day_Type=EPValues.SUMMER_DESIGN_DAY,
+        Maximum_DryBulb_Temperature=38,
+        Daily_DryBulb_Temperature_Range=10,
+        Wind_Speed=2,
+        Wind_Direction=180,
+        Wetbulb_or_DewPoint_at_Maximum_DryBulb=18,
+        Humidity_Condition_Type="DewPoint",
+        Barometric_Pressure=101325
+    )
+)
+
 Runperiod(
     idf,
     **RunperiodType(
         Name="run period",
-        Begin_Month=1,
-        Begin_Day_of_Month=1,
-        End_Month=12,
-        End_Day_of_Month=31,
+        Begin_Month=RUN_PERIOD["Begin_Month"],
+        Begin_Day_of_Month=RUN_PERIOD["Begin_Day_of_Month"],
+        Begin_Year=RUN_PERIOD["Begin_Year"],
+        End_Month=RUN_PERIOD["End_Month"],
+        End_Day_of_Month=RUN_PERIOD["End_Day_of_Month"],
+        End_Year=RUN_PERIOD["End_Year"],
         Use_Weather_File_Holidays_and_Special_Days="No",
         Use_Weather_File_Daylight_Saving_Period="No"
     )
@@ -238,8 +262,10 @@ for loop in LOOPS:
         **SizingPlantType(
             Plant_or_Condenser_Loop_Name=loop,
             Loop_Type=conf.get("Loop_Type", EPValues.HEATING).split("_")[0],
-            Design_Loop_Exit_Temperature=conf.get("Design_Loop_Exit_Temperature", 70),
-            Loop_Design_Temperature_Difference=conf.get("Loop_Design_Temperature_Difference", 10),
+            Design_Loop_Exit_Temperature=conf.get(
+                "Design_Loop_Exit_Temperature", 70),
+            Loop_Design_Temperature_Difference=conf.get(
+                "Loop_Design_Temperature_Difference", 10),
             Sizing_Option="NonCoincident",
             Zone_Timesteps_in_Averaging_Window=1,
         )
@@ -247,18 +273,39 @@ for loop in LOOPS:
 
 def basic_zone_sizing(zone_name: str):
     """basic zone sizing"""
+    # other methods : Flow/Person
+    design_spec = DesignspecificationOutdoorair(
+        idf,
+        **DesignspecificationOutdoorairType(
+            Name=f"{zone_name}_design_spec_oa",
+            Outdoor_Air_Method="Flow/Zone",
+            Outdoor_Air_Flow_per_Person=0.007,
+            Outdoor_Air_Flow_per_Zone=0.1
+        )
+    )
+    # other methods : TemperatureDifference
     return SizingZone(
         idf,
         **SizingZoneType(
             Zone_or_ZoneList_Name=zone_name,
+            Zone_Cooling_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
+            Zone_Cooling_Design_Supply_Air_Temperature=14,
             Zone_Cooling_Design_Supply_Air_Humidity_Ratio=0.008,
-            Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
+            Zone_Heating_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
             Zone_Heating_Design_Supply_Air_Temperature=40,
+            Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
+            Design_Specification_Outdoor_Air_Object_Name=design_spec.Name
         )
     )
 for zone in ZONES:
     basic_zone_sizing(zone)
     zone_equipments[zone] = []
+    air_nodes[zone] = {
+        "air_inlet_node": f"{zone}_inlet_air_node",
+        "air_exhaust_node": f"{zone}_return_air_node"
+    }
+
+USE_AIR = 0
 
 for equipment_name in EQUIPMENTS:
     if PUMP in equipment_name:
@@ -299,22 +346,32 @@ for equipment_name in EQUIPMENTS:
         continue
     if "PV" in equipment_name:
         PV_plant(equipment_name)
-    if "baseboards" in equipment_name:
-        try:
-            zone = equipment_name.split("_")[1]
-        except IndexError:
-            zone = None
-        if zone in ZONES:
-            baseboards = add_baseboard(idf, zone)
-            equipments[equipment_name] = baseboards
-            zone_equipments[zone].append(baseboards)
+        continue
+    # zone equipment
+    try:
+        zone = equipment_name.split("_")[1]
+    except IndexError:
+        zone = None
+    if zone in ZONES:
+        if "baseboards" in equipment_name:
+            zone_equipment = add_baseboard(idf, zone)
+            equipments[equipment_name] = zone_equipment
+        if FCU in equipment_name:
+            coil_cooling_water, zone_equipment = fcu_cooling(
+                equipment_name,
+                zone_air_inlet_node=air_nodes[zone]["air_inlet_node"],
+                zone_air_exhaust_node=air_nodes[zone]["air_exhaust_node"]
+            )
+            USE_AIR = 1
+            equipments[equipment_name] = coil_cooling_water
+        zone_equipments[zone].append(zone_equipment)
 
 #----------------------------------------------------------------
 # ZONE EQUIPMENTS DECLARATION
 #----------------------------------------------------------------
 for zone, equipment_list in zone_equipments.items():
     zone_equipment_list = zone_list(zone, equipment_list)
-    ZonehvacEquipmentconnections(
+    connections = ZonehvacEquipmentconnections(
         idf,
         **ZonehvacEquipmentconnectionsType(
             Zone_Name=zone,
@@ -322,6 +379,9 @@ for zone, equipment_list in zone_equipments.items():
             Zone_Air_Node_Name=f"{zone}_air_node"
         )
     )
+    if USE_AIR:
+        connections["Zone_Air_Inlet_Node_or_NodeList_Name"]=air_nodes[zone]["air_inlet_node"]
+        connections["Zone_Air_Exhaust_Node_or_NodeList_Name"]=air_nodes[zone]["air_exhaust_node"]
 
 sensors = initialise_sensors(CONF.get("sensors", {}))
 process = CONF.get("process", {})
@@ -402,8 +462,14 @@ OutputEnergymanagementsystem(idf, **OutputEnergymanagementsystemType(
 
 # tout ce tuning des variables de sortie peut être raisonnablement fait avec IDFEditor
 add_variable("Site Outdoor Air Drybulb Temperature")
+add_variable("Site Outdoor Air Humidity Ratio")
+add_variable("Site Outdoor Air Relative Humidity")
 add_variable("Zone Air Temperature")
+add_variable("Zone Air Relative Humidity")
+add_variable("Zone Air Humidity Ratio")
 add_variable("Zone Thermostat Heating Setpoint Temperature")
+add_variable("Zone Mean Air Dewpoint Temperature")
+
 if CONF.get("verbose"):
     add_variable("System Node Setpoint Temperature")
     add_variable("System Node Temperature")
@@ -437,10 +503,18 @@ for equipment_name in EQUIPMENTS:
         add_variable("Fluid Heat Exchanger Loop Demand Side Mass Flow Rate")
         add_variable("Fluid Heat Exchanger Loop Demand Side Inlet Temperature")
         add_variable("Fluid Heat Exchanger Loop Demand Side Outlet Temperature")
-
-add_variable("Baseboard Total Heating Rate")
-add_variable("Baseboard Water Inlet Temperature")
-add_variable("Baseboard Water Outlet Temperature")
+    if FCU in equipment_name:
+        add_variable("Heating Coil Heating Rate")
+        add_variable("Cooling Coil Total Cooling Rate")
+        add_variable("Cooling Coil Sensible Cooling Rate")
+        add_variable("Fan Electricity Rate")
+        add_variable("Fan Coil Fan Electricity Rate")
+        add_variable("Fan Coil Heating Rate")
+        add_variable("Fan Coil Total Cooling Rate")
+    if "baseboard" in equipment_name:
+        add_variable("Baseboard Total Heating Rate")
+        add_variable("Baseboard Water Inlet Temperature")
+        add_variable("Baseboard Water Outlet Temperature")
 
 add_variable("Pump Mass Flow Rate")
 
