@@ -1,4 +1,5 @@
-building_name: batiment_600m2
+building_name: Agence_ACF
+North_Axis: 122.4
 
 name: air2water_hp_35KW
 suffix: single_loop
@@ -36,7 +37,7 @@ water_law_set_point:
 
 hpatw_eir:
   force_side: Load_Side
-  Reference_Capacity : 35000
+  #Reference_Capacity : 47000
   Reference_Coefficient_Of_Performance: 3.2
   # x = water temp / y = air temp
   capacity_c: 0.794900878202383

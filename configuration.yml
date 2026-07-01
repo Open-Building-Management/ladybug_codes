@@ -1,4 +1,5 @@
-building_name: batiment_600m2
+building_name: Agence_ACF
+North_Axis: 122.4
 
 name: borehole_1000ml
 suffix: SP5535
@@ -44,7 +45,7 @@ water_heating_loop:
         - [baseboards_RPLUS1]
 
 constant_set_point:
-  temp: -10
+  temp: 12
 
 water_law_set_point:
   Setpoint_at_Outdoor_Low_Temperature: 55

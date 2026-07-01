@@ -1,6 +1,7 @@
-building_name: batiment_600m2
+building_name: Agence_ACF
+North_Axis: 122.4
 
-name: borehole_500ml_reducedFlow30_80%
+name: borehole_500ml_reducedFlow30_80
 suffix: SP5535
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
@@ -61,7 +62,7 @@ water_heating_loop:
         - [baseboards_RPLUS1]
 
 constant_set_point:
-  temp: -10
+  temp: 12
 
 water_law_set_point:
   Setpoint_at_Outdoor_Low_Temperature: 55
