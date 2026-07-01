@@ -1,16 +1,12 @@
-building_name: batiment_600m2
-North_Axis: 60
+building_name: Agence_ACF
+North_Axis: 122.4
 
-name: borehole_3loops_PACON_CtrlDeltaSP
-suffix: 500ml_30KWPAC_Boiler45KW_nocond_SIGNLE_SP7040
+name: borehole_3loops_CtrldeltaSP
+suffix: 500ml_30KWPAC_Boiler45KW_SP7040
 
 verbose: 0
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
-
-schedules:
-  cooling:
-    mode: "compact"
 
 zones:
   - "RDC"
@@ -78,7 +74,8 @@ controls:
 
 soil_loop:
   setpoint: constant_set_point
-  operation: [borehole]
+  operation:
+    uncontrolled: [borehole]
   branches:
     plant: [soil_pump, borehole]
     demand: [hpwtw]
@@ -110,7 +107,7 @@ zone_water_heating_loop:
         - [baseboards_RPLUS1]
 
 constant_set_point:
-  temp: -10
+  temp: 12
 
 water_law_set_point_7040:
   Setpoint_at_Outdoor_Low_Temperature: 70
