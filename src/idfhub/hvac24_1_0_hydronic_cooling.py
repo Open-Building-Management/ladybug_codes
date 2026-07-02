@@ -72,15 +72,20 @@ def fcu_cooling(
         zone_oa_mixer_outlet,
         zone_air_inlet_node,
     ]
+    rdd_variables = [
+        "System Node Temperature",
+        "System Node Mass Flow Rate"
+    ]
     for node_name in node_names:
-        OutputVariable(
-            idf,
-            **OutputVariableType(
-                Key_Value=node_name,
-                Variable_Name="System Node Temperature",
-                Reporting_Frequency="Timestep"
+        for variable in rdd_variables:
+            OutputVariable(
+                idf,
+                **OutputVariableType(
+                    Key_Value=node_name,
+                    Variable_Name=variable,
+                    Reporting_Frequency="Timestep"
+                )
             )
-        )
     mixer = OutdoorairMixer(
         idf,
         **OutdoorairMixerType(

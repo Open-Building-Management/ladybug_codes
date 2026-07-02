@@ -511,6 +511,7 @@ for equipment_name in EQUIPMENTS:
         add_variable("Fan Coil Fan Electricity Rate")
         add_variable("Fan Coil Heating Rate")
         add_variable("Fan Coil Total Cooling Rate")
+        add_variable("Fan Coil Fan Speed Level")
     if "baseboard" in equipment_name:
         add_variable("Baseboard Total Heating Rate")
         add_variable("Baseboard Water Inlet Temperature")
