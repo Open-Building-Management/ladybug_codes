@@ -8,6 +8,10 @@ suffix: single_loop
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
+run_period:
+  Begin_Year: 2017
+  End_Year: 2017
+
 zones:
   - "RDC"
   - "RPLUS1"
