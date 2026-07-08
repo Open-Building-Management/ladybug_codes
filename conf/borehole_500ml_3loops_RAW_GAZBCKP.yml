@@ -8,6 +8,14 @@ verbose: 0
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
+run_period:
+  Begin_Month: 4
+  Begin_Day_of_Month: 21
+  Begin_Year: 2026
+  End_Month: 4
+  End_Day_of_Month: 20
+  End_Year: 2027
+
 zones:
   - "RDC"
   - "RPLUS1"

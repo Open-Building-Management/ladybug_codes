@@ -283,6 +283,7 @@ def basic_zone_sizing(zone_name: str):
             Outdoor_Air_Flow_per_Zone=0.1
         )
     )
+    conf = CONF.get(zone_name, {})
     # other methods : TemperatureDifference
     return SizingZone(
         idf,
@@ -294,7 +295,13 @@ def basic_zone_sizing(zone_name: str):
             Zone_Heating_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
             Zone_Heating_Design_Supply_Air_Temperature=40,
             Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
-            Design_Specification_Outdoor_Air_Object_Name=design_spec.Name
+            Design_Specification_Outdoor_Air_Object_Name=design_spec.Name,
+            Cooling_Design_Air_Flow_Method=conf.get(
+                "Cooling_Design_Air_Flow_Method", "DesignDay"
+            ),
+            Cooling_Design_Air_Flow_Rate=conf.get(
+                "Cooling_Design_Air_Flow_Rate", 0.6
+            )
         )
     )
 for zone in ZONES:
@@ -468,6 +475,7 @@ add_variable("Zone Air Temperature")
 add_variable("Zone Air Relative Humidity")
 add_variable("Zone Air Humidity Ratio")
 add_variable("Zone Thermostat Heating Setpoint Temperature")
+add_variable("Zone Thermostat Cooling Setpoint Temperature")
 add_variable("Zone Mean Air Dewpoint Temperature")
 
 if CONF.get("verbose"):
@@ -476,10 +484,11 @@ if CONF.get("verbose"):
 
 for equipment_name in EQUIPMENTS:
     if BOREHOLE in equipment_name:
-        add_variable("Ground Heat Exchanger Heat Transfer Rate")
-        add_variable("Ground Heat Exchanger Inlet Temperature")
-        add_variable("Ground Heat Exchanger Outlet Temperature")
-        add_variable("Ground Heat Exchanger Average Borehole Temperature")
+        suffix = "Ground Heat Exchanger"
+        add_variable(f"{suffix} Heat Transfer Rate")
+        add_variable(f"{suffix} Inlet Temperature")
+        add_variable(f"{suffix} Outlet Temperature")
+        add_variable(f"{suffix} Average Borehole Temperature")
     if HP in equipment_name:
         suffix = "Heat Pump"
         add_variable(f"{suffix} Load Side Outlet Temperature")
@@ -491,22 +500,25 @@ for equipment_name in EQUIPMENTS:
         add_variable(f"{suffix} Load Side Heat Transfer Rate")
         add_variable(f"{suffix} Source Side Heat Transfer Rate")
     if BOILER in equipment_name:
-        add_variable("Boiler Heating Rate")
-        add_variable("Boiler Inlet Temperature")
-        add_variable("Boiler Outlet Temperature")
-        add_variable("Boiler Part Load Ratio")
+        suffix = "Boiler"
+        add_variable(f"{suffix} Heating Rate")
+        add_variable(f"{suffix} Inlet Temperature")
+        add_variable(f"{suffix} Outlet Temperature")
+        add_variable(f"{suffix} Part Load Ratio")
     if EXCHANGER in equipment_name:
-        add_variable("Fluid Heat Exchanger Heat Transfer Rate")
-        add_variable("Fluid Heat Exchanger Loop Supply Side Mass Flow Rate")
-        add_variable("Fluid Heat Exchanger Loop Supply Side Inlet Temperature")
-        add_variable("Fluid Heat Exchanger Loop Supply Side Outlet Temperature")
-        add_variable("Fluid Heat Exchanger Loop Demand Side Mass Flow Rate")
-        add_variable("Fluid Heat Exchanger Loop Demand Side Inlet Temperature")
-        add_variable("Fluid Heat Exchanger Loop Demand Side Outlet Temperature")
+        suffix = "Fluid Heat Exchanger"
+        add_variable(f"{suffix} Heat Transfer Rate")
+        add_variable(f"{suffix} Loop Supply Side Mass Flow Rate")
+        add_variable(f"{suffix} Loop Supply Side Inlet Temperature")
+        add_variable(f"{suffix} Loop Supply Side Outlet Temperature")
+        add_variable(f"{suffix} Loop Demand Side Mass Flow Rate")
+        add_variable(f"{suffix} Loop Demand Side Inlet Temperature")
+        add_variable(f"{suffix} Loop Demand Side Outlet Temperature")
     if FCU in equipment_name:
-        add_variable("Heating Coil Heating Rate")
+        #add_variable("Heating Coil Heating Rate")
         add_variable("Cooling Coil Total Cooling Rate")
         add_variable("Cooling Coil Sensible Cooling Rate")
+        add_variable("Cooling Coil Wetted Area Fraction")
         add_variable("Fan Electricity Rate")
         add_variable("Fan Coil Fan Electricity Rate")
         add_variable("Fan Coil Heating Rate")

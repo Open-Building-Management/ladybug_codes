@@ -74,7 +74,9 @@ def fcu_cooling(
     ]
     rdd_variables = [
         "System Node Temperature",
-        "System Node Mass Flow Rate"
+        "System Node Mass Flow Rate",
+        "System Node Enthalpy",
+        "System Node Humidity Ratio"
     ]
     for node_name in node_names:
         for variable in rdd_variables:

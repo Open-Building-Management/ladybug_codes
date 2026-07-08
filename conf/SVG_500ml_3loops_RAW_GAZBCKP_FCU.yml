@@ -19,7 +19,7 @@ run_period:
 schedules:
   cooling:
     mode: "compact"
-    #standby: 30
+    #standby: 26
     from: 04/21 # month/day
     to: 10/15
 
@@ -60,9 +60,51 @@ sensors:
   setpoint_sensor:
     location_name: pac_water_heating_loop_plant_outlet_node
     type: "System Node Setpoint Temperature"
+  # to evaluate latent deshumidification power
+  RDC_cool_total_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RDC_cool_sensible_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
+  RPLUS1_cool_total_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RPLUS1_cool_sensible_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
+  ###########################################
+  #### RDC temp and humidity ratio
+  fcu_RDC_w_out:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Humidity Ratio"
+  fcu_RDC_t_out:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Temperature"
+  fcu_RDC_w_in:
+    location_name: "RDC_return_air_node"
+    type: "System Node Humidity Ratio"
+  fcu_RDC_t_in:
+    location_name: "RDC_return_air_node"
+    type: "System Node Temperature"
+  RDC_mdot:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Mass Flow Rate"
+  RDC_water_mdot:
+    location_name: "soil_loop_demand_0_1_inlet_node"
+    type: "System Node Mass Flow Rate"
 
 process:
   deltaSP: "setpoint_sensor - pac_outlet"
+  RDC_cool_latent_rate: "RDC_cool_total_rate - RDC_cool_sensible_rate"
+  RPLUS1_cool_latent_rate: "RPLUS1_cool_total_rate - RPLUS1_cool_sensible_rate"
+  # using the Built-in Psychrometric Functions to catch enthalpy values
+  # ems-application-guide, bigladdersoftware
+  # to recalculate cooling coil total rate....
+  fcu_RDC_h_in: "@HFnTdbW fcu_RDC_t_in fcu_RDC_w_in"
+  fcu_RDC_h_out: "@HFnTdbW fcu_RDC_t_out fcu_RDC_w_out"
+  fcu_RDC_delta_h: "fcu_RDC_h_in - fcu_RDC_h_out"
+  fcu_RDC_cooling_coil_total_rate: "RDC_mdot * fcu_RDC_delta_h"
 
 controls:
   boiler_availability:
@@ -160,3 +202,11 @@ fcu_RDC:
 fcu_RPLUS1:
   process: "cooling"
   force_side: Water
+
+RDC:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.6
+
+RPLUS1:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.8
