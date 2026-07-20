@@ -206,7 +206,11 @@ fcu_RPLUS1:
 RDC:
   Cooling_Design_Air_Flow_Method: "Flow/Zone"
   Cooling_Design_Air_Flow_Rate: 0.6
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1
 
 RPLUS1:
   Cooling_Design_Air_Flow_Method: "Flow/Zone"
   Cooling_Design_Air_Flow_Rate: 0.8
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1

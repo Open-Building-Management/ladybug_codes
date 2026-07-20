@@ -184,7 +184,8 @@ SizingParameters(
 Building(
     idf,
     **BuildingType(
-        Name="CeremaCF",
+        Name=CONF["building_name"],
+        Terrain=CONF.get("Terrain", "Suburbs"),
         North_Axis=CONF.get("North_Axis", 0),
         Loads_Convergence_Tolerance_Value=0.04,
         Temperature_Convergence_Tolerance_Value=0.4
@@ -273,17 +274,23 @@ for loop in LOOPS:
 
 def basic_zone_sizing(zone_name: str):
     """basic zone sizing"""
+    zone_conf = CONF.get(zone_name, {})
     # other methods : Flow/Person
     design_spec = DesignspecificationOutdoorair(
         idf,
         **DesignspecificationOutdoorairType(
             Name=f"{zone_name}_design_spec_oa",
-            Outdoor_Air_Method="Flow/Zone",
-            Outdoor_Air_Flow_per_Person=0.007,
-            Outdoor_Air_Flow_per_Zone=0.1
+            Outdoor_Air_Method=zone_conf.get(
+                "Outdoor_Air_Method", "Flow/Zone"
+            ),
+            Outdoor_Air_Flow_per_Person=zone_conf.get(
+                "Outdoor_Air_Flow_per_Person", 0.007
+            ),
+            Outdoor_Air_Flow_per_Zone=zone_conf.get(
+                "Outdoor_Air_Flow_per_Zone", 0.1
+            )
         )
     )
-    conf = CONF.get(zone_name, {})
     # other methods : TemperatureDifference
     return SizingZone(
         idf,
@@ -296,10 +303,10 @@ def basic_zone_sizing(zone_name: str):
             Zone_Heating_Design_Supply_Air_Temperature=40,
             Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
             Design_Specification_Outdoor_Air_Object_Name=design_spec.Name,
-            Cooling_Design_Air_Flow_Method=conf.get(
+            Cooling_Design_Air_Flow_Method=zone_conf.get(
                 "Cooling_Design_Air_Flow_Method", "DesignDay"
             ),
-            Cooling_Design_Air_Flow_Rate=conf.get(
+            Cooling_Design_Air_Flow_Rate=zone_conf.get(
                 "Cooling_Design_Air_Flow_Rate", 0.6
             )
         )
