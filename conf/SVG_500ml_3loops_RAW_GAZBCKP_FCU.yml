@@ -1,8 +1,8 @@
 building_name: Agence_ACF
 North_Axis: 122.4
 
-name: borehole_3loops_CtrldeltaSP
-suffix: 500ml_30KWPAC_Boiler45KW_SP7040
+name: SVG_3loops_CtrldeltaSP
+suffix: 500ml_30KWPAC_Boiler45KW_SP7040_FCU
 
 verbose: 0
 
@@ -15,6 +15,13 @@ run_period:
   End_Month: 4
   End_Day_of_Month: 20
   End_Year: 2027
+
+schedules:
+  cooling:
+    mode: "compact"
+    #standby: 26
+    from: 04/21 # month/day
+    to: 10/15
 
 zones:
   - "RDC"
@@ -35,6 +42,8 @@ equipments:
   - HX
   - baseboards_RDC
   - baseboards_RPLUS1
+  - fcu_RDC
+  - fcu_RPLUS1
   - PV_lab
 
 sensors:
@@ -51,34 +60,59 @@ sensors:
   setpoint_sensor:
     location_name: pac_water_heating_loop_plant_outlet_node
     type: "System Node Setpoint Temperature"
+  # to evaluate latent deshumidification power
+  RDC_cool_total_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RDC_cool_sensible_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
+  RPLUS1_cool_total_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RPLUS1_cool_sensible_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
+  ###########################################
+  #### RDC temp and humidity ratio
+  fcu_RDC_w_out:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Humidity Ratio"
+  fcu_RDC_t_out:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Temperature"
+  fcu_RDC_w_in:
+    location_name: "RDC_return_air_node"
+    type: "System Node Humidity Ratio"
+  fcu_RDC_t_in:
+    location_name: "RDC_return_air_node"
+    type: "System Node Temperature"
+  RDC_mdot:
+    location_name: "RDC_inlet_air_node"
+    type: "System Node Mass Flow Rate"
+  RDC_water_mdot:
+    location_name: "soil_loop_demand_0_1_inlet_node"
+    type: "System Node Mass Flow Rate"
 
 process:
   deltaSP: "setpoint_sensor - pac_outlet"
+  RDC_cool_latent_rate: "RDC_cool_total_rate - RDC_cool_sensible_rate"
+  RPLUS1_cool_latent_rate: "RPLUS1_cool_total_rate - RPLUS1_cool_sensible_rate"
+  # using the Built-in Psychrometric Functions to catch enthalpy values
+  # ems-application-guide, bigladdersoftware
+  # to recalculate cooling coil total rate....
+  fcu_RDC_h_in: "@HFnTdbW fcu_RDC_t_in fcu_RDC_w_in"
+  fcu_RDC_h_out: "@HFnTdbW fcu_RDC_t_out fcu_RDC_w_out"
+  fcu_RDC_delta_h: "fcu_RDC_h_in - fcu_RDC_h_out"
+  fcu_RDC_cooling_coil_total_rate: "RDC_mdot * fcu_RDC_delta_h"
 
 controls:
-  # first control = bivalence
-  # Text < -2 -> gaz
-  # -2 < Text < 0 -> pac+gaz < 0
-  # Text > 0 -> pac
-  # second control = PAC always ON
-  # gaz only if T < 0
-  # third control : PAC always ON, gaz if setpoint not met
   boiler_availability:
     sensor: deltaSP
-    #sensor: outdoorT
     type: "On/Off Supervisory"
     pilot: [gas_boiler]
     start_above: 0
     stop_below: 0
-    #start_below: 0
-    #stop_above: 0
-  #pac_availability:
-  #  sensor: outdoorT
-  #  type: "On/Off Supervisory"
-  #  pilot: [hpwtw]    
-  #  stop_below: -2
-  #  start_above: -2
-
 
 soil_loop:
   setpoint: constant_set_point
@@ -86,7 +120,11 @@ soil_loop:
     uncontrolled: [borehole]
   branches:
     plant: [soil_pump, borehole]
-    demand: [hpwtw]
+    demand: #[hpwtw]
+      - parallel:
+        - [hpwtw]
+        - [fcu_RDC]
+        - [fcu_RPLUS1] 
   Loop_Type: cooling
   Design_Loop_Exit_Temperature: 12
   Loop_Design_Temperature_Difference: 5
@@ -123,18 +161,6 @@ water_law_set_point_7040:
   Setpoint_at_Outdoor_High_Temperature: 40
   Outdoor_High_Temperature: 15
 
-water_law_set_point_6040:
-  Setpoint_at_Outdoor_Low_Temperature: 60
-  Outdoor_Low_Temperature: -5
-  Setpoint_at_Outdoor_High_Temperature: 40
-  Outdoor_High_Temperature: 15
-
-water_law_set_point_5535:
-  Setpoint_at_Outdoor_Low_Temperature: 55
-  Outdoor_Low_Temperature: -5
-  Setpoint_at_Outdoor_High_Temperature: 35
-  Outdoor_High_Temperature: 15
-
 borehole:
   Number_of_Boreholes_in_XDirection: 5
   Number_of_Boreholes_in_YDirection: 1
@@ -168,3 +194,23 @@ PV_lab:
     - ["37+45+8", 0, "altitude+height+0.45"]
     - ["37+45+8", 53, "altitude+height+0.45"]
     - ["37+45", 53, "altitude+height"]
+
+fcu_RDC:
+  process: "cooling"
+  force_side: Water
+
+fcu_RPLUS1:
+  process: "cooling"
+  force_side: Water
+
+RDC:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.6
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1
+
+RPLUS1:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.8
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1

@@ -25,7 +25,7 @@ ignore = ["idf_autocomplete"]
 [tool.pylint.design]
 max-locals = 20
 max-args = 7
-max-positional-arguments = 6
+max-positional-arguments = 7
 max-branches = 20
 
 [build-system]
