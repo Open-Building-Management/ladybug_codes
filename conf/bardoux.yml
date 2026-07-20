@@ -1,0 +1,14 @@
+building_name: 8_bardoux
+
+name: raw
+suffix: no_hvac
+
+Terrain: City
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones: []
+
+loops: []
+
+equipments: []

@@ -57,14 +57,27 @@ def box_room(
     )
 
 def create_walls(
-    pts:list[Point3D],
-    height: float,
+    *,
+    pts: list[Point3D],
+    height: float|list[float] = 3,
+    remove_wall: list[int] | None = None
 ) -> list[Face3D]:
     """create walls from lower and upper points"""
-    up = Vector3D(0, 0, height)
-    pts_u = [pt.move(up) for pt in pts]
+    if remove_wall is None:
+        remove_wall = []
+    if isinstance(height, list):
+        LOGGER.debug("having a list of heights %s", height)
+        if len(height) != len(pts):
+            pts_u = [pt.move(Vector3D(0,0,height[0])) for pt in pts]
+        else:
+            pts_u = [pt.move(Vector3D(0,0,height[i])) for i,pt in enumerate(pts)]
+    else:
+        up = Vector3D(0, 0, height)
+        pts_u = [pt.move(up) for pt in pts]
     i_inds = list(range(len(pts)))
     j_inds = i_inds[1:] + [0]
+    if remove_wall:
+        LOGGER.info("removing wall %s", remove_wall)
     return [
         Face3D([
             pts[i],
@@ -72,23 +85,30 @@ def create_walls(
             pts_u[j_inds[i]],
             pts_u[i]
         ])
-        for i in i_inds
+        for i in i_inds if i not in remove_wall
     ]
 
 def create_floors_roofs(
+    *,
     floors:list[list[Point3D]],
-    height: float
-) -> tuple[list[Point3D], list[Point3D]]:
+    height: float = 3,
+    roofs:list[list[Point3D]]|None = None
+) -> tuple[list[Face3D], list[Face3D]]:
     """create floors and roofs"""
-    up = Vector3D(0, 0, height)
+    if roofs is None:
+        roofs = []
     all_floors: list[Face3D] = []
     for floor in [Face3D(pts) for pts in floors]:
         if floor.normal.z > 0:
             LOGGER.debug("flipping to have a floor")
             all_floors.append(floor.flip())
         else:
-            all_floors.append(floor.flip())
-    all_up_pts = [[pt.move(up) for pt in pts] for pts in floors]
+            all_floors.append(floor)
+    if len(roofs) == 0:
+        up = Vector3D(0, 0, height)
+        all_up_pts = [[pt.move(up) for pt in pts] for pts in floors]
+    else:
+        all_up_pts = roofs
     all_roofs: list[Face3D] = []
     for roof in [Face3D(pts) for pts in all_up_pts]:
         if roof.normal.z < 0:
@@ -107,19 +127,37 @@ def create_floors_roofs(
 
 def complex_room(
     pts:list[Point3D],
-    height:float,
+    height:float|list[float],
     identifier:str,
     floors:list[list[Point3D]]|None = None,
-    use_polyface:bool = True
+    roofs:list[list[Point3D]]|None = None,
+    use_polyface:bool = True,
+    remove_wall:list[int]|None = None
 ) -> Room:
     """create a complex room"""
+    if floors is None:
+        floors = []
+    if roofs is None:
+        roofs = []
+    if remove_wall is None:
+        remove_wall = []
     # on crée les murs d'après les glacis de points
-    walls = create_walls(pts, height)
+    walls = create_walls(pts=pts, height=height, remove_wall=remove_wall)
     # on crée sol(s) et plafond(s)
-    if not floors:
-        all_floors, all_roofs = create_floors_roofs([Face3D(pts)], height)
+    # si l'utilisateur fournit une liste de hauteurs, il doit définir le plafond dans le yaml
+    # s'il ne l'a pas fait, on produit un plafond plat
+    room_height = max(height) if isinstance(height, list) else height
+    if len(floors) == 0:
+        all_floors, all_roofs = create_floors_roofs(
+            floors=[Face3D(pts)],
+            height=room_height
+        )
     else:
-        all_floors, all_roofs = create_floors_roofs(floors, height)
+        all_floors, all_roofs = create_floors_roofs(
+            floors=floors,
+            height=room_height,
+            roofs=roofs
+        )
 
     if use_polyface:
         polyface = Polyface3D.from_faces(

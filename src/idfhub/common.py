@@ -109,8 +109,16 @@ BLOCKS = GEOMETRY.get("blocks", {})
 def get_variables(metadata: dict) -> dict:
     """return dict of variables"""
     variables = {}
-    variables["height"] = metadata.get("height", COMMON_HEIGHT)
-    variables["altitude"] = metadata.get("altitude", 0)
+    accepted_keys = [
+        "height",
+        "altitude",
+        "d0","d1","d2","d3","d4","d5",
+        "h0","h1","h2","h3","h4","h5",
+        "z0"
+    ]
+    for key in accepted_keys:
+        if key in metadata:
+            variables[key] = metadata[key]
     return variables
 
 def eval_expr(expr, variables):

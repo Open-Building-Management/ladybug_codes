@@ -23,10 +23,10 @@ common_height = GEOMETRY.get("height", 3)
 
 def prepare(
     coordinates: list[list[float]],
-    variables: dict|None = None
+    variables: dict = {}
 ) -> list[Point3D]:
     """prepare for complex_room method"""
-    if variables is None:
+    if len(variables) == 0:
         return [
             Point3D(*row)
             for row in coordinates
@@ -50,10 +50,12 @@ for building_name, building_metadata in GEOMETRY.items():
             if not isinstance(level_metadata, dict):
                 continue
             if "walls" not in level_metadata:
-                LOGGER.error("no floors key for %s, skipping the level", level_name)
+                LOGGER.error("no walls key for %s, skipping the level", level_name)
                 continue
             LOGGER.info("Generating %s", level_name)
             level_variables = get_variables(level_metadata)
+            if level_metadata.get("use_blocks_vars", 0) == 1:
+                level_variables = {**level_variables, **get_variables(BLOCKS)}
             wall_points: list[list[float]] = []
             for x in level_metadata["walls"]:
                 if isinstance(x, str):
@@ -63,19 +65,40 @@ for building_name, building_metadata in GEOMETRY.items():
                     wall_points = [*wall_points, x]
 
             walls = prepare(wall_points, variables=level_variables)
-            floors = []
-            if "floors" in level_metadata:
-                LOGGER.info("custom floors for %s", level_name)
-                for x in level_metadata["floors"]:
-                    if isinstance(x, str):
-                        if x in BLOCKS:
-                            floors.append(prepare(BLOCKS[x]))
+            surfaces: dict[str, list[list[Point3D]]] = {"floors": [], "roofs": []}
+            for key, surface in surfaces.items():
+                if key in level_metadata:
+                    pts: list[list[float]] = []
+                    LOGGER.info("custom %s for %s", key, level_name)
+                    for x in level_metadata[key]:
+                        if isinstance(x, str):
+                            if x in BLOCKS:
+                                surface.append(
+                                    prepare(
+                                        BLOCKS[x],
+                                        variables=get_variables(BLOCKS)
+                                    )
+                                )
+                        if isinstance(x, list):
+                            pts.append(x)
+                    if len(pts) > 0:
+                        surface.append(
+                            prepare(
+                                pts,
+                                variables=level_variables
+                            )
+                        )
+            height=level_metadata.get("height", common_height)
+            if "heights" in level_metadata:
+                height = level_metadata["heights"]
             level = complex_room(
                 walls,
-                height=level_variables["height"],
+                height=height,
                 identifier=level_name,
-                floors = floors if floors else None,
-                use_polyface = not floors
+                floors = surfaces["floors"],
+                roofs = surfaces["roofs"],
+                use_polyface = not surfaces["floors"],
+                remove_wall=level_metadata.get("remove_wall", [])
             )
             building.append(level)
             building_dict[level_name] = level
@@ -153,30 +176,36 @@ for building_name, building_metadata in GEOMETRY.items():
                 aperture_types = apertures["types"]
             except KeyError:
                 aperture_types = []
-            for i, face in enumerate(level_walls):
-                try:
-                    count = numbers[i]
-                except IndexError:
-                    LOGGER.warning("aperture index error")
+            i = 0
+            apm = ApertureManager(site[building_name][level_name])
+            # we must loop on numbers and not on level_walls, as some walls may be removed
+            for j, count in enumerate(numbers):
+                if j in level_metadata.get("remove_wall", []):
                     continue
-                if not count:
+                try:
+                    face = level_walls[i]
+                except IndexError:
+                    LOGGER.warning("no index %s in %s", i, level_walls)
+                    continue
+                # we have the face, we can increment i
+                i+=1
+                if count == 0:
                     LOGGER.warning("skipping aperture on %s", face)
                     continue
-                apm = ApertureManager(site[building_name][level_name])
                 try:
-                    width = widths[i]
+                    width = widths[j]
                 except IndexError:
                     width = apertures.get("width", 1.2)
                 try:
-                    height = heights[i]
+                    height = heights[j]
                 except IndexError:
                     height = apertures.get("height", 1.3)
                 try:
-                    sill_height = sill_heights[i]
+                    sill_height = sill_heights[j]
                 except IndexError:
                     sill_height = apertures.get("sill_height", 1)
                 try:
-                    aperture_type = aperture_types[i]
+                    aperture_type = aperture_types[j]
                 except IndexError:
                     aperture_type = apertures.get("type", "aperture")
                 apm.fix_dim(
@@ -185,7 +214,7 @@ for building_name, building_metadata in GEOMETRY.items():
                     sill_height = sill_height
                 )
                 try:
-                    construction_name = constructions[i]
+                    construction_name = constructions[j]
                 except IndexError:
                     construction_name = apertures.get("construction")
                 construction=CONSTLIB.get(construction_name)
@@ -199,6 +228,8 @@ for building_name, building_metadata in GEOMETRY.items():
         # now we can add single elements if any
         elements = level_metadata.get("elements", {})
         level_variables = get_variables(level_metadata)
+        if level_metadata.get("use_blocks_vars", 0) == 1:
+            level_variables = {**level_variables, **get_variables(BLOCKS)}
         for element_name, element_metadata in elements.items():
             if "geometry" not in element_metadata:
                 continue
