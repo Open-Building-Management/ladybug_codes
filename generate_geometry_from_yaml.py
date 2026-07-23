@@ -9,10 +9,10 @@ from honeybee_energy.writer import model_to_idf
 
 from ladybug_geometry.geometry3d import Face3D, Point3D
 
-from src.idfhub.common import get_logger, eval_expr, GEOMETRY, BLOCKS, get_variables
+from idfhub.common import get_logger, eval_expr, GEOMETRY, BLOCKS, get_variables
 
-from src.idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture
-from src.idfhub.helpers.matlib import CONSTLIB
+from idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture
+from idfhub.helpers.matlib import CONSTLIB
 
 LOGGER = get_logger(log_level=logging.INFO)
 
@@ -22,10 +22,11 @@ buildings: list[list[Room]] = []
 common_height = GEOMETRY.get("height", 3)
 
 def prepare(
-    coordinates: list[list[float]],
-    variables: dict = {}
+    coordinates: list[list[float|str]],
+    *,
+    variables: dict
 ) -> list[Point3D]:
-    """prepare for complex_room method"""
+    """evaluate user formulas and prepare for complex_room method"""
     if len(variables) == 0:
         return [
             Point3D(*row)
@@ -39,6 +40,78 @@ def prepare(
         for row in coordinates
     ]
 
+def dispatch_apertures(
+    *,
+    apertures: dict[str, list],
+    manager: ApertureManager,
+    destination_faces: list[Face3D]
+):
+    """dispatch apertures on destination faces
+    numbers is a mandatory key in the apertures dict
+    """
+    ap_numbers = apertures["numbers"]
+    try:
+        ap_widths = apertures["widths"]
+    except KeyError:
+        ap_widths = []
+    try:
+        ap_heights = apertures["heights"]
+    except KeyError:
+        ap_heights = []
+    try:
+        ap_sill_heights = apertures["sill_heights"]
+    except KeyError:
+        ap_sill_heights = []
+    try:
+        ap_constructions = apertures["constructions"]
+    except KeyError:
+        ap_constructions = []
+    try:
+        ap_types = apertures["types"]
+    except KeyError:
+        ap_types = []
+    for destination_face in destination_faces:
+        j = int(destination_face.identifier.split("_")[-1])
+        try:
+            ap_count = ap_numbers[j]
+        except IndexError:
+            continue
+        if ap_count == 0:
+            LOGGER.warning("skipping aperture on %s", destination_face)
+            continue
+        try:
+            ap_width = ap_widths[j]
+        except IndexError:
+            ap_width = apertures.get("width", 1.2)
+        try:
+            ap_height = ap_heights[j]
+        except IndexError:
+            ap_height = apertures.get("height", 1.3)
+        try:
+            ap_sill_height = ap_sill_heights[j]
+        except IndexError:
+            ap_sill_height = apertures.get("sill_height", 1)
+        try:
+            ap_type = ap_types[j]
+        except IndexError:
+            ap_type = apertures.get("type", "aperture")
+        manager.fix_dim(
+            width = ap_width,
+            height = ap_height,
+            sill_height = ap_sill_height
+        )
+        try:
+            ap_construction_name = ap_constructions[j]
+        except IndexError:
+            ap_construction_name = apertures.get("construction")
+        ap_construction=CONSTLIB.get(ap_construction_name)
+        manager.face = destination_face
+        manager.set_u_v_bounds()
+        manager.add_from_border(
+            construction=ap_construction,
+            count=ap_count,
+            aperture_type=ap_type
+        )
 
 for building_name, building_metadata in GEOMETRY.items():
     if not isinstance(building_metadata, dict):
@@ -56,19 +129,19 @@ for building_name, building_metadata in GEOMETRY.items():
             level_variables = get_variables(level_metadata)
             if level_metadata.get("use_blocks_vars", 0) == 1:
                 level_variables = {**level_variables, **get_variables(BLOCKS)}
-            wall_points: list[list[float]] = []
+            wall_points: list[list[float | str]] = []
             for x in level_metadata["walls"]:
                 if isinstance(x, str):
                     if x in BLOCKS:
                         wall_points = [*wall_points, *BLOCKS[x]]
                 if isinstance(x, list):
-                    wall_points = [*wall_points, x]
+                    wall_points = [*wall_points, x[0:3]]
 
             walls = prepare(wall_points, variables=level_variables)
             surfaces: dict[str, list[list[Point3D]]] = {"floors": [], "roofs": []}
             for key, surface in surfaces.items():
                 if key in level_metadata:
-                    pts: list[list[float]] = []
+                    pts: list[list[float | str]] = []
                     LOGGER.info("custom %s for %s", key, level_name)
                     for x in level_metadata[key]:
                         if isinstance(x, str):
@@ -97,7 +170,7 @@ for building_name, building_metadata in GEOMETRY.items():
                 identifier=level_name,
                 floors = surfaces["floors"],
                 roofs = surfaces["roofs"],
-                use_polyface = not surfaces["floors"],
+                use_polyface = False,
                 remove_wall=level_metadata.get("remove_wall", [])
             )
             building.append(level)
@@ -127,9 +200,14 @@ for building_name, building_metadata in GEOMETRY.items():
             continue
         constructions = level_metadata.get("constructions", {})
         level_walls: list[Wall] = []
+        level_roofs: list[RoofCeiling] = []
         for face in site[building_name][level_name].faces:
             if isinstance(face.type, Wall):
-                construction_name = constructions.get("walls")
+                number = int(face.identifier.split("_")[-1])
+                try:
+                    construction_name = level_metadata["walls"][number][3]
+                except IndexError:
+                    construction_name = constructions.get("walls")
                 construction = CONSTLIB.get(construction_name)
                 if construction is not None:
                     face.properties.energy.construction = construction
@@ -145,86 +223,35 @@ for building_name, building_metadata in GEOMETRY.items():
             if isinstance(face.type, RoofCeiling):
                 construction_name = constructions.get("roofs")
                 construction = CONSTLIB.get(construction_name)
+                if face.boundary_condition == Outdoors():
+                    level_roofs.append(face)
                 if construction is None:
                     continue
                 if face.boundary_condition != Outdoors():
                     LOGGER.info("Setting roof construction %s on %s", construction_name, face)
                     face.properties.energy.construction = construction
-        # now we can add apertures
-        apertures = level_metadata.get("apertures", {})
-        if "numbers" not in apertures:
-            LOGGER.warning("NO APERTURE ON LEVEL %s", level_name)
+
+        # now we can add apertures and vasistas using an aperture manager
+        apertures_keys = ["apertures", "vasistas"]
+        apm = ApertureManager(site[building_name][level_name])
+        windows_doors = level_metadata.get("apertures", {})
+        if "numbers" not in windows_doors:
+            LOGGER.warning("NO WINDOW OR DOOR ON LEVEL %s", level_name)
         else:
-            numbers = apertures["numbers"]
-            try:
-                widths = apertures["widths"]
-            except KeyError:
-                widths = []
-            try:
-                heights = apertures["heights"]
-            except KeyError:
-                heights = []
-            try:
-                sill_heights = apertures["sill_heights"]
-            except KeyError:
-                sill_heights = []
-            try:
-                constructions = apertures["constructions"]
-            except KeyError:
-                constructions = []
-            try:
-                aperture_types = apertures["types"]
-            except KeyError:
-                aperture_types = []
-            i = 0
-            apm = ApertureManager(site[building_name][level_name])
-            # we must loop on numbers and not on level_walls, as some walls may be removed
-            for j, count in enumerate(numbers):
-                if j in level_metadata.get("remove_wall", []):
-                    continue
-                try:
-                    face = level_walls[i]
-                except IndexError:
-                    LOGGER.warning("no index %s in %s", i, level_walls)
-                    continue
-                # we have the face, we can increment i
-                i+=1
-                if count == 0:
-                    LOGGER.warning("skipping aperture on %s", face)
-                    continue
-                try:
-                    width = widths[j]
-                except IndexError:
-                    width = apertures.get("width", 1.2)
-                try:
-                    height = heights[j]
-                except IndexError:
-                    height = apertures.get("height", 1.3)
-                try:
-                    sill_height = sill_heights[j]
-                except IndexError:
-                    sill_height = apertures.get("sill_height", 1)
-                try:
-                    aperture_type = aperture_types[j]
-                except IndexError:
-                    aperture_type = apertures.get("type", "aperture")
-                apm.fix_dim(
-                    width = width,
-                    height = height,
-                    sill_height = sill_height
-                )
-                try:
-                    construction_name = constructions[j]
-                except IndexError:
-                    construction_name = apertures.get("construction")
-                construction=CONSTLIB.get(construction_name)
-                apm.face = face
-                apm.set_u_v_bounds()
-                apm.add_from_border(
-                    construction=construction,
-                    count=count,
-                    aperture_type=aperture_type
-                )
+            dispatch_apertures(
+                apertures=windows_doors,
+                manager=apm,
+                destination_faces=level_walls
+            )
+        vasistas = level_metadata.get("vasistas", {})
+        if "numbers" not in vasistas:
+            LOGGER.warning("NO VASISTAS ON LEVEL %s", level_name)
+        else:
+            dispatch_apertures(
+                apertures=vasistas,
+                manager=apm,
+                destination_faces=level_roofs
+            )
         # now we can add single elements if any
         elements = level_metadata.get("elements", {})
         level_variables = get_variables(level_metadata)

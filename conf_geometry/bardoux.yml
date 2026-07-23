@@ -1,4 +1,5 @@
 name: 8_bardoux
+glasswool_new: 0.14
 
 blocks:
   ss2_alt: &ss2_alt -8
@@ -96,6 +97,10 @@ immeuble_8:
   ss2:
     height: 4
     use_blocks_vars: 1
+    constructions:
+      walls: townhouse_basement
+      floors: townhouse_basement
+      roofs: townhouse_basement
     walls:
       - ["d0", 0, *ss2_alt]
       - ["d0", "d3+d4+d5", *ss2_alt]
@@ -104,6 +109,10 @@ immeuble_8:
   ss1:
     height: 4
     use_blocks_vars: 1
+    constructions:
+      walls: townhouse_basement
+      floors: townhouse_basement
+      roofs: townhouse_basement
     floors:
       - ["d0", 0, *ss1_alt]
       - ["d0", "d3+d4+d5", *ss1_alt]
@@ -118,6 +127,8 @@ immeuble_8:
   rdc:
     height: 3
     use_blocks_vars: 1
+    constructions:
+      floors: townhouse_basement
     walls:
       - [0,  0, *rdc_alt]
       - ["d0", 0, *rdc_alt]
@@ -136,6 +147,8 @@ immeuble_8:
   rdc_annexe:
     height: 3
     use_blocks_vars: 1
+    constructions:
+      floors: townhouse_basement
     walls:
       - ["-d1-d2", 0, *rdc_alt]
       - ["-d1", 0, *rdc_alt]
@@ -275,18 +288,21 @@ immeuble_8:
       - ["d0", "d3+d4+d5", *r4_alt]
       - [0, "d3+d4+d5", *r4_alt]
     roofs: [toit1_1, toit1_2, toit2_1, toit2_2, toit3_1, toit3_2]
+    vasistas:
+      numbers: [0,3]
+      sill_heights: [0,2]
     walls:
-      - [0, 0, *r4_alt]
-      - [3, 0, *r4_alt]
-      - ["3+7", 0, *r4_alt]
+      - [0, 0, *r4_alt, recent_light_renovation]
+      - [3, 0, *r4_alt, recent_light_renovation]
+      - ["3+7", 0, *r4_alt, recent_light_renovation]
       - ["d0", 0, *r4_alt]
       - ["d0", "d3/2+d4/2+d5/2", *r4_alt]
-      - ["d0", "d3+d4+d5", *r4_alt]
-      - ["3+7", "d3+d4+d5", *r4_alt]
-      - [3, "d3+d4+d5", *r4_alt]
-      - [0, "d3+d4+d5", *r4_alt]
-      - [0, "d3+d4", *r4_alt]
-      - [0, "d3", *r4_alt]
+      - ["d0", "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - ["3+7", "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [3, "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [0, "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [0, "d3+d4", *r4_alt, recent_light_renovation]
+      - [0, "d3", *r4_alt, recent_light_renovation]
     heights: [2,3,2.5,1,1.8,1,2.5,3,2,2,2]
     elements:
       half_lune_1:

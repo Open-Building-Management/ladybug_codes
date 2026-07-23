@@ -61,7 +61,7 @@ def create_walls(
     pts: list[Point3D],
     height: float|list[float] = 3,
     remove_wall: list[int] | None = None
-) -> list[Face3D]:
+) -> dict[str, Face3D]:
     """create walls from lower and upper points"""
     if remove_wall is None:
         remove_wall = []
@@ -78,15 +78,15 @@ def create_walls(
     j_inds = i_inds[1:] + [0]
     if remove_wall:
         LOGGER.info("removing wall %s", remove_wall)
-    return [
-        Face3D([
+    return {
+        i: Face3D([
             pts[i],
             pts[j_inds[i]],
             pts_u[j_inds[i]],
             pts_u[i]
         ])
         for i in i_inds if i not in remove_wall
-    ]
+    }
 
 def create_floors_roofs(
     *,
@@ -161,7 +161,7 @@ def complex_room(
 
     if use_polyface:
         polyface = Polyface3D.from_faces(
-            [*all_floors, *walls, *all_roofs],
+            [*all_floors, *walls.values(), *all_roofs],
             tolerance = TOLERANCE
         )
         output_room = Room.from_polyface3d(
@@ -172,19 +172,19 @@ def complex_room(
         hb_faces = []
         for i, f3d in enumerate(all_floors):
             hb = Face(
-                identifier=f'{identifier}_{FLOOR}{i}',
+                identifier=f'{identifier}_{FLOOR}_{i}',
                 geometry=f3d
             )
             hb_faces.append(hb)
         for i, f3d in enumerate(all_roofs):
             hb = Face(
-                identifier=f'{identifier}_{ROOF}{i}',
+                identifier=f'{identifier}_{ROOF}_{i}',
                 geometry=f3d
             )
             hb_faces.append(hb)
-        for i, f3d in enumerate(walls):
+        for key, f3d in walls.items():
             hb = Face(
-                identifier=f'{identifier}_{WALL}{i}',
+                identifier=f'{identifier}_{WALL}_{key}',
                 geometry=f3d
             )
             hb_faces.append(hb)
