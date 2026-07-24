@@ -17,6 +17,8 @@ from ladybug_geometry.geometry3d import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
+from idfhub.helpers.matlib import CONSTLIB
+
 LOGGER = logging.getLogger(__name__)
 
 WIDTH = 37.0
@@ -465,3 +467,77 @@ def join_surface(room1: Room, pattern1: str, room2: Room, pattern2: str):
     face2.boundary_condition = Surface(boundary_condition_objects=bdo)
     bdo = (face2.identifier, face1.identifier)
     face1.boundary_condition = Surface(boundary_condition_objects=bdo)
+
+
+def dispatch_apertures(
+    *,
+    apertures: dict[str, list],
+    manager: ApertureManager,
+    destination_faces: list[Face3D]
+):
+    """dispatch apertures on destination faces
+    numbers is a mandatory key in the apertures dict
+    """
+    ap_numbers = apertures["numbers"]
+    try:
+        ap_widths = apertures["widths"]
+    except KeyError:
+        ap_widths = []
+    try:
+        ap_heights = apertures["heights"]
+    except KeyError:
+        ap_heights = []
+    try:
+        ap_sill_heights = apertures["sill_heights"]
+    except KeyError:
+        ap_sill_heights = []
+    try:
+        ap_constructions = apertures["constructions"]
+    except KeyError:
+        ap_constructions = []
+    try:
+        ap_types = apertures["types"]
+    except KeyError:
+        ap_types = []
+    for destination_face in destination_faces:
+        j = int(destination_face.identifier.split("_")[-1])
+        try:
+            ap_count = ap_numbers[j]
+        except IndexError:
+            continue
+        if ap_count == 0:
+            LOGGER.warning("skipping aperture on %s", destination_face)
+            continue
+        try:
+            ap_width = ap_widths[j]
+        except IndexError:
+            ap_width = apertures.get("width", 1.2)
+        try:
+            ap_height = ap_heights[j]
+        except IndexError:
+            ap_height = apertures.get("height", 1.3)
+        try:
+            ap_sill_height = ap_sill_heights[j]
+        except IndexError:
+            ap_sill_height = apertures.get("sill_height", 1)
+        try:
+            ap_type = ap_types[j]
+        except IndexError:
+            ap_type = apertures.get("type", "aperture")
+        manager.fix_dim(
+            width = ap_width,
+            height = ap_height,
+            sill_height = ap_sill_height
+        )
+        try:
+            ap_construction_name = ap_constructions[j]
+        except IndexError:
+            ap_construction_name = apertures.get("construction")
+        ap_construction=CONSTLIB.get(ap_construction_name)
+        manager.face = destination_face
+        manager.set_u_v_bounds()
+        manager.add_from_border(
+            construction=ap_construction,
+            count=ap_count,
+            aperture_type=ap_type
+        )
