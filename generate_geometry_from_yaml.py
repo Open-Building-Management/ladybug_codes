@@ -99,7 +99,7 @@ for building_name, building_metadata in GEOMETRY.items():
                 floors = surfaces["floors"],
                 roofs = surfaces["roofs"],
                 use_polyface = False,
-                remove_wall=level_metadata.get("remove_wall", [])
+                remove=level_metadata.get("remove")
             )
             building.append(level)
             building_dict[level_name] = level
