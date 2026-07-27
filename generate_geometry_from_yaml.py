@@ -2,7 +2,7 @@
 import logging
 
 from honeybee.boundarycondition import Ground, Outdoors
-from honeybee.facetype import Floor, Wall, RoofCeiling
+from honeybee.facetype import Floor, Wall, RoofCeiling, AirBoundary
 from honeybee.model import Model
 from honeybee.room import Room
 from honeybee_energy.writer import model_to_idf
@@ -40,6 +40,27 @@ def prepare(
         for row in coordinates
     ]
 
+def resolve(block: list[list|int|str]) -> list[list]:
+    """auto resolve"""
+    result: list[list] = []
+    for b in block:
+        if isinstance(b, list):
+            result.append(b)
+        else:
+            if b in BLOCKS:
+                result.extend(BLOCKS[b])
+    return result
+
+def get_construction_name(face3d: Face3D, yml_data: str | dict, default: str|None = None):
+    """return the construction name from the yml data"""
+    if isinstance(yml_data, str):
+        return yml_data
+    if isinstance(yml_data, dict):
+        nb = int(face3d.identifier.split("_")[-1])
+        if nb in yml_data:
+            return yml_data[nb]
+    return default
+
 
 for building_name, building_metadata in GEOMETRY.items():
     if not isinstance(building_metadata, dict):
@@ -61,7 +82,8 @@ for building_name, building_metadata in GEOMETRY.items():
             for x in level_metadata["walls"]:
                 if isinstance(x, str):
                     if x in BLOCKS:
-                        wall_points = [*wall_points, *BLOCKS[x]]
+                        #wall_points = [*wall_points, *BLOCKS[x]]
+                        wall_points.extend(resolve(BLOCKS[x]))
                 if isinstance(x, list):
                     wall_points = [*wall_points, x[0:3]]
 
@@ -76,7 +98,7 @@ for building_name, building_metadata in GEOMETRY.items():
                             if x in BLOCKS:
                                 surface.append(
                                     prepare(
-                                        BLOCKS[x],
+                                        resolve(BLOCKS[x]),
                                         variables=get_variables(BLOCKS)
                                     )
                                 )
@@ -135,13 +157,23 @@ for building_name, building_metadata in GEOMETRY.items():
                 try:
                     construction_name = level_metadata["walls"][number][3]
                 except IndexError:
-                    construction_name = constructions.get("walls")
+                    construction_name = constructions.get("walls", constructions.get("default"))
+                if construction_name == "air_boundary":
+                    face.type = AirBoundary()
+                    continue
                 construction = CONSTLIB.get(construction_name)
                 if construction is not None:
                     face.properties.energy.construction = construction
                 level_walls.append(face)
             if isinstance(face.type, Floor):
-                construction_name = constructions.get("floors")
+                construction_name = get_construction_name(
+                    face3d=face,
+                    yml_data=constructions.get("floors"),
+                    default=constructions.get("default")
+                )
+                if construction_name == "air_boundary":
+                    face.type = AirBoundary()
+                    continue
                 construction = CONSTLIB.get(construction_name)
                 if construction is None:
                     continue
@@ -149,7 +181,14 @@ for building_name, building_metadata in GEOMETRY.items():
                     LOGGER.info("Setting floor construction %s on %s", construction_name, face)
                     face.properties.energy.construction = construction
             if isinstance(face.type, RoofCeiling):
-                construction_name = constructions.get("roofs")
+                construction_name = get_construction_name(
+                    face3d=face,
+                    yml_data=constructions.get("roofs"),
+                    default=constructions.get("default")
+                )
+                if construction_name == "air_boundary":
+                    face.type = AirBoundary()
+                    continue
                 construction = CONSTLIB.get(construction_name)
                 if face.boundary_condition == Outdoors():
                     level_roofs.append(face)
