@@ -1,5 +1,6 @@
 """geometric fonctions"""
 from dataclasses import dataclass
+from typing import Any
 import logging
 
 from honeybee.aperture import Aperture
@@ -402,20 +403,67 @@ class ApertureManager:
         construction: WindowConstruction | None,
         label: str,
         aperture_type: str = "aperture",
+        geometry: Face3D|None = None
     ):
         """add a single aperture"""
-        geometry = aperture_geometry(
-            self.face,
-            origin=origin,
-            width=self.dims.width,
-            height=self.dims.height
-        )
+        if geometry is None:
+            geometry = aperture_geometry(
+                self.face,
+                origin=origin,
+                width=self.dims.width,
+                height=self.dims.height
+            )
         add_aperture(
             self.face,
             geometry,
             construction=construction,
             label=label,
             aperture_type=aperture_type
+        )
+
+    def add_single_vasistas(self, aperture: dict[str, float|int|str], face: Face3D):
+        """add a single vasistas on a face"""
+        mandatory = ["apex", "base_start", "base_end"]
+        for key in mandatory:
+            if key not in aperture:
+                return
+        apex = aperture["apex"]
+        base_start = aperture["base_start"]
+        base_end = aperture["base_end"]
+        ap_width = aperture.get("width", 1.2)
+        ap_height = aperture.get("height", 1)
+        ap_sill_height = aperture.get("sill_height", 1)
+        ap_construction = None
+        if "construction" in aperture:
+            ap_construction=CONSTLIB.get(str(aperture["construction"]))
+        face_vertices = face.geometry.boundary
+        base = face_vertices[base_end] - face_vertices[base_start]
+        u = base.normalize()
+        v = face.geometry.plane.n.cross(u).normalize()
+        # pointe du triangle vers qui il faut pointer.
+        if (face_vertices[apex] - face_vertices[base_start]).dot(v) < 0:
+            v = -v
+        edge_length = base.magnitude
+        offset = 0.5 * (edge_length - ap_width)
+        origin = (
+            face_vertices[base_start]
+            + u * offset
+            + v * ap_sill_height
+        )
+        print(origin)
+        geometry = Face3D([
+            origin,
+            origin + u * ap_width,
+            origin + u * ap_width + v * ap_height,
+            origin + v * ap_height,
+        ])
+        self.face = face
+        self._add(
+            origin=origin,
+            construction=ap_construction,
+            label="vasistas",
+            aperture_type="aperture",
+            geometry=geometry
         )
 
     def add_from_center(
@@ -464,7 +512,8 @@ class ApertureManager:
             )
 
 def join_surface(room1: Room, pattern1: str, room2: Room, pattern2: str):
-    """Add boundary condition between two adjacent faces."""
+    """Add boundary condition between two adjacent faces.
+    FINALLY NOT USED"""
     face1 = get_from_pattern(room1, pattern1)
     face2 = get_from_pattern(room2, pattern2)
     bdo = (face1.identifier, face2.identifier)
@@ -473,60 +522,76 @@ def join_surface(room1: Room, pattern1: str, room2: Room, pattern2: str):
     face1.boundary_condition = Surface(boundary_condition_objects=bdo)
 
 
+def get_design_value(apertures: dict[str, Any], name: str, index: int, default: Any) -> Any:
+    """get a design value (width, height, sill_height, construction)"""
+    params = apertures.get(f"{name}s", [])
+    if not isinstance(params, list):
+        return params
+    try:
+        value = params[index]
+    except IndexError:
+        value = apertures.get(name, default)
+    return value
+
+
 def dispatch_apertures(
     *,
-    apertures: dict[str, list],
+    apertures: dict[Any, list|Any],
     manager: ApertureManager,
-    destination_faces: list[Face3D]
+    destination_faces: list[Face3D],
+    level_name: str,
+    ap_type: str = "aperture"
 ):
     """dispatch apertures on destination faces
-    numbers is a mandatory key in the apertures dict
+    2 options : 
+    1) the key is the wall number, value = [nb_apertures, width, height, sill_height]
+    2) you use a key "numbers", value = [number of apertures for each wall - 0 if no aperture]
     """
-    ap_numbers = apertures["numbers"]
-    ap_widths = apertures["widths"] if "widths" in apertures else []
-    ap_heights = apertures["heights"] if "heights" in apertures else []
-    ap_sill_heights = apertures["sill_heights"] if "sill_heights" in apertures else []
-    ap_constructions = apertures["constructions"] if "constructions" in apertures else []
-    ap_types = apertures["types"] if "types" in apertures else []
     for destination_face in destination_faces:
         j = int(destination_face.identifier.split("_")[-1])
-        try:
-            ap_count = ap_numbers[j]
-        except IndexError:
+        aperture = apertures.get(j)
+        if len(destination_face.geometry.boundary) == 3 and isinstance(aperture, dict):
+            manager.add_single_vasistas(aperture, destination_face)
             continue
-        if ap_count == 0:
-            LOGGER.warning("skipping aperture on %s", destination_face)
-            continue
-        try:
-            ap_width = ap_widths[j]
-        except IndexError:
-            ap_width = apertures.get("width", 1.2)
-        try:
-            ap_height = ap_heights[j]
-        except IndexError:
-            ap_height = apertures.get("height", 1.3)
-        try:
-            ap_sill_height = ap_sill_heights[j]
-        except IndexError:
-            ap_sill_height = apertures.get("sill_height", 1)
-        try:
-            ap_type = ap_types[j]
-        except IndexError:
-            ap_type = apertures.get("type", "aperture")
+        if isinstance(aperture, list):
+            if len(aperture) < 4:
+                continue
+            ap_count = aperture[0]
+            ap_width = aperture[1]
+            ap_height = aperture[2]
+            ap_sill_height = aperture[3]
+            try:
+                ap_construction_name = aperture[4]
+            except IndexError:
+                ap_construction_name =apertures.get("construction")
+        else:
+            if "numbers" not in apertures:
+                continue
+            if not isinstance(apertures["numbers"], list):
+                continue
+            try:
+                ap_count = int(apertures["numbers"][j])
+            except IndexError:
+                continue
+            if ap_count == 0:
+                LOGGER.warning("skipping aperture on %s of %s", destination_face, level_name)
+                continue
+            ap_width = get_design_value(apertures, "width", j, 1.2)
+            ap_height = get_design_value(apertures, "height", j, 1.3)
+            ap_sill_height = get_design_value(apertures, "sill_height", j, 1)
+            ap_type = get_design_value(apertures, "type", j, "aperture")
+            ap_construction_name = get_design_value(apertures, "construction", j, None)
+        # now we can tune the manager :-)
         manager.fix_dim(
-            width = ap_width,
-            height = ap_height,
-            sill_height = ap_sill_height
+            width = float(ap_width),
+            height = float(ap_height),
+            sill_height = float(ap_sill_height)
         )
-        try:
-            ap_construction_name = ap_constructions[j]
-        except IndexError:
-            ap_construction_name = apertures.get("construction")
         ap_construction=CONSTLIB.get(ap_construction_name)
         manager.face = destination_face
         manager.set_u_v_bounds()
         manager.add_from_border(
             construction=ap_construction,
+            aperture_type=str(ap_type),
             count=ap_count,
-            aperture_type=ap_type
         )

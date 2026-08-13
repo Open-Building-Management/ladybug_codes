@@ -41,7 +41,8 @@ def prepare(
     ]
 
 def resolve(block: list[list|int|str]) -> list[list]:
-    """auto resolve"""
+    """auto resolve a block
+    replace the block name by the block content"""
     result: list[list] = []
     for b in block:
         if isinstance(b, list):
@@ -52,7 +53,8 @@ def resolve(block: list[list|int|str]) -> list[list]:
     return result
 
 def get_construction_name(face3d: Face3D, yml_data: str | dict, default: str|None = None):
-    """return the construction name from the yml data"""
+    """return the construction name from the yml data
+    for roof and floor only"""
     if isinstance(yml_data, str):
         return yml_data
     if isinstance(yml_data, dict):
@@ -154,10 +156,16 @@ for building_name, building_metadata in GEOMETRY.items():
         for face in site[building_name][level_name].faces:
             if isinstance(face.type, Wall):
                 number = int(face.identifier.split("_")[-1])
+                generic = constructions.get("walls", constructions.get("default"))
                 try:
                     construction_name = level_metadata["walls"][number][3]
                 except IndexError:
-                    construction_name = constructions.get("walls", constructions.get("default"))
+                    construction_name = generic
+                # if the user specify a custom constructions, walls is a list of list
+                # len(construction_name) is 1 if walls is a list of string
+                # in that case, we also reset to generic
+                if construction_name is not None and len(construction_name) == 1:
+                    construction_name = generic
                 if construction_name == "air_boundary":
                     face.type = AirBoundary()
                     continue
@@ -197,27 +205,18 @@ for building_name, building_metadata in GEOMETRY.items():
                 if face.boundary_condition != Outdoors():
                     LOGGER.info("Setting roof construction %s on %s", construction_name, face)
                     face.properties.energy.construction = construction
-
-        # now we can add apertures and vasistas using an aperture manager
-        apertures_keys = ["apertures", "vasistas"]
+        # now we can add apertures, doors and vasistas using an aperture manager
+        aperture_keys = ["apertures", "doors", "vasistas"]
         apm = ApertureManager(site[building_name][level_name])
-        windows_doors = level_metadata.get("apertures", {})
-        if "numbers" not in windows_doors:
-            LOGGER.warning("NO WINDOW OR DOOR ON LEVEL %s", level_name)
-        else:
+        for key in aperture_keys:
+            apertures = level_metadata.get(key, {})
+            #print(level_name, key, apertures)
             dispatch_apertures(
-                apertures=windows_doors,
+                apertures=apertures,
                 manager=apm,
-                destination_faces=level_walls
-            )
-        vasistas = level_metadata.get("vasistas", {})
-        if "numbers" not in vasistas:
-            LOGGER.warning("NO VASISTAS ON LEVEL %s", level_name)
-        else:
-            dispatch_apertures(
-                apertures=vasistas,
-                manager=apm,
-                destination_faces=level_roofs
+                destination_faces=level_walls if key != "vasistas" else level_roofs,
+                level_name=level_name,
+                ap_type="aperture" if key != "doors" else "door" 
             )
         # now we can add single elements if any
         elements = level_metadata.get("elements", {})

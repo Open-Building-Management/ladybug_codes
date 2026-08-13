@@ -83,6 +83,45 @@ blocks:
     - ["-d1", "d3+d4", *r1_alt]
     - ["-d1", "d3+d4+d5", *r1_alt]
     - ["-d1-d2", "d3+d4+d5", *r1_alt]
+  r2_cage:
+    - ["d6", 0, *r2_alt]
+    - ["d6", "d8", *r2_alt]
+    - ["d6+d7", "d8", *r2_alt]
+    - ["d6+d7", 0, *r2_alt]
+  r2:
+    - [0, 0, *r2_alt]
+    - r2_cage
+    - ["d0", 0, *r2_alt]
+    - ["d0", "d3+d4+d5", *r2_alt]
+    - [0, "d3+d4+d5", *r2_alt]
+    - [0, "d3+d4", *r2_alt]
+    - [0, "d3", *r2_alt]
+  r3_cage:
+    - ["d6", 0, *r3_alt]
+    - ["d6", "d8", *r3_alt]
+    - ["d6+d7", "d8", *r3_alt]
+    - ["d6+d7", 0, *r3_alt]
+  r3:
+    - [0, 0, *r3_alt]
+    - r3_cage
+    - ["d0", 0, *r3_alt]
+    - ["d0", "d3+d4+d5", *r3_alt]
+    - [0, "d3+d4+d5", *r3_alt]
+    - [0, "d3+d4", *r3_alt]
+    - [0, "d3", *r3_alt]
+  r4_cage:
+    - ["d6", 0, *r4_alt]
+    - ["d6", "d8", *r4_alt]
+    - ["d6+d7", "d8", *r4_alt]
+    - ["d6+d7", 0, *r4_alt]
+  r4:
+    - [0, 0, *r4_alt]
+    - r4_cage
+    - ["d0", 0, *r4_alt]
+    - ["d0", "d3+d4+d5", *r4_alt]
+    - [0, "d3+d4+d5", *r4_alt]
+    - [0, "d3+d4", *r4_alt]
+    - [0, "d3", *r4_alt]
   h0: 2
   h1: 3
   h2: 2.5
@@ -143,26 +182,11 @@ immeuble_8:
     use_blocks_vars: 1
     constructions:
       floors: townhouse_basement
-    walls:
-      - [0,  0, *rdc_alt]
-      - rdc_cage
-      - ["d0", 0, *rdc_alt]
-      - ["d0", "d3+d4", *rdc_alt]
-      - [0, "d3+d4", *rdc_alt]
+    walls: [caves]
     apertures:
-      numbers: [0,0,0,0,0,2, 1, 0]
-      widths: [0,0,0,0,0, 1.4, 2, 0]
-      heights: [0,0,0,0,0, 1.5, 3, 0]
-      sill_heights: [0,0,0,0,0, 1, 0, 0]
-      types:
-        - none
-        - none
-        - none
-        - none
-        - none
-        - aperture
-        - door
-        - none
+      5: [2, 1.4, 1.5, 1]
+    doors:
+      6: [1, 2, 3, 0]
   rdc_cage:
     height: 3
     use_blocks_vars: 1
@@ -183,36 +207,28 @@ immeuble_8:
   r1:
     height: 3
     use_blocks_vars: 1
-    floors: [r1_1, r1_cage, r1_2]
-    constructions:
-      floors:
-        1: air_boundary
-    roofs:
-      - [0, 0, *r2_alt]
-      - ["d0", 0, *r2_alt]
-      - ["d0", "d3+d4+d5", *r2_alt]
-      - [0, "d3+d4+d5", *r2_alt]
+    floors: [r1_1, r1_2]
     walls:
       - [0,  0, *r1_alt]
+      - r1_cage
       - ["d0", 0, *r1_alt]
       - ["d0", "d3+d4+d5", *r1_alt]
       - [0, "d3+d4+d5", *r1_alt]
       - [0, "d3+d4", *r1_alt]
       - [0, "d3", *r1_alt]
     remove:
-      walls: [4]
+      walls: [8]
     apertures:
-      numbers: [0, 3, 0, 1, 0, 1]
-      widths: [0, 1.3, 0, 1.3, 0, 1.3]
-      heights: [0, 1.5, 0, 1.5, 0, 1.5]
-      sill_heights: [0, 1, 0, 1, 0, 1]
-      types:
-        - none
-        - aperture
-        - none
-        - aperture
-        - none
-        - aperture
+      5: [3, 1.3, 1.5, 1]
+      7: [1, 1.3, 1.5, 1]
+      9: [1, 1.3, 1.5, 1]
+  r1_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: air_boundary
+      roofs: air_boundary
+    walls: [r1_cage]
   r1_annexe:
     height: 3
     use_blocks_vars: 1
@@ -239,47 +255,28 @@ immeuble_8:
       - ["-d1-d2", "d3", *r1_alt]
     remove:
       walls: [3]
+    doors:
+      1: [1, 2, 2.5, 0, window_pvc]
+      2: [1, 1, 2.5, 0, window_pvc]
     apertures:
-      numbers: [0, 1, 1, 0, 1, 1, 0, 0, 0, 1]
-      widths: [0, 2, 1, 0, 1.3, 1.3, 0, 0, 0, 1.3]
-      heights: [0, 2.5, 2.5, 0, 1.5, 1.5, 0, 0, 0, 1.5]
-      sill_heights: [0, 0, 0, 0, 1, 1, 0, 0, 0, 1]
-      constructions:
-        - none
-        - window_pvc
-        - window_pvc
-        - none
-        - lb
-        - lb
-        - none
-        - none
-        - none
-        - lb
-      types:
-        - none
-        - door
-        - door
-        - none
-        - aperture
-        - aperture
-        - none
-        - aperture
-        - none
-        - aperture
+      4: [1, 1.3, 1.5, 1]
+      5: [1, 1.3, 1.5, 1]
+      9: [1, 1.3, 1.5, 1]
   r2:
     height: 3
     use_blocks_vars: 1
-    walls:
-      - [0, "d3", *r2_alt]
-      - [0,  0, *r2_alt]
-      - ["d0", 0, *r2_alt]
-      - ["d0", "d3+d4+d5", *r2_alt]
-      - [0, "d3+d4+d5", *r2_alt]
-      - [0, "d3+d4", *r2_alt]
+    walls: [r2]
     remove:
-      walls: [5]
+      walls: [8]
     apertures:
-      numbers: [1,0,3,0,1,0]
+      numbers: [0,0,0,0,0,3,0,1,0,1]
+  r2_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: air_boundary
+      roofs: air_boundary
+    walls: [r2_cage]
   r2_annexe:
     height: 3
     use_blocks_vars: 1
@@ -304,26 +301,32 @@ immeuble_8:
   r3:
     height: 3
     use_blocks_vars: 1
-    walls:
-      - [0,  0, *r3_alt]
-      - ["d0", 0, *r3_alt]
-      - ["d0", "d3+d4+d5", *r3_alt]
-      - [0, "d3+d4+d5", *r3_alt]
-      - [0, "d3+d4", *r3_alt]
-      - [0, "d3", *r3_alt]
+    walls: [r3]
     apertures:
-      numbers: [0,3,0,1,1,1]
+      numbers: [0,0,0,0,0,3,0,1,1,1]
+  r3_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: air_boundary
+      roofs: air_boundary
+    walls: [r3_cage]
   r4:
     use_blocks_vars: 1
-    floors:
-      - [0,  0, *r4_alt]
-      - ["d0", 0, *r4_alt]
-      - ["d0", "d3+d4+d5", *r4_alt]
-      - [0, "d3+d4+d5", *r4_alt]
+    floors: [r4, r4_cage]
+    constructions:
+      floors:
+        1: air_boundary
     roofs: [toit1_1, toit1_2, toit2_1, toit2_2, toit3_1, toit3_2]
     vasistas:
-      numbers: [0,3]
-      sill_heights: [0,2]
+      1: [3, 1.2, 1.3, 2]
+      4:
+        base_start: 0
+        base_end: 2
+        apex: 1
+        width: 1.2
+        height: 1
+        sill_height: 1
     walls:
       - [0, 0, *r4_alt, recent_light_renovation]
       - [3, 0, *r4_alt, recent_light_renovation]
