@@ -8,6 +8,7 @@ mandatory level key | description
 `walls` | list of points defining the level floor. The first wall bottom line is between the first and second point, and so on... 
 
 optional level key | description
+--|--
 `altitude` | altitude of the floor, for example `altitude: &lab_alt -3` which defines a `lab_alt` yml anchor
 
 A point is a list of 3 coordinates : [X, Y, Z]
