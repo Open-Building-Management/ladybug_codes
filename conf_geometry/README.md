@@ -22,7 +22,7 @@ To define a coordinate, you can use :
 
 At the yaml root, a `blocks` key permits :
 - to define reusable lists of points
-- to address numeric variables (`d0` to `d8`, `z0`, `h0` to `h4`) in the blocks section, that can be used in zone subsections (`floors`, `roofs`, `walls`, `elements`) without the need of adding an anchor
+- to address numeric variables (`d0` to `d8`, `z0`, `h0` to `h4`) that can be used in zone subsections (`floors`, `roofs`, `walls`, `elements`) without the need of adding an anchor
 
 ```
 blocks:
