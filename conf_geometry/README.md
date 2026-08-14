@@ -150,7 +150,7 @@ apertures:
     - aperture
     - aperture
     - none
-    - aperture
+    - none
     - none
     - aperture
 ``` 
