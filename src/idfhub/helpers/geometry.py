@@ -450,7 +450,6 @@ class ApertureManager:
             + u * offset
             + v * ap_sill_height
         )
-        print(origin)
         geometry = Face3D([
             origin,
             origin + u * ap_width,

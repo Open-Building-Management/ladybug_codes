@@ -115,7 +115,10 @@ for building_name, building_metadata in GEOMETRY.items():
                         )
             height=level_metadata.get("height", common_height)
             if "heights" in level_metadata:
-                height = level_metadata["heights"]
+                height = [
+                    eval_expr(el, level_variables)if isinstance(el, str) else el
+                    for el in level_metadata["heights"]
+                ]
             level = complex_room(
                 walls,
                 height=height,
@@ -210,13 +213,12 @@ for building_name, building_metadata in GEOMETRY.items():
         apm = ApertureManager(site[building_name][level_name])
         for key in aperture_keys:
             apertures = level_metadata.get(key, {})
-            #print(level_name, key, apertures)
             dispatch_apertures(
                 apertures=apertures,
                 manager=apm,
                 destination_faces=level_walls if key != "vasistas" else level_roofs,
                 level_name=level_name,
-                ap_type="aperture" if key != "doors" else "door" 
+                ap_type="aperture" if key != "doors" else "door"
             )
         # now we can add single elements if any
         elements = level_metadata.get("elements", {})

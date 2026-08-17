@@ -4,6 +4,7 @@ import ast
 import logging
 import operator as op
 import os
+import re
 import sys
 import yaml
 
@@ -112,13 +113,14 @@ def get_variables(metadata: dict) -> dict:
     accepted_keys = [
         "height",
         "altitude",
-        "d0","d1","d2","d3","d4","d5","d6","d7","d8",
-        "h0","h1","h2","h3","h4","h5",
-        "z0"
     ]
-    for key in accepted_keys:
-        if key in metadata:
+    for key in metadata:
+        if key in accepted_keys:
             variables[key] = metadata[key]
+        for start in ["d", "z", "h"]:
+            pattern = f"^{start}[0-9]+"
+            if re.match(pattern, key):
+                variables[key] = metadata[key]
     return variables
 
 def eval_expr(expr, variables):
