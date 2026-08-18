@@ -340,6 +340,14 @@ immeuble_8:
     roofs: [toit_cage]
     walls: [r4_cage]
     heights: [h10, h10, h11, h11]
+    vasistas:
+      0:
+        base_start: 1
+        base_end: 0
+        apex: 3
+        width: 1.8
+        height: 0.8
+        sill_height: 0.1
   r4:
     use_blocks_vars: 1
     floors: [r4]
@@ -357,7 +365,7 @@ immeuble_8:
       - [0, 0, *r4_alt, recent_light_renovation]
       - ["d9", 0, *r4_alt, recent_light_renovation]
       - r4_cage
-      - [d912, 0, *r4_alt, recent_light_renovation]
+      - [d912, 0, *r4_alt]
       - ["d0", 0, *r4_alt]
       - ["d0", "(d3+d4+d5)/2", *r4_alt]
       - ["d0", "d3+d4+d5", *r4_alt, recent_light_renovation]

@@ -22,7 +22,7 @@ To define a coordinate, you can use :
 
 At the yaml root, a `blocks` key permits :
 - to define reusable lists of points
-- to inject numeric variables (`d0` to `d8`, `z0`, `h0` to `h4`) that can be used in formulas defined in blocks or in zone subsections like `floors`, `roofs`, `walls`, `elements`.
+- to inject numeric variables (`d0`, `z0`, `h0`) that can be used in formulas defined in blocks or in zone subsections like `floors`, `roofs`, `walls`, `elements`. You may also define intermediate formulas : `d912: d9+d10+d11+d12`
 
 You can use a block (which does not contain any other block) inside another.
 
@@ -86,6 +86,21 @@ constructions:
   default: townhouse_basement
   roofs:
     4: air_boundary
+```
+when defining wall points, each wall construction can be customized :
+
+```
+walls:
+  - [0, 0, *r4_alt, recent_light_renovation]
+  - ["d9", 0, *r4_alt, recent_light_renovation]
+  - r4_cage
+  - [d912, 0, *r4_alt]
+  - ["d0", 0, *r4_alt]
+  - ["d0", "(d3+d4+d5)/2", *r4_alt]
+  - ["d0", "d3+d4+d5", *r4_alt, recent_light_renovation]
+  - [d912, "d3+d4+d5", *r4_alt, recent_light_renovation]
+  - ["d9", "d3+d4+d5", *r4_alt, recent_light_renovation]
+  - [0, "d3+d4+d5", *r4_alt, recent_light_renovation]
 ```
 
 # dispatch apertures

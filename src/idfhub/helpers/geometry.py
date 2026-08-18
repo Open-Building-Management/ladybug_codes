@@ -549,7 +549,9 @@ def dispatch_apertures(
     for destination_face in destination_faces:
         j = int(destination_face.identifier.split("_")[-1])
         aperture = apertures.get(j)
-        if len(destination_face.geometry.boundary) == 3 and isinstance(aperture, dict):
+        #if len(destination_face.geometry.boundary) == 3 and isinstance(aperture, dict):
+        # why limiting to triangular surfaces ??
+        if isinstance(aperture, dict):
             manager.add_single_vasistas(aperture, destination_face)
             continue
         if isinstance(aperture, list):

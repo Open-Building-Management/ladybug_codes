@@ -87,6 +87,7 @@ for building_name, building_metadata in GEOMETRY.items():
                         #wall_points = [*wall_points, *BLOCKS[x]]
                         wall_points.extend(resolve(BLOCKS[x]))
                 if isinstance(x, list):
+                    #wall_points.append(x[0:3])
                     wall_points = [*wall_points, x[0:3]]
 
             walls = prepare(wall_points, variables=level_variables)
@@ -158,10 +159,11 @@ for building_name, building_metadata in GEOMETRY.items():
         level_roofs: list[RoofCeiling] = []
         for face in site[building_name][level_name].faces:
             if isinstance(face.type, Wall):
+                walls_metadata = resolve(level_metadata["walls"])
                 number = int(face.identifier.split("_")[-1])
                 generic = constructions.get("walls", constructions.get("default"))
                 try:
-                    construction_name = level_metadata["walls"][number][3]
+                    construction_name = walls_metadata[number][3]
                 except IndexError:
                     construction_name = generic
                 # if the user specify a custom constructions, walls is a list of list
