@@ -110,18 +110,29 @@ BLOCKS = GEOMETRY.get("blocks", {})
 def get_variables(metadata: dict) -> dict:
     """return dict of variables"""
     variables = {}
+    formulas = {}
     accepted_keys = [
         "height",
         "altitude",
     ]
     for key in metadata:
         if key in accepted_keys:
-            variables[key] = metadata[key]
+            if isinstance(metadata[key], str):
+                formulas[key] = metadata[key]
+            else:
+                variables[key] = metadata[key]
         for start in ["d", "z", "h"]:
             pattern = f"^{start}[0-9]+"
             if re.match(pattern, key):
-                variables[key] = metadata[key]
-    return variables
+                if isinstance(metadata[key], str):
+                    formulas[key] = metadata[key]
+                else:
+                    variables[key] = metadata[key]
+    resolved = {
+        key:eval_expr(formula, variables)
+        for key,formula in formulas.items()
+    }
+    return {**variables, **resolved}
 
 def eval_expr(expr, variables):
     """secure resolution engine"""
