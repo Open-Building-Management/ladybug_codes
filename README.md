@@ -23,7 +23,7 @@ pip install -e .
 py .\generate_geometry_from_yam.py  --geoconf=conf_geometry/agence.yaml
 ```
 
-building|tertiary/industry
+domestic|tertiary/industry
 --|--
 ![](images/bardoux_cour.png)|![](images/site_ACF.png)
 
