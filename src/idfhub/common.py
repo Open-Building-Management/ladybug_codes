@@ -107,7 +107,63 @@ GEOMETRY = load_config(REPO_ROOT, args.geoconf)
 COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
 
+def _get_dependencies(expr: str) -> set[str]:
+    """extraction des noms utilisés dans une expression"""
+    tree = ast.parse(expr, mode="eval")
+    return {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+    }
+
+def _resolve(key: str, metadata: dict, resolved: dict, resolving: set):
+    """résolution d'une clé"""
+    if key in resolved:
+        return resolved[key]
+
+    if key in resolving:
+        raise ValueError(f"circular dependency involving {key}")
+
+    value = metadata[key]
+
+    if not isinstance(value, str):
+        resolved[key] = value
+        return value
+
+    resolving.add(key)
+
+    dependencies = _get_dependencies(value)
+
+    variables = {
+        dep: _resolve(dep, metadata, resolved, resolving)
+        for dep in dependencies
+    }
+
+    result = eval_expr(value, variables)
+
+    resolving.remove(key)
+    resolved[key] = result
+
+    return result
+
+def _is_variable(key: str):
+    """détection des variables autorisées"""
+    if key in {"height", "altitude"}:
+        return True
+    return any(
+        re.match(fr"^{prefix}[0-9]+$", key)
+        for prefix in ("d", "z", "h")
+    )
+
 def get_variables(metadata: dict) -> dict:
+    """return dict of variables"""
+    resolved: dict = {}
+    for key in metadata:
+        if _is_variable(key):
+            _resolve(key, metadata, resolved, set())
+    return resolved
+
+def get_variables_old(metadata: dict) -> dict:
     """return dict of variables"""
     variables = {}
     formulas = {}
