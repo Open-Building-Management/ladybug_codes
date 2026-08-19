@@ -166,11 +166,6 @@ for building_name, building_metadata in GEOMETRY.items():
                     construction_name = walls_metadata[number][3]
                 except IndexError:
                     construction_name = generic
-                # if the user specify a custom constructions, walls is a list of list
-                # len(construction_name) is 1 if walls is a list of string
-                # in that case, we also reset to generic
-                if construction_name is not None and len(construction_name) == 1:
-                    construction_name = generic
                 if construction_name == "air_boundary":
                     face.type = AirBoundary()
                     continue
