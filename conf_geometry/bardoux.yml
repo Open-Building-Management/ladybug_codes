@@ -229,6 +229,7 @@ immeuble_8:
     height: 3
     use_blocks_vars: 1
     floors: [r1_1, r1_2]
+    roofs: [r2]
     walls:
       - [0,  0, *r1_alt]
       - r1_cage
