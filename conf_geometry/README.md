@@ -4,7 +4,7 @@ Each building is composed of different levels
 
 mandatory level key | description
 --|--
-`height` or `heights` | height of walls, for example `height: 7`. You may create walls with different heights using the `heights` key and a list of heights. When defining heights, you also have to define roofs, otherwise the roof will be a horizontal plane. Using the list blocks defined in the blocks section, it is easy to define a ceiling/roof which is not a simple translation of the floor
+`height` or `heights` | height of walls, for example `height: 7`. You may create walls with different heights using the `heights` key and a list of heights. If using `heights`, you also have to define `roofs`, otherwise the roof will be a horizontal plane. Using the list blocks defined in the blocks section makes it easy to define a ceiling/roof which is not a simple translation of the floor
 `walls` | list of points defining the level floor. The first wall bottom line is between the first and second point, and so on... 
 
 optional level key | description
@@ -170,8 +170,8 @@ apertures:
     - aperture
 ``` 
 
-# single vasistas & triangular surface
-You may add a single vasistas on a triangular surface (portion of a roof) using vertices numbers
+# single vasistas with vertices numbers
+Nice for a triangular surface (portion of a roof)
 ```
 vasistas:
   1: [3, 1.2, 1.3, 2]
