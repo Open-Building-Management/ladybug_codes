@@ -320,6 +320,7 @@ for zone in ZONES:
     }
 
 USE_AIR = 0
+ground_temperature()
 
 for equipment_name in EQUIPMENTS:
     if PUMP in equipment_name:
@@ -338,7 +339,6 @@ for equipment_name in EQUIPMENTS:
         equipments[equipment_name] = pipe
         continue
     if BOREHOLE in equipment_name:
-        ground_temperature()
         borehole = vertical_geoexchanger(equipment_name)
         equipments[equipment_name] = borehole
         continue

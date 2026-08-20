@@ -4,6 +4,7 @@ import ast
 import logging
 import operator as op
 import os
+import re
 import sys
 import yaml
 
@@ -106,12 +107,88 @@ GEOMETRY = load_config(REPO_ROOT, args.geoconf)
 COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
 
+def _get_dependencies(expr: str) -> set[str]:
+    """extraction des noms utilisés dans une expression"""
+    tree = ast.parse(expr, mode="eval")
+    return {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+    }
+
+def _resolve(key: str, metadata: dict, resolved: dict, resolving: set):
+    """résolution d'une clé"""
+    if key in resolved:
+        return resolved[key]
+
+    if key in resolving:
+        raise ValueError(f"circular dependency involving {key}")
+
+    value = metadata[key]
+
+    if not isinstance(value, str):
+        resolved[key] = value
+        return value
+
+    resolving.add(key)
+
+    dependencies = _get_dependencies(value)
+
+    variables = {
+        dep: _resolve(dep, metadata, resolved, resolving)
+        for dep in dependencies
+    }
+
+    result = eval_expr(value, variables)
+
+    resolving.remove(key)
+    resolved[key] = result
+
+    return result
+
+def _is_variable(key: str):
+    """détection des variables autorisées"""
+    if key in {"height", "altitude"}:
+        return True
+    return any(
+        re.match(fr"^{prefix}[0-9]+$", key)
+        for prefix in ("d", "z", "h")
+    )
+
 def get_variables(metadata: dict) -> dict:
     """return dict of variables"""
+    resolved: dict = {}
+    for key in metadata:
+        if _is_variable(key):
+            _resolve(key, metadata, resolved, set())
+    return resolved
+
+def get_variables_old(metadata: dict) -> dict:
+    """return dict of variables"""
     variables = {}
-    variables["height"] = metadata.get("height", COMMON_HEIGHT)
-    variables["altitude"] = metadata.get("altitude", 0)
-    return variables
+    formulas = {}
+    accepted_keys = [
+        "height",
+        "altitude",
+    ]
+    for key in metadata:
+        if key in accepted_keys:
+            if isinstance(metadata[key], str):
+                formulas[key] = metadata[key]
+            else:
+                variables[key] = metadata[key]
+        for start in ["d", "z", "h"]:
+            pattern = f"^{start}[0-9]+"
+            if re.match(pattern, key):
+                if isinstance(metadata[key], str):
+                    formulas[key] = metadata[key]
+                else:
+                    variables[key] = metadata[key]
+    resolved = {
+        key:eval_expr(formula, variables)
+        for key,formula in formulas.items()
+    }
+    return {**variables, **resolved}
 
 def eval_expr(expr, variables):
     """secure resolution engine"""
@@ -146,9 +223,9 @@ REQUIRED = [
     "equipments",
 ]
 
-for key in REQUIRED:
-    if key not in CONF:
-        print(f"exiting - check conf {key} is missing")
+for required_key in REQUIRED:
+    if required_key not in CONF:
+        print(f"exiting - check conf {required_key} is missing")
         sys.exit()
 
 BUILDING_NAME: str = CONF["building_name"]
@@ -182,8 +259,8 @@ YML_SCHED = CONF.get("schedules", {})
 for sched_name, sched_conf in YML_SCHED.items():
     if sched_name not in ["heating", "cooling"]:
         continue
-    for key, value in sched_conf.items():
-        SCHEDULES[sched_name][key] = value
+    for yml_key, yml_value in sched_conf.items():
+        SCHEDULES[sched_name][yml_key] = yml_value
 
 RUN_PERIOD = CONF.get("run_period", {})
 

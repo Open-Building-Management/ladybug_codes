@@ -3,7 +3,8 @@
 from .material import (
     wall_osb, wall_parpaing,
     floor_internal,
-    window_pvc, simple_glass_wall
+    window_pvc, simple_glass_wall,
+    townhouse_basement, recent_light_renovation
 )
 
 CONSTLIB = {
@@ -11,5 +12,7 @@ CONSTLIB = {
     "wall_parpaing": wall_parpaing,
     "floor_internal": floor_internal,
     "window_pvc": window_pvc,
-    "simple_glass_wall": simple_glass_wall
+    "simple_glass_wall": simple_glass_wall,
+    "townhouse_basement": townhouse_basement,
+    "recent_light_renovation": recent_light_renovation
 }
