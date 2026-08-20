@@ -1,22 +1,26 @@
 """yml geometry generator"""
 import logging
 
+from eppy.modeleditor import IDF
+
 from honeybee.boundarycondition import Ground, Outdoors
-from honeybee.facetype import Floor, Wall, RoofCeiling, AirBoundary
+from honeybee.facetype import Floor, Wall, RoofCeiling
 from honeybee.model import Model
 from honeybee.room import Room
 from honeybee_energy.writer import model_to_idf
 
 from ladybug_geometry.geometry3d import Face3D, Point3D
 
-from idfhub.common import get_logger, eval_expr, GEOMETRY, BLOCKS, get_variables
+from idfhub.common import get_logger, eval_expr, GEOMETRY, BLOCKS, get_variables, OS_EP_PATH
 
 from idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture, dispatch_apertures
 from idfhub.helpers.matlib import CONSTLIB
 
+from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import BuildingsurfaceDetailedMeta
+
 LOGGER = get_logger(log_level=logging.INFO)
 
-site = {}
+site: dict[str, dict[str, Room]] = {}
 buildings: list[list[Room]] = []
 
 common_height = GEOMETRY.get("height", 3)
@@ -29,27 +33,39 @@ def prepare(
     """evaluate user formulas and prepare for complex_room method"""
     if len(variables) == 0:
         return [
-            Point3D(*row)
+            Point3D(*row[0:3])
             for row in coordinates
         ]
     return [
         Point3D(*[
             eval_expr(el, variables) if isinstance(el, str) else el
-            for el in row
+            for el in row[0:3]
         ])
         for row in coordinates
     ]
 
-def resolve(block: list[list|int|str]) -> list[list]:
-    """auto resolve a block
-    replace the block name by the block content"""
+
+def resolve(
+    block: list[list|int|str],
+    resolving: set[int|str] | None = None,
+) -> list[list]:
+    """auto resolve a reusable block
+    Recursively resolve block names into block contents.
+    """
+    if resolving is None:
+        resolving = set()
     result: list[list] = []
-    for b in block:
-        if isinstance(b, list):
-            result.append(b)
-        else:
-            if b in BLOCKS:
-                result.extend(BLOCKS[b])
+    for item in block:
+        if isinstance(item, list):
+            result.append(item)
+        elif item in BLOCKS:
+            if item in resolving:
+                raise ValueError(
+                    f"Circular block reference: {item}"
+                )
+            resolving.add(item)
+            result.extend(resolve(BLOCKS[item], resolving))
+            resolving.remove(item)
     return result
 
 def get_construction_name(face3d: Face3D, yml_data: str | dict, default: str|None = None):
@@ -63,7 +79,8 @@ def get_construction_name(face3d: Face3D, yml_data: str | dict, default: str|Non
             return yml_data[nb]
     return default
 
-
+level_metadatas = {}
+air_boundaries = []
 for building_name, building_metadata in GEOMETRY.items():
     if not isinstance(building_metadata, dict):
         continue
@@ -76,6 +93,7 @@ for building_name, building_metadata in GEOMETRY.items():
             if "walls" not in level_metadata:
                 LOGGER.error("no walls key for %s, skipping the level", level_name)
                 continue
+            level_metadatas[level_name] = level_metadata
             LOGGER.info("Generating %s", level_name)
             level_variables = get_variables(level_metadata)
             if level_metadata.get("use_blocks_vars", 0) == 1:
@@ -143,23 +161,15 @@ Room.solve_adjacency(model.rooms)
 LOGGER.info(site)
 
 # now we can customize the construction settings
-for building_name, building_metadata in GEOMETRY.items():
-    if not isinstance(building_metadata, dict):
-        continue
-    if "blocks" in building_name:
-        continue
-    for level_name, level_metadata in building_metadata.items():
-        if not isinstance(level_metadata, dict):
-            continue
-        if "walls" not in level_metadata:
-            LOGGER.error("no walls key for %s, skipping the level", level_name)
-            continue
+for building_name, building_dict in site.items():
+    for level_name, level in building_dict.items():
+        level_metadata = level_metadatas[level_name]
         constructions = level_metadata.get("constructions", {})
         level_walls: list[Wall] = []
         level_roofs: list[RoofCeiling] = []
-        for face in site[building_name][level_name].faces:
+        walls_metadata = resolve(level_metadata["walls"])
+        for face in level.faces:
             if isinstance(face.type, Wall):
-                walls_metadata = resolve(level_metadata["walls"])
                 number = int(face.identifier.split("_")[-1])
                 generic = constructions.get("walls", constructions.get("default"))
                 try:
@@ -167,7 +177,7 @@ for building_name, building_metadata in GEOMETRY.items():
                 except IndexError:
                     construction_name = generic
                 if construction_name == "air_boundary":
-                    face.type = AirBoundary()
+                    air_boundaries.append(face.identifier)
                     continue
                 construction = CONSTLIB.get(construction_name)
                 if construction is not None:
@@ -180,7 +190,7 @@ for building_name, building_metadata in GEOMETRY.items():
                     default=constructions.get("default")
                 )
                 if construction_name == "air_boundary":
-                    face.type = AirBoundary()
+                    air_boundaries.append(face.identifier)
                     continue
                 construction = CONSTLIB.get(construction_name)
                 if construction is None:
@@ -195,7 +205,7 @@ for building_name, building_metadata in GEOMETRY.items():
                     default=constructions.get("default")
                 )
                 if construction_name == "air_boundary":
-                    face.type = AirBoundary()
+                    air_boundaries.append(face.identifier)
                     continue
                 construction = CONSTLIB.get(construction_name)
                 if face.boundary_condition == Outdoors():
@@ -207,7 +217,7 @@ for building_name, building_metadata in GEOMETRY.items():
                     face.properties.energy.construction = construction
         # now we can add apertures, doors and vasistas using an aperture manager
         aperture_keys = ["apertures", "doors", "vasistas"]
-        apm = ApertureManager(site[building_name][level_name])
+        apm = ApertureManager(level)
         for key in aperture_keys:
             apertures = level_metadata.get(key, {})
             dispatch_apertures(
@@ -243,3 +253,16 @@ for building_name, building_metadata in GEOMETRY.items():
 
 with open(f"{name}.idf", "w", encoding="utf-8") as f:
     f.write(model_to_idf(model))
+
+# now we should set surfaces to air boundary if any in yaml
+if air_boundaries:
+    LOGGER.info("setting air boundaries...")
+    IDF.setiddname(f"{OS_EP_PATH}/Energy+.idd")
+    idf = IDF(f"{name}.idf")
+    for surface_name in air_boundaries:
+        surface = idf.getobject(
+            BuildingsurfaceDetailedMeta.idf_name,
+            surface_name
+        )
+        surface["Construction_Name"] = "Generic Air Boundary"
+    idf.save(f"{name}.idf")
