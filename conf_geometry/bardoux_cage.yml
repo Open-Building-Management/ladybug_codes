@@ -1,0 +1,463 @@
+name: 8_bardoux
+glasswool_new: 0.14
+
+blocks:
+  ss2_alt: &ss2_alt -8
+  ss1_alt: &ss1_alt -4
+  rdc_alt: &rdc_alt 0
+  r1_alt: &r1_alt 3
+  r2_alt: &r2_alt 6
+  r3_alt: &r3_alt 9
+  r4_alt: &r4_alt 12
+  d0: 19
+  d1: 3
+  d2: 5
+  d3: 4
+  d4: 4
+  d5: 3
+  d8: 2.8 # profondeur cage
+  d9: 3
+  d10: 1.6 # début cage à d9+10
+  d11: d13+d14+d15 # largeur cage
+  d12: 1.6
+  d13: 1.5
+  d14: 0.8
+  d15: 1.5
+
+  z0: 12
+  ss1_floor:
+    - ["d0", 0, *ss1_alt]
+    - ["d0", "d3+d4+d5", *ss1_alt]
+    - ["-d1-d2",  "d3+d4+d5", *ss1_alt]
+    - ["-d1-d2",  0, *ss1_alt]
+  # surfaces used for rdc floors
+  rdc_cage:
+    - ["d9+d10", 0, *rdc_alt]
+    - ["d9+d10", "d8", *rdc_alt]
+    - ["d9+d10+d11", "d8", *rdc_alt]
+    - ["d9+d10+d11", 0, *rdc_alt]
+  car_path:
+    - ["d0", "d3+d4", *rdc_alt]
+    - ["d0", "d3+d4+d5", *rdc_alt]
+    - ["-d1-d2", "d3+d4+d5", *rdc_alt]
+    - ["-d1-d2", "d3+d4", *rdc_alt]
+  caves:
+    - [0, 0, *rdc_alt]
+    - rdc_cage
+    - ["d0", 0, *rdc_alt]
+    - ["d0", "d3+d4", *rdc_alt]
+    - [0, "d3+d4", *rdc_alt]
+  annexe:
+    - ["-d1", 0, *rdc_alt]
+    - ["-d1", "d3+d4", *rdc_alt]
+    - ["-d1-d2", "d3+d4", *rdc_alt]
+    - ["-d1-d2", 0, *rdc_alt]
+  cour_drouet:
+    - ["-d1", 0, *rdc_alt]
+    - [0, 0, *rdc_alt]
+    - [0, "d3+d4", *rdc_alt]
+    - ["-d1", "d3+d4", *rdc_alt]
+  # surfaces used for r1 floors
+  r1_hole:
+    - ["d9+d10+d13", 0, *r1_alt]
+    - ["d9+d10+d13", 2, *r1_alt]
+    - ["d9+d10+d13+d14", 2, *r1_alt]
+    - ["d9+d10+d13+d14", 0, *r1_alt]
+  r1_filled:
+    - ["d9+d10", 0, *r1_alt]
+    - r1_hole
+    - ["d9+d10+d11", 0, *r1_alt]
+    - ["d9+d10+d11", "d8", *r1_alt]
+    - ["d9+d10", "d8", *r1_alt]
+  r1_cage:
+    - ["d9+d10", 0, *r1_alt]
+    - ["d9+d10", "d8", *r1_alt]
+    - ["d9+d10+d11", "d8", *r1_alt]
+    - ["d9+d10+d11", 0, *r1_alt]
+  r1_1:
+    - [0, 0, *r1_alt]
+    - r1_cage
+    - ["d0", 0, *r1_alt]
+    - ["d0", "d3+d4", *r1_alt]
+    - [0, "d3+d4", *r1_alt]
+  r1_2:
+    - [0, "d3+d4", *r1_alt]
+    - ["d0", "d3+d4", *r1_alt]
+    - ["d0", "d3+d4+d5", *r1_alt]
+    - [0, "d3+d4+d5", *r1_alt]
+  r1_passerelle:
+    - ["-d1","d3", *r1_alt]
+    - [0,"d3", *r1_alt]
+    - [0, "d3+d4", *r1_alt]
+    - ["-d1", "d3+d4", *r1_alt]
+  r1_annexe_1:
+    - ["-d1-d2", 0, *r1_alt]
+    - ["-d1", 0, *r1_alt]
+    - ["-d1", "d3+d4", *r1_alt]
+    - ["-d1-d2", "d3+d4", *r1_alt]
+  r1_annexe_2:
+    - ["-d1-d2", "d3+d4", *r1_alt]
+    - ["-d1", "d3+d4", *r1_alt]
+    - ["-d1", "d3+d4+d5", *r1_alt]
+    - ["-d1-d2", "d3+d4+d5", *r1_alt]
+  r2_hole:
+    - ["d9+d10+d13", 0, *r2_alt]
+    - ["d9+d10+d13", 2, *r2_alt]
+    - ["d9+d10+d13+d14", 2, *r2_alt]
+    - ["d9+d10+d13+d14", 0, *r2_alt]
+  r2_filled:
+    - ["d9+d10", 0, *r2_alt]
+    - r2_hole
+    - ["d9+d10+d11", 0, *r2_alt]
+    - ["d9+d10+d11", "d8", *r2_alt]
+    - ["d9+d10", "d8", *r2_alt]
+  r2_cage:
+    - ["d9+d10", 0, *r2_alt]
+    - ["d9+d10", "d8", *r2_alt]
+    - ["d9+d10+d11", "d8", *r2_alt]
+    - ["d9+d10+d11", 0, *r2_alt]
+  r2:
+    - [0, 0, *r2_alt]
+    - r2_cage
+    - ["d0", 0, *r2_alt]
+    - ["d0", "d3+d4+d5", *r2_alt]
+    - [0, "d3+d4+d5", *r2_alt]
+    - [0, "d3+d4", *r2_alt] # vers annexe - index mur = 8
+    - [0, "d3", *r2_alt] # vers annexe
+  r3_hole:
+    - ["d9+d10+d13", 0, *r3_alt]
+    - ["d9+d10+d13", 2, *r3_alt]
+    - ["d9+d10+d13+d14", 2, *r3_alt]
+    - ["d9+d10+d13+d14", 0, *r3_alt]
+  r3_filled:
+    - ["d9+d10", 0, *r3_alt]
+    - r3_hole
+    - ["d9+d10+d11", 0, *r3_alt]
+    - ["d9+d10+d11", "d8", *r3_alt]
+    - ["d9+d10", "d8", *r3_alt]
+  r3_cage:
+    - ["d9+d10", 0, *r3_alt]
+    - ["d9+d10", "d8", *r3_alt]
+    - ["d9+d10+d11", "d8", *r3_alt]
+    - ["d9+d10+d11", 0, *r3_alt]
+  r3:
+    - [0, 0, *r3_alt]
+    - r3_cage
+    - ["d0", 0, *r3_alt]
+    - ["d0", "d3+d4+d5", *r3_alt]
+    - [0, "d3+d4+d5", *r3_alt]
+    - [0, "d3+d4", *r3_alt]
+    - [0, "d3", *r3_alt]
+  r4_hole:
+    - ["d9+d10+d13", 0, *r4_alt]
+    - ["d9+d10+d13", 2, *r4_alt]
+    - ["d9+d10+d13+d14", 2, *r4_alt]
+    - ["d9+d10+d13+d14", 0, *r4_alt]
+  r4_filled:
+    - ["d9+d10", 0, *r4_alt]
+    - r4_hole
+    - ["d9+d10+d11", 0, *r4_alt]
+    - ["d9+d10+d11", "d8", *r4_alt]
+    - ["d9+d10", "d8", *r4_alt]
+  r4_cage:
+    - ["d9+d10", 0, *r4_alt]
+    - ["d9+d10", "d8", *r4_alt]
+    - ["d9+d10+d11", "d8", *r4_alt]
+    - ["d9+d10+d11", 0, *r4_alt]
+  r4:
+    - [0, 0, *r4_alt]
+    - r4_cage
+    - ["d0", 0, *r4_alt]
+    - ["d0", "d3+d4+d5", *r4_alt]
+    - [0, "d3+d4+d5", *r4_alt]
+    - [0, "d3+d4", *r4_alt]
+    - [0, "d3", *r4_alt]
+  h0: 2
+  h1: 3
+  h2: 2.5
+  h3: 1
+  h4: 1.8
+  d911: d9+d10+d11
+  d912: d9+d10+d11+d12
+  h10: h2+(h1-h2)*(d11+d12)/(d10+d11+d12) # THALES
+  h11: h2+(h1-h2)*d12/(d10+d11+d12) # THALES
+  toit1_1:
+    - [0, 0, "z0+h0"]
+    - ["d9", 0, "z0+h1"]
+    - ["d9", "d3+d4+d5", "z0+h1"]
+    - [0, "d3+d4+d5", "z0+h0"]
+  toit_precage:
+    - ["d9", 0, "z0+h1"]
+    - ["d9", "d8", "z0+h1"]
+    - ["d9+d10", "d8", "z0+h10"]
+    - ["d9+d10", 0, "z0+h10"]
+  toit_cage:
+    - ["d9+d10", 0, "z0+h10"]
+    - ["d9+d10", "d8", "z0+h10"]
+    - ["d911", "d8", "z0+h11"]
+    - ["d911", 0, "z0+h11"]
+  toit_postcage:
+    - ["d911", 0, "z0+h11"]
+    - ["d911", "d8", "z0+h11"]
+    - [d912, "d8", "z0+h2"]
+    - ["d912", 0, "z0+h2"]
+  toit1_2:
+    - ["d9", "d8", "z0+h1"]
+    - ["d912", "d8", "z0+h2"]
+    - ["d912", "d3+d4+d5", "z0+h2"]
+    - ["d9", "d3+d4+d5", "z0+h1"]
+  toit2_1:
+    - ["d912", 0, "z0+h2"]
+    - ["d0", 0, "z0+h3"]
+    - ["d912", "(d3+d4+d5)/2", "z0+h2"]
+  toit2_2:
+    - ["d912", "(d3+d4+d5)/2", "z0+h2"]
+    - ["d0", "d3+d4+d5", "z0+h3"]
+    - ["d912", "d3+d4+d5", "z0+h2"]
+  toit3_1:
+    - ["d912", "(d3+d4+d5)/2", "z0+h2"]
+    - ["d0", 0, "z0+h3"]
+    - ["d0", "(d3+d4+d5)/2", "z0+h4"]
+  toit3_2:
+    - ["d912", "(d3+d4+d5)/2", "z0+h2"]
+    - ["d0", "(d3+d4+d5)/2", "z0+h4"]
+    - ["d0", "d3+d4+d5", "z0+h3"]
+
+immeuble_8:
+  ss2:
+    height: 4
+    use_blocks_vars: 1
+    constructions:
+      walls: townhouse_basement
+      floors: townhouse_basement
+      roofs: townhouse_basement
+    walls:
+      - ["d0", 0, *ss2_alt]
+      - ["d0", "d3+d4+d5", *ss2_alt]
+      - ["-d1-d2",  "d3+d4+d5", *ss2_alt]
+      - ["-d1-d2",  0, *ss2_alt]
+  ss1:
+    height: 4
+    use_blocks_vars: 1
+    constructions:
+      default: townhouse_basement
+      exclude:
+        roofs: [4]
+    floors: [ss1_floor]
+    roofs: [annexe, cour_drouet, car_path, caves, rdc_cage]
+    walls: [ss1_floor]
+  rdc:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: townhouse_basement
+    walls: [caves]
+    apertures:
+      5: [2, 1.4, 1.5, 1]
+    doors:
+      6: [1, 2, 3, 0]
+  rdc_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      roofs:
+        0: air_boundary
+    roofs: [r1_hole, r1_filled]
+    walls: [rdc_cage]
+  rdc_annexe:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: townhouse_basement
+    walls:
+      - ["-d1-d2", 0, *rdc_alt]
+      - ["-d1", 0, *rdc_alt]
+      - ["-d1", "d3+d4", *rdc_alt]
+      - ["-d1-d2", "d3+d4", *rdc_alt]
+  r1:
+    height: 3
+    use_blocks_vars: 1
+    floors: [r1_1, r1_2]
+    roofs: [r2]
+    walls:
+      - [0,  0, *r1_alt]
+      - r1_cage
+      - ["d0", 0, *r1_alt]
+      - ["d0", "d3+d4+d5", *r1_alt]
+      - [0, "d3+d4+d5", *r1_alt]
+      - [0, "d3+d4", *r1_alt] # vers annexe
+      - [0, "d3", *r1_alt] # vers annexe
+    remove:
+      walls: [8]
+    apertures:
+      5: [3, 1.3, 1.5, 1]
+      7: [1, 1.3, 1.5, 1]
+      9: [1, 1.3, 1.5, 1]
+  r1_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors:
+        0: air_boundary
+      roofs:
+        0: air_boundary
+    floors: [r1_hole, r1_filled]
+    roofs: [r2_hole, r2_filled]
+    walls: [r1_cage]
+  r1_annexe:
+    height: 3
+    use_blocks_vars: 1
+    floors: [r1_passerelle, r1_annexe_1, r1_annexe_2]
+    roofs:
+      - ["-d1-d2", 0, *r2_alt]
+      - ["-d1", 0, *r2_alt]
+      - ["-d1", "d3", *r2_alt]
+      - [0, "d3", *r2_alt] # depuis immeuble - index mur = 3
+      - [0, "d3+d4", *r2_alt] #  depuis immeuble 
+      - ["-d1", "d3+d4", *r2_alt]
+      - ["-d1", "d3+d4+d5", *r2_alt]
+      - ["-d1-d2", "d3+d4+d5", *r2_alt]
+    walls:
+      - ["-d1-d2", 0, *r1_alt]
+      - ["-d1", 0, *r1_alt]
+      - ["-d1", "d3", *r1_alt]
+      - [0, "d3", *r1_alt]
+      - [0, "d3+d4", *r1_alt]
+      - ["-d1", "d3+d4", *r1_alt]
+      - ["-d1", "d3+d4+d5", *r1_alt]
+      - ["-d1-d2", "d3+d4+d5", *r1_alt]
+      - ["-d1-d2", "d3+d4", *r1_alt]
+      - ["-d1-d2", "d3", *r1_alt]
+    remove:
+      walls: [3]
+    doors:
+      1: [1, 2, 2.5, 0, window_pvc]
+      2: [1, 1, 2.5, 0, window_pvc]
+    apertures:
+      4: [1, 1.3, 1.5, 1]
+      5: [1, 1.3, 1.5, 1]
+      9: [1, 1.3, 1.5, 1]
+  r2:
+    height: 3
+    use_blocks_vars: 1
+    walls: [r2]
+    remove:
+      walls: [8]
+    apertures:
+      numbers: [0,0,0,0,0,3,0,1,0,1]
+  r2_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors:
+        0: air_boundary
+      roofs:
+        0: air_boundary
+    roofs: [r3_hole, r3_filled]
+    floors: [r2_hole, r2_filled]
+    walls: [r2_cage]
+  r2_annexe:
+    height: 3
+    use_blocks_vars: 1
+    walls:
+      - ["-d1-d2", 0, *r2_alt]
+      - ["-d1", 0, *r2_alt]
+      - ["-d1", "d3", *r2_alt]
+      - [0, "d3", *r2_alt]
+      - [0, "d3+d4", *r2_alt] # depuis immeuble
+      - ["-d1", "d3+d4", *r2_alt] # depuis immeuble
+      - ["-d1", "d3+d4+d5", *r2_alt]
+      - ["-d1-d2", "d3+d4+d5", *r2_alt]
+      - ["-d1-d2", "d3+d4", *r2_alt]
+      - ["-d1-d2", "d3", *r2_alt]
+    remove:
+      walls: [3]
+    apertures:
+      numbers: [0, 1, 1, 0, 0, 1, 0, 1, 0, 1]
+      widths: [0, 1.3, 2.5, 0 ,0, 1.3, 0, 1.3, 0, 1.3]
+      heights: [0, 1.5, 1.5, 0, 0, 1.5, 0, 1.5, 0, 1.5]
+      sill_heights: [0, 1, 1, 0, 0, 1, 0, 1, 0, 1]
+  r3:
+    height: 3
+    use_blocks_vars: 1
+    walls: [r3]
+    apertures:
+      numbers: [0,0,0,0,0,3,0,1,1,1]
+  r3_cage:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors:
+        0: air_boundary
+      roofs:
+        0: air_boundary
+    roofs: [r4_hole, r4_filled]
+    floors: [r3_hole, r3_filled]
+    walls: [r3_cage]
+  r14_cage:
+    use_blocks_vars: 1
+    constructions:
+      floors:
+        0: air_boundary
+    roofs: [toit_cage]
+    floors: [r4_hole, r4_filled]
+    walls: [r4_cage]
+    heights: [h10, h10, h11, h11]
+    vasistas:
+      0:
+        base_start: 1
+        base_end: 0
+        apex: 3
+        width: 1.5
+        height: 1.3
+        sill_height: 1.2
+  r4:
+    use_blocks_vars: 1
+    floors: [r4]
+    roofs: [toit1_1, toit1_2, toit_precage, toit_postcage, toit2_1, toit2_2, toit3_1, toit3_2]
+    vasistas:
+      1: [2, 1.2, 1.3, 2]
+      6:
+        base_start: 0 
+        base_end: 2
+        apex: 1
+        width: 1.2
+        height: 1
+        sill_height: 1
+    walls:
+      - [0, 0, *r4_alt, recent_light_renovation]
+      - ["d9", 0, *r4_alt, recent_light_renovation]
+      - r4_cage
+      - [d912, 0, *r4_alt]
+      - ["d0", 0, *r4_alt]
+      - ["d0", "(d3+d4+d5)/2", *r4_alt]
+      - ["d0", "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [d912, "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - ["d9", "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [0, "d3+d4+d5", *r4_alt, recent_light_renovation]
+      - [0, "d3+d4", *r4_alt, recent_light_renovation]
+      - [0, "d3", *r4_alt, recent_light_renovation]
+    heights: [h0,h1,h10,h10,h11,h11,h2,h3,h4,h3,h2,h1,h0,h0,h0]
+    elements:
+      half_lune_1:
+        index: 7
+        geometry:
+          - ["d0", "(d3+d4+d5)/2-0.8", "z0+0.5"]
+          - ["d0", "(d3+d4+d5)/2", "z0+0.5"]
+          - ["d0", "(d3+d4+d5)/2", "z0+1.2"]
+          - ["d0", "(d3+d4+d5)/2-0.6", "z0+0.9"]
+        construction: simple_glass_wall
+        type: aperture
+      half_lune_2:
+        index: 8
+        geometry:
+          - ["d0", "(d3+d4+d5)/2", "z0+1.2"]
+          - ["d0", "(d3+d4+d5)/2", "z0+0.5"]
+          - ["d0", "(d3+d4+d5)/2+0.8", "z0+0.5"]
+          - ["d0", "(d3+d4+d5)/2+0.6", "z0+0.9"]
+        construction: simple_glass_wall
+        type: aperture
+    apertures:
+      12: [1, 1.2, 1.3, 0.5]
+      13: [1, 1.2, 1.3, 0.5]
+      14: [1, 1.2, 1.3, 0.5]

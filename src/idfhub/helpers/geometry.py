@@ -1,5 +1,6 @@
 """geometric fonctions"""
 from dataclasses import dataclass
+from typing import Any
 import logging
 
 from honeybee.aperture import Aperture
@@ -16,6 +17,8 @@ from ladybug_geometry.geometry3d.polyface import Polyface3D
 from ladybug_geometry.geometry3d import Vector3D, Point3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
+
+from idfhub.helpers.matlib import CONSTLIB
 
 LOGGER = logging.getLogger(__name__)
 
@@ -57,73 +60,115 @@ def box_room(
     )
 
 def create_walls(
-    pts:list[Point3D],
-    height: float,
-) -> list[Face3D]:
+    *,
+    pts: list[Point3D],
+    height: float|list[float] = 3,
+    remove_wall: list[int] | None = None
+) -> dict[str|int, Face3D]:
     """create walls from lower and upper points"""
-    up = Vector3D(0, 0, height)
-    pts_u = [pt.move(up) for pt in pts]
+    if remove_wall is None:
+        remove_wall = []
+    if isinstance(height, list):
+        LOGGER.debug("having a list of heights %s", height)
+        if len(height) != len(pts):
+            pts_u = [pt.move(Vector3D(0,0,height[0])) for pt in pts]
+        else:
+            pts_u = [pt.move(Vector3D(0,0,height[i])) for i,pt in enumerate(pts)]
+    else:
+        up = Vector3D(0, 0, height)
+        pts_u = [pt.move(up) for pt in pts]
     i_inds = list(range(len(pts)))
     j_inds = i_inds[1:] + [0]
-    return [
-        Face3D([
+    if remove_wall:
+        LOGGER.info("removing wall %s", remove_wall)
+    return {
+        i: Face3D([
             pts[i],
             pts[j_inds[i]],
             pts_u[j_inds[i]],
             pts_u[i]
         ])
-        for i in i_inds
-    ]
+        for i in i_inds if i not in remove_wall
+    }
 
 def create_floors_roofs(
+    *,
     floors:list[list[Point3D]],
-    height: float
-) -> tuple[list[Point3D], list[Point3D]]:
+    height: float = 3,
+    roofs:list[list[Point3D]]|None = None,
+    remove_floor: list[int]|None = None,
+    remove_roof: list[int]|None = None
+) -> tuple[dict[str|int, Face3D], dict[str|int, Face3D]]:
     """create floors and roofs"""
-    up = Vector3D(0, 0, height)
-    all_floors: list[Face3D] = []
-    for floor in [Face3D(pts) for pts in floors]:
-        if floor.normal.z > 0:
-            LOGGER.debug("flipping to have a floor")
-            all_floors.append(floor.flip())
-        else:
-            all_floors.append(floor.flip())
-    all_up_pts = [[pt.move(up) for pt in pts] for pts in floors]
-    all_roofs: list[Face3D] = []
-    for roof in [Face3D(pts) for pts in all_up_pts]:
-        if roof.normal.z < 0:
-            LOGGER.debug("flipping to have a roof")
-            all_roofs.append(roof.flip())
-        else:
-            all_roofs.append(roof)
-    for i, f3d in enumerate(all_floors):
-        message = f"floor {i} -> {f3d.normal}"
+    if roofs is None:
+        roofs = []
+    if remove_floor is None:
+        remove_floor = []
+    if remove_roof is None:
+        remove_roof = []
+    all_floors: dict[str|int, Face3D] = {
+        i: Face3D(pts).flip() if Face3D(pts).normal.z > 0 else Face3D(pts)
+        for i, pts in enumerate(floors)
+        if i not in remove_floor
+    }
+    # initialise the all_up_pts variable for the roofs
+    if len(roofs) == 0:
+        up = Vector3D(0, 0, height)
+        all_up_pts = [[pt.move(up) for pt in pts] for pts in floors]
+    else:
+        all_up_pts = roofs
+    all_roofs: dict[str|int, Face3D] = {
+        i: Face3D(pts).flip() if Face3D(pts).normal.z < 0 else Face3D(pts)
+        for i, pts in enumerate(all_up_pts)
+        if i not in remove_roof
+    }
+    for key, f3d in all_floors.items():
+        message = f"floor {key} -> {f3d.normal}"
         LOGGER.debug(message)
-    for i, f3d in enumerate(all_roofs):
-        message = f"roof {i} -> {f3d.normal}"
+    for key, f3d in all_roofs.items():
+        message = f"roof {key} -> {f3d.normal}"
         LOGGER.debug(message)
     return all_floors, all_roofs
 
+REMOVE: dict[str, list[int]] = {
+    "walls": [],
+    "floors": [],
+    "roofs": []
+}
 
 def complex_room(
     pts:list[Point3D],
-    height:float,
+    height:float|list[float],
     identifier:str,
     floors:list[list[Point3D]]|None = None,
-    use_polyface:bool = True
+    roofs:list[list[Point3D]]|None = None,
+    use_polyface:bool = True,
+    remove:dict[str, list[int]]|None = None
 ) -> Room:
     """create a complex room"""
+    if floors is None:
+        floors = []
+    if roofs is None:
+        roofs = []
+    if remove is None:
+        remove = REMOVE
     # on crée les murs d'après les glacis de points
-    walls = create_walls(pts, height)
+    walls = create_walls(pts=pts, height=height, remove_wall=remove.get("walls"))
     # on crée sol(s) et plafond(s)
-    if not floors:
-        all_floors, all_roofs = create_floors_roofs([Face3D(pts)], height)
-    else:
-        all_floors, all_roofs = create_floors_roofs(floors, height)
+    # si l'utilisateur fournit une liste de hauteurs, il doit définir le plafond dans le yaml
+    # s'il ne l'a pas fait, on produit un plafond plat
+    room_height = max(height) if isinstance(height, list) else height
+    all_floors, all_roofs = create_floors_roofs(
+        floors=[Face3D(pts)] if len(floors)==0 else floors,
+        height=room_height,
+        roofs=roofs,
+        remove_floor=remove.get("floors"),
+        remove_roof=remove.get("roofs")
+    )
 
     if use_polyface:
         polyface = Polyface3D.from_faces(
-            [*all_floors, *walls, *all_roofs],
+            [*all_floors.values(), *walls.values(), *all_roofs.values()],
             tolerance = TOLERANCE
         )
         output_room = Room.from_polyface3d(
@@ -132,21 +177,21 @@ def complex_room(
         )
     else:
         hb_faces = []
-        for i, f3d in enumerate(all_floors):
+        for key, f3d in all_floors.items():
             hb = Face(
-                identifier=f'{identifier}_{FLOOR}{i}',
+                identifier=f'{identifier}_{FLOOR}_{key}',
                 geometry=f3d
             )
             hb_faces.append(hb)
-        for i, f3d in enumerate(all_roofs):
+        for key, f3d in all_roofs.items():
             hb = Face(
-                identifier=f'{identifier}_{ROOF}{i}',
+                identifier=f'{identifier}_{ROOF}_{key}',
                 geometry=f3d
             )
             hb_faces.append(hb)
-        for i, f3d in enumerate(walls):
+        for key, f3d in walls.items():
             hb = Face(
-                identifier=f'{identifier}_{WALL}{i}',
+                identifier=f'{identifier}_{WALL}_{key}',
                 geometry=f3d
             )
             hb_faces.append(hb)
@@ -358,20 +403,66 @@ class ApertureManager:
         construction: WindowConstruction | None,
         label: str,
         aperture_type: str = "aperture",
+        geometry: Face3D|None = None
     ):
         """add a single aperture"""
-        geometry = aperture_geometry(
-            self.face,
-            origin=origin,
-            width=self.dims.width,
-            height=self.dims.height
-        )
+        if geometry is None:
+            geometry = aperture_geometry(
+                self.face,
+                origin=origin,
+                width=self.dims.width,
+                height=self.dims.height
+            )
         add_aperture(
             self.face,
             geometry,
             construction=construction,
             label=label,
             aperture_type=aperture_type
+        )
+
+    def add_single_vasistas(self, aperture: dict[str, float|int|str], face: Face3D):
+        """add a single vasistas on a face"""
+        mandatory = ["apex", "base_start", "base_end"]
+        for key in mandatory:
+            if key not in aperture:
+                return
+        apex = aperture["apex"]
+        base_start = aperture["base_start"]
+        base_end = aperture["base_end"]
+        ap_width = aperture.get("width", 1.2)
+        ap_height = aperture.get("height", 1)
+        ap_sill_height = aperture.get("sill_height", 1)
+        ap_construction = None
+        if "construction" in aperture:
+            ap_construction=CONSTLIB.get(str(aperture["construction"]))
+        face_vertices = face.geometry.boundary
+        base = face_vertices[base_end] - face_vertices[base_start]
+        u = base.normalize()
+        v = face.geometry.plane.n.cross(u).normalize()
+        # pointe du triangle vers qui il faut pointer.
+        if (face_vertices[apex] - face_vertices[base_start]).dot(v) < 0:
+            v = -v
+        edge_length = base.magnitude
+        offset = 0.5 * (edge_length - ap_width)
+        origin = (
+            face_vertices[base_start]
+            + u * offset
+            + v * ap_sill_height
+        )
+        geometry = Face3D([
+            origin,
+            origin + u * ap_width,
+            origin + u * ap_width + v * ap_height,
+            origin + v * ap_height,
+        ])
+        self.face = face
+        self._add(
+            origin=origin,
+            construction=ap_construction,
+            label="vasistas",
+            aperture_type="aperture",
+            geometry=geometry
         )
 
     def add_from_center(
@@ -420,10 +511,88 @@ class ApertureManager:
             )
 
 def join_surface(room1: Room, pattern1: str, room2: Room, pattern2: str):
-    """Add boundary condition between two adjacent faces."""
+    """Add boundary condition between two adjacent faces.
+    FINALLY NOT USED"""
     face1 = get_from_pattern(room1, pattern1)
     face2 = get_from_pattern(room2, pattern2)
     bdo = (face1.identifier, face2.identifier)
     face2.boundary_condition = Surface(boundary_condition_objects=bdo)
     bdo = (face2.identifier, face1.identifier)
     face1.boundary_condition = Surface(boundary_condition_objects=bdo)
+
+
+def get_design_value(apertures: dict[str, Any], name: str, index: int, default: Any) -> Any:
+    """get a design value (width, height, sill_height, construction)"""
+    params = apertures.get(f"{name}s", [])
+    if not isinstance(params, list):
+        return params
+    try:
+        value = params[index]
+    except IndexError:
+        value = apertures.get(name, default)
+    return value
+
+
+def dispatch_apertures(
+    *,
+    apertures: dict[Any, list|Any],
+    manager: ApertureManager,
+    destination_faces: list[Face3D],
+    level_name: str,
+    ap_type: str = "aperture"
+):
+    """dispatch apertures on destination faces
+    2 options : 
+    1) the key is the wall number, value = [nb_apertures, width, height, sill_height]
+    2) you use a key "numbers", value = [number of apertures for each wall - 0 if no aperture]
+    """
+    for destination_face in destination_faces:
+        j = int(destination_face.identifier.split("_")[-1])
+        aperture = apertures.get(j)
+        #if len(destination_face.geometry.boundary) == 3 and isinstance(aperture, dict):
+        # why limiting to triangular surfaces ??
+        if isinstance(aperture, dict):
+            manager.add_single_vasistas(aperture, destination_face)
+            continue
+        if isinstance(aperture, list):
+            if len(aperture) < 4:
+                continue
+            ap_count = aperture[0]
+            ap_width = aperture[1]
+            ap_height = aperture[2]
+            ap_sill_height = aperture[3]
+            try:
+                ap_construction_name = aperture[4]
+            except IndexError:
+                ap_construction_name =apertures.get("construction")
+        else:
+            if "numbers" not in apertures:
+                continue
+            if not isinstance(apertures["numbers"], list):
+                continue
+            try:
+                ap_count = int(apertures["numbers"][j])
+            except IndexError:
+                continue
+            if ap_count == 0:
+                LOGGER.warning("skipping aperture on %s of %s", destination_face, level_name)
+                continue
+            ap_width = get_design_value(apertures, "width", j, 1.2)
+            ap_height = get_design_value(apertures, "height", j, 1.3)
+            ap_sill_height = get_design_value(apertures, "sill_height", j, 1)
+            ap_type = get_design_value(apertures, "type", j, "aperture")
+            ap_construction_name = get_design_value(apertures, "construction", j, None)
+        # now we can tune the manager :-)
+        manager.fix_dim(
+            width = float(ap_width),
+            height = float(ap_height),
+            sill_height = float(ap_sill_height)
+        )
+        ap_construction=CONSTLIB.get(ap_construction_name)
+        manager.face = destination_face
+        manager.set_u_v_bounds()
+        manager.add_from_border(
+            construction=ap_construction,
+            aperture_type=str(ap_type),
+            count=ap_count,
+        )
