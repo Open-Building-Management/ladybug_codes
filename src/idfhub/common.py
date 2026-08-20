@@ -223,9 +223,9 @@ REQUIRED = [
     "equipments",
 ]
 
-for key in REQUIRED:
-    if key not in CONF:
-        print(f"exiting - check conf {key} is missing")
+for required_key in REQUIRED:
+    if required_key not in CONF:
+        print(f"exiting - check conf {required_key} is missing")
         sys.exit()
 
 BUILDING_NAME: str = CONF["building_name"]
@@ -259,8 +259,8 @@ YML_SCHED = CONF.get("schedules", {})
 for sched_name, sched_conf in YML_SCHED.items():
     if sched_name not in ["heating", "cooling"]:
         continue
-    for key, value in sched_conf.items():
-        SCHEDULES[sched_name][key] = value
+    for yml_key, yml_value in sched_conf.items():
+        SCHEDULES[sched_name][yml_key] = yml_value
 
 RUN_PERIOD = CONF.get("run_period", {})
 
