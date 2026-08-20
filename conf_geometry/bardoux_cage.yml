@@ -240,16 +240,9 @@ immeuble_8:
     height: 4
     use_blocks_vars: 1
     constructions:
-      #default: townhouse_basement
-      walls: townhouse_basement
-      floors: townhouse_basement
-      roofs:
-        0: townhouse_basement
-        1: townhouse_basement
-        2: townhouse_basement
-        3: townhouse_basement
-      #roofs:
-      #  4: air_boundary
+      default: townhouse_basement
+      exclude:
+        roofs: [4]
     floors: [ss1_floor]
     roofs: [annexe, cour_drouet, car_path, caves, rdc_cage]
     walls: [ss1_floor]

@@ -102,11 +102,9 @@ for building_name, building_metadata in GEOMETRY.items():
             for x in level_metadata["walls"]:
                 if isinstance(x, str):
                     if x in BLOCKS:
-                        #wall_points = [*wall_points, *BLOCKS[x]]
                         wall_points.extend(resolve(BLOCKS[x]))
                 if isinstance(x, list):
-                    #wall_points.append(x[0:3])
-                    wall_points = [*wall_points, x[0:3]]
+                    wall_points.append(x[0:3])
 
             walls = prepare(wall_points, variables=level_variables)
             surfaces: dict[str, list[list[Point3D]]] = {"floors": [], "roofs": []}
@@ -168,9 +166,12 @@ for building_name, building_dict in site.items():
         level_walls: list[Wall] = []
         level_roofs: list[RoofCeiling] = []
         walls_metadata = resolve(level_metadata["walls"])
+        excluded = constructions.get("exclude", {})
         for face in level.faces:
             if isinstance(face.type, Wall):
                 number = int(face.identifier.split("_")[-1])
+                if number in excluded.get("walls", []):
+                    continue
                 generic = constructions.get("walls", constructions.get("default"))
                 try:
                     construction_name = walls_metadata[number][3]
@@ -184,6 +185,9 @@ for building_name, building_dict in site.items():
                     face.properties.energy.construction = construction
                 level_walls.append(face)
             if isinstance(face.type, Floor):
+                number = int(face.identifier.split("_")[-1])
+                if number in excluded.get("floors", []):
+                    continue
                 construction_name = get_construction_name(
                     face3d=face,
                     yml_data=constructions.get("floors"),
@@ -199,6 +203,9 @@ for building_name, building_dict in site.items():
                     LOGGER.info("Setting floor construction %s on %s", construction_name, face)
                     face.properties.energy.construction = construction
             if isinstance(face.type, RoofCeiling):
+                number = int(face.identifier.split("_")[-1])
+                if number in excluded.get("roofs", []):
+                    continue
                 construction_name = get_construction_name(
                     face3d=face,
                     yml_data=constructions.get("roofs"),
