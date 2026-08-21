@@ -1,0 +1,61 @@
+name: example
+
+blocks:
+  ss1_alt: &ss1_alt -4
+  rdc_alt: &rdc_alt 0
+  d0: 19
+  d3: 4
+  d4: 4
+  d5: 3
+  d8: 2.8 # profondeur cage
+  d9: 3
+  d10: 1.6 # début cage à d9+10
+  d11: 3.8 # largeur cage
+  d911: d9+d10+d11
+  ss1_floor:
+    - [d0, 0, *ss1_alt]
+    - [d0, d3+d4+d5, *ss1_alt]
+    - [0,  d3+d4+d5, *ss1_alt]
+    - [0,  0, *ss1_alt]
+  ss1_roof:
+    - [d0, d3+d4, *rdc_alt]
+    - [d0, d3+d4+d5, *rdc_alt]
+    - [0, d3+d4+d5, *rdc_alt]
+    - [0, d3+d4, *rdc_alt]
+  rdc_cage:
+    - [d9+d10, 0, *rdc_alt]
+    - [d9+d10, d8, *rdc_alt, air_boundary]
+    - [d911, d8, *rdc_alt]
+    - [d911, 0, *rdc_alt]
+  caves:
+    - [0, 0, *rdc_alt]
+    - rdc_cage
+    - ["d0", 0, *rdc_alt]
+    - ["d0", "d3+d4", *rdc_alt]
+    - [0, "d3+d4", *rdc_alt]
+
+immeuble:
+  ss1:
+    height: 4
+    use_blocks_vars: 1
+    constructions:
+      default: townhouse_basement
+      exclude:
+        roofs: [2]
+    floors: [ss1_floor]
+    roofs: [ss1_roof, caves, rdc_cage]
+    walls: [ss1_floor]
+  rdc:
+    height: 3
+    use_blocks_vars: 1
+    constructions:
+      floors: townhouse_basement
+    walls: [caves]
+    apertures:
+      5: [2, 1.4, 1.5, 1]
+    doors:
+      6: [1, 2, 3, 0]
+  rdc_cage:
+    height: 3
+    use_blocks_vars: 1
+    walls: [rdc_cage]
