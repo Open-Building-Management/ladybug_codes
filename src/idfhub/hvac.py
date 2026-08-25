@@ -191,10 +191,12 @@ def node_name(branch_name: str, port: str):
     return f"{object_name(branch_name)}_{port}_node"
 
 
-def set_branch_list(obj, *, side, branch_list):
+def set_branch_list(obj, *, branch_list, side: str|None = None):
     """Set branch list on a loop side"""
-    obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
-
+    if side is None:
+        obj[EPApi.BRANCH_LIST_NAME] = branch_list
+    else:
+        obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
 
 def add_plantloop(
     idf:IDF,

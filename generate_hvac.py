@@ -450,7 +450,7 @@ for loop in loops:
         except IndexError:
             setpoint = None
         if setpoint is not None:
-            side = resolve_side(obj_name, PLANT)
+            side = resolve_side(obj_name, loop_side=PLANT)
             equipment = equipments[obj_name]
             outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
             water_law(loop, setpoint, outlet)
