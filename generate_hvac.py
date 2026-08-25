@@ -363,7 +363,7 @@ for equipment_name in EQUIPMENTS:
         continue
     # zone equipment
     try:
-        zone = equipment_name.split("_")[1]
+        zone = equipment_name.split("_")[-1]
     except IndexError:
         zone = None
     if zone in ZONES:
