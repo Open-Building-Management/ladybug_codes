@@ -1,6 +1,6 @@
 """Manage hvac equipments"""
 import sys
-from typing import Any
+from typing import Any, cast
 from eppy.bunch_subclass import BadEPFieldError, EpBunch
 
 from idfhub.hvac import (
@@ -472,30 +472,37 @@ def gas_boiler(name):
     )
 
 
-def resolve_side(name, branch_type):
+def resolve_side(name, *, loop_side: str|None = None):
     """resolve equipment side
-    for two sided equipments like heat pumps"""
+    for two sided equipments like heat pumps
+    but not only - cf Boiler, cf Fan"""
     if name not in CONF:
         return None
-    equipment_type = CONF[name].get("type")
+    machine_conf = cast(dict[str, Any], CONF[name])
+    force_side = machine_conf.get("force_side")
+    known_sides = [
+        SUPPLY, PLANT, DEMAND, RETURN
+    ]
+    if not loop_side:
+        return force_side
+    if loop_side not in known_sides:
+        return force_side
+    equipment_type = machine_conf.get("type")
     if equipment_type == "heatpump":
         return {
             SUPPLY: EPApi.LOAD_SIDE,
             PLANT: EPApi.LOAD_SIDE,
             DEMAND: EPApi.SOURCE_SIDE,
             RETURN: EPApi.SOURCE_SIDE
-        }[branch_type]
+        }[loop_side]
     if equipment_type == "exchanger":
         return {
             SUPPLY: EPApi.LOOP_SUPPLY_SIDE,
             PLANT: EPApi.LOOP_SUPPLY_SIDE,
             DEMAND: EPApi.LOOP_DEMAND_SIDE,
             RETURN: EPApi.LOOP_DEMAND_SIDE
-        }[branch_type]
-    force_side = CONF[name].get("force_side")
-    if force_side:
-        return force_side
-    return None
+        }[loop_side]
+    return force_side
 
 
 def process_serie(
@@ -519,7 +526,7 @@ def process_serie(
         next_outlet = outlet_node if is_last else None
 
         obj = equipments[obj_name]
-        side = resolve_side(obj_name, loop_side)
+        side = resolve_side(obj_name, loop_side=loop_side)
         set_nodes(
             obj,
             inlet=current_inlet,
@@ -707,7 +714,7 @@ def generate_operation(
                 Name=operation_name)
         )
         for i, obj_name in enumerate(names):
-            side = resolve_side(obj_name, PLANT)
+            side = resolve_side(obj_name, loop_side=PLANT)
             equipment = equipments[obj_name]
             inlet = equipment[f"{side}_{EPApi.INLET_NODE_NAME}"]
             outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]

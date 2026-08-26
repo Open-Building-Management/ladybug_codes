@@ -62,7 +62,7 @@ def fcu_cooling(
     - le mixe à l'air extérieur, le fait passer dans le fan,
     - le raffraichit avec la CC = coil cooling
     - rejette vers zone_air_inlet"""
-    zone_name = name.split("_")[1]
+    zone_name = name.split("_")[-1]
     # le noeud de l'air extérieur
     oa_in_node = f"{name} OA in node"
     zone_oa_mixer_outlet = f"{zone_name} mixer outlet node"
