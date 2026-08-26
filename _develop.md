@@ -13,7 +13,7 @@ pipe_splitter|X|
 pipe_mixer|X|
 
 ## tous les objets de hvac.py
-- **LoopNodes** : formate node names pour objets à side
+- **LoopNodes** : formate les noms de nodes pour les objets à side
 - **Branches** : formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)
 - **EPValues** : StrEnum de valeurs EnergyPlus
 - **EPApi** : StrEnum de noms de champs EnergyPlus
