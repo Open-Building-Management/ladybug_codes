@@ -12,35 +12,25 @@ branchlist_update|X|X
 pipe_splitter||X|
 pipe_mixer||X|
 
-## LoopNodes
-formate node names pour objets à side
-## Branches
-formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)
-## EPValues
-StrEnum de valeurs EnergyPlus
-## EPApi
-StrEnum de noms de champs EnergyPlus
-## set_nodes
-## node_name
-object_name_inlet/outlet_node
-## set_branch_list
-utilisé seulement dans add_plant_loop (et dans add_airloop)
-## add_plant_loop
-produit un plantloop
-## create_pipe
-## add_baseboard
-devrait être dans un fichier spécifique
-## create_branch
-## object_name
-enlève le pattern _branch ds branch_name
-## split_mix
-devrait s'appeler connector_split_mix
-## branchlist_update 
-## pipe_splitter
-## pipe_mixer
-## bypass_branch
-A SUPPRIMER - pas utilisé
-## get_branch_inlet_outlet_nodes
+## tous les objets de hvac.py
+- LoopNodes : formate node names pour objets à side
+- Branches : formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)
+- EPValues : StrEnum de valeurs EnergyPlus
+- EPApi : StrEnum de noms de champs EnergyPlus
+- set_nodes
+- node_name : object_name_inlet/outlet_node
+- set_branch_list : utilisé seulement dans add_plant_loop (et dans add_airloop)
+- add_plant_loop
+- create_pipe
+- add_baseboard : devrait être dans un fichier spécifique
+- create_branch
+- object_name : enlève le pattern _branch ds branch_name
+- split_mix : devrait s'appeler connector_split_mix
+- branchlist_update 
+- pipe_splitter
+- pipe_mixer
+- bypass_branch : A SUPPRIMER - pas utilisé
+- get_branch_inlet_outlet_nodes
 
 
 # hvac24_1_0.py
