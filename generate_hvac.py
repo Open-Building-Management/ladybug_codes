@@ -316,7 +316,9 @@ for zone in ZONES:
     zone_equipments[zone] = []
     air_nodes[zone] = {
         "air_inlet_node": f"{zone}_inlet_air_node",
-        "air_exhaust_node": f"{zone}_return_air_node"
+        "air_exhaust_node": f"{zone}_exhaust_air_node",
+        "air_return_node": f"{zone}_return_air_node",
+        "air_node": f"{zone}_air_node"
     }
 
 USE_AIR = 0
@@ -390,12 +392,13 @@ for zone, equipment_list in zone_equipments.items():
         **ZonehvacEquipmentconnectionsType(
             Zone_Name=zone,
             Zone_Conditioning_Equipment_List_Name=zone_equipment_list.Name,
-            Zone_Air_Node_Name=f"{zone}_air_node"
+            Zone_Air_Node_Name=air_nodes[zone]["air_node"]
         )
     )
     if USE_AIR:
         connections["Zone_Air_Inlet_Node_or_NodeList_Name"]=air_nodes[zone]["air_inlet_node"]
         connections["Zone_Air_Exhaust_Node_or_NodeList_Name"]=air_nodes[zone]["air_exhaust_node"]
+        connections["Zone_Return_Air_Node_or_NodeList_Name"]=air_nodes[zone]["air_return_node"]
 
 sensors = initialise_sensors(CONF.get("sensors", {}))
 process = CONF.get("process", {})
