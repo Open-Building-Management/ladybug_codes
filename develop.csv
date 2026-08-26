@@ -1,25 +1,28 @@
-﻿fichier;class/method;fonction;commentaire1;commentaire2
-hvac.py;LoopNodes;classe pour formater les noms de nœuds quant on a des objets à side;;
-hvac.py;Branches;classe pour formater les noms de branches;pas de parallelisme des formes avec LoopNodes (pas d'underscore dans le nom des branches);utilisé seulement dans add_plant_loop
-hvac.py;EPValues;StrEnum de valeurs EnergyPlus;;
-hvac.py;EPApi;StrEnum de noms de champs EnergyPlus;;
-hvac.py;set_nodes;;;
-hvac.py;node_name;retourne object_name_port_node avec port valant inlet ou outlet;;
-hvac.py;set_branch_list;;;utilisé seulement dans add_plant_loop
-hvac.py;add_plant_loop;;;
-hvac.py;create_pipe;;uniquement pour les plantloop;
-hvac.py;add_baseboard;;;devrait être ailleurs dans un fichier spécifique
-hvac.py;create_branch;;plantloop/airloop;
-hvac.py;object_name;retourne le nom de l'objet à partir du nom de branche en enlevant le pattern _branch;process_serie produit des noms de branches avec _branch;
-hvac.py;split_mix;;uniquement pour les plantloop;devrait s'appeler connector_split_mix
-hvac.py;branchlist_update;;plantloop/airloop;
-hvac.py;pipe_splitter;;uniquement pour les plantloop;
-hvac.py;pipe_mixer;;uniquement pour les plantloop;
-hvac.py;bypass_branch;;;A SUPPRIMER - pas utilisé
-hvac.py;get_branch_inlet_outlet_nodes;;;
-hvac24_1_0.py;loops;VARIABLE GLOBALE;;
-hvac24_1_0.py;equipments;VARIABLE GLOBALE;;
-hvac24_1_0.py;schedule_typelimits;;;
-hvac24_1_0.py;basic_compact_schedule;;;
-hvac24_1_0.py;constant_schedule;;;
-hvac24_1_0.py;schedule_objects;;;
+﻿fichier,class/method,fonction,commentaire1,commentaire2
+hvac.py,LoopNodes,classe pour formater les noms de nœuds quant on a des objets à side,,
+hvac.py,Branches,classe pour formater les noms de branches,pas de parallelisme des formes avec LoopNodes (pas d'underscore dans le nom des branches),utilisé seulement dans add_plant_loop (et dans add_airloop)
+hvac.py,EPValues,StrEnum de valeurs EnergyPlus,,
+hvac.py,EPApi,StrEnum de noms de champs EnergyPlus,,
+hvac.py,set_nodes,,,
+hvac.py,node_name,retourne object_name_port_node avec port valant inlet ou outlet,,
+hvac.py,set_branch_list,,,utilisé seulement dans add_plant_loop
+hvac.py,add_plant_loop,,,
+hvac.py,create_pipe,,uniquement pour les plantloop,
+hvac.py,add_baseboard,,,devrait être ailleurs dans un fichier spécifique
+hvac.py,create_branch,,plantloop/airloop,
+hvac.py,object_name,retourne le nom de l'objet à partir du nom de branche en enlevant le pattern _branch,process_serie produit des noms de branches avec _branch,
+hvac.py,split_mix,,uniquement pour les plantloop,devrait s'appeler connector_split_mix
+hvac.py,branchlist_update,,plantloop/airloop,
+hvac.py,pipe_splitter,,uniquement pour les plantloop,
+hvac.py,pipe_mixer,,uniquement pour les plantloop,
+hvac.py,bypass_branch,,,A SUPPRIMER - pas utilisé
+hvac.py,get_branch_inlet_outlet_nodes,,,
+hvac24_1_0.py,loops,VARIABLE GLOBALE,,
+hvac24_1_0.py,equipments,VARIABLE GLOBALE,,
+hvac24_1_0.py,schedule_typelimits,,,
+hvac24_1_0.py,basic_compact_schedule,,,
+hvac24_1_0.py,constant_schedule,,,
+hvac24_1_0.py,schedule_objects,crée les schedules, en utilisant basic_compact_schedule et constant_schedule,utilisé dans generate,
+,summer,,,
+,two_season_schedule,,,
+,zone_control,crée les thermostats de zone,,
