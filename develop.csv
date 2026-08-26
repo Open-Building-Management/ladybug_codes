@@ -1,28 +1,41 @@
 ﻿fichier,class/method,fonction,commentaire1,commentaire2
-hvac.py,LoopNodes,classe pour formater les noms de nœuds quant on a des objets à side,,
-hvac.py,Branches,classe pour formater les noms de branches,pas de parallelisme des formes avec LoopNodes (pas d'underscore dans le nom des branches),utilisé seulement dans add_plant_loop (et dans add_airloop)
+hvac.py,LoopNodes,formate node names pour objets à side,,
+hvac.py,Branches,formate les noms de branches (no underscore?),pas de parallelisme des formes avec LoopNode,utilisé seulement dans add_plant_loop (et dans add_airloop)
 hvac.py,EPValues,StrEnum de valeurs EnergyPlus,,
 hvac.py,EPApi,StrEnum de noms de champs EnergyPlus,,
 hvac.py,set_nodes,,,
-hvac.py,node_name,retourne object_name_port_node avec port valant inlet ou outlet,,
+hvac.py,node_name,object_name_inlet/outlet_node,,
 hvac.py,set_branch_list,,,utilisé seulement dans add_plant_loop
-hvac.py,add_plant_loop,,,
+hvac.py,add_plant_loop,,,utilisé dans generate
 hvac.py,create_pipe,,uniquement pour les plantloop,
-hvac.py,add_baseboard,,,devrait être ailleurs dans un fichier spécifique
-hvac.py,create_branch,,plantloop/airloop,
-hvac.py,object_name,retourne le nom de l'objet à partir du nom de branche en enlevant le pattern _branch,process_serie produit des noms de branches avec _branch,
+hvac.py,add_baseboard,,,devrait être dans un fichier spécifique
+hvac.py,create_branch,,plantloop all sides / airloop supply side,
+hvac.py,object_name,enlève pattern _branch ds branch_name,process_serie produit des noms de branches avec _branch,
 hvac.py,split_mix,,uniquement pour les plantloop,devrait s'appeler connector_split_mix
-hvac.py,branchlist_update,,plantloop/airloop,
+hvac.py,branchlist_update,,plantloop all sides / airloop supply side,
 hvac.py,pipe_splitter,,uniquement pour les plantloop,
 hvac.py,pipe_mixer,,uniquement pour les plantloop,
 hvac.py,bypass_branch,,,A SUPPRIMER - pas utilisé
 hvac.py,get_branch_inlet_outlet_nodes,,,
 hvac24_1_0.py,loops,VARIABLE GLOBALE,,
 hvac24_1_0.py,equipments,VARIABLE GLOBALE,,
-hvac24_1_0.py,schedule_typelimits,,,
+hvac24_1_0.py,schedule_typelimits,,,utilisé dans generate
 hvac24_1_0.py,basic_compact_schedule,,,
 hvac24_1_0.py,constant_schedule,,,
-hvac24_1_0.py,schedule_objects,crée les schedules, en utilisant basic_compact_schedule et constant_schedule,utilisé dans generate
+hvac24_1_0.py,schedule_objects,crée les schedules,utilise basic_compact_schedule et constant_schedule,utilisé dans generate
 hvac24_1_0.py,summer,,,
 hvac24_1_0.py,two_season_schedule,,,
-hvac24_1_0.py,zone_control,crée les thermostats de zone,,
+hvac24_1_0.py,zone_control,crée les thermostats de zone,,utilisé dans generate
+hvac24_1_0.py,water_law,,,
+hvac24_1_0.py,constant_set_point,,,
+hvac24_1_0.py,pump,,,
+hvac24_1_0.py,gas_boiler,,,
+hvac24_1_0.py,resolve_side,,,
+hvac24_1_0.py,process_serie,utilise equipments et branchlist_update(X1),,
+hvac24_1_0.py,process_series,run process_serie/process_parallel,,
+hvac24_1_0.py,process_parallel,utilise loops et branchlist_update (X2),,
+hvac24_1_0.py,adjust_nodes_branch,run process_series,,utilisé dans generate
+hvac24_1_0.py,generate_operation,,,
+hvac24_1_0.py,operation_list_scheme,,,
+hvac24_1_0.py,zone_list,,,utilisé dans generate
+,,,,utilisé dans generate
