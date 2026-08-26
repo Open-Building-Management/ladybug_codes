@@ -1,47 +1,45 @@
 ﻿# hvac.py
 
-class/method|shortcut|fonction
+## LoopNodes
+formate node names pour objets à side
+## Branches
+formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)
+## EPValues
+StrEnum de valeurs EnergyPlus
+## EPApi
+StrEnum de noms de champs EnergyPlus
+## set_nodes
+## node_name
+object_name_inlet/outlet_node
+## set_branch_list
+utilisé seulement dans add_plant_loop (et dans add_airloop)
+## add_plant_loop
+produit un plantloop (PL)
+## create_pipe
+## add_baseboard
+devrait être dans un fichier spécifique
+## create_branch
+## object_name
+enlève pattern _branch ds branch_name
+## split_mix
+devrait s'appeler connector_split_mix
+##branchlist_update 
+BLU
+## pipe_splitter
+## pipe_mixer
+## bypass_branch
+A SUPPRIMER - pas utilisé
+## get_branch_inlet_outlet_nodes
+
+
+class/method|PL|AL
 --|--|--
-LoopNodes||formate node names pour objets à side
-Branches||formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)
-EPValues||StrEnum de valeurs EnergyPlus
-EPApi||StrEnum de noms de champs EnergyPlus
-set_nodes||
-node_name||object_name_inlet/outlet_node
-set_branch_list||utilisé seulement dans add_plant_loop (et dans add_airloop)
-add_plant_loop||produit un plantloop (PL)
-create_pipe||
-add_baseboard||devrait être dans un fichier spécifique
-create_branch||
-object_name||enlève pattern _branch ds branch_name
-split_mix||devrait s'appeler connector_split_mix
-branchlist_update|BLU|
-pipe_splitter||
-pipe_mixer||
-bypass_branch||A SUPPRIMER - pas utilisé
-get_branch_inlet_outlet_nodes||
-
-
-class/method|main|L|E|BLU|PL|AL
---|--|--|--|--|--|--
-LoopNodes||||||
-Branches||||||
-EPValues||||||
-EPApi||||||
-set_nodes||||||
-node_name||||||
-set_branch_list||||||
-add_plant_loop||||||
-create_pipe|||||X|
-add_baseboard||||||
-create_branch|||||X|X
-object_name||||||
-split_mix|||||X|
-branchlist_update|||||X|X
-pipe_splitter|||||X|
-pipe_mixer|||||X|
-bypass_branch||||||
-get_branch_inlet_outlet_nodes||||||
+create_pipe|X|
+create_branch|X|X
+split_mix||X|
+branchlist_update|X|X
+pipe_splitter||X|
+pipe_mixer||X|
 
 # hvac24_1_0.py
 
