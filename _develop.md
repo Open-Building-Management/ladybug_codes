@@ -10,7 +10,7 @@ create_branch|X|X
 split_mix|X|
 branchlist_update|X|X
 pipe_splitter|X|
-pipe_mixer|X|X
+pipe_mixer|X|
 
 ## tous les objets de hvac.py
 - **LoopNodes** : formate node names pour objets à side
