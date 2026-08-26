@@ -1,5 +1,17 @@
 ﻿# hvac.py
 
+- PL = plantloop
+- AL = airloop supply side
+
+class/method|PL|AL
+--|--|--
+create_pipe|X|
+create_branch|X|X
+split_mix||X|
+branchlist_update|X|X
+pipe_splitter||X|
+pipe_mixer||X|
+
 ## LoopNodes
 formate node names pour objets à side
 ## Branches
@@ -14,17 +26,16 @@ object_name_inlet/outlet_node
 ## set_branch_list
 utilisé seulement dans add_plant_loop (et dans add_airloop)
 ## add_plant_loop
-produit un plantloop (PL)
+produit un plantloop
 ## create_pipe
 ## add_baseboard
 devrait être dans un fichier spécifique
 ## create_branch
 ## object_name
-enlève pattern _branch ds branch_name
+enlève le pattern _branch ds branch_name
 ## split_mix
 devrait s'appeler connector_split_mix
-##branchlist_update 
-BLU
+## branchlist_update 
 ## pipe_splitter
 ## pipe_mixer
 ## bypass_branch
@@ -32,37 +43,58 @@ A SUPPRIMER - pas utilisé
 ## get_branch_inlet_outlet_nodes
 
 
-class/method|PL|AL
---|--|--
-create_pipe|X|
-create_branch|X|X
-split_mix||X|
-branchlist_update|X|X
-pipe_splitter||X|
-pipe_mixer||X|
-
 # hvac24_1_0.py
 
-class/method|shortcut|fonction|main|L|E|BLU|PL|AL
---|--|--|--|--|--|--|--|--
-loops|L|VARIABLE GLOBALE|X|||||
-equipments|E|VARIABLE GLOBALE|X|||||
-schedule_typelimits|||X|||||
-basic_compact_schedule||||||||
-constant_schedule||||||||
-schedule_objects||crée les schedules, avec basic_compact_schedule et constant_schedule|X|||||
-summer||||||||
-two_season_schedule||||||||
-zone_control||crée les thermostats de zone|X|||||
-water_law|||X|||||
-constant_set_point|||X|||||
-pump|||X|||||
-gas_boiler|||X|||||
-resolve_side|||X|||||
-process_serie||Si pas fourni, produit des noms de branches génériques avec _branch|||X|X1||
-process_series||run process_serie and process_parallel||||||
-process_parallel||||X||X2||
-adjust_nodes_branch||run process_series|X|||||
-generate_operation|||||X|||
-operation_list_scheme|||X|||||
-zone_list|||X|||||
+
+## loops
+VARIABLE GLOBALE
+## equipments
+VARIABLE GLOBALE
+## schedule_typelimits
+## basic_compact_schedule
+## constant_schedule
+## schedule_objects
+crée les schedules, avec basic_compact_schedule et constant_schedule
+## summer
+## two_season_schedule
+## zone_control
+## crée les thermostats de zone
+## water_law
+## constant_set_point
+## pump
+## gas_boiler
+## resolve_side
+## process_serie
+Si pas fourni, produit des noms de branches génériques avec _branch
+## process_series
+run process_serie and process_parallel
+## process_parallel
+## adjust_nodes_branch
+run process_series
+## generate_operation
+## operation_list_scheme
+## zone_list
+
+
+- L = loops
+- E = equipments
+- BLU = branchlist_update
+
+class/method|main|L|E|BLU
+--|--|--|--|--
+loops|X|||
+equipments|X|||
+schedule_typelimits|X|||
+schedule_objects|X|||
+zone_control|X|||
+water_law|X|||
+constant_set_point|X|||
+pump|X|||
+gas_boiler|X|||
+resolve_side|X|||
+process_serie|||X|X1
+process_parallel||X||X2
+adjust_nodes_branch|X|||
+generate_operation|X||X||
+operation_list_scheme|X|||
+zone_list|X|||
