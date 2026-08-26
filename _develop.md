@@ -1,7 +1,7 @@
 ﻿class/method|shortcut|fonction|main|L|E|BLU|PL|AL
 --|--|--|--|--|--|--|--|--
 LoopNodes||formate node names pour objets à side||||||
-Branches||formate les noms de branches (no underscore?)| utilisé seulement dans add_plant_loop (et dans add_airloop)||||||
+Branches||formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)||||||
 EPValues||StrEnum de valeurs EnergyPlus||||||
 EPApi||StrEnum de noms de champs EnergyPlus||||||
 set_nodes||||||||
@@ -23,7 +23,7 @@ equipments|E|VARIABLE GLOBALE|X|||||
 schedule_typelimits|||X|||||
 basic_compact_schedule||||||||
 constant_schedule||||||||
-schedule_objects||crée les schedules| utilise basic_compact_schedule et constant_schedule|X|||||
+schedule_objects||crée les schedules, avec basic_compact_schedule et constant_schedule|X|||||
 summer||||||||
 two_season_schedule||||||||
 zone_control||crée les thermostats de zone|X|||||
@@ -32,7 +32,7 @@ constant_set_point|||X|||||
 pump|||X|||||
 gas_boiler|||X|||||
 resolve_side|||X|||||
-process_serie||Si pas fourni| produit des noms de branches avec _branch|||X|X1||
+process_serie||Si pas fourni, produit des noms de branches avec _branch|||X|X1||
 process_series||run process_serie and process_parallel||||||
 process_parallel||||X||X2||
 adjust_nodes_branch||run process_series|X|||||
