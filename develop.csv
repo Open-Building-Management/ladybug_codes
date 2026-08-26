@@ -1,41 +1,40 @@
-﻿fichier,class/method,fonction,commentaire1,commentaire2
-hvac.py,LoopNodes,formate node names pour objets à side,,
-hvac.py,Branches,formate les noms de branches (no underscore?),pas de parallelisme des formes avec LoopNode,utilisé seulement dans add_plant_loop (et dans add_airloop)
-hvac.py,EPValues,StrEnum de valeurs EnergyPlus,,
-hvac.py,EPApi,StrEnum de noms de champs EnergyPlus,,
-hvac.py,set_nodes,,,
-hvac.py,node_name,object_name_inlet/outlet_node,,
-hvac.py,set_branch_list,,,utilisé seulement dans add_plant_loop
-hvac.py,add_plant_loop,,,utilisé dans generate
-hvac.py,create_pipe,,uniquement pour les plantloop,
-hvac.py,add_baseboard,,,devrait être dans un fichier spécifique
-hvac.py,create_branch,,plantloop all sides / airloop supply side,
-hvac.py,object_name,enlève pattern _branch ds branch_name,process_serie produit des noms de branches avec _branch,
-hvac.py,split_mix,,uniquement pour les plantloop,devrait s'appeler connector_split_mix
-hvac.py,branchlist_update,,plantloop all sides / airloop supply side,
-hvac.py,pipe_splitter,,uniquement pour les plantloop,
-hvac.py,pipe_mixer,,uniquement pour les plantloop,
-hvac.py,bypass_branch,,,A SUPPRIMER - pas utilisé
-hvac.py,get_branch_inlet_outlet_nodes,,,
-hvac24_1_0.py,loops,VARIABLE GLOBALE,,
-hvac24_1_0.py,equipments,VARIABLE GLOBALE,,
-hvac24_1_0.py,schedule_typelimits,,,utilisé dans generate
-hvac24_1_0.py,basic_compact_schedule,,,
-hvac24_1_0.py,constant_schedule,,,
-hvac24_1_0.py,schedule_objects,crée les schedules,utilise basic_compact_schedule et constant_schedule,utilisé dans generate
-hvac24_1_0.py,summer,,,
-hvac24_1_0.py,two_season_schedule,,,
-hvac24_1_0.py,zone_control,crée les thermostats de zone,,utilisé dans generate
-hvac24_1_0.py,water_law,,,
-hvac24_1_0.py,constant_set_point,,,
-hvac24_1_0.py,pump,,,
-hvac24_1_0.py,gas_boiler,,,
-hvac24_1_0.py,resolve_side,,,
-hvac24_1_0.py,process_serie,utilise equipments et branchlist_update(X1),,
-hvac24_1_0.py,process_series,run process_serie/process_parallel,,
-hvac24_1_0.py,process_parallel,utilise loops et branchlist_update (X2),,
-hvac24_1_0.py,adjust_nodes_branch,run process_series,,utilisé dans generate
-hvac24_1_0.py,generate_operation,,,
-hvac24_1_0.py,operation_list_scheme,,,
-hvac24_1_0.py,zone_list,,,utilisé dans generate
-,,,,utilisé dans generate
+﻿class/method,shortcut,fonction,main,L,E,BLU,PL,airloop supplyside
+LoopNodes,,formate node names pour objets à side,,,,,,
+Branches,,formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop),,,,,,
+EPValues,,StrEnum de valeurs EnergyPlus,,,,,,
+EPApi,,StrEnum de noms de champs EnergyPlus,,,,,,
+set_nodes,,,,,,,,
+node_name,,object_name_inlet/outlet_node,,,,,,
+set_branch_list,,utilisé seulement dans add_plant_loop (et dans add_airloop),,,,,,
+add_plant_loop,,produit un plantloop (PL),X,,,,,
+create_pipe,,,,,,,X,
+add_baseboard,,devrait être dans un fichier spécifique,,,,,,
+create_branch,,,,,,,X,X
+object_name,,enlève pattern _branch ds branch_name,,,,,,
+split_mix,,devrait s'appeler connector_split_mix,,,,,X,
+branchlist_update,BLU,,,,,,X,X
+pipe_splitter,,,,,,,X,
+pipe_mixer,,,,,,,X,
+bypass_branch,,A SUPPRIMER - pas utilisé,,,,,,
+get_branch_inlet_outlet_nodes,,,,,,,,
+loops,L,VARIABLE GLOBALE,X,,,,,
+equipments,E,VARIABLE GLOBALE,X,,,,,
+schedule_typelimits,,,X,,,,,
+basic_compact_schedule,,,,,,,,
+constant_schedule,,,,,,,,
+schedule_objects,,crée les schedules, utilise basic_compact_schedule et constant_schedule,X,,,,,
+summer,,,,,,,,
+two_season_schedule,,,,,,,,
+zone_control,,crée les thermostats de zone,X,,,,,
+water_law,,,X,,,,,
+constant_set_point,,,X,,,,,
+pump,,,X,,,,,
+gas_boiler,,,X,,,,,
+resolve_side,,,X,,,,,
+process_serie,,Si pas fourni, produit des noms de branches avec _branch,,,X,X1,,
+process_series,,run process_serie and process_parallel,,,,,,
+process_parallel,,,,X,,X2,,
+adjust_nodes_branch,,run process_series,X,,,,,
+generate_operation,,,,,X,,,
+operation_list_scheme,,,X,,,,,
+zone_list,,,X,,,,,
