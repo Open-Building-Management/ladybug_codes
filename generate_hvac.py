@@ -1,8 +1,10 @@
 """"hvac generator"""
 import os
 
+from eppy.bunch_subclass import EpBunch
+
 from idfhub.hvac import (
-    PLANT, DEMAND,
+    PLANT, DEMAND, SUPPLY,
     EPApi, EPValues,
     add_plantloop,
     add_baseboard,
@@ -12,7 +14,7 @@ from idfhub.hvac import (
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
     Building, Globalgeometryrules,
-    SizingParameters, SizingZone, SizingPlant,
+    SizingParameters, SizingZone, SizingPlant, SizingSystem,
     ZonehvacEquipmentconnections,
     OutputEnergymanagementsystem,
     OutputVariabledictionary,
@@ -24,7 +26,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     TimestepType, SizingperiodDesigndayType, RunperiodType, VersionType, SimulationcontrolType,
     BuildingType, GlobalgeometryrulesType,
-    SizingParametersType, SizingZoneType, SizingPlantType,
+    SizingParametersType, SizingZoneType, SizingPlantType, SizingSystemType,
     ZonehvacEquipmentconnectionsType,
     OutputEnergymanagementsystemType,
     OutputVariabledictionaryType,
@@ -54,6 +56,7 @@ from idfhub.hvac24_1_0 import (
     gas_boiler,
     zone_list
 )
+from idfhub.hvac24_1_0_airloops import add_airloop, fan, cv_no_reheat
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
     ground_temperature,
@@ -68,6 +71,7 @@ from idfhub.hvac24_1_0_hydronic_cooling import fcu_cooling
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 
+AIRLOOPS: list[str] = CONF.get("airloops", [])
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
     '%(name)s:%(lineno)d | '
@@ -94,9 +98,13 @@ HPATW = "hpatw"
 BOILER = "boiler"
 EXCHANGER = "HX"
 FCU = "fcu"
+FAN = "fan"
+CV_NO_REHEAT = "cv_no_reheat"
 
 zone_equipments: dict[str, list] = {}
 air_nodes: dict[str, dict[str, str]] = {}
+air_zone_splitters: dict[str, EpBunch] = {}
+air_zone_mixers: dict[str, EpBunch] = {}
 
 def add_variable(name, key="*"):
     """add a variable to the ep output"""
@@ -229,6 +237,27 @@ zone_control(
 
 
 #------------------------------------------------------------------------------
+# Air Loops
+#------------------------------------------------------------------------------
+for airloop in AIRLOOPS:
+   air_splitter, air_mixer, air_loop = add_airloop(airloop)
+   loops[airloop] = air_loop
+   air_zone_splitters[airloop] = air_splitter
+   air_zone_mixers[airloop] = air_mixer
+   SizingSystem(
+       idf,
+       **SizingSystemType(
+           AirLoop_Name=airloop,
+           Preheat_Design_Temperature=7,
+           Preheat_Design_Humidity_Ratio=0.008,
+           Precool_Design_Temperature=12.8,
+           Precool_Design_Humidity_Ratio=0.008,
+           Central_Cooling_Design_Supply_Air_Temperature=12.8,
+           Central_Heating_Design_Supply_Air_Temperature=40,
+       )
+   )
+
+#------------------------------------------------------------------------------
 # Plant Loops
 #------------------------------------------------------------------------------
 for loop in LOOPS:
@@ -325,6 +354,9 @@ USE_AIR = 0
 ground_temperature()
 
 for equipment_name in EQUIPMENTS:
+    if FAN in equipment_name:
+        equipments[equipment_name] = fan(equipment_name)
+        continue
     if PUMP in equipment_name:
         pump_type = "constant"
         if "variable" in equipment_name:
@@ -372,6 +404,13 @@ for equipment_name in EQUIPMENTS:
         if "baseboards" in equipment_name:
             zone_equipment = add_baseboard(idf, zone)
             equipments[equipment_name] = zone_equipment
+        if CV_NO_REHEAT in equipment_name:
+            air_terminal, zone_equipment = cv_no_reheat(
+                equipment_name,
+                zone_air_inlet_node=air_nodes[zone]["air_inlet_node"]
+            )
+            USE_AIR = 1
+            equipments[equipment_name] = air_terminal
         if FCU in equipment_name:
             coil_cooling_water, zone_equipment = fcu_cooling(
                 equipment_name,
@@ -441,6 +480,24 @@ for loop in LOOPS:
                 branches_descr=branches_descr
             )
     operation_list_scheme(loop)
+
+for loop in AIRLOOPS:
+    branches_descr = CONF[loop].get("branches", {})
+    if SUPPLY in branches_descr:
+        adjust_nodes_branch(
+            loop,
+            loop_side=SUPPLY,
+            branches_descr=branches_descr
+        )
+    terminals = CONF[loop].get("terminals", [])
+    for i, name in enumerate(terminals):
+        zone = name.split("_")[-1]
+        side = resolve_side(name)
+        terminal = equipments[name]
+        inlet = f"{side}_{EPApi.INLET_NODE_NAME}"
+        outlet = f"{side}_{EPApi.OUTLET_NODE_NAME}"
+        air_zone_splitters[loop][f"Outlet_{i+1}_Node_Name"] = terminal[inlet]
+        air_zone_mixers[loop][f"Inlet_{i+1}_Node_Name"] = air_nodes[zone]["air_return_node"]
 
 # machine level setpoints management
 # this can only to be done after all nodes and branches adjustments
@@ -534,6 +591,9 @@ for equipment_name in EQUIPMENTS:
         add_variable("Fan Coil Heating Rate")
         add_variable("Fan Coil Total Cooling Rate")
         add_variable("Fan Coil Fan Speed Level")
+    if FAN in equipment_name:
+        add_variable("Fan Electricity Rate")
+        add_variable("Fan Air Mass Flow Rate")
     if "baseboard" in equipment_name:
         add_variable("Baseboard Total Heating Rate")
         add_variable("Baseboard Water Inlet Temperature")
