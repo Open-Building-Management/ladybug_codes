@@ -45,6 +45,28 @@ A SUPPRIMER - pas utilisé
 
 # hvac24_1_0.py
 
+- L = loops
+- E = equipments
+- BLU = branchlist_update
+
+class/method|main|L|E|BLU
+--|--|--|--|--
+loops|X|||
+equipments|X|||
+schedule_typelimits|X|||
+schedule_objects|X|||
+zone_control|X|||
+water_law|X|||
+constant_set_point|X|||
+pump|X|||
+gas_boiler|X|||
+resolve_side|X|||
+process_serie|||X|X1
+process_parallel||X||X2
+adjust_nodes_branch|X|||
+generate_operation|X||X||
+operation_list_scheme|X|||
+zone_list|X|||
 
 ## loops
 VARIABLE GLOBALE
@@ -75,26 +97,3 @@ run process_series
 ## operation_list_scheme
 ## zone_list
 
-
-- L = loops
-- E = equipments
-- BLU = branchlist_update
-
-class/method|main|L|E|BLU
---|--|--|--|--
-loops|X|||
-equipments|X|||
-schedule_typelimits|X|||
-schedule_objects|X|||
-zone_control|X|||
-water_law|X|||
-constant_set_point|X|||
-pump|X|||
-gas_boiler|X|||
-resolve_side|X|||
-process_serie|||X|X1
-process_parallel||X||X2
-adjust_nodes_branch|X|||
-generate_operation|X||X||
-operation_list_scheme|X|||
-zone_list|X|||
