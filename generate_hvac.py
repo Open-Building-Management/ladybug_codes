@@ -549,12 +549,14 @@ OutputSqlite(
 )
 input("press")
 
+BUILDING_LAST_NAME = BUILDING_NAME.split("/")[-1]
+
 if not os.path.exists(EP_SIM_PATH):
     os.mkdir(EP_SIM_PATH)
-if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}"):
-    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_NAME}")
-if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}"):
-    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}")
+if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}"):
+    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}")
+if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}"):
+    os.mkdir(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}")
 
-final_name = f"{EP_SIM_PATH}/{BUILDING_NAME}/{PROJECT_NAME}/{BUILDING_NAME}.idf"
+final_name = f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}/{BUILDING_LAST_NAME}.idf"
 idf.save(final_name)
