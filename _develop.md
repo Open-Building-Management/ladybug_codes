@@ -1,16 +1,16 @@
 ﻿# hvac.py
 
-- PL = plantloop
-- AL = airloop supply side
+- PL = plantloop compatible
+- AL = airloop supply side compatible
 
 class/method|PL|AL
 --|--|--
 create_pipe|X|
 create_branch|X|X
-split_mix||X|
+split_mix|X|
 branchlist_update|X|X
-pipe_splitter||X|
-pipe_mixer||X|
+pipe_splitter|X|
+pipe_mixer|X|X
 
 ## tous les objets de hvac.py
 - **LoopNodes** : formate node names pour objets à side
