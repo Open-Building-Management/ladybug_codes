@@ -1,4 +1,7 @@
-﻿class/method|shortcut|fonction|main|L|E|BLU|PL|AL
+﻿# hvac.py
+
+
+class/method|shortcut|fonction|main|L|E|BLU|PL|AL
 --|--|--|--|--|--|--|--|--
 LoopNodes||formate node names pour objets à side||||||
 Branches||formate les noms de branches (no underscore?), utilisé seulement dans add_plant_loop (et dans add_airloop)||||||
@@ -18,6 +21,11 @@ pipe_splitter|||||||X|
 pipe_mixer|||||||X|
 bypass_branch||A SUPPRIMER - pas utilisé||||||
 get_branch_inlet_outlet_nodes||||||||
+
+# hvac24_1_0.py
+
+class/method|shortcut|fonction|main|L|E|BLU|PL|AL
+--|--|--|--|--|--|--|--|--
 loops|L|VARIABLE GLOBALE|X|||||
 equipments|E|VARIABLE GLOBALE|X|||||
 schedule_typelimits|||X|||||
@@ -32,7 +40,7 @@ constant_set_point|||X|||||
 pump|||X|||||
 gas_boiler|||X|||||
 resolve_side|||X|||||
-process_serie||Si pas fourni, produit des noms de branches avec _branch|||X|X1||
+process_serie||Si pas fourni, produit des noms de branches génériques avec _branch|||X|X1||
 process_series||run process_serie and process_parallel||||||
 process_parallel||||X||X2||
 adjust_nodes_branch||run process_series|X|||||
