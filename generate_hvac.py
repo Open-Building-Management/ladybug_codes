@@ -350,7 +350,7 @@ for zone in ZONES:
         "air_node": f"{zone}_air_node"
     }
 
-USE_AIR = 0
+USE_AIR = {"return": 0, "exhaust": 0}
 ground_temperature()
 
 for equipment_name in EQUIPMENTS:
@@ -409,7 +409,7 @@ for equipment_name in EQUIPMENTS:
                 equipment_name,
                 zone_air_inlet_node=air_nodes[zone]["air_inlet_node"]
             )
-            USE_AIR = 1
+            USE_AIR["return"] = 1
             equipments[equipment_name] = air_terminal
         if FCU in equipment_name:
             coil_cooling_water, zone_equipment = fcu_cooling(
@@ -417,7 +417,7 @@ for equipment_name in EQUIPMENTS:
                 zone_air_inlet_node=air_nodes[zone]["air_inlet_node"],
                 zone_air_exhaust_node=air_nodes[zone]["air_exhaust_node"]
             )
-            USE_AIR = 1
+            USE_AIR["exhaust"] = 1
             equipments[equipment_name] = coil_cooling_water
         zone_equipments[zone].append(zone_equipment)
 
@@ -434,10 +434,12 @@ for zone, equipment_list in zone_equipments.items():
             Zone_Air_Node_Name=air_nodes[zone]["air_node"]
         )
     )
-    if USE_AIR:
+    if USE_AIR["return"] or USE_AIR["exhaust"]:
         connections["Zone_Air_Inlet_Node_or_NodeList_Name"]=air_nodes[zone]["air_inlet_node"]
-        connections["Zone_Air_Exhaust_Node_or_NodeList_Name"]=air_nodes[zone]["air_exhaust_node"]
+    if USE_AIR["return"]:
         connections["Zone_Return_Air_Node_or_NodeList_Name"]=air_nodes[zone]["air_return_node"]
+    if USE_AIR["exhaust"]:
+        connections["Zone_Air_Exhaust_Node_or_NodeList_Name"]=air_nodes[zone]["air_exhaust_node"]
 
 sensors = initialise_sensors(CONF.get("sensors", {}))
 process = CONF.get("process", {})

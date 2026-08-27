@@ -4,6 +4,10 @@ North_Axis: 122.4
 name: gaz_boiler
 suffix: single_loop_slow_flow
 
+run_period:
+  Begin_Year: 2017
+  End_Year: 2017
+
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
 zones:
