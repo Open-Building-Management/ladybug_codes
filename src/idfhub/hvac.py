@@ -82,8 +82,10 @@ class Branches:
 
     def get(self, *, side, branch_list=False):
         """get a branch or branch list name on a loop side"""
-        end = "" if not branch_list else LIST
-        return f"{self.name} {side} {BRANCH} {end}".strip()
+        name = f"{self.name}_{side}_{BRANCH}"
+        if branch_list:
+            name = f"{name}_{LIST}"
+        return name
     @property
     def supply_branch(self):
         """Supply Branch"""
@@ -237,11 +239,6 @@ def add_plantloop(
             "Load_Distribution_Scheme",
             "SequentialLoad"
         )
-        #Availability_Manager_List_Name
-        #Plant_Loop_Demand_Calculation_Scheme
-        #Common_Pipe_Simulation
-        #Pressure_Simulation_Type
-        #Loop_Circulation_Time
     )
     set_nodes(
         plantloop,
@@ -501,23 +498,6 @@ def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
         idf,
         name = branch_name,
         objects = [outlet_pipe],
-        sides = [None]
-    )
-
-
-def bypass_branch(idf: IDF, bypass_branch_name: str):
-    """add a bypass branch to be used with split/mix"""
-    bypass_name = f"{object_name(bypass_branch_name)}_pipe"
-    bypass_pipe = create_pipe(
-        idf,
-        name=bypass_name,
-        inlet_node_name=node_name(bypass_branch_name, INLET),
-        outlet_node_name=node_name(bypass_branch_name, OUTLET)
-    )
-    return create_branch(
-        idf,
-        name = bypass_branch_name,
-        objects = [bypass_pipe],
         sides = [None]
     )
 

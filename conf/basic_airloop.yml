@@ -1,0 +1,33 @@
+building_name: 8_bardoux
+
+name: airloop
+suffix: test
+
+Terrain: City
+
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+zones:
+  - r4
+
+loops: []
+
+airloops:
+  - airloop
+
+equipments:
+  - constant_fan
+  - cv_no_reheat_r4
+
+airloop:
+  branches:
+    air_supply: [constant_fan]
+  terminals:
+    - cv_no_reheat_r4
+
+constant_fan:
+  force_side: Air
+
+cv_no_reheat_r4:
+  force_side: Air
+  process: cooling
