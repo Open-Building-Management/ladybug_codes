@@ -7,7 +7,7 @@ from idfhub.hvac import (
     PLANT, SUPPLY, DEMAND, RETURN, INLET, OUTLET, ALWAYS_ON,
     EPApi, EPValues,
     create_branch,
-    LoopNodes,
+    LoopNodes, Branches,
     set_nodes, node_name,
     branchlist_update,
     split_mix, pipe_splitter, pipe_mixer,
@@ -560,7 +560,7 @@ def process_series(
 ):
     """process a complex structure"""
     if not branch_name:
-        branch_name = f"{loop_name}_{loop_side}_branch"
+        branch_name = Branches(loop_name).get(side=loop_side)
     if not inlet_node:
         inlet_node = node_name(branch_name, INLET)
     if not outlet_node:
