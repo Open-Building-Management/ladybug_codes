@@ -82,10 +82,10 @@ sensors:
     location_name: "RDC_inlet_air_node"
     type: "System Node Temperature"
   fcu_RDC_w_in:
-    location_name: "RDC_return_air_node"
+    location_name: "RDC_exhaust_air_node"
     type: "System Node Humidity Ratio"
   fcu_RDC_t_in:
-    location_name: "RDC_return_air_node"
+    location_name: "RDC_exhaust_air_node"
     type: "System Node Temperature"
   RDC_mdot:
     location_name: "RDC_inlet_air_node"
