@@ -64,13 +64,14 @@ def fcu_cooling(
     - rejette vers zone_air_inlet"""
     zone_name = name.split("_")[-1]
     # le noeud de l'air extérieur
-    oa_in_node = f"{name} OA in node"
-    zone_oa_mixer_outlet = f"{zone_name} mixer outlet node"
+    mixer_name = f"{name}_OA_mixer"
+    oa_in_node = f"{mixer_name}_OA_in_node"
+    air_mixed_node = f"{mixer_name}_mixed_node"
     node_names = [
         oa_in_node,
-        zone_air_exhaust_node,
-        zone_oa_mixer_outlet,
+        air_mixed_node,
         zone_air_inlet_node,
+        zone_air_exhaust_node,
     ]
     rdd_variables = [
         "System Node Temperature",
@@ -91,10 +92,10 @@ def fcu_cooling(
     mixer = OutdoorairMixer(
         idf,
         **OutdoorairMixerType(
-            Name=f"{name} OA mixer",
-            Mixed_Air_Node_Name= zone_oa_mixer_outlet,
+            Name=mixer_name,
+            Mixed_Air_Node_Name=air_mixed_node,
             Outdoor_Air_Stream_Node_Name=oa_in_node,
-            Relief_Air_Stream_Node_Name=f"{name} Exh node",
+            Relief_Air_Stream_Node_Name=f"{mixer_name}_relief_node",
             Return_Air_Stream_Node_Name=zone_air_exhaust_node
         )
     )
@@ -108,7 +109,7 @@ def fcu_cooling(
         idf,
         **FanSystemmodelType(
             Name=f"{name}_fan",
-            Air_Inlet_Node_Name=zone_oa_mixer_outlet,
+            Air_Inlet_Node_Name=air_mixed_node,
             Air_Outlet_Node_Name=f"{name}_fan_outlet",
             Design_Maximum_Air_Flow_Rate=EPValues.AUTOSIZE,
             Design_Pressure_Rise=120,
