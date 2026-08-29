@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-CSV_FOLDER = "csv"
+CSV_FOLDER = "open_studio_files"
 EPLUSOUT = "eplusout.csv"
 ZONE = "zone"
 OUTDOOR = "outdoor"
