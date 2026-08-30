@@ -1,4 +1,9 @@
-"""air loops"""
+"""air loops
+the most basic airloop has not outdoorair mixer,
+just a terminal and its distribution wrapper on the demand side
+and maybe a fan on the supply
+this basic airloop is of no interest in practise, just to understand how the role of some objects
+"""
 from typing import Tuple
 from eppy.bunch_subclass import EpBunch
 
@@ -8,7 +13,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Nodelist,
     AirloophvacZonesplitter,AirloophvacSupplypath,
     AirloophvacZonemixer,AirloophvacReturnpath,
-    FanConstantvolume,
     ZonehvacAirdistributionunit,
     AirterminalSingleductConstantvolumeNoreheat,
 )
@@ -19,35 +23,19 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     NodelistType,
     AirloophvacZonesplitterType,AirloophvacSupplypathType,
     AirloophvacZonemixerType,AirloophvacReturnpathType,
-    FanConstantvolumeType,
     ZonehvacAirdistributionunitType,
     AirterminalSingleductConstantvolumeNoreheatType,
 )
 
-from idfhub.common import idf, CONF
-from idfhub.hvac import LoopNodes, Branches, set_nodes, set_branch_list, EPApi, EPValues, ALWAYS_ON
-
-def fan(name) -> EpBunch:
-    """create a fan"""
-    conf = CONF.get(name, {})
-    return FanConstantvolume(
-        idf,
-        **FanConstantvolumeType(
-            Name=name,
-            Pressure_Rise=conf.get("Presure_Rise", 500),
-            Maximum_Flow_Rate=EPValues.AUTOSIZE,
-            Motor_Efficiency=conf.get("Motor_Efficiency", 0.9),
-            Air_Inlet_Node_Name=f"{name} air inlet node",
-            Air_Outlet_Node_Name=f"{name} air outlet node" 
-        )
-    )
+from idfhub.common import idf
+from idfhub.hvac import LoopNodes, Branches, set_nodes, set_branch_list, EPApi, EPValues
 
 def cv_no_reheat(
     name,
     * ,
     zone_air_inlet_node: str
 ) -> Tuple[EpBunch, EpBunch]:
-    """create an CV no reheat air terminal and its air distribution unit wrapper"""
+    """create an Constant volume (CV) no reheat air terminal and its air distribution unit wrapper"""
     terminal_name = f"{name} terminal unit"
     air_terminal = AirterminalSingleductConstantvolumeNoreheat(
         idf,
