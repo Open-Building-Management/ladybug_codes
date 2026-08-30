@@ -24,7 +24,6 @@ from eppy.bunch_subclass import EpBunch
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     ZonehvacFourpipefancoil,
-    FanSystemmodel,
     CoilCoolingWater,
     CoilHeatingElectric,
     OutdoorairMixer,
@@ -34,7 +33,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ZonehvacFourpipefancoilType,
-    FanSystemmodelType,
     CoilCoolingWaterType,
     CoilHeatingElectricType,
     OutdoorairMixerType,
@@ -48,6 +46,7 @@ from idfhub.hvac24_1_0 import (
     schedule_typelimits, summer,
     constant_schedule, two_season_schedule
 )
+from idfhub.hvac24_1_0_fan import fan
 
 def fcu_cooling(
     name: str,
@@ -67,6 +66,8 @@ def fcu_cooling(
     mixer_name = f"{name}_OA_mixer"
     oa_in_node = f"{mixer_name}_OA_in_node"
     air_mixed_node = f"{mixer_name}_mixed_node"
+    fan_outlet_node = f"{name}_fan_outlet_node"
+    ccw_air_outlet_node = f"{name}_CCW_air_outlet_node"
     node_names = [
         oa_in_node,
         air_mixed_node,
@@ -105,23 +106,10 @@ def fcu_cooling(
             Name=oa_in_node
         )
     )
-    fan = FanSystemmodel(
-        idf,
-        **FanSystemmodelType(
-            Name=f"{name}_fan",
-            Air_Inlet_Node_Name=air_mixed_node,
-            Air_Outlet_Node_Name=f"{name}_fan_outlet",
-            Design_Maximum_Air_Flow_Rate=EPValues.AUTOSIZE,
-            Design_Pressure_Rise=120,
-            Motor_Efficiency=0.8,
-            Number_of_Speeds=3,
-            Speed_1_Flow_Fraction=0.33,
-            Speed_2_Flow_Fraction=0.66,
-            Speed_3_Flow_Fraction=1,
-            Speed_1_Electric_Power_Fraction=0.3,
-            Speed_2_Electric_Power_Fraction=0.65,
-            Speed_3_Electric_Power_Fraction=1
-        )
+    fcu_fan = fan(
+        f"{name}_system_fan",
+        inlet_node_name=air_mixed_node,
+        outlet_node_name=fan_outlet_node
     )
     # availability schedule
     # typelimits are initialized in generate_hvac
@@ -140,15 +128,15 @@ def fcu_cooling(
             value_out_period=0,
             typelimits_name=EPValues.FRACTIONAL
         )
-        fan["Availability_Schedule_Name"] = fan_schedule.Name
+        fcu_fan["Availability_Schedule_Name"] = fan_schedule.Name
     coil_cooling_water = CoilCoolingWater(
         idf,
         **CoilCoolingWaterType(
             Name=f"{name}_coil_cooling_water",
             Water_Inlet_Node_Name=f"{name}_water_inlet",
             Water_Outlet_Node_Name=f"{name}_water_outlet",
-            Air_Inlet_Node_Name=f"{name}_fan_outlet",
-            Air_Outlet_Node_Name=f"{name}_CC_water_air_outlet"
+            Air_Inlet_Node_Name=fan_outlet_node,
+            Air_Outlet_Node_Name=ccw_air_outlet_node,
         )
     )
     always_off = "Always OFF"
@@ -160,7 +148,7 @@ def fcu_cooling(
         idf,
         **CoilHeatingElectricType(
             Name=f"{name}_coil_heating_electric",
-            Air_Inlet_Node_Name=f"{name}_CC_water_air_outlet",
+            Air_Inlet_Node_Name=ccw_air_outlet_node,
             Air_Outlet_Node_Name=zone_air_inlet_node,
             Availability_Schedule_Name=always_off
         ) 
@@ -179,8 +167,8 @@ def fcu_cooling(
             Outdoor_Air_Mixer_Name=mixer.Name,
             Air_Inlet_Node_Name=zone_air_exhaust_node,
             Air_Outlet_Node_Name=zone_air_inlet_node,
-            Supply_Air_Fan_Name=fan.Name,
-            Supply_Air_Fan_Object_Type=fan.key,
+            Supply_Air_Fan_Name=fcu_fan.Name,
+            Supply_Air_Fan_Object_Type=fcu_fan.key,
             Cooling_Coil_Name=coil_cooling_water.Name,
             Cooling_Coil_Object_Type=coil_cooling_water.key,
             Maximum_Cold_Water_Flow_Rate=EPValues.AUTOSIZE,

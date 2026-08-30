@@ -56,7 +56,8 @@ from idfhub.hvac24_1_0 import (
     gas_boiler,
     zone_list
 )
-from idfhub.hvac24_1_0_airloops import add_airloop, fan, cv_no_reheat
+from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat
+from idfhub.hvac24_1_0_fan import fan
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
     ground_temperature,
