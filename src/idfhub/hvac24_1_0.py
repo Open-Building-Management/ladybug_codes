@@ -14,6 +14,8 @@ from idfhub.hvac import (
     get_branch_inlet_outlet_nodes
 )
 
+from idfhub.hvac24_1_0_airloops import oa_system
+
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Scheduletypelimits,ScheduletypelimitsMeta,ScheduleConstant,ScheduleConstantMeta,
     SetpointmanagerOutdoorairreset,SetpointmanagerOutdoorairresetMeta,
@@ -60,7 +62,8 @@ from idfhub.common import get_logger, idf, CONF, SCHEDULES
 LOGGER = get_logger()
 BYPASS = "bypass"
 loops: dict = {}
-equipments: dict[str, Any] = {}
+equipments: dict[str, EpBunch] = {}
+controllers: dict[str, EpBunch] = {}
 
 if not idf:
     LOGGER.error("no idf > generate_geometry")
@@ -310,8 +313,8 @@ def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
             )
         )
         for i, thermostat in enumerate(thermostats.values()):
-            controller[f"Control_{i+1}_Object_Type"] = thermostat.key
-            controller[f"Control_{i+1}_Name"] = thermostat.Name
+            controller[EPApi.CONTROL.object_type(i+1)] = thermostat.key
+            controller[EPApi.CONTROL.field_name(i+1)] = thermostat.Name
 
 
 #------------------------------------------------------------------------------
@@ -524,21 +527,39 @@ def process_serie(
     for i, obj_name in enumerate(structure_serie):
         is_last = i == len(structure_serie) - 1
         next_outlet = outlet_node if is_last else None
-
-        obj = equipments[obj_name]
-        side = resolve_side(obj_name, loop_side=loop_side)
-        set_nodes(
-            obj,
-            inlet=current_inlet,
-            outlet=next_outlet,
-            side=side
-        )
+        if "oa_system" in obj_name:
+            oa_system_conf = CONF.get(obj_name, {})
+            mixer_name = oa_system_conf.get("mixer")
+            if mixer_name:
+                mixer = equipments[mixer_name]
+                ctrl = controllers.get(mixer_name)
+                obj = oa_system(
+                    obj_name,
+                    mixer_list=[mixer],
+                    ctrl_list=[ctrl] if ctrl else []
+                )
+                mixer[EPApi.RETURN_AIR.stream_node_name] = current_inlet
+                if ctrl:
+                    ctrl[EPApi.RETURN_AIR.node_name()] = current_inlet
+                side = None
+                current_inlet = mixer[EPApi.MIXED_AIR.node_name()]
+            else:
+                continue
+        else:
+            obj = equipments[obj_name]
+            side = resolve_side(obj_name, loop_side=loop_side)
+            set_nodes(
+                obj,
+                inlet=current_inlet,
+                outlet=next_outlet,
+                side=side
+            )
+            try:
+                current_inlet = obj[EPApi.OUTLET.node_name()]
+            except BadEPFieldError:
+                current_inlet = obj[f"{side}_{EPApi.OUTLET.node_name()}"]
         _objects.append(obj)
         _sides.append(side)
-        try:
-            current_inlet = obj[EPApi.OUTLET_NODE_NAME]
-        except BadEPFieldError:
-            current_inlet = obj[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
     branch = create_branch(
         idf,
         name=branch_name,
@@ -716,14 +737,14 @@ def generate_operation(
         for i, obj_name in enumerate(names):
             side = resolve_side(obj_name, loop_side=PLANT)
             equipment = equipments[obj_name]
-            inlet = equipment[f"{side}_{EPApi.INLET_NODE_NAME}"]
-            outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-            operation[f"Equipment_{i+1}_Object_Type"] = equipment.key
-            operation[f"Equipment_{i+1}_Name"] = obj_name
-            operation[f"Demand_Calculation_{i+1}_Node_Name"] = inlet
-            operation[f"Setpoint_{i+1}_Node_Name"] = outlet
-            operation[f"Component_{i+1}_Flow_Rate"] = EPValues.AUTOSIZE
-            operation[f"Operation_{i+1}_Type"] = EPValues.HEATING
+            inlet = equipment[f"{side}_{EPApi.INLET.node_name()}"]
+            outlet = equipment[f"{side}_{EPApi.OUTLET.node_name()}"]
+            operation[EPApi.EQUIPMENT.object_type(i+1)] = equipment.key
+            operation[EPApi.EQUIPMENT.field_name(i+1)] = obj_name
+            operation[EPApi.DEMAND_CALCULATION.node_name(i+1)] = inlet
+            operation[EPApi.SETPOINT.node_name(i+1)] = outlet
+            operation[EPApi.COMPONENT.flow_rate(i+1)] = EPValues.AUTOSIZE
+            operation[EPApi.OPERATION.type(i+1)] = EPValues.HEATING
         return operation
     list_names = []
     if "mix" in loop_type.lower():
@@ -752,8 +773,8 @@ def generate_operation(
             )
         )
         for i, obj_name in enumerate(names):
-            loop_equipment_list[f"Equipment_{i+1}_Object_Type"] = equipments[obj_name].key
-            loop_equipment_list[f"Equipment_{i+1}_Name"] = equipments[obj_name].Name
+            loop_equipment_list[EPApi.EQUIPMENT.object_type(i+1)] = equipments[obj_name].key
+            loop_equipment_list[EPApi.EQUIPMENT.field_name(i+1)] = equipments[obj_name].Name
         list_names.append(list_name)
 
     if control_mode.lower() == EPValues.LOAD.lower():
@@ -798,9 +819,9 @@ def generate_operation(
                     "operation_range",
                     [0, 1e9]
                 )
-            operation[f"Range_{i+1}_Equipment_List_Name"] = list_name
-            operation[f"Load_Range_{i+1}_Lower_Limit"] = op_range[0]
-            operation[f"Load_Range_{i+1}_Upper_Limit"] = op_range[1]
+            operation[EPApi.RANGE.equipment_list_name(i+1)] = list_name
+            operation[EPApi.LOAD_RANGE.lower_limit(i+1)] = op_range[0]
+            operation[EPApi.LOAD_RANGE.upper_limit(i+1)] = op_range[1]
         return operation
     # on est en control_mode == "OutdoorDryBulb":
     operation = PlantequipmentoperationOutdoordrybulb(
@@ -818,9 +839,9 @@ def generate_operation(
                 "operation_range",
                 [-20, 20]
             )
-        operation[f"Range_{i+1}_Equipment_List_Name"] = list_name
-        operation[f"DryBulb_Temperature_Range_{i+1}_Lower_Limit"] = op_range[0]
-        operation[f"DryBulb_Temperature_Range_{i+1}_Upper_Limit"] = op_range[1]
+        operation[EPApi.RANGE.equipment_list_name(i+1)] = list_name
+        operation[EPApi.DRYBULB_T_RANGE.lower_limit(i+1)] = op_range[0]
+        operation[EPApi.DRYBULB_T_RANGE.upper_limit(i+1)] = op_range[1]
     return operation
 
 
@@ -861,9 +882,9 @@ def operation_list_scheme(loop_name:str):
         )
     )
     for i, operation in enumerate(operations):
-        scheme[f"Control_Scheme_{i+1}_Object_Type"] = operation.key
-        scheme[f"Control_Scheme_{i+1}_Name"] = operation.Name
-        scheme[f"Control_Scheme_{i+1}_Schedule_Name"] = ALWAYS_ON
+        scheme[EPApi.CONTROL_SCHEME.object_type(i+1)] = operation.key
+        scheme[EPApi.CONTROL_SCHEME.field_name(i+1)] = operation.Name
+        scheme[EPApi.CONTROL_SCHEME.schedule_name(i+1)] = ALWAYS_ON
 
 
 def zone_list(
@@ -871,7 +892,6 @@ def zone_list(
     zone_equipments: EpBunch | list[EpBunch]
 ) -> EpBunch:
     """manage zone equipements"""
-    suffix = "Zone_Equipment"
     equipment_list_name = f"{zone_name} equipment list"
     zone_equipment_list = idf.getobject(
         ZonehvacEquipmentlistMeta.idf_name,
@@ -882,7 +902,7 @@ def zone_list(
     heating_index = 1
     if zone_equipment_list:
         while True:
-            field = f"{suffix}_{start_index}_Name"
+            field = EPApi.ZONE_EQUIPMENT.field_name(start_index)
             if field not in zone_equipment_list.fieldnames:
                 break
             name = getattr(zone_equipment_list, field)
@@ -898,10 +918,10 @@ def zone_list(
         )
     def heating_field(i):
         """heating field to search"""
-        return f"{suffix}_{i}_Heating_or_NoLoad_Sequence"
+        return f"{EPApi.ZONE_EQUIPMENT}_{i}_Heating_or_NoLoad_Sequence"
     def cooling_field(i):
         """cooling field to search"""
-        return f"{suffix}_{i}_Cooling_Sequence"
+        return f"{EPApi.ZONE_EQUIPMENT}_{i}_Cooling_Sequence"
     if start_index > 1:
         cooling_indexes = [
             int(getattr(zone_equipment_list, heating_field(i)))
@@ -926,8 +946,8 @@ def zone_list(
             heating = 0
             cooling = cooling_index
             cooling_index += 1
-        zone_equipment_list[f"{suffix}_{start_index + i}_Name"] = equipment.Name
-        zone_equipment_list[f"{suffix}_{start_index + i}_Object_Type"] = equipment.key
-        zone_equipment_list[cooling_field(start_index + i)] = cooling
-        zone_equipment_list[heating_field(start_index + i)] = heating
+        zone_equipment_list[EPApi.ZONE_EQUIPMENT.field_name(start_index + i)] = equipment.Name
+        zone_equipment_list[EPApi.ZONE_EQUIPMENT.object_type(start_index + i)] = equipment.key
+        zone_equipment_list[EPApi.ZONE_EQUIPMENT.cooling_sequence(start_index + i)] = cooling
+        zone_equipment_list[EPApi.ZONE_EQUIPMENT.heating_sequence(start_index + i)] = heating
     return zone_equipment_list

@@ -8,7 +8,9 @@ from eppy.bunch_subclass import EpBunch
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     ConnectorMixer, ConnectorSplitter, Connectorlist, ConnectorlistMeta,
     Branchlist, BranchlistMeta,
-    AirloophvacMeta
+    AirloophvacMeta, AirloophvacOutdoorairsystemMeta,
+    AirloophvacOutdoorairsystemEquipmentlistMeta,
+    OutdoorairMixerMeta
 )
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
@@ -148,22 +150,100 @@ class EPValues(StrEnum):
     LOOPTOLOOP ="LoopToLoop"
 
 class EPApi(StrEnum):
-    "EnergyPlus consts"
-    INLET_NODE_NAME = "Inlet_Node_Name"
-    OUTLET_NODE_NAME = "Outlet_Node_Name"
+    "EnergyPlus field names"
+    INLET = "Inlet"
+    OUTLET = "Outlet"
+    BRANCH = "Branch"
+    CONNECTOR = "Connector"
     INLET_NODE_NAMES = "Inlet_Node_Names"
     OUTLET_NODE_NAMES = "Outlet_Node_Names"
     PLANT_SIDE = "Plant_Side"
     SUPPLY_SIDE = "Supply_Side"
     DEMAND_SIDE = "Demand_Side"
-    BRANCH_LIST_NAME = "Branch_List_Name"
-    CONNECTOR_LIST_NAME = "Connector_List_Name"
     SOURCE_SIDE = "Source_Side"
     LOAD_SIDE = "Load_Side"
-    INLET_BRANCH_NAME = "Inlet_Branch_Name"
-    OUTLET_BRANCH_NAME = "Outlet_Branch_Name"
+    INLET_BRANCH = "Inlet_Branch"
+    OUTLET_BRANCH = "Outlet_Branch"
     LOOP_DEMAND_SIDE = "Loop_Demand_Side"
     LOOP_SUPPLY_SIDE = "Loop_Supply_Side"
+    OUTDOOR_AIR = "Outdoor_Air"
+    OUTDOOR_AIR_EQUIPMENT = "Outdoor_Air_Equipment"
+    RETURN_AIR = "Return_Air"
+    ACTUATOR = "Actuator"
+    RELIEF_AIR = "Relief_Air"
+    MIXED_AIR = "Mixed_Air"
+    CONTROLLER = "Controller"
+    COMPONENT = "Component"
+    EQUIPMENT = "Equipment"
+    CONTROL = "Control"
+    DEMAND_CALCULATION = "Demand_Calculation"
+    SETPOINT = "Setpoint"
+    OPERATION = "Operation"
+    RANGE = "Range"
+    LOAD_RANGE = "Load_Range"
+    DRYBULB_T_RANGE = "DryBulb_Temperature_Range"
+    CONTROL_SCHEME = "Control_Scheme"
+    ZONE_EQUIPMENT = "Zone_Equipment"
+
+    @property
+    def stream_node_name(self) -> str:
+        """return a stream_node_name field"""
+        return f"{self}_Stream_Node_Name"
+    @property
+    def list_name(self) -> str:
+        """return a list_name field"""
+        return f"{self}_List_Name"
+    def node_name(self, i: int|None = None) -> str:
+        """return a node_name field"""
+        if i is None:
+            return f"{self}_Node_Name"
+        return f"{self}_{i}_Node_Name"
+    def field_name(self, i: int|None = None) -> str:
+        """return a name field
+        EPApi.CONNECTOR.field_name(2) -> Connector_2_Name
+        """
+        if i is None:
+            return f"{self}_Name"
+        return f"{self}_{i}_Name"
+    def object_type(self, i: int|None = None) -> str:
+        """return a object_type field"""
+        if i is None:
+            return f"{self}_Object_Type"
+        return f"{self}_{i}_Object_Type"
+    def inlet_node_name(self, i: int|None = None) -> str:
+        """return a inlet_node_name field"""
+        if i is None:
+            return f"{self}_Inlet_Node_Name"
+        return f"{self}_{i}_Inlet_Node_Name"
+    def oulet_node_name(self, i: int|None = None) -> str:
+        """return a outlet_node_name field"""
+        if i is None:
+            return f"{self}_Outlet_Node_Name"
+        return f"{self}_{i}_Outlet_Node_Name"
+    def flow_rate(self, i: int) -> str:
+        """return a flow_rate field"""
+        return f"{self}_{i}_Flow_Rate"
+    def type(self, i: int) -> str:
+        """return a type field"""
+        return f"{self}_{i}_Type"
+    def equipment_list_name(self, i: int) -> str:
+        """return a equipment_list_name field"""
+        return f"{self}_{i}_Equipment_List_Name"
+    def lower_limit(self, i:int) -> str:
+        """return a lower_limit field"""
+        return f"{self}_{i}_Lower_Limit"
+    def upper_limit(self, i:int) -> str:
+        """return a upper_limit field"""
+        return f"{self}_{i}_Upper_Limit"
+    def schedule_name(self, i:int) -> str:
+        """return a schedule_name field"""
+        return f"{self}_{i}_Schedule_Name"
+    def heating_sequence(self, i:int) -> str:
+        """return a heating_or_noload_sequence field"""
+        return f"{self}_{i}_Heating_or_NoLoad_Sequence"
+    def cooling_sequence(self, i:int) -> str:
+        """return a cooling sequence field"""
+        return f"{self}_{i}_Cooling_Sequence"
 
 
 def set_nodes(
@@ -175,8 +255,8 @@ def set_nodes(
 ):
     """Set object nodes - loop or equipment"""
     prefix = f"{side}_" if side else ""
-    inlet_field = f"{prefix}{EPApi.INLET_NODE_NAME}"
-    outlet_field = f"{prefix}{EPApi.OUTLET_NODE_NAME}"
+    inlet_field = f"{prefix}{EPApi.INLET.node_name()}"
+    outlet_field = f"{prefix}{EPApi.OUTLET.node_name()}"
     if obj.key == AirloophvacMeta.idf_name:
         if side == EPApi.DEMAND_SIDE:
             inlet_field = f"{prefix}{EPApi.INLET_NODE_NAMES}"
@@ -196,14 +276,14 @@ def node_name(branch_name: str, port: str):
 def set_branch_list(obj, *, branch_list, side: str|None = None):
     """Set branch list on a loop side"""
     if side is None:
-        obj[EPApi.BRANCH_LIST_NAME] = branch_list
+        obj[EPApi.BRANCH.list_name] = branch_list
     else:
-        obj[f"{side}_{EPApi.BRANCH_LIST_NAME}"] = branch_list
+        obj[f"{side}_{EPApi.BRANCH.list_name}"] = branch_list
 
 def add_plantloop(
     idf:IDF,
     name:str,
-    conf:dict|None = None
+    conf:dict
 ):
     """create a plant loop
     On crée les objets BRANCHLIST
@@ -280,8 +360,8 @@ def create_pipe(
         "PIPE:ADIABATIC",
         Name=name
     )
-    pipe[EPApi.INLET_NODE_NAME] = inlet_node_name
-    pipe[EPApi.OUTLET_NODE_NAME] = outlet_node_name
+    pipe[EPApi.INLET.node_name()] = inlet_node_name
+    pipe[EPApi.OUTLET.node_name()] = outlet_node_name
     return pipe
 
 
@@ -307,8 +387,8 @@ def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
         Heating_Design_Capacity=EPValues.AUTOSIZE,
         Maximum_Water_Flow_Rate=EPValues.AUTOSIZE,
     )
-    zone_baseboard[EPApi.INLET_NODE_NAME] = f"{zone_name} baseboards inlet"
-    zone_baseboard[EPApi.OUTLET_NODE_NAME] = f"{zone_name} baseboards outlet"
+    zone_baseboard[EPApi.INLET.node_name()] = f"{zone_name} baseboards inlet"
+    zone_baseboard[EPApi.OUTLET.node_name()] = f"{zone_name} baseboards outlet"
     surfaces = [
         s for s in idf.idfobjects["BUILDINGSURFACE:DETAILED"]
         if s.Zone_Name.lower() == zone_name.lower()
@@ -345,6 +425,26 @@ def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
     return zone_baseboard
 
 
+def get_oa_system_mixer(idf: IDF, list_name: str) -> EpBunch|None:
+    """get oa system mixer regards to its equipment list
+    in EnergyPlus : only a single OutdoorAir:Mixer per AirLoopHVAC:OutdoorAirSystem
+    on a une equipment list qui peut référencer plusieurs mixers
+    mais celà n'a pas de sens d'enchainer des mixers en série
+    """
+    mixer_list = idf.getobject(
+        AirloophvacOutdoorairsystemEquipmentlistMeta.idf_name,
+        list_name
+    )
+    if not mixer_list:
+        return None
+    mixer_name = mixer_list[EPApi.COMPONENT.field_name(1)]
+    mixer = idf.getobject(
+        OutdoorairMixerMeta.idf_name,
+        mixer_name
+    )
+    return mixer
+
+
 def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
     """create a branch"""
     branch = idf.newidfobject(
@@ -352,17 +452,23 @@ def create_branch(idf: IDF, *, name: str, objects: list[EpBunch], sides: list):
         Name=name
     )
     for i, obj in enumerate(objects):
-        suffix = f"Component_{i+1}"
-        branch[f"{suffix}_Object_Type"] = obj.key
-        branch[f"{suffix}_Name"] = obj.Name
-        inlet_node = f"{suffix}_{EPApi.INLET_NODE_NAME}"
-        outlet_node = f"{suffix}_{EPApi.OUTLET_NODE_NAME}"
+        branch[EPApi.COMPONENT.object_type(i+1)] = obj.key
+        branch[EPApi.COMPONENT.field_name(i+1)] = obj.Name
+        inlet_node = EPApi.COMPONENT.inlet_node_name(i+1)
+        outlet_node = EPApi.COMPONENT.oulet_node_name(i+1)
         if sides[i] is None:
-            branch[inlet_node] = obj[EPApi.INLET_NODE_NAME]
-            branch[outlet_node] = obj[EPApi.OUTLET_NODE_NAME]
+            if obj.key == AirloophvacOutdoorairsystemMeta.idf_name:
+                list_name = obj[EPApi.OUTDOOR_AIR_EQUIPMENT.list_name]
+                mixer = get_oa_system_mixer(idf, list_name)
+                if mixer:
+                    branch[inlet_node] = mixer[EPApi.RETURN_AIR.stream_node_name]
+                    branch[outlet_node] = mixer[EPApi.MIXED_AIR.node_name()]
+            else:
+                branch[inlet_node] = obj[EPApi.INLET.node_name()]
+                branch[outlet_node] = obj[EPApi.OUTLET.node_name()]
         else:
-            branch[inlet_node] = obj[f"{sides[i]}_{EPApi.INLET_NODE_NAME}"]
-            branch[outlet_node] = obj[f"{sides[i]}_{EPApi.OUTLET_NODE_NAME}"]
+            branch[inlet_node] = obj[f"{sides[i]}_{EPApi.INLET.node_name()}"]
+            branch[outlet_node] = obj[f"{sides[i]}_{EPApi.OUTLET.node_name()}"]
     #print(branch)
     return branch
 
@@ -392,7 +498,7 @@ def split_mix(
         )
     )
     for i, branch in enumerate(branches):
-        splitter[f"Outlet_Branch_{i+1}_Name"] = branch.Name
+        splitter[EPApi.OUTLET_BRANCH.field_name(i+1)] = branch.Name
     mixer = ConnectorMixer(
         idf,
         **ConnectorMixerType(
@@ -401,11 +507,11 @@ def split_mix(
         )
     )
     for i, branch in enumerate(branches):
-        mixer[f"Inlet_Branch_{i+1}_Name"] = branch.Name
+        mixer[EPApi.INLET_BRANCH.field_name(i+1)] = branch.Name
     # at this stage, we should add connectors to the connector list
     # or create it if it does not exist
     connector_list_name = f"{plantloop.Name} {side} connector list"
-    plantloop[f"{side}_{EPApi.CONNECTOR_LIST_NAME}"] = connector_list_name
+    plantloop[f"{side}_{EPApi.CONNECTOR.list_name}"] = connector_list_name
     connector_list = idf.getobject(
         ConnectorlistMeta.idf_name,
         connector_list_name
@@ -413,7 +519,7 @@ def split_mix(
     start_index = 1
     if connector_list:
         while True:
-            name = getattr(connector_list, f"Connector_{start_index}_Name")
+            name = getattr(connector_list, EPApi.CONNECTOR.field_name(start_index))
             if not name:
                 break
             start_index += 1
@@ -425,8 +531,8 @@ def split_mix(
             )
         )
     for i, connector in enumerate([splitter, mixer]):
-        connector_list[f"Connector_{start_index + i}_Object_Type"] = connector.key
-        connector_list[f"Connector_{start_index + i}_Name"] = connector.Name
+        connector_list[EPApi.CONNECTOR.object_type(start_index + i)] = connector.key
+        connector_list[EPApi.CONNECTOR.field_name(start_index + i)] = connector.Name
 
 
 def branchlist_update(
@@ -447,7 +553,7 @@ def branchlist_update(
     start_index = 1
     if branch_list:
         while True:
-            field = f"Branch_{start_index}_Name"
+            field = EPApi.BRANCH.field_name(start_index)
             if field not in branch_list.fieldnames:
                 break
             name = getattr(branch_list, field)
@@ -463,9 +569,9 @@ def branchlist_update(
         )
     if isinstance(branches, list):
         for i, branch in enumerate(branches):
-            branch_list[f"Branch_{start_index + i}_Name"] = branch.Name
+            branch_list[EPApi.BRANCH.field_name(start_index + i)] = branch.Name
     else:
-        branch_list[f"Branch_{start_index}_Name"] = branches.Name
+        branch_list[EPApi.BRANCH.field_name(start_index)] = branches.Name
 
 
 def pipe_splitter(idf: IDF, *, inlet_node: str, branch_name: str):
@@ -505,12 +611,12 @@ def pipe_mixer(idf:IDF, *, outlet_node: str, branch_name: str):
 def get_branch_inlet_outlet_nodes(branch: EpBunch):
     """branch inlet and outlet nodes"""
     # inlet = premier composant
-    inlet = getattr(branch, "Component_1_Inlet_Node_Name", None)
+    inlet = getattr(branch, EPApi.COMPONENT.inlet_node_name(1), None)
     # outlet = dernier composant
     i = 1
     last_outlet = None
     while True:
-        outlet = getattr(branch, f"Component_{i}_Outlet_Node_Name", None)
+        outlet = getattr(branch, EPApi.COMPONENT.oulet_node_name(i), None)
         if not outlet:
             break
         last_outlet = outlet

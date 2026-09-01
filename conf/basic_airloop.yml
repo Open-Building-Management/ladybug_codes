@@ -18,12 +18,21 @@ airloops:
 equipments:
   - constant_fan
   - cv_no_reheat_r4
+  - oa_mixer_airloop
 
 airloop:
   branches:
-    air_supply: [constant_fan]
+    air_supply:
+      - oa_system_airloop
+      - constant_fan
   terminals:
     - cv_no_reheat_r4
+
+oa_system_airloop:
+  mixer: oa_mixer_airloop
+
+oa_mixer_airloop:
+  controller: oa_controller_airloop
 
 constant_fan:
   force_side: Air

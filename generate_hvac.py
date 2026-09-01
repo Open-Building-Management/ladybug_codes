@@ -46,7 +46,7 @@ from idfhub.common import (
 )
 
 from idfhub.hvac24_1_0 import (
-    loops, equipments,
+    loops, equipments, controllers,
     schedule_typelimits,
     resolve_side,
     pump,
@@ -56,7 +56,7 @@ from idfhub.hvac24_1_0 import (
     gas_boiler,
     zone_list
 )
-from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat
+from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat, oa_mixer
 from idfhub.hvac24_1_0_fan import fan
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
@@ -101,6 +101,7 @@ EXCHANGER = "HX"
 FCU = "fcu"
 FAN = "fan"
 CV_NO_REHEAT = "cv_no_reheat"
+OA_MIXER = "oa_mixer"
 
 zone_equipments: dict[str, list] = {}
 air_nodes: dict[str, dict[str, str]] = {}
@@ -355,6 +356,12 @@ USE_AIR = {"return": 0, "exhaust": 0}
 ground_temperature()
 
 for equipment_name in EQUIPMENTS:
+    if OA_MIXER in equipment_name:
+        elements = oa_mixer(equipment_name)
+        equipments[equipment_name] = elements[0]
+        if len(elements) == 2:
+            controllers[equipment_name] = elements[1]
+        continue
     if FAN in equipment_name:
         equipments[equipment_name] = fan(equipment_name)
         continue
@@ -497,10 +504,10 @@ for loop in AIRLOOPS:
         zone = name.split("_")[-1]
         side = resolve_side(name)
         terminal = equipments[name]
-        inlet = f"{side}_{EPApi.INLET_NODE_NAME}"
-        outlet = f"{side}_{EPApi.OUTLET_NODE_NAME}"
-        air_zone_splitters[loop][f"Outlet_{i+1}_Node_Name"] = terminal[inlet]
-        air_zone_mixers[loop][f"Inlet_{i+1}_Node_Name"] = air_nodes[zone]["air_return_node"]
+        inlet = f"{side}_{EPApi.INLET.node_name()}"
+        outlet = f"{side}_{EPApi.OUTLET.node_name()}"
+        air_zone_splitters[loop][EPApi.OUTLET.node_name(i+1)] = terminal[inlet]
+        air_zone_mixers[loop][EPApi.INLET.node_name(i+1)] = air_nodes[zone]["air_return_node"]
 
 # machine level setpoints management
 # this can only to be done after all nodes and branches adjustments
@@ -515,7 +522,7 @@ for loop in loops:
         if setpoint is not None:
             side = resolve_side(obj_name, loop_side=PLANT)
             equipment = equipments[obj_name]
-            outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
+            outlet = equipment[f"{side}_{EPApi.OUTLET.node_name()}"]
             water_law(loop, setpoint, outlet)
 
 #------------------------------------------------------------------------------
