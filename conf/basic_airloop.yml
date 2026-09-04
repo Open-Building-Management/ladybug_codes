@@ -19,11 +19,13 @@ equipments:
   - constant_fan
   - cv_no_reheat_r4
   - oa_mixer_airloop
+  - coil_system_cooling_dx
 
 airloop:
   branches:
     air_supply:
       - oa_system_airloop
+      - coil_system_cooling_dx
       - constant_fan
   terminals:
     - cv_no_reheat_r4
@@ -33,6 +35,14 @@ oa_system_airloop:
 
 oa_mixer_airloop:
   controller: oa_controller_airloop
+
+coil_system_cooling_dx:
+  force_side: DX_Cooling_Coil_System
+  coil: coil_cooling_dx_single_speed
+
+coil_cooling_dx_single_speed:
+  force_side: Air
+  cop: 3
 
 constant_fan:
   force_side: Air

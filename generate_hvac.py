@@ -57,6 +57,7 @@ from idfhub.hvac24_1_0 import (
     zone_list
 )
 from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat, oa_mixer
+from idfhub.hvac24_1_0_coils import coil_system_cooling_dx
 from idfhub.hvac24_1_0_fan import fan
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
@@ -102,6 +103,8 @@ FCU = "fcu"
 FAN = "fan"
 CV_NO_REHEAT = "cv_no_reheat"
 OA_MIXER = "oa_mixer"
+COIL_SYSTEM = "coil_system"
+COOLING_DX = "cooling_dx"
 
 zone_equipments: dict[str, list] = {}
 air_nodes: dict[str, dict[str, str]] = {}
@@ -361,6 +364,10 @@ for equipment_name in EQUIPMENTS:
         equipments[equipment_name] = elements[0]
         if len(elements) == 2:
             controllers[equipment_name] = elements[1]
+        continue
+    if COIL_SYSTEM in equipment_name:
+        if COOLING_DX in equipment_name:
+            equipments[equipment_name] = coil_system_cooling_dx(equipment_name)
         continue
     if FAN in equipment_name:
         equipments[equipment_name] = fan(equipment_name)

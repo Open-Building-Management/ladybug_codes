@@ -547,13 +547,17 @@ def process_serie(
                 continue
         else:
             obj = equipments[obj_name]
-            side = resolve_side(obj_name, loop_side=loop_side)
-            set_nodes(
-                obj,
-                inlet=current_inlet,
-                outlet=next_outlet,
-                side=side
-            )
+            objects = obj if isinstance(obj, list) else [obj]
+            # usually only one object, but we can have a container
+            # eg a coil_system and a coil sharing same nodes
+            for obj in objects: 
+                side = resolve_side(obj.Name, loop_side=loop_side)
+                set_nodes(
+                    obj,
+                    inlet=current_inlet,
+                    outlet=next_outlet,
+                    side=side
+                )
             try:
                 current_inlet = obj[EPApi.OUTLET.node_name()]
             except BadEPFieldError:
