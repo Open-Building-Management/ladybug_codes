@@ -550,8 +550,14 @@ def process_serie(
             objects = obj if isinstance(obj, list) else [obj]
             # usually only one object, but we can have a container
             # eg a coil_system and a coil sharing same nodes
-            for obj in objects: 
-                side = resolve_side(obj.Name, loop_side=loop_side)
+            LOGGER.debug(
+                "%s yml name : %s, idf names: %s",
+                branch_name, obj_name, [obj.Name for obj in objects]
+            )
+            for obj in objects:
+                # obj_name comes from the yaml, it can be shorter than obj.Name
+                # if more than one object sharing the same nodes, we use idf object names
+                side = resolve_side(obj_name if len(objects)==1 else obj.Name, loop_side=loop_side)
                 set_nodes(
                     obj,
                     inlet=current_inlet,
