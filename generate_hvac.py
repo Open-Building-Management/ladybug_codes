@@ -245,22 +245,22 @@ zone_control(
 # Air Loops
 #------------------------------------------------------------------------------
 for airloop in AIRLOOPS:
-   air_splitter, air_mixer, air_loop = add_airloop(airloop)
-   loops[airloop] = air_loop
-   air_zone_splitters[airloop] = air_splitter
-   air_zone_mixers[airloop] = air_mixer
-   SizingSystem(
-       idf,
-       **SizingSystemType(
-           AirLoop_Name=airloop,
-           Preheat_Design_Temperature=7,
-           Preheat_Design_Humidity_Ratio=0.008,
-           Precool_Design_Temperature=12.8,
-           Precool_Design_Humidity_Ratio=0.008,
-           Central_Cooling_Design_Supply_Air_Temperature=12.8,
-           Central_Heating_Design_Supply_Air_Temperature=40,
-       )
-   )
+    air_splitter, air_mixer, air_loop = add_airloop(airloop)
+    loops[airloop] = air_loop
+    air_zone_splitters[airloop] = air_splitter
+    air_zone_mixers[airloop] = air_mixer
+    SizingSystem(
+        idf,
+        **SizingSystemType(
+            AirLoop_Name=airloop,
+            Preheat_Design_Temperature=7,
+            Preheat_Design_Humidity_Ratio=0.008,
+            Precool_Design_Temperature=12.8,
+            Precool_Design_Humidity_Ratio=0.008,
+            Central_Cooling_Design_Supply_Air_Temperature=12.8,
+            Central_Heating_Design_Supply_Air_Temperature=40,
+        )
+    )
 
 #------------------------------------------------------------------------------
 # Plant Loops
