@@ -105,6 +105,8 @@ OA_MIXER = "oa_mixer"
 COIL_SYSTEM = "coil_system"
 COOLING_DX = "cooling_dx"
 
+USE_AIR = {"return": 0, "exhaust": 0}
+
 zone_equipments: dict[str, list] = {}
 air_nodes: dict[str, dict[str, str]] = {}
 air_zone_splitters: dict[str, EpBunch] = {}
@@ -120,6 +122,197 @@ def add_variable(name, key="*"):
             Reporting_Frequency="Timestep"
         )
     )
+
+
+def generate_zone_equipment(equipment_name: str, zone_name: str):
+    """generate zone equipments for a zone"""
+    if "baseboards" in equipment_name:
+        zone_equipment = add_baseboard(idf, zone_name)
+        equipments[equipment_name] = zone_equipment
+    if CV_NO_REHEAT in equipment_name:
+        air_terminal, zone_equipment = cv_no_reheat(
+            equipment_name,
+            zone_air_inlet_node=air_nodes[zone_name]["air_inlet_node"]
+        )
+        USE_AIR["return"] = 1
+        equipments[equipment_name] = air_terminal
+    if FCU in equipment_name:
+        coil_cooling_water, zone_equipment = fcu_cooling(
+            equipment_name,
+            zone_air_inlet_node=air_nodes[zone_name]["air_inlet_node"],
+            zone_air_exhaust_node=air_nodes[zone_name]["air_exhaust_node"]
+        )
+        USE_AIR["exhaust"] = 1
+        equipments[equipment_name] = coil_cooling_water
+    zone_equipments[zone_name].append(zone_equipment)
+
+
+def generate_equipment(equipment_name) -> bool:
+    """generate equipment from the name declared in the yml"""
+    if OA_MIXER in equipment_name:
+        elements = oa_mixer(equipment_name)
+        equipments[equipment_name] = elements[0]
+        if len(elements) == 2:
+            controllers[equipment_name] = elements[1]
+        return True
+    if COIL_SYSTEM in equipment_name:
+        if COOLING_DX in equipment_name:
+            kit = coil_system_cooling_dx(equipment_name)
+            if kit:
+                kits[equipment_name] = kit
+        return True
+    if FAN in equipment_name:
+        equipments[equipment_name] = fan(equipment_name)
+        return True
+    if PUMP in equipment_name:
+        pump_type = "constant"
+        if "variable" in equipment_name:
+            pump_type = "variable"
+        equipments[equipment_name] = pump(equipment_name, pump_type=pump_type)
+        return True
+    if PIPE in equipment_name:
+        pipe = create_pipe(
+            idf,
+            name=equipment_name,
+            inlet_node_name=f"{equipment_name}_inlet_node",
+            outlet_node_name=f"{equipment_name}_outlet_node"
+        )
+        equipments[equipment_name] = pipe
+        return True
+    if BOREHOLE in equipment_name:
+        borehole = vertical_geoexchanger(equipment_name)
+        equipments[equipment_name] = borehole
+        return True
+    if HPWTW in equipment_name:
+        hpwtw = water_to_water_heatpump(equipment_name)
+        equipments[equipment_name] = hpwtw
+        return True
+    if HPATW in equipment_name:
+        hpatw = air_to_water_heatpump_eir(equipment_name)
+        equipments[equipment_name] = hpatw
+        return True
+    if BOILER in equipment_name:
+        boiler = gas_boiler(equipment_name)
+        equipments[equipment_name] = boiler
+        return True
+    if EXCHANGER in equipment_name:
+        exchanger = heat_exchanger(equipment_name)
+        equipments[equipment_name] = exchanger
+        return True
+    if "PV" in equipment_name:
+        PV_plant(equipment_name)
+        return True
+    return False
+
+
+def generate_equipments():
+    """generate all equipments"""
+    for equipment_name in EQUIPMENTS:
+        if not generate_equipment(equipment_name):
+            # zone equipment
+            try:
+                zone_name = equipment_name.split("_")[-1]
+            except IndexError:
+                zone_name = None
+            if zone_name in ZONES:
+                generate_zone_equipment(equipment_name, zone_name)
+
+
+def basic_zone_sizing(zone_name: str):
+    """basic zone sizing"""
+    zone_conf = CONF.get(zone_name, {})
+    # other methods : Flow/Person
+    design_spec = DesignspecificationOutdoorair(
+        idf,
+        **DesignspecificationOutdoorairType(
+            Name=f"{zone_name}_design_spec_oa",
+            Outdoor_Air_Method=zone_conf.get(
+                "Outdoor_Air_Method", "Flow/Zone"
+            ),
+            Outdoor_Air_Flow_per_Person=zone_conf.get(
+                "Outdoor_Air_Flow_per_Person", 0.007
+            ),
+            Outdoor_Air_Flow_per_Zone=zone_conf.get(
+                "Outdoor_Air_Flow_per_Zone", 0.1
+            )
+        )
+    )
+    # other methods : TemperatureDifference
+    return SizingZone(
+        idf,
+        **SizingZoneType(
+            Zone_or_ZoneList_Name=zone_name,
+            Zone_Cooling_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
+            Zone_Cooling_Design_Supply_Air_Temperature=14,
+            Zone_Cooling_Design_Supply_Air_Humidity_Ratio=0.008,
+            Zone_Heating_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
+            Zone_Heating_Design_Supply_Air_Temperature=40,
+            Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
+            Design_Specification_Outdoor_Air_Object_Name=design_spec.Name,
+            Cooling_Design_Air_Flow_Method=zone_conf.get(
+                "Cooling_Design_Air_Flow_Method", "DesignDay"
+            ),
+            Cooling_Design_Air_Flow_Rate=zone_conf.get(
+                "Cooling_Design_Air_Flow_Rate", 0.6
+            )
+        )
+    )
+
+
+def add_equipment_variables():
+    """add variables for the declared equipments"""
+    for equipment_name in EQUIPMENTS:
+        if COIL_SYSTEM in equipment_name and COOLING_DX in equipment_name:
+            add_variable("Cooling Coil Total Cooling Rate")
+        if BOREHOLE in equipment_name:
+            suffix = "Ground Heat Exchanger"
+            add_variable(f"{suffix} Heat Transfer Rate")
+            add_variable(f"{suffix} Inlet Temperature")
+            add_variable(f"{suffix} Outlet Temperature")
+            add_variable(f"{suffix} Average Borehole Temperature")
+        if HP in equipment_name:
+            suffix = "Heat Pump"
+            add_variable(f"{suffix} Load Side Outlet Temperature")
+            add_variable(f"{suffix} Load Side Inlet Temperature")
+            add_variable(f"{suffix} Source Side Outlet Temperature")
+            add_variable(f"{suffix} Source Side Inlet Temperature")
+            add_variable(f"{suffix} Source Side Mass Flow Rate")
+            add_variable(f"{suffix} Electricity Rate")
+            add_variable(f"{suffix} Load Side Heat Transfer Rate")
+            add_variable(f"{suffix} Source Side Heat Transfer Rate")
+        if BOILER in equipment_name:
+            suffix = "Boiler"
+            add_variable(f"{suffix} Heating Rate")
+            add_variable(f"{suffix} Inlet Temperature")
+            add_variable(f"{suffix} Outlet Temperature")
+            add_variable(f"{suffix} Part Load Ratio")
+        if EXCHANGER in equipment_name:
+            suffix = "Fluid Heat Exchanger"
+            add_variable(f"{suffix} Heat Transfer Rate")
+            add_variable(f"{suffix} Loop Supply Side Mass Flow Rate")
+            add_variable(f"{suffix} Loop Supply Side Inlet Temperature")
+            add_variable(f"{suffix} Loop Supply Side Outlet Temperature")
+            add_variable(f"{suffix} Loop Demand Side Mass Flow Rate")
+            add_variable(f"{suffix} Loop Demand Side Inlet Temperature")
+            add_variable(f"{suffix} Loop Demand Side Outlet Temperature")
+        if FCU in equipment_name:
+            #add_variable("Heating Coil Heating Rate")
+            add_variable("Cooling Coil Total Cooling Rate")
+            add_variable("Cooling Coil Sensible Cooling Rate")
+            add_variable("Cooling Coil Wetted Area Fraction")
+            add_variable("Fan Electricity Rate")
+            add_variable("Fan Coil Fan Electricity Rate")
+            add_variable("Fan Coil Heating Rate")
+            add_variable("Fan Coil Total Cooling Rate")
+            add_variable("Fan Coil Fan Speed Level")
+        if FAN in equipment_name:
+            add_variable("Fan Electricity Rate")
+            add_variable("Fan Air Mass Flow Rate")
+        if "baseboard" in equipment_name:
+            add_variable("Baseboard Total Heating Rate")
+            add_variable("Baseboard Water Inlet Temperature")
+            add_variable("Baseboard Water Outlet Temperature")
+
 
 Timestep(
     idf,
@@ -305,45 +498,6 @@ for loop in LOOPS:
         )
     )
 
-def basic_zone_sizing(zone_name: str):
-    """basic zone sizing"""
-    zone_conf = CONF.get(zone_name, {})
-    # other methods : Flow/Person
-    design_spec = DesignspecificationOutdoorair(
-        idf,
-        **DesignspecificationOutdoorairType(
-            Name=f"{zone_name}_design_spec_oa",
-            Outdoor_Air_Method=zone_conf.get(
-                "Outdoor_Air_Method", "Flow/Zone"
-            ),
-            Outdoor_Air_Flow_per_Person=zone_conf.get(
-                "Outdoor_Air_Flow_per_Person", 0.007
-            ),
-            Outdoor_Air_Flow_per_Zone=zone_conf.get(
-                "Outdoor_Air_Flow_per_Zone", 0.1
-            )
-        )
-    )
-    # other methods : TemperatureDifference
-    return SizingZone(
-        idf,
-        **SizingZoneType(
-            Zone_or_ZoneList_Name=zone_name,
-            Zone_Cooling_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
-            Zone_Cooling_Design_Supply_Air_Temperature=14,
-            Zone_Cooling_Design_Supply_Air_Humidity_Ratio=0.008,
-            Zone_Heating_Design_Supply_Air_Temperature_Input_Method="SupplyAirTemperature",
-            Zone_Heating_Design_Supply_Air_Temperature=40,
-            Zone_Heating_Design_Supply_Air_Humidity_Ratio=0.008,
-            Design_Specification_Outdoor_Air_Object_Name=design_spec.Name,
-            Cooling_Design_Air_Flow_Method=zone_conf.get(
-                "Cooling_Design_Air_Flow_Method", "DesignDay"
-            ),
-            Cooling_Design_Air_Flow_Rate=zone_conf.get(
-                "Cooling_Design_Air_Flow_Rate", 0.6
-            )
-        )
-    )
 for zone in ZONES:
     basic_zone_sizing(zone)
     zone_equipments[zone] = []
@@ -354,88 +508,9 @@ for zone in ZONES:
         "air_node": f"{zone}_air_node"
     }
 
-USE_AIR = {"return": 0, "exhaust": 0}
 ground_temperature()
 
-for equipment_name in EQUIPMENTS:
-    if OA_MIXER in equipment_name:
-        elements = oa_mixer(equipment_name)
-        equipments[equipment_name] = elements[0]
-        if len(elements) == 2:
-            controllers[equipment_name] = elements[1]
-        continue
-    if COIL_SYSTEM in equipment_name:
-        if COOLING_DX in equipment_name:
-            kit = coil_system_cooling_dx(equipment_name)
-            if kit:
-                kits[equipment_name] = kit
-        continue
-    if FAN in equipment_name:
-        equipments[equipment_name] = fan(equipment_name)
-        continue
-    if PUMP in equipment_name:
-        pump_type = "constant"
-        if "variable" in equipment_name:
-            pump_type = "variable"
-        equipments[equipment_name] = pump(equipment_name, pump_type=pump_type)
-        continue
-    if PIPE in equipment_name:
-        pipe = create_pipe(
-            idf,
-            name=equipment_name,
-            inlet_node_name=f"{equipment_name}_inlet_node",
-            outlet_node_name=f"{equipment_name}_outlet_node"
-        )
-        equipments[equipment_name] = pipe
-        continue
-    if BOREHOLE in equipment_name:
-        borehole = vertical_geoexchanger(equipment_name)
-        equipments[equipment_name] = borehole
-        continue
-    if HPWTW in equipment_name:
-        hpwtw = water_to_water_heatpump(equipment_name)
-        equipments[equipment_name] = hpwtw
-        continue
-    if HPATW in equipment_name:
-        hpatw = air_to_water_heatpump_eir(equipment_name)
-        equipments[equipment_name] = hpatw
-        continue
-    if BOILER in equipment_name:
-        boiler = gas_boiler(equipment_name)
-        equipments[equipment_name] = boiler
-        continue
-    if EXCHANGER in equipment_name:
-        exchanger = heat_exchanger(equipment_name)
-        equipments[equipment_name] = exchanger
-        continue
-    if "PV" in equipment_name:
-        PV_plant(equipment_name)
-        continue
-    # zone equipment
-    try:
-        zone = equipment_name.split("_")[-1]
-    except IndexError:
-        zone = None
-    if zone in ZONES:
-        if "baseboards" in equipment_name:
-            zone_equipment = add_baseboard(idf, zone)
-            equipments[equipment_name] = zone_equipment
-        if CV_NO_REHEAT in equipment_name:
-            air_terminal, zone_equipment = cv_no_reheat(
-                equipment_name,
-                zone_air_inlet_node=air_nodes[zone]["air_inlet_node"]
-            )
-            USE_AIR["return"] = 1
-            equipments[equipment_name] = air_terminal
-        if FCU in equipment_name:
-            coil_cooling_water, zone_equipment = fcu_cooling(
-                equipment_name,
-                zone_air_inlet_node=air_nodes[zone]["air_inlet_node"],
-                zone_air_exhaust_node=air_nodes[zone]["air_exhaust_node"]
-            )
-            USE_AIR["exhaust"] = 1
-            equipments[equipment_name] = coil_cooling_water
-        zone_equipments[zone].append(zone_equipment)
+generate_equipments()
 
 #----------------------------------------------------------------
 # ZONE EQUIPMENTS DECLARATION
@@ -579,57 +654,7 @@ if CONF.get("verbose"):
     add_variable("System Node Setpoint Temperature")
     add_variable("System Node Temperature")
 
-for equipment_name in EQUIPMENTS:
-    if COIL_SYSTEM in equipment_name and COOLING_DX in equipment_name:
-        add_variable("Cooling Coil Total Cooling Rate")
-    if BOREHOLE in equipment_name:
-        suffix = "Ground Heat Exchanger"
-        add_variable(f"{suffix} Heat Transfer Rate")
-        add_variable(f"{suffix} Inlet Temperature")
-        add_variable(f"{suffix} Outlet Temperature")
-        add_variable(f"{suffix} Average Borehole Temperature")
-    if HP in equipment_name:
-        suffix = "Heat Pump"
-        add_variable(f"{suffix} Load Side Outlet Temperature")
-        add_variable(f"{suffix} Load Side Inlet Temperature")
-        add_variable(f"{suffix} Source Side Outlet Temperature")
-        add_variable(f"{suffix} Source Side Inlet Temperature")
-        add_variable(f"{suffix} Source Side Mass Flow Rate")
-        add_variable(f"{suffix} Electricity Rate")
-        add_variable(f"{suffix} Load Side Heat Transfer Rate")
-        add_variable(f"{suffix} Source Side Heat Transfer Rate")
-    if BOILER in equipment_name:
-        suffix = "Boiler"
-        add_variable(f"{suffix} Heating Rate")
-        add_variable(f"{suffix} Inlet Temperature")
-        add_variable(f"{suffix} Outlet Temperature")
-        add_variable(f"{suffix} Part Load Ratio")
-    if EXCHANGER in equipment_name:
-        suffix = "Fluid Heat Exchanger"
-        add_variable(f"{suffix} Heat Transfer Rate")
-        add_variable(f"{suffix} Loop Supply Side Mass Flow Rate")
-        add_variable(f"{suffix} Loop Supply Side Inlet Temperature")
-        add_variable(f"{suffix} Loop Supply Side Outlet Temperature")
-        add_variable(f"{suffix} Loop Demand Side Mass Flow Rate")
-        add_variable(f"{suffix} Loop Demand Side Inlet Temperature")
-        add_variable(f"{suffix} Loop Demand Side Outlet Temperature")
-    if FCU in equipment_name:
-        #add_variable("Heating Coil Heating Rate")
-        add_variable("Cooling Coil Total Cooling Rate")
-        add_variable("Cooling Coil Sensible Cooling Rate")
-        add_variable("Cooling Coil Wetted Area Fraction")
-        add_variable("Fan Electricity Rate")
-        add_variable("Fan Coil Fan Electricity Rate")
-        add_variable("Fan Coil Heating Rate")
-        add_variable("Fan Coil Total Cooling Rate")
-        add_variable("Fan Coil Fan Speed Level")
-    if FAN in equipment_name:
-        add_variable("Fan Electricity Rate")
-        add_variable("Fan Air Mass Flow Rate")
-    if "baseboard" in equipment_name:
-        add_variable("Baseboard Total Heating Rate")
-        add_variable("Baseboard Water Inlet Temperature")
-        add_variable("Baseboard Water Outlet Temperature")
+add_equipment_variables()
 
 add_variable("Pump Mass Flow Rate")
 

@@ -89,9 +89,9 @@ def vertical_geoexchanger(name: str):
     return GroundheatexchangerSystem(
         idf,
         **GroundheatexchangerSystemType(
-            Name=f"{name} vertical geoexchanger",
-            Inlet_Node_Name=f"{name}_vertical_geoexchanger_inlet_node",
-            Outlet_Node_Name=f"{name}_vertical_geoexchanger_outlet_node",
+            Name=name,
+            Inlet_Node_Name=f"{name}_inlet_node",
+            Outlet_Node_Name=f"{name}_outlet_node",
             Design_Flow_Rate=0.006,  # m3/s before 0.0033
             Undisturbed_Ground_Temperature_Model_Name=soil.Name,
             Undisturbed_Ground_Temperature_Model_Type=soil.key,

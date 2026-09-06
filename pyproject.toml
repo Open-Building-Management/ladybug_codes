@@ -27,6 +27,7 @@ max-locals = 20
 max-args = 7
 max-positional-arguments = 7
 max-branches = 20
+max-returns = 20
 
 [build-system]
 requires = ["setuptools"]
