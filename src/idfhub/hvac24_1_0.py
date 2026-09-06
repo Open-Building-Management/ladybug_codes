@@ -436,8 +436,8 @@ def resolve_side(name, *, loop_side: str|None = None):
     return force_side
 
 
-def _get_parts(obj_name: str) -> list[EpBunch]:
-    """get parts of a hvac machine
+def _gather(obj_name: str) -> list[EpBunch]:
+    """gather parts of a hvac machine
     usually it is a single object
     but we can have a container
     eg a coil_system and a coil sharing same nodes
@@ -512,7 +512,7 @@ def process_serie(
             side = None
             current_inlet = mixer[EPApi.MIXED_AIR.node_name()]
         else:
-            objects: list[EpBunch] = _get_parts(obj_name)
+            objects: list[EpBunch] = _gather(obj_name)
             if len(objects) == 0:
                 continue
             LOGGER.debug(
