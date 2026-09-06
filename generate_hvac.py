@@ -39,24 +39,24 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 from idfhub.common import (
     idf, get_logger,
     BUILDING_NAME, PROJECT_NAME,
-    CONF, ZONES, LOOPS,
+    CONF, ZONES, LOOPS, AIRLOOPS,
     EQUIPMENTS,
     SCHEDULES,
     RUN_PERIOD
 )
 
 from idfhub.hvac24_1_0 import (
-    loops, equipments,
+    loops, equipments, kits, controllers,
     schedule_typelimits,
     resolve_side,
     pump,
-    water_law, constant_set_point,
     adjust_nodes_branch, operation_list_scheme,
     schedule_objects, zone_control,
     gas_boiler,
     zone_list
 )
-from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat
+from idfhub.hvac24_1_0_airloops import add_airloop, cv_no_reheat, oa_mixer
+from idfhub.hvac24_1_0_coils import coil_system_cooling_dx
 from idfhub.hvac24_1_0_fan import fan
 from idfhub.hvac24_1_0_exchanger import heat_exchanger
 from idfhub.hvac24_1_0_geoexchanger import (
@@ -71,8 +71,8 @@ from idfhub.hvac24_1_0_heatpump import (
 from idfhub.hvac24_1_0_hydronic_cooling import fcu_cooling
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
+from idfhub.hvac24_1_0_setpoints import oa_reset, constant_set_point, airloop_setpoint
 
-AIRLOOPS: list[str] = CONF.get("airloops", [])
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
     '%(name)s:%(lineno)d | '
@@ -101,6 +101,9 @@ EXCHANGER = "HX"
 FCU = "fcu"
 FAN = "fan"
 CV_NO_REHEAT = "cv_no_reheat"
+OA_MIXER = "oa_mixer"
+COIL_SYSTEM = "coil_system"
+COOLING_DX = "cooling_dx"
 
 zone_equipments: dict[str, list] = {}
 air_nodes: dict[str, dict[str, str]] = {}
@@ -241,22 +244,22 @@ zone_control(
 # Air Loops
 #------------------------------------------------------------------------------
 for airloop in AIRLOOPS:
-   air_splitter, air_mixer, air_loop = add_airloop(airloop)
-   loops[airloop] = air_loop
-   air_zone_splitters[airloop] = air_splitter
-   air_zone_mixers[airloop] = air_mixer
-   SizingSystem(
-       idf,
-       **SizingSystemType(
-           AirLoop_Name=airloop,
-           Preheat_Design_Temperature=7,
-           Preheat_Design_Humidity_Ratio=0.008,
-           Precool_Design_Temperature=12.8,
-           Precool_Design_Humidity_Ratio=0.008,
-           Central_Cooling_Design_Supply_Air_Temperature=12.8,
-           Central_Heating_Design_Supply_Air_Temperature=40,
-       )
-   )
+    air_splitter, air_mixer, air_loop = add_airloop(airloop)
+    loops[airloop] = air_loop
+    air_zone_splitters[airloop] = air_splitter
+    air_zone_mixers[airloop] = air_mixer
+    SizingSystem(
+        idf,
+        **SizingSystemType(
+            AirLoop_Name=airloop,
+            Preheat_Design_Temperature=7,
+            Preheat_Design_Humidity_Ratio=0.008,
+            Precool_Design_Temperature=12.8,
+            Precool_Design_Humidity_Ratio=0.008,
+            Central_Cooling_Design_Supply_Air_Temperature=12.8,
+            Central_Heating_Design_Supply_Air_Temperature=40,
+        )
+    )
 
 #------------------------------------------------------------------------------
 # Plant Loops
@@ -355,6 +358,18 @@ USE_AIR = {"return": 0, "exhaust": 0}
 ground_temperature()
 
 for equipment_name in EQUIPMENTS:
+    if OA_MIXER in equipment_name:
+        elements = oa_mixer(equipment_name)
+        equipments[equipment_name] = elements[0]
+        if len(elements) == 2:
+            controllers[equipment_name] = elements[1]
+        continue
+    if COIL_SYSTEM in equipment_name:
+        if COOLING_DX in equipment_name:
+            kit = coil_system_cooling_dx(equipment_name)
+            if kit:
+                kits[equipment_name] = kit
+        continue
     if FAN in equipment_name:
         equipments[equipment_name] = fan(equipment_name)
         continue
@@ -468,11 +483,11 @@ for control_conf in controls.values():
 
 
 for loop in LOOPS:
-    setpoint = CONF[loop].get("setpoint", {})
+    setpoint = CONF[loop].get("setpoint")
     branches_descr: dict[str, list[str]]
     branches_descr = CONF[loop].get("branches", {})
     if WATER_LAW in setpoint:
-        water_law(loop, setpoint)
+        oa_reset(loop, setpoint)
     if CONSTANT in setpoint:
         constant_set_point(loop, setpoint)
     for loop_side in [PLANT, DEMAND]:
@@ -497,10 +512,10 @@ for loop in AIRLOOPS:
         zone = name.split("_")[-1]
         side = resolve_side(name)
         terminal = equipments[name]
-        inlet = f"{side}_{EPApi.INLET_NODE_NAME}"
-        outlet = f"{side}_{EPApi.OUTLET_NODE_NAME}"
-        air_zone_splitters[loop][f"Outlet_{i+1}_Node_Name"] = terminal[inlet]
-        air_zone_mixers[loop][f"Inlet_{i+1}_Node_Name"] = air_nodes[zone]["air_return_node"]
+        inlet = f"{side}_{EPApi.INLET.node_name()}"
+        outlet = f"{side}_{EPApi.OUTLET.node_name()}"
+        air_zone_splitters[loop][EPApi.OUTLET.node_name(i+1)] = terminal[inlet]
+        air_zone_mixers[loop][EPApi.INLET.node_name(i+1)] = air_nodes[zone]["air_return_node"]
 
 # machine level setpoints management
 # this can only to be done after all nodes and branches adjustments
@@ -514,9 +529,21 @@ for loop in loops:
             setpoint = None
         if setpoint is not None:
             side = resolve_side(obj_name, loop_side=PLANT)
-            equipment = equipments[obj_name]
-            outlet = equipment[f"{side}_{EPApi.OUTLET_NODE_NAME}"]
-            water_law(loop, setpoint, outlet)
+            equipment: EpBunch|None = None
+            equipment = equipments.get(obj_name)
+            if equipment is None and obj_name in kits:
+                for obj in kits[obj_name]:
+                    if obj_name in obj.Name:
+                        equipment = obj
+                        break
+            if equipment is None:
+                continue
+            outlet = equipment[f"{side}_{EPApi.OUTLET.node_name()}"]
+            if WATER_LAW in setpoint:
+                oa_reset(loop, setpoint, outlet)
+            if loop in AIRLOOPS:
+                airloop_setpoint(loop, setpoint, outlet)
+
 
 #------------------------------------------------------------------------------
 # OUTPUT CONFIGURATION

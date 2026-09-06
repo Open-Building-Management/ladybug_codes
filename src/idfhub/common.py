@@ -232,6 +232,7 @@ BUILDING_NAME: str = CONF["building_name"]
 ZONES = CONF["zones"]
 LOOPS: list[str] = CONF["loops"]
 EQUIPMENTS: list[str] = CONF["equipments"]
+AIRLOOPS: list[str] = CONF.get("airloops", [])
 
 PROJECT_NAME = f"{CONF['name']}_{CONF['suffix']}"
 OS_EP_PATH = CONF["os_ep_path"]
