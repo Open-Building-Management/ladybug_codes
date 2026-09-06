@@ -497,19 +497,20 @@ def process_serie(
         if "oa_system" in obj_name:
             oa_system_conf = CONF.get(obj_name, {})
             mixer_name = oa_system_conf.get("mixer")
-            if mixer_name:
-                mixer = equipments[mixer_name]
-                ctrl = controllers.get(mixer_name)
-                obj = oa_system(
-                    obj_name,
-                    mixer_list=[mixer],
-                    ctrl_list=[ctrl] if ctrl else []
-                )
-                mixer[EPApi.RETURN_AIR.stream_node_name] = current_inlet
-                if ctrl:
-                    ctrl[EPApi.RETURN_AIR.node_name()] = current_inlet
-                side = None
-                current_inlet = mixer[EPApi.MIXED_AIR.node_name()]
+            if not mixer_name:
+                continue
+            mixer = equipments[mixer_name]
+            ctrl = controllers.get(mixer_name)
+            obj = oa_system(
+                obj_name,
+                mixer_list=[mixer],
+                ctrl_list=[ctrl] if ctrl else []
+            )
+            mixer[EPApi.RETURN_AIR.stream_node_name] = current_inlet
+            if ctrl:
+                ctrl[EPApi.RETURN_AIR.node_name()] = current_inlet
+            side = None
+            current_inlet = mixer[EPApi.MIXED_AIR.node_name()]
         else:
             objects: list[EpBunch] = _get_parts(obj_name)
             if len(objects) == 0:
