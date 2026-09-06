@@ -43,6 +43,7 @@ coil_system_cooling_dx:
   coil: coil_cooling_dx_single_speed
 
 coil_cooling_dx_single_speed:
+  Gross_Rated_Total_Cooling_Capacity: 5000
   force_side: Air
   cop: 3
 

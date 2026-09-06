@@ -120,7 +120,10 @@ def coil_cooling_dx_single_speed(name: str) -> EpBunch:
         idf,
         **CoilCoolingDxSinglespeedType(
             Name=name,
-            Gross_Rated_Total_Cooling_Capacity=EPValues.AUTOSIZE,
+            Gross_Rated_Total_Cooling_Capacity=conf.get(
+                "Gross_Rated_Total_Cooling_Capacity",
+                EPValues.AUTOSIZE
+            ),
             Gross_Rated_Sensible_Heat_Ratio=EPValues.AUTOSIZE,
             Gross_Rated_Cooling_COP=conf.get("cop", 3),
             Rated_Air_Flow_Rate=EPValues.AUTOSIZE,
