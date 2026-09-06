@@ -580,6 +580,8 @@ if CONF.get("verbose"):
     add_variable("System Node Temperature")
 
 for equipment_name in EQUIPMENTS:
+    if COIL_SYSTEM in equipment_name and COOLING_DX in equipment_name:
+        add_variable("Cooling Coil Total Cooling Rate")
     if BOREHOLE in equipment_name:
         suffix = "Ground Heat Exchanger"
         add_variable(f"{suffix} Heat Transfer Rate")
