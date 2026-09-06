@@ -39,18 +39,17 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 from idfhub.common import (
     idf, get_logger,
     BUILDING_NAME, PROJECT_NAME,
-    CONF, ZONES, LOOPS,
+    CONF, ZONES, LOOPS, AIRLOOPS,
     EQUIPMENTS,
     SCHEDULES,
     RUN_PERIOD
 )
 
 from idfhub.hvac24_1_0 import (
-    loops, equipments, controllers,
+    loops, equipments, kits, controllers,
     schedule_typelimits,
     resolve_side,
     pump,
-    water_law, constant_set_point,
     adjust_nodes_branch, operation_list_scheme,
     schedule_objects, zone_control,
     gas_boiler,
@@ -72,8 +71,8 @@ from idfhub.hvac24_1_0_heatpump import (
 from idfhub.hvac24_1_0_hydronic_cooling import fcu_cooling
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
+from idfhub.hvac24_1_0_setpoints import oa_reset, constant_set_point, airloop_setpoint
 
-AIRLOOPS: list[str] = CONF.get("airloops", [])
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
     '%(name)s:%(lineno)d | '
@@ -367,7 +366,9 @@ for equipment_name in EQUIPMENTS:
         continue
     if COIL_SYSTEM in equipment_name:
         if COOLING_DX in equipment_name:
-            equipments[equipment_name] = coil_system_cooling_dx(equipment_name)
+            kit = coil_system_cooling_dx(equipment_name)
+            if kit:
+                kits[equipment_name] = kit
         continue
     if FAN in equipment_name:
         equipments[equipment_name] = fan(equipment_name)
@@ -482,11 +483,11 @@ for control_conf in controls.values():
 
 
 for loop in LOOPS:
-    setpoint = CONF[loop].get("setpoint", {})
+    setpoint = CONF[loop].get("setpoint")
     branches_descr: dict[str, list[str]]
     branches_descr = CONF[loop].get("branches", {})
     if WATER_LAW in setpoint:
-        water_law(loop, setpoint)
+        oa_reset(loop, setpoint)
     if CONSTANT in setpoint:
         constant_set_point(loop, setpoint)
     for loop_side in [PLANT, DEMAND]:
@@ -528,9 +529,21 @@ for loop in loops:
             setpoint = None
         if setpoint is not None:
             side = resolve_side(obj_name, loop_side=PLANT)
-            equipment = equipments[obj_name]
+            equipment: EpBunch|None = None
+            equipment = equipments.get(obj_name)
+            if equipment is None and obj_name in kits:
+                for obj in kits[obj_name]:
+                    if obj_name in obj.Name:
+                        equipment = obj
+                        break
+            if equipment is None:
+                continue
             outlet = equipment[f"{side}_{EPApi.OUTLET.node_name()}"]
-            water_law(loop, setpoint, outlet)
+            if WATER_LAW in setpoint:
+                oa_reset(loop, setpoint, outlet)
+            if loop in AIRLOOPS:
+                airloop_setpoint(loop, setpoint, outlet)
+
 
 #------------------------------------------------------------------------------
 # OUTPUT CONFIGURATION

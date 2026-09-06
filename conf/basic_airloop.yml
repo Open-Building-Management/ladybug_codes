@@ -22,6 +22,8 @@ equipments:
   - coil_system_cooling_dx
 
 airloop:
+  setpoints: [multi_zone_cooling]
+  operation: [coil_system_cooling_dx] 
   branches:
     air_supply:
       - oa_system_airloop

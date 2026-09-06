@@ -18,8 +18,6 @@ from idfhub.hvac24_1_0_airloops import oa_system
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Scheduletypelimits,ScheduletypelimitsMeta,ScheduleConstant,ScheduleConstantMeta,
-    SetpointmanagerOutdoorairreset,SetpointmanagerOutdoorairresetMeta,
-    SetpointmanagerScheduled,
     PumpConstantspeed, PumpVariablespeed,
     ScheduleCompact,ScheduleCompactMeta,
     Plantequipmentlist, Plantequipmentoperationschemes,
@@ -28,7 +26,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     CurveBiquadratic,
     BoilerHotwater,
     PlantequipmentoperationOutdoordrybulb,
-    OutputVariable,
     PlantequipmentoperationComponentsetpoint,
     ZonehvacEquipmentlist, ZonehvacEquipmentlistMeta,
     ThermostatsetpointDualsetpoint,
@@ -39,7 +36,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     ScheduletypelimitsType,ScheduleConstantType,
-    SetpointmanagerOutdoorairresetType, SetpointmanagerScheduledType,
     PumpConstantspeedType, PumpVariablespeedType,
     ScheduleCompactType,
     PlantequipmentlistType, PlantequipmentoperationschemesType,
@@ -48,7 +44,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     CurveBiquadraticType,
     BoilerHotwaterType,
     PlantequipmentoperationOutdoordrybulbType,
-    OutputVariableType,
     PlantequipmentoperationComponentsetpointType,
     ZonehvacEquipmentlistType,
     ThermostatsetpointDualsetpointType,
@@ -63,6 +58,7 @@ LOGGER = get_logger()
 BYPASS = "bypass"
 loops: dict = {}
 equipments: dict[str, EpBunch] = {}
+kits: dict[str, list[EpBunch]] = {}
 controllers: dict[str, EpBunch] = {}
 
 if not idf:
@@ -318,75 +314,7 @@ def zone_control(schedules: dict[str, EpBunch], zones: list[str]):
 
 
 #------------------------------------------------------------------------------
-# SETPOINTS
-#------------------------------------------------------------------------------
-def water_law(loop_name: str, setpoint_name: str, node: str|None = None):
-    """add a waterlaw setpoint on a loop plant outlet"""
-    if node is None:
-        node = LoopNodes(loop_name).plant_outlet
-    water_law_name = f"{setpoint_name} {loop_name}"
-    water_law_object = idf.getobject(
-        SetpointmanagerOutdoorairresetMeta.idf_name,
-        water_law_name
-    )
-    if water_law_object is not None:
-        return
-    message = f"waterlaw @ {node} with {CONF[setpoint_name]}"
-    LOGGER.debug(message)
-    SetpointmanagerOutdoorairreset(
-        idf,
-        **SetpointmanagerOutdoorairresetType(
-            Name=f"{setpoint_name} {loop_name}",
-            Control_Variable=EPValues.TEMPERATURE,
-            Setpoint_at_Outdoor_Low_Temperature=CONF[setpoint_name].get(
-                "Setpoint_at_Outdoor_Low_Temperature", 70),
-            Outdoor_Low_Temperature=CONF[setpoint_name].get(
-                "Outdoor_Low_Temperature", -5),
-            Setpoint_at_Outdoor_High_Temperature=CONF[setpoint_name].get(
-                "Setpoint_at_Outdoor_High_Temperature", 40),
-            Outdoor_High_Temperature=CONF[setpoint_name].get(
-                "Outdoor_High_Temperature", 15),
-            Setpoint_Node_or_NodeList_Name=node
-        )
-    )
-    OutputVariable(
-        idf,
-        **OutputVariableType(
-            Key_Value=node,
-            Variable_Name="System Node Setpoint Temperature",
-            Reporting_Frequency="Timestep"
-        )
-    )
-
-def constant_set_point(loop_name: str, setpoint_name: str):
-    """add a constant setpoint on a loop plant outlet"""
-    node = LoopNodes(loop_name).plant_outlet
-    message = f"constant setpoint @ {node} with {CONF[setpoint_name]}"
-    LOGGER.debug(message)
-    temp = CONF[setpoint_name].get("temp", 12)
-    name = f"const_temp_sched_{temp}deg"
-    consigne = idf.getobject(
-        ScheduleConstantMeta.idf_name,
-        name
-    )
-    if consigne is None:
-        consigne = constant_schedule(
-            temp,
-            name=name,
-            typelimits_name=EPValues.TEMPERATURE
-        )
-    SetpointmanagerScheduled(
-        idf,
-        **SetpointmanagerScheduledType(
-            Name=f"{setpoint_name} {loop_name}",
-            Control_Variable=EPValues.TEMPERATURE,
-            Schedule_Name=consigne.Name,
-            Setpoint_Node_or_NodeList_Name=node,
-        )
-    )
-
-#------------------------------------------------------------------------------
-# PRODUCTION SYSTEMS
+# BASIC PRODUCTION SYSTEMS
 #------------------------------------------------------------------------------
 
 def pump(name, pump_type="constant"):
@@ -508,6 +436,45 @@ def resolve_side(name, *, loop_side: str|None = None):
     return force_side
 
 
+def _get_parts(obj_name: str) -> list[EpBunch]:
+    """get parts of a hvac machine
+    usually it is a single object
+    but we can have a container
+    eg a coil_system and a coil sharing same nodes
+    """
+    obj = equipments.get(obj_name)
+    kit = kits.get(obj_name)
+    if obj:
+        return [obj]
+    if kit:
+        return kit
+    return []
+
+
+def _set_nodes(
+    yml_name: str,
+    loop_side: str|None,
+    objects: list[EpBunch],
+    inlet: str|None,
+    outlet: str|None
+):
+    """set inlet and outlet nodes on a list of EpBunch objects sharing same nodes"""
+    for obj in objects:
+        # yml_name comes from the yaml, it can be shorter than obj.Name
+        # if more than one object sharing the same nodes, we use idf object names
+        side = resolve_side(
+            yml_name if len(objects)==1 else obj.Name,
+            loop_side=loop_side
+        )
+        set_nodes(
+            obj,
+            inlet=inlet,
+            outlet=outlet,
+            side=side
+        )
+    return objects[-1], side
+
+
 def process_serie(
     branch_name: str,
     loop_side: str,
@@ -543,27 +510,15 @@ def process_serie(
                     ctrl[EPApi.RETURN_AIR.node_name()] = current_inlet
                 side = None
                 current_inlet = mixer[EPApi.MIXED_AIR.node_name()]
-            else:
-                continue
         else:
-            obj = equipments[obj_name]
-            objects = obj if isinstance(obj, list) else [obj]
-            # usually only one object, but we can have a container
-            # eg a coil_system and a coil sharing same nodes
+            objects: list[EpBunch] = _get_parts(obj_name)
+            if len(objects) == 0:
+                continue
             LOGGER.debug(
                 "%s yml name : %s, idf names: %s",
                 branch_name, obj_name, [obj.Name for obj in objects]
             )
-            for obj in objects:
-                # obj_name comes from the yaml, it can be shorter than obj.Name
-                # if more than one object sharing the same nodes, we use idf object names
-                side = resolve_side(obj_name if len(objects)==1 else obj.Name, loop_side=loop_side)
-                set_nodes(
-                    obj,
-                    inlet=current_inlet,
-                    outlet=next_outlet,
-                    side=side
-                )
+            obj, side = _set_nodes(obj_name, loop_side, objects, current_inlet, next_outlet)
             try:
                 current_inlet = obj[EPApi.OUTLET.node_name()]
             except BadEPFieldError:

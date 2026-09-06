@@ -186,6 +186,10 @@ class EPApi(StrEnum):
     ZONE_EQUIPMENT = "Zone_Equipment"
 
     @property
+    def node_or_nodelist_name(self) -> str:
+        """return a node_or_nodelist_name"""
+        return f"{self}_Node_or_NodeList_Name"
+    @property
     def stream_node_name(self) -> str:
         """return a stream_node_name field"""
         return f"{self}_Stream_Node_Name"
