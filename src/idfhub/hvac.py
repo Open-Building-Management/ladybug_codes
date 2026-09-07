@@ -147,7 +147,7 @@ class EPValues(StrEnum):
     LOAD = "Load"
     IDEAL = "Ideal"
     UNCONTROLLED_ON = "UncontrolledOn"
-    LOOPTOLOOP ="LoopToLoop"
+    LOOPTOLOOP = "LoopToLoop"
 
 class EPApi(StrEnum):
     "EnergyPlus field names"
@@ -184,6 +184,7 @@ class EPApi(StrEnum):
     DRYBULB_T_RANGE = "DryBulb_Temperature_Range"
     CONTROL_SCHEME = "Control_Scheme"
     ZONE_EQUIPMENT = "Zone_Equipment"
+    SURFACE = "Surface"
 
     @property
     def node_or_nodelist_name(self) -> str:
@@ -367,66 +368,6 @@ def create_pipe(
     pipe[EPApi.INLET.node_name()] = inlet_node_name
     pipe[EPApi.OUTLET.node_name()] = outlet_node_name
     return pipe
-
-
-def add_baseboard(idf: IDF, zone_name, frac_rad=0.3, frac_rad_people=0.3):
-    """Add baseboards like (radiant and convective) EU heaters"""
-    idf.newidfobject(
-        "ZONEHVAC:BASEBOARD:RADIANTCONVECTIVE:WATER:DESIGN",
-        Name=f"{zone_name} Baseboard Design",
-        #Heating_Design_Capacity_Method="HeatingDesignCapacity",
-        Heating_Design_Capacity_Per_Floor_Area=0,
-        Fraction_of_Autosized_Heating_Design_Capacity=1,
-        Convergence_Tolerance= 0.001,
-        Fraction_Radiant=frac_rad,
-        Fraction_of_Radiant_Energy_Incident_on_People=frac_rad_people
-    )
-    zone_baseboard = idf.newidfobject(
-        "ZONEHVAC:BASEBOARD:RADIANTCONVECTIVE:WATER",
-        Name=f"{zone_name} Baseboard",
-        Design_Object=f"{zone_name} Baseboard Design",
-        Availability_Schedule_Name=ALWAYS_ON,
-        Rated_Average_Water_Temperature=87.78,
-        Rated_Water_Mass_Flow_Rate=0.063,
-        Heating_Design_Capacity=EPValues.AUTOSIZE,
-        Maximum_Water_Flow_Rate=EPValues.AUTOSIZE,
-    )
-    zone_baseboard[EPApi.INLET.node_name()] = f"{zone_name} baseboards inlet"
-    zone_baseboard[EPApi.OUTLET.node_name()] = f"{zone_name} baseboards outlet"
-    surfaces = [
-        s for s in idf.idfobjects["BUILDINGSURFACE:DETAILED"]
-        if s.Zone_Name.lower() == zone_name.lower()
-    ]
-    walls = [s for s in surfaces if s.Surface_Type == "Wall"]
-    floors = [s for s in surfaces if s.Surface_Type == "Floor"]
-    ceilings = [s for s in surfaces if s.Surface_Type == "Ceiling"]
-    roofs = [s for s in surfaces if s.Surface_Type == "Roof"]
-    nbs = {
-        "Wall": len(walls),
-        "Floor": len(floors),
-        "Ceiling": len(ceilings),
-        "Roof": len(roofs)
-    }
-    w_ceiling = 0.1
-    w_roof = 0.1
-    if nbs["Ceiling"] and not nbs["Roof"]:
-        w_ceiling = 0.2
-        w_roof = 0
-    if nbs["Roof"] and not nbs["Ceiling"]:
-        w_ceiling = 0
-        w_roof = 0.2
-    weights = {
-        "Wall": 0.6,
-        "Floor": 0.2,
-        "Ceiling": w_ceiling,
-        "Roof": w_roof
-    }
-    for i, s in enumerate(surfaces):
-        zone_baseboard[f"Surface_{i+1}_Name"] = s.Name
-        value = (1 -frac_rad_people) * weights[s.Surface_Type] / nbs[s.Surface_Type]
-        field = f"Fraction_of_Radiant_Energy_to_Surface_{i+1}"
-        zone_baseboard[field] = value
-    return zone_baseboard
 
 
 def get_oa_system_mixer(idf: IDF, list_name: str) -> EpBunch|None:

@@ -7,7 +7,6 @@ from idfhub.hvac import (
     PLANT, DEMAND, SUPPLY,
     EPApi, EPValues,
     add_plantloop,
-    add_baseboard,
     create_pipe
 )
 # autocompletion use
@@ -70,6 +69,7 @@ from idfhub.hvac24_1_0_heatpump import (
 )
 from idfhub.hvac24_1_0_hydronic_cooling import fcu_cooling
 from idfhub.hvac24_1_0_photovoltaic import PV_plant
+from idfhub.hvac24_1_0_radiant import baseboards
 from idfhub.hvac24_1_0_secondary import initialise_sensors, control, compute
 from idfhub.hvac24_1_0_setpoints import oa_reset, constant_set_point, airloop_setpoint
 
@@ -104,6 +104,7 @@ CV_NO_REHEAT = "cv_no_reheat"
 OA_MIXER = "oa_mixer"
 COIL_SYSTEM = "coil_system"
 COOLING_DX = "cooling_dx"
+BASEBOARDS = "baseboards"
 
 USE_AIR = {"return": 0, "exhaust": 0}
 
@@ -126,8 +127,8 @@ def add_variable(name, key="*"):
 
 def generate_zone_equipment(equipment_name: str, zone_name: str):
     """generate zone equipments for a zone"""
-    if "baseboards" in equipment_name:
-        zone_equipment = add_baseboard(idf, zone_name)
+    if BASEBOARDS in equipment_name:
+        zone_equipment = baseboards(equipment_name, zone_name)
         equipments[equipment_name] = zone_equipment
     if CV_NO_REHEAT in equipment_name:
         air_terminal, zone_equipment = cv_no_reheat(
