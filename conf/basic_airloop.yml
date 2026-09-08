@@ -21,6 +21,21 @@ equipments:
   - oa_mixer_airloop
   - coil_system_cooling_dx
 
+sensors:
+  r4_temp:
+    type: "Zone Air Temperature"
+    location_name: r4
+
+controls:
+  fan_control:
+    sensor: r4_temp
+    type: Availability_Schedule_Name
+    pilot: [constant_fan]
+    stop_below: 25
+    start_above: 25
+    min: 0
+    max: 1
+
 airloop:
   setpoints: [multi_zone_cooling]
   operation: [coil_system_cooling_dx] 
