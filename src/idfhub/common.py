@@ -68,6 +68,7 @@ def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
     if os.path.exists(yaml_path):
         with open(yaml_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
+    print("*********YML FILE NOT FOUND*********")
     return {}
 
 OPS = {
