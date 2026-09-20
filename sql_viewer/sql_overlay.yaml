@@ -1,0 +1,17 @@
+path: sql_db
+#name: Agence_ACF_geo_only_chauffage_seul_10Y_RSM_FD.sql
+name: Agence_ACF_geo_only_10Y.sql
+overlay: 1
+
+environment: "RUN PERIOD"
+
+variables:
+  #temperature:
+  #  - name: "Site Outdoor Air Drybulb Temperature"
+  #    key: Environment
+  #    label: "Outdoor Temp °C"
+
+  borehole_average:
+    - name: "Ground Heat Exchanger Average Borehole Temperature"
+      key: "BOREHOLE"
+      label: "Average Borehole °C"

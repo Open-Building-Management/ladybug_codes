@@ -1,9 +1,11 @@
 """read energyplus results databases"""
 import argparse
 import contextlib
+from collections import defaultdict
 import sqlite3
 from datetime import datetime, timedelta
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import yaml
 
@@ -101,31 +103,77 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
     plt.show()
 
 
-def plot_variables(db, config):
-    """plot variables declared in the yaml
-    for a single database"""
-    plt.figure()
+def plot_variables(db, config, overlay_years=True):
+    """Plot variables declared in the yaml.
+    For a single database !
+    overlay mode to overlap successive years
+    TODO : prise en compte des années bisextiles
+    """
     nb = len(config["variables"])
     if nb < 1:
         return
-    ax = []
-    ax.append(plt.subplot(nb, 1, 1))
+    fig, ax = plt.subplots(
+        nb,
+        1,
+        sharex=True,
+        squeeze=False,
+    )
+    ax = ax[:, 0]
     with sqlite3.connect(db) as con:
-        for i, thema_name in enumerate(config["variables"]):
-            thema = config["variables"][thema_name]
-            if i > 0:
-                ax.append(plt.subplot(nb, 1, i+1, sharex=ax[0]))
+        for i, (thema_name, thema) in enumerate(
+            config["variables"].items()
+        ):
             for variable in thema:
                 name = variable["name"]
                 key = variable["key"]
-                label = variable.get("label", f"{name} — {key}")
-                dates, values = fetch(con, name, key, config)
-                plt.plot(dates, values, label=label)
-            plt.xlabel("date")
-            plt.ylabel(thema_name)
-            plt.grid(True)
-            plt.legend()
-    plt.tight_layout()
+                label = variable.get(
+                    "label",
+                    f"{name} — {key}",
+                )
+                dates, values = fetch(
+                    con,
+                    name,
+                    key,
+                    config,
+                )
+                if not overlay_years:
+                    ax[i].plot(
+                        dates,
+                        values,
+                        label=label,
+                    )
+                    continue
+                # Regroupement par année
+                yearly_data = defaultdict(
+                    lambda: ([], [])
+                )
+                for date, value in zip(dates, values):
+                    year = date.year
+                    yearly_data[year][0].append(
+                        date.replace(year=2000)
+                    )
+                    yearly_data[year][1].append(value)
+                for year, (year_dates, year_values) in (
+                    yearly_data.items()
+                ):
+                    ax[i].plot(
+                        year_dates,
+                        year_values,
+                        label=f"{label} — {year}",
+                    )
+            ax[i].set_xlabel("date")
+            ax[i].set_ylabel(thema_name)
+            ax[i].grid(True)
+            ax[i].legend()
+    if overlay_years:
+        for axis in ax:
+            axis.xaxis.set_major_locator(
+                mdates.MonthLocator()
+            )
+            axis.xaxis.set_major_formatter(
+                mdates.DateFormatter("%b")
+            )
+    fig.tight_layout()
     plt.show()
 
 
@@ -155,7 +203,11 @@ def main():
 
     if args.plot:
         if len(databases) == 1:
-            plot_variables(databases["main"], sql_config)
+            plot_variables(
+                databases["main"],
+                sql_config,
+                overlay_years=sql_config.get('overlay', False)
+            )
             return
         multidb_plot_variables(databases, sql_config)
         return
