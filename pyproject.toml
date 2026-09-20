@@ -41,7 +41,8 @@ dependencies = [
     "honeybee-core",
     "honeybee-energy",
     "ladybug-geometry",
-    "pyyaml"
+    "pyyaml",
+	"matplotlib"
 ]
 
 [tool.setuptools]
