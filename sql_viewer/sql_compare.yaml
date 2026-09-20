@@ -1,0 +1,22 @@
+path: sql_db
+#/Agence_ACF_geo_only/SVG_3loops_CtrldeltaSP_500ml_30KWPAC_Boiler45KW_SP7040_FCU
+name: 
+  heating_only: Agence_ACF_geo_only_chauffage_seul_10Y.sql
+  heating_n_cooling: Agence_ACF_geo_only_10Y.sql
+#Agence_ACF_geo_only.sql
+
+environment: "RUN PERIOD"
+
+variables:
+  T_inlet:
+    - name: "Ground Heat Exchanger Inlet Temperature"
+      key: "BOREHOLE"
+      label: "Soil inlet °C"
+  T_outlet:
+    - name: "Ground Heat Exchanger Outlet Temperature"
+      key: "BOREHOLE"
+      label: "Soil outlet °C"
+  average_borehole_T:
+    - name: "Ground Heat Exchanger Average Borehole Temperature"
+      key: "BOREHOLE"
+      label: "Average Borehole Temperature"
