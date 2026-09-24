@@ -4,5 +4,6 @@ osm_*
 idf_zip/*
 weather/data
 sql_viewer/sql_db
+sql_viewer/exports
 *egg-info
 ep_simulations/*
