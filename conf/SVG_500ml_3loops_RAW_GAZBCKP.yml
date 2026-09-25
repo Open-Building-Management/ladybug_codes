@@ -1,0 +1,148 @@
+building_name: idf/Agence_ACF_geo_only
+North_Axis: 122.4
+
+name: SVG_3L_DSP
+suffix: 500m_30PAC_Gaz45_7040_10Y
+
+verbose: 0
+
+os_ep_path: "D:/EnergyPlusV24-1-0"
+
+run_period:
+  Begin_Month: 4
+  Begin_Day_of_Month: 21
+  Begin_Year: 2026
+  End_Month: 4
+  End_Day_of_Month: 20
+  End_Year: 2035
+
+schedules:
+  cooling:
+    mode: "compact"
+    #standby: 26
+    from: 04/21 # month/day
+    to: 10/15
+  heating:
+    mode: compact
+    periods:
+      - For: AllDays
+        Until:
+         - "07:00": 0
+         - "17:00": 20
+         - "24:00": 0
+
+zones:
+  - "RDC"
+  - "RPLUS1"
+
+loops:
+  - soil_loop
+  - pac_water_heating_loop
+  - zone_water_heating_loop
+
+equipments:
+  - borehole
+  - soil_pump
+  - hpwtw
+  - gas_boiler
+  - pac_variable_pump
+  - zone_variable_pump
+  - HX
+  - baseboards_RDC
+  - baseboards_RPLUS1
+
+sensors:
+  pac_outlet:
+    location_name: hpwtw_load_side_outlet_node
+    type: "System Node Temperature"
+  setpoint_sensor:
+    location_name: pac_water_heating_loop_plant_outlet_node
+    type: "System Node Setpoint Temperature"
+
+process:
+  deltaSP: "setpoint_sensor - pac_outlet"
+
+controls:
+  boiler_availability:
+    sensor: deltaSP
+    type: "On/Off Supervisory"
+    pilot: [gas_boiler]
+    start_above: 0
+    stop_below: 0
+
+soil_loop:
+  setpoint: constant_set_point
+  operation:
+    uncontrolled: [borehole]
+  branches:
+    plant: [soil_pump, borehole]
+    demand: [hpwtw]
+  Loop_Type: cooling
+  Design_Loop_Exit_Temperature: 12
+  Loop_Design_Temperature_Difference: 5
+  Maximum_Loop_Temperature: 35
+  Minimum_Loop_Temperature: -5
+
+pac_water_heating_loop:
+  setpoint: water_law_set_point_7040
+  operation: [hpwtw, gas_boiler]
+  Loop_Type: heating
+  branches:
+    plant: [pac_variable_pump, hpwtw, gas_boiler]
+    demand: [HX]
+
+zone_water_heating_loop:
+  setpoint: water_law_set_point_7040
+  operation: [HX]
+  branches:
+    plant: [zone_variable_pump, HX]
+    demand:
+      - parallel:
+        - [baseboards_RDC]
+        - [baseboards_RPLUS1]
+
+constant_set_point:
+  temp: 12
+
+water_law_set_point_7040:
+  Setpoint_at_Outdoor_Low_Temperature: 70
+  Outdoor_Low_Temperature: -5
+  Setpoint_at_Outdoor_High_Temperature: 40
+  Outdoor_High_Temperature: 15
+
+borehole:
+  Number_of_Boreholes_in_XDirection: 5
+  Number_of_Boreholes_in_YDirection: 1
+
+hpwtw:
+  Reference_Coefficient_of_Performance: 2.5
+  Reference_Heating_Capacity: 30000
+  type: heatpump
+
+HX:
+  type: exchanger
+  Heat_Exchange_Model_Type: CounterFlow
+  Control_Type: OperationSchemeModulated
+
+gas_boiler:
+  force_side: Boiler_Water
+  Nominal_Capacity: 45000
+  Nominal_Thermal_Efficiency: 0.87
+  efficiency_c: 1 #0.96
+  efficiency_x: 0.02 #0.04 # x=PLR
+  efficiency_x2: -0.04 #-0.03
+  efficiency_y: -0.0003 #-0.004 # y=Twater
+  efficiency_y2: 0 #-0.00004
+  efficiency_xy: 0
+
+RDC:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.6
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1
+
+RPLUS1:
+  Cooling_Design_Air_Flow_Method: "Flow/Zone"
+  Cooling_Design_Air_Flow_Rate: 0.8
+  Outdoor_Air_Method: "Flow/Zone"
+  Outdoor_Air_Flow_per_Zone: 0.1
