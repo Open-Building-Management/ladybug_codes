@@ -42,7 +42,8 @@ dependencies = [
     "honeybee-energy",
     "ladybug-geometry",
     "pyyaml",
-	"matplotlib"
+	"matplotlib",
+	"tzdata"
 ]
 
 [tool.setuptools]
