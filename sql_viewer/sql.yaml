@@ -1,0 +1,31 @@
+path: sql_db
+name: Agence_ACF_chauffage_seul_10Y_RSM_FD.sql
+
+environment: "RUN PERIOD"
+
+variables:
+  temperature:
+    - name: "Site Outdoor Air Drybulb Temperature"
+      key: Environment
+      label: "Outdoor Temp °C"
+    - name: "Zone Air Temperature"
+      key: RPLUS1
+      label: "RPLUS1 temp °C"
+  
+  borehole:
+    - name: "Ground Heat Exchanger Inlet Temperature"
+      key: "BOREHOLE"
+      label: "Soil inlet °C"
+    - name: "Ground Heat Exchanger Outlet Temperature"
+      key: "BOREHOLE"
+      label: "Soil outlet °C"
+
+  borehole_average:
+    - name: "Ground Heat Exchanger Average Borehole Temperature"
+      key: "BOREHOLE"
+      label: "Average Borehole °C"
+  
+  heat_transfer:
+    - name: "Ground Heat Exchanger Heat Transfer Rate"
+      key: "BOREHOLE"
+      label: "Borehole Heat Transfer W"
