@@ -116,43 +116,55 @@ def basic_compact_schedule(
     typelimits_name: str
 ):
     """create a compact schedule"""
+    detailed_schedule_name = f"{schedule_name}_schedule_{value_confort}"
     compact_sched = idf.getobject(
         ScheduleCompactMeta.idf_name,
-        schedule_name
+        detailed_schedule_name
     )
     if not compact_sched:
+        conf = CONF["schedules"][schedule_name]
+        on_day =  [
+            { "07:00": value_standby },
+            { "17:00": value_confort },
+            { "24:00": value_standby }
+        ]
+        off_day = [
+            { "24:00": value_standby }
+        ]
+        if "periods" not in conf:
+            conf["periods"] = [
+                {
+                    EPValues.FOR: EPValues.WEEKDAYS,
+                    EPValues.UNTIL: on_day
+                },{
+                    EPValues.FOR: EPValues.WEEKENDS,
+                    EPValues.UNTIL: off_day
+                },{
+                    EPValues.FOR: EPValues.WINTER_DESIGN_DAY,
+                    EPValues.UNTIL: on_day
+                },{
+                    EPValues.FOR: EPValues.SUMMER_DESIGN_DAY,
+                    EPValues.UNTIL: on_day
+                }
+            ]
         compact_sched = ScheduleCompact(
             idf,
             **ScheduleCompactType(
-                Name=schedule_name,
+                Name=detailed_schedule_name,
                 Schedule_Type_Limits_Name=typelimits_name,
                 Field_1=f"{EPValues.THROUGH}: 12/31",
-                Field_2=f"{EPValues.FOR}: {EPValues.WEEKDAYS}",
-                Field_3=f"{EPValues.UNTIL}: 07:00",
-                Field_4=value_standby,
-                Field_5=f"{EPValues.UNTIL}: 17:00",
-                Field_6=value_confort,
-                Field_7=f"{EPValues.UNTIL}: 24:00",
-                Field_8=value_standby,
-                Field_9=f"{EPValues.FOR}: {EPValues.WEEKENDS}",
-                Field_10=f"{EPValues.UNTIL}: 24:00",
-                Field_11=value_standby,
-                Field_12=f"{EPValues.FOR}:{EPValues.WINTER_DESIGN_DAY}",
-                Field_13=f"{EPValues.UNTIL}: 07:00",
-                Field_14=value_standby,
-                Field_15=f"{EPValues.UNTIL}: 17:00",
-                Field_16=value_confort,
-                Field_17=f"{EPValues.UNTIL}: 24:00",
-                Field_18=value_standby,
-                Field_19=f"{EPValues.FOR}:{EPValues.SUMMER_DESIGN_DAY}",
-                Field_20=f"{EPValues.UNTIL}: 07:00",
-                Field_21=value_standby,
-                Field_22=f"{EPValues.UNTIL}: 17:00",
-                Field_23=value_confort,
-                Field_24=f"{EPValues.UNTIL}: 24:00",
-                Field_25=value_standby,
             )
         )
+        i = 2
+        for period in conf["periods"]:
+            days = period["For"]
+            compact_sched[f"{EPApi.FIELD}_{i}"] = f"{EPValues.FOR}: {days}"
+            i += 1
+            for item in period["Until"]:
+                for time, value in item.items():    
+                    compact_sched[f"{EPApi.FIELD}_{i}"] = f"{EPValues.UNTIL}: {time}"
+                    compact_sched[f"{EPApi.FIELD}_{i+1}"] = value
+                    i += 2
     return compact_sched
 
 
@@ -191,7 +203,7 @@ def schedule_objects(conf: dict[str, dict]) -> dict[str, EpBunch]:
             schedules[sched_name] = basic_compact_schedule(
                 confort,
                 standby,
-                schedule_name=f"{sched_name}_schedule_{confort}",
+                schedule_name=sched_name,
                 typelimits_name=EPValues.TEMPERATURE
             )
         else:

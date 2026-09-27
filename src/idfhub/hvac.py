@@ -185,6 +185,7 @@ class EPApi(StrEnum):
     CONTROL_SCHEME = "Control_Scheme"
     ZONE_EQUIPMENT = "Zone_Equipment"
     SURFACE = "Surface"
+    FIELD = "Field"
 
     @property
     def node_or_nodelist_name(self) -> str:
