@@ -50,11 +50,15 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
 
 def water_to_water_heatpump(name):
     """add a water to water heatpump"""
+    conf = CONF[name]
     capacity_curve = CurveQuadlinear(
         idf,
         **create_quadlincurve(
             f"{name} Heating capacity curve",
-            0.8, 0.002, 0.002, 0
+            conf.get("capacity_c", 0.8),
+            conf.get("capacity_w", 0.002),
+            conf.get("capacity_x", 0.002),
+            0
         )
     )
 
@@ -62,7 +66,10 @@ def water_to_water_heatpump(name):
         idf,
         **create_quadlincurve(
             f"{name} Heating power curve",
-            0.4, 0.002, 0.002, 0
+            conf.get("power_c", 0.4),
+            conf.get("power_w", 0.002),
+            conf.get("power_x", 0.002),
+            0
         )
     )
 
@@ -76,10 +83,10 @@ def water_to_water_heatpump(name):
             Load_Side_Outlet_Node_Name=f"{name}_load_side_outlet_node",
             Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
             Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
-            Reference_Heating_Capacity=CONF[name].get(
+            Reference_Heating_Capacity=conf.get(
                 "Reference_Heating_Capacity", EPValues.AUTOSIZE),
             Reference_Heating_Power_Consumption=EPValues.AUTOSIZE,
-            Reference_Coefficient_of_Performance=CONF[name].get(
+            Reference_Coefficient_of_Performance=conf.get(
                 "Reference_Coefficient_of_Performance", 2.5),
             Sizing_Factor=1,
             Heating_Capacity_Curve_Name=capacity_curve.Name,
