@@ -7,7 +7,7 @@ import re
 import sqlite3
 
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -98,10 +98,15 @@ def fetch(con, name, key, config):
     return dates, values
 
 
-def get_dictionary_indexes(con, variables):
+def get_dictionary_indexes(con, config):
     """Return dictionary indexes for requested variables."""
-    if not variables:
+    if "variables" not in config:
         return {}
+    variables = [
+        variable
+        for thema in config["variables"].values()
+        for variable in thema
+    ]
     conditions = []
     params = []
     for variable in variables:
@@ -109,8 +114,8 @@ def get_dictionary_indexes(con, variables):
             "(Name = ? AND KeyValue = ?)"
         )
         params.extend([
-            variable["name"],
-            variable["key"],
+            config[variable]["name"],
+            config[variable]["key"],
         ])
     query = f"""
         SELECT
@@ -132,14 +137,9 @@ def fetch_many(con, config,
     mode="human"
 ):
     """Fetch several EnergyPlus variables sharing the same dates."""
-    variables = [
-        variable
-        for thema in config["variables"].values()
-        for variable in thema
-    ]
-    indexes = get_dictionary_indexes(con, variables)
+    indexes = get_dictionary_indexes(con, config)
     if not indexes:
-        return { "dates": [] }
+        return {}
     index_to_variable = {
         index: variable
         for variable, index in indexes.items()
@@ -196,17 +196,19 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
             db_name: stack.enter_context(sqlite3.connect(db_path))
             for db_name, db_path in dbs.items()
         }
-        datas = {db_name : {} for db_name in cons}
+        datas: dict[str, dict] = {db_name : {} for db_name in cons}
         for db_name, con in cons.items():
             datas[db_name] = fetch_many(con, config)
         fig, ax = plt.subplots(nb, 1, sharex=True, squeeze=False)
+        if "title" in config:
+            fig.suptitle(config["title"])
         ax = ax[:, 0]
         for i, (thema_name, thema) in enumerate(config["variables"].items()):
             for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
+                name = config[variable]["name"]
+                key = config[variable]["key"]
                 identifier = (name, key)
-                label = variable.get("label", f"{name} — {key}")
+                label = config[variable].get("label", f"{name} — {key}")
                 for db_name, con in cons.items():
                     db_label = label if db_name == "main" else f"{db_name} {label}"
                     dates = datas[db_name][identifier]["dates"]
@@ -235,6 +237,8 @@ def plot_variables(db, config, overlay_years=True):
         sharex=True,
         squeeze=False,
     )
+    if "title" in config:
+        fig.suptitle(config["title"])
     ax = ax[:, 0]
     with sqlite3.connect(db) as con:
         data = fetch_many(con, config)
@@ -242,9 +246,9 @@ def plot_variables(db, config, overlay_years=True):
             config["variables"].items()
         ):
             for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
-                label = variable.get(
+                name = config[variable]["name"]
+                key = config[variable]["key"]
+                label = config[variable].get(
                     "label",
                     f"{name} — {key}",
                 )
@@ -297,6 +301,25 @@ def safe_filename(name):
     return re.sub(r'[<>:"/\\|?*]', "_", name)
 
 
+def open_chunk(output_dir, base_name, chunk_number):
+    """open chunk"""
+    filename = (
+        f"{base_name}.csv"
+        if chunk_number == 1
+        else f"{base_name}_{chunk_number:03d}.csv"
+    )
+    filepath = output_dir / filename
+    csvfile = filepath.open(
+        "w",
+        newline="",
+        encoding="utf-8",
+    )
+    writer = csv.writer(csvfile)
+    writer.writerow(["timestamp", "value"])
+    print(f"Exporting: {filepath}")
+    return csvfile, writer
+
+
 def export_variables_csv_chunk(db, config,
     output_dir="exports",
     tz_name="Europe/Paris",
@@ -319,60 +342,40 @@ def export_variables_csv_chunk(db, config,
         )
         for _, thema in config["variables"].items():
             for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
+                name = config[variable]["name"]
+                key = config[variable]["key"]
                 identifier = (name, key)
                 dates = data[identifier]["dates"]
                 values = data[identifier]["values"]
-                filename = safe_filename(name)
                 # Export in chunks.
                 chunk_index = 1
                 current_size = 0
-                csvfile = None
-                writer = None
-                def open_chunk(index):
-                    """open chunk"""
-                    nonlocal csvfile, writer, current_size
-                    if csvfile is not None:
-                        csvfile.close()
-                    if index == 1:
-                        filepath = output_dir / f"{filename}.csv"
-                    else:
-                        filepath = output_dir / (
-                            f"{filename}_{index:03d}.csv"
-                        )
-                    csvfile = filepath.open(
-                        "w",
-                        newline="",
-                        encoding="utf-8",
-                    )
-                    writer = csv.writer(csvfile)
-                    writer.writerow(["timestamp", "value"])
-                    csvfile.flush()
-                    current_size = csvfile.tell()
-                    print(f"Exporting: {filepath}")
                 try:
-                    open_chunk(chunk_index)
+                    csvfile, writer = open_chunk(
+                        output_dir,
+                        safe_filename(name),
+                        chunk_index,
+                    )
+                    current_size = 0
                     for date, value in zip(dates, values):
-                        # Generate the CSV row in memory
-                        # to determine its encoded size.
                         buffer = io.StringIO(newline="")
                         row_writer = csv.writer(buffer)
                         row_writer.writerow([date, value])
                         row = buffer.getvalue()
-                        row_size = len(
-                            row.encode("utf-8")
-                        )
-                        # Start a new chunk before writing
-                        # if the size limit would be exceeded.
+                        row_size = len(row.encode("utf-8"))
                         if (
                             current_size + row_size > max_size
                             and current_size > 0
                         ):
+                            csvfile.close()
                             chunk_index += 1
-                            open_chunk(chunk_index)
+                            csvfile, writer = open_chunk(
+                                output_dir,
+                                safe_filename(name),
+                                chunk_index,
+                            )
+                            current_size = 0
                         writer.writerow([date, value])
-                        csvfile.flush()
                         current_size += row_size
                 finally:
                     if csvfile is not None:

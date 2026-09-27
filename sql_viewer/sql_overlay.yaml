@@ -5,13 +5,40 @@ overlay: 1
 
 environment: "RUN PERIOD"
 
+title: "baisse de température"
 variables:
   #temperature:
-  #  - name: "Site Outdoor Air Drybulb Temperature"
-  #    key: Environment
-  #    label: "Outdoor Temp °C"
+  #  - outdoor_t
 
   borehole_average:
-    - name: "Ground Heat Exchanger Average Borehole Temperature"
-      key: "BOREHOLE"
-      label: "Average Borehole °C"
+    - glhe_average_t
+
+outdoor_t:
+  name: "Site Outdoor Air Drybulb Temperature"
+  key: Environment
+  label: "Outdoor Temp °C"
+  
+indoor_t_r1:
+  name: "Zone Air Temperature"
+  key: RPLUS1
+  label: "RPLUS1 temp °C"
+
+glhe_inlet_t:
+  name: "Ground Heat Exchanger Inlet Temperature"
+  key: "BOREHOLE"
+  label: "Soil inlet °C"
+
+glhe_outlet_t:
+  name: "Ground Heat Exchanger Outlet Temperature"
+  key: "BOREHOLE"
+  label: "Soil outlet °C"
+
+glhe_average_t:
+  name: "Ground Heat Exchanger Average Borehole Temperature"
+  key: "BOREHOLE"
+  label: "Average Borehole °C"
+
+glhe_power:
+  name: "Ground Heat Exchanger Heat Transfer Rate"
+  key: "BOREHOLE"
+  label: "Borehole Heat Transfer W"
