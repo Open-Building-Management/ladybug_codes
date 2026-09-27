@@ -118,6 +118,12 @@ hpwtw:
   Reference_Coefficient_of_Performance: 2.5
   Reference_Heating_Capacity: 30000
   type: heatpump
+  capacity_c: 0.985034
+  capacity_w: 0.029963
+  capacity_x: -0.005332
+  power_c: 0.192996
+  power_w: 0.000464
+  power_x: 0.021273
 
 HX:
   type: exchanger
