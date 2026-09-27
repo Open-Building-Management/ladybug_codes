@@ -171,19 +171,17 @@ def fetch_many(con, config,
     params.append(config["environment"])
     rows = con.execute(query, params).fetchall()
     data = {
-        variable: []
+        variable: {
+            "dates": [],
+            "values": []
+        }
         for variable in indexes
     }
-    data["dates"] = []
-    last_time_index = None
-    for time_index, y, mo, d, h, mi, dict_index, value in rows:
-        # A single date per TimeIndex
-        if time_index != last_time_index:
-            dt = energyplus_date(y, mo, d, h, mi, tz_name=tz_name, mode=mode)
-            data["dates"].append(dt)
-            last_time_index = time_index
+    for _, y, mo, d, h, mi, dict_index, value in rows:
+        dt = energyplus_date(y, mo, d, h, mi, tz_name=tz_name, mode=mode)
         variable = index_to_variable[dict_index]
-        data[variable].append(value)
+        data[variable]["dates"].append(dt)
+        data[variable]["values"].append(value)
     return data
 
 
@@ -211,8 +209,8 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
                 label = variable.get("label", f"{name} — {key}")
                 for db_name, con in cons.items():
                     db_label = label if db_name == "main" else f"{db_name} {label}"
-                    dates = datas[db_name]["dates"]
-                    values = datas[db_name][identifier]
+                    dates = datas[db_name][identifier]["dates"]
+                    values = datas[db_name][identifier]["values"]
                     ax[i].plot(dates, values, label=db_label)
             ax[i].set_xlabel("date")
             ax[i].set_ylabel(thema_name)
@@ -240,7 +238,6 @@ def plot_variables(db, config, overlay_years=True):
     ax = ax[:, 0]
     with sqlite3.connect(db) as con:
         data = fetch_many(con, config)
-        dates = data["dates"]
         for i, (thema_name, thema) in enumerate(
             config["variables"].items()
         ):
@@ -252,7 +249,8 @@ def plot_variables(db, config, overlay_years=True):
                     f"{name} — {key}",
                 )
                 identifier = (name, key)
-                values = data[identifier]
+                dates = data[identifier]["dates"]
+                values = data[identifier]["values"]
                 if not overlay_years:
                     ax[i].plot(
                         dates,
@@ -319,13 +317,13 @@ def export_variables_csv_chunk(db, config,
             tz_name=tz_name,
             mode="timestamp",
         )
-        dates = data["dates"]
         for _, thema in config["variables"].items():
             for variable in thema:
                 name = variable["name"]
                 key = variable["key"]
                 identifier = (name, key)
-                values = data[identifier]
+                dates = data[identifier]["dates"]
+                values = data[identifier]["values"]
                 filename = safe_filename(name)
                 # Export in chunks.
                 chunk_index = 1
