@@ -13,7 +13,10 @@ from zoneinfo import ZoneInfo
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import numpy as np
 import yaml
+
+from idfhub.ast_utils import get_dependencies, eval_expr
 
 
 def list_variables(db):
@@ -102,11 +105,14 @@ def get_dictionary_indexes(con, config):
     """Return dictionary indexes for requested variables."""
     if "variables" not in config:
         return {}
-    variables = [
-        variable
-        for thema in config["variables"].values()
-        for variable in thema
-    ]
+    variables = []
+    for thema in config["variables"].values():
+        if isinstance(thema, list):
+            for variable in thema:
+                variables.append(variable)
+        if isinstance(thema, str):
+            # we have a formula so we must get the dependencies
+            variables.extend(get_dependencies(thema))
     conditions = []
     params = []
     for variable in variables:
@@ -222,6 +228,36 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
     plt.show()
 
 
+def plot_variable(ax, dates, values, label, overlay_years=False):
+    """plot a single serie on an matplotlib axe"""
+    if not overlay_years:
+        ax.plot(
+            dates,
+            values,
+            label=label,
+        )
+        return
+    # overlay mode
+    # Regroupement par année
+    yearly_data = defaultdict(
+        lambda: ([], [])
+    )
+    for date, value in zip(dates, values):
+        year = date.year
+        yearly_data[year][0].append(
+            date.replace(year=2000)
+        )
+        yearly_data[year][1].append(value)
+    for year, (year_dates, year_values) in (
+        yearly_data.items()
+    ):
+        ax.plot(
+            year_dates,
+            year_values,
+            label=year
+        )
+
+
 def plot_variables(db, config, overlay_years=True):
     """Plot variables declared in the yaml.
     For a single database !
@@ -245,45 +281,36 @@ def plot_variables(db, config, overlay_years=True):
         for i, (thema_name, thema) in enumerate(
             config["variables"].items()
         ):
-            for variable in thema:
-                name = config[variable]["name"]
-                key = config[variable]["key"]
-                label = config[variable].get(
-                    "label",
-                    f"{name} — {key}",
-                )
-                identifier = (name, key)
-                dates = data[identifier]["dates"]
-                values = data[identifier]["values"]
-                if not overlay_years:
-                    ax[i].plot(
-                        dates,
-                        values,
-                        label=label,
+            if isinstance(thema, str):
+                dependencies = get_dependencies(thema)
+                values_by_name = {}
+                dates = []
+                for dependency in dependencies:
+                    name = config[dependency]["name"]
+                    key = config[dependency]["key"]
+                    identifier = (name, key)
+                    if not dates:
+                        dates = data[identifier]["dates"]
+                    values_by_name[dependency] = np.array(
+                        data[identifier]["values"]
                     )
-                    continue
-                # Regroupement par année
-                yearly_data = defaultdict(
-                    lambda: ([], [])
-                )
-                for date, value in zip(dates, values):
-                    year = date.year
-                    yearly_data[year][0].append(
-                        date.replace(year=2000)
+                values = eval_expr(thema, values_by_name)
+                label = config.get(thema_name, {}).get("label", thema)
+                plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
+            if isinstance(thema, list):
+                for variable in thema:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
+                    label = config[variable].get(
+                        "label",
+                        f"{name} — {key}",
                     )
-                    yearly_data[year][1].append(value)
-                for year, (year_dates, year_values) in (
-                    yearly_data.items()
-                ):
-                    ax[i].plot(
-                        year_dates,
-                        year_values,
-                        label=f"{label} — {year}",
-                    )
-            ax[i].set_xlabel("date")
+                    identifier = (name, key)
+                    dates = data[identifier]["dates"]
+                    values = data[identifier]["values"]
+                    plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
             ax[i].set_ylabel(thema_name)
             ax[i].grid(True)
-            ax[i].legend()
     if overlay_years:
         for axis in ax:
             axis.xaxis.set_major_locator(
@@ -292,7 +319,19 @@ def plot_variables(db, config, overlay_years=True):
             axis.xaxis.set_major_formatter(
                 mdates.DateFormatter("%b")
             )
-    fig.tight_layout()
+        handles, labels = ax[0].get_legend_handles_labels()
+        fig.legend(
+            handles,
+            labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.96),
+            ncol=5,
+        )
+        fig.tight_layout(rect=[0, 0, 1, 0.92])
+    else:
+        for axis in ax:
+            axis.legend()
+        fig.tight_layout()
     plt.show()
 
 
