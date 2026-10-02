@@ -1,6 +1,9 @@
 path: sql_db
 
 name: Agence_ACF_H_4x5x100_Axiom240.sql
+name: Agence_ACF_H_4x5x100_Axiom240_daily_GLHE.sql
+name: Agence_ACF_H_4x5x100_Axiom240_montlhy_cop_20Y.sql
+#overlay: 1
 #name:
 #  4x5x100m : Agence_ACF_H_4x5x100_Axiom240.sql 
 #  2x5x100m : Agence_ACF_H_2x5x100_Axiom240.sql 
@@ -27,10 +30,10 @@ variables:
   borehole_average_°C:
     - glhe_average_t
   
-  rates:
-    - pac_load_heat_transfer
-    - glhe_heat_rate
-    - pac_elec
+  #rates:
+  #  - pac_load_heat_transfer
+  #  - glhe_heat_rate
+  #  - pac_elec
 
 borehole_delta_t:
   label: "borehole deltaT °C"
@@ -98,3 +101,15 @@ pac_source_inlet_t:
 pac_source_outlet_t:
   name: "Heat Pump Source Side Outlet Temperature"
   key: HPWTW
+
+pac_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: PAC_VARIABLE_PUMP
+
+borehole_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: SOIL_PUMP
+
+zone_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: "ZONE_VARIABLE_PUMP"
