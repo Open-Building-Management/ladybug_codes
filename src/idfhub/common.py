@@ -1,14 +1,13 @@
 """yml management"""
 import argparse
-import ast
 import logging
-import operator as op
 import os
 import re
 import sys
 import yaml
 
 from eppy.modeleditor import IDF
+from .ast_utils import get_dependencies, eval_expr 
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -71,15 +70,6 @@ def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
     print("*********YML FILE NOT FOUND*********")
     return {}
 
-OPS = {
-    ast.Add: op.add,
-    ast.Sub: op.sub,
-    ast.Mult: op.mul,
-    ast.Div: op.truediv,
-    ast.USub: op.neg,
-    ast.UAdd: op.pos,
-}
-
 hvac_parser = argparse.ArgumentParser(description='hvac configuration')
 
 hvac_parser.add_argument(
@@ -108,15 +98,6 @@ GEOMETRY = load_config(REPO_ROOT, args.geoconf)
 COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
 
-def _get_dependencies(expr: str) -> set[str]:
-    """extraction des noms utilisés dans une expression"""
-    tree = ast.parse(expr, mode="eval")
-    return {
-        node.id
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Name)
-    }
-
 def _resolve(key: str, metadata: dict, resolved: dict, resolving: set):
     """résolution d'une clé"""
     if key in resolved:
@@ -133,7 +114,7 @@ def _resolve(key: str, metadata: dict, resolved: dict, resolving: set):
 
     resolving.add(key)
 
-    dependencies = _get_dependencies(value)
+    dependencies = get_dependencies(value)
 
     variables = {
         dep: _resolve(dep, metadata, resolved, resolving)
@@ -191,28 +172,6 @@ def get_variables_old(metadata: dict) -> dict:
     }
     return {**variables, **resolved}
 
-def eval_expr(expr, variables):
-    """secure resolution engine"""
-    def _eval(node):
-        """evaluation method"""
-        if isinstance(node, ast.Constant):
-            return node.value
-
-        if isinstance(node, ast.Name):
-            return variables[node.id]
-
-        if isinstance(node, ast.BinOp):
-            return OPS[type(node.op)](
-                _eval(node.left),
-                _eval(node.right)
-            )
-
-        if isinstance(node, ast.UnaryOp):
-            return OPS[type(node.op)](_eval(node.operand))
-
-        raise TypeError(f"Unsupported Expression : {ast.dump(node)}")
-
-    return _eval(ast.parse(expr.strip(), mode="eval").body)
 
 REQUIRED = [
     "building_name",

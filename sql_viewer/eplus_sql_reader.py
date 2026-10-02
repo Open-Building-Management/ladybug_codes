@@ -7,13 +7,16 @@ import re
 import sqlite3
 
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import numpy as np
 import yaml
+
+from idfhub.ast_utils import get_dependencies, eval_expr
 
 
 def list_variables(db):
@@ -98,10 +101,18 @@ def fetch(con, name, key, config):
     return dates, values
 
 
-def get_dictionary_indexes(con, variables):
+def get_dictionary_indexes(con, config):
     """Return dictionary indexes for requested variables."""
-    if not variables:
+    if "variables" not in config:
         return {}
+    variables = []
+    for thema in config["variables"].values():
+        if isinstance(thema, list):
+            for variable in thema:
+                variables.append(variable)
+        if isinstance(thema, str):
+            # we have a formula so we must get the dependencies
+            variables.extend(get_dependencies(thema))
     conditions = []
     params = []
     for variable in variables:
@@ -109,8 +120,8 @@ def get_dictionary_indexes(con, variables):
             "(Name = ? AND KeyValue = ?)"
         )
         params.extend([
-            variable["name"],
-            variable["key"],
+            config[variable]["name"],
+            config[variable]["key"],
         ])
     query = f"""
         SELECT
@@ -132,14 +143,9 @@ def fetch_many(con, config,
     mode="human"
 ):
     """Fetch several EnergyPlus variables sharing the same dates."""
-    variables = [
-        variable
-        for thema in config["variables"].values()
-        for variable in thema
-    ]
-    indexes = get_dictionary_indexes(con, variables)
+    indexes = get_dictionary_indexes(con, config)
     if not indexes:
-        return { "dates": [] }
+        return {}
     index_to_variable = {
         index: variable
         for variable, index in indexes.items()
@@ -191,33 +197,84 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
     nb = len(config["variables"])
     if nb < 1:
         return
+    colors = config.get("colors", {})
     with contextlib.ExitStack() as stack:
         cons = {
             db_name: stack.enter_context(sqlite3.connect(db_path))
             for db_name, db_path in dbs.items()
         }
-        datas = {db_name : {} for db_name in cons}
+        datas: dict[str, dict] = {db_name : {} for db_name in cons}
         for db_name, con in cons.items():
             datas[db_name] = fetch_many(con, config)
         fig, ax = plt.subplots(nb, 1, sharex=True, squeeze=False)
+        if "title" in config:
+            fig.suptitle(config["title"])
         ax = ax[:, 0]
         for i, (thema_name, thema) in enumerate(config["variables"].items()):
-            for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
-                identifier = (name, key)
-                label = variable.get("label", f"{name} — {key}")
-                for db_name, con in cons.items():
-                    db_label = label if db_name == "main" else f"{db_name} {label}"
-                    dates = datas[db_name][identifier]["dates"]
-                    values = datas[db_name][identifier]["values"]
-                    ax[i].plot(dates, values, label=db_label)
+            y_label = config.get(thema_name, {}).get("label", thema_name)
+            if isinstance(thema, str):
+                dependencies = get_dependencies(thema)
+                values_by_name: dict[str, dict] = {db_name: {} for db_name in cons}
+                dates: list = []
+                for dependency in dependencies:
+                    name = config[dependency]["name"]
+                    key = config[dependency]["key"]
+                    identifier = (name, key)
+                    for db_name in cons:
+                        if not dates:
+                            dates = datas[db_name][identifier]["dates"]
+                        values_by_name[db_name][dependency] = np.array(
+                            datas[db_name][identifier]["values"]
+                        )
+                for db_name in cons:
+                    values = eval_expr(thema, values_by_name[db_name])
+                    color = colors.get(db_name)
+                    ax[i].plot(dates, values, label=db_name, color=color)
+            if isinstance(thema, list):
+                for variable in thema:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
+                    identifier = (name, key)
+                    for db_name in cons:
+                        dates = datas[db_name][identifier]["dates"]
+                        values = datas[db_name][identifier]["values"]
+                        ax[i].plot(dates, values, label=db_name)
             ax[i].set_xlabel("date")
-            ax[i].set_ylabel(thema_name)
+            ax[i].set_ylabel(y_label)
             ax[i].grid(True)
             ax[i].legend()
     fig.tight_layout()
     plt.show()
+
+
+def plot_variable(ax, dates, values, label, overlay_years=False):
+    """plot a single serie on an matplotlib axe"""
+    if not overlay_years:
+        ax.plot(
+            dates,
+            values,
+            label=label,
+        )
+        return
+    # overlay mode
+    # Regroupement par année
+    yearly_data = defaultdict(
+        lambda: ([], [])
+    )
+    for date, value in zip(dates, values):
+        year = date.year
+        yearly_data[year][0].append(
+            date.replace(year=2000)
+        )
+        yearly_data[year][1].append(value)
+    for year, (year_dates, year_values) in (
+        yearly_data.items()
+    ):
+        ax.plot(
+            year_dates,
+            year_values,
+            label=year
+        )
 
 
 def plot_variables(db, config, overlay_years=True):
@@ -235,51 +292,45 @@ def plot_variables(db, config, overlay_years=True):
         sharex=True,
         squeeze=False,
     )
+    if "title" in config:
+        fig.suptitle(config["title"])
     ax = ax[:, 0]
     with sqlite3.connect(db) as con:
         data = fetch_many(con, config)
         for i, (thema_name, thema) in enumerate(
             config["variables"].items()
         ):
-            for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
-                label = variable.get(
-                    "label",
-                    f"{name} — {key}",
-                )
-                identifier = (name, key)
-                dates = data[identifier]["dates"]
-                values = data[identifier]["values"]
-                if not overlay_years:
-                    ax[i].plot(
-                        dates,
-                        values,
-                        label=label,
+            if isinstance(thema, str):
+                dependencies = get_dependencies(thema)
+                values_by_name = {}
+                dates = []
+                for dependency in dependencies:
+                    name = config[dependency]["name"]
+                    key = config[dependency]["key"]
+                    identifier = (name, key)
+                    if not dates:
+                        dates = data[identifier]["dates"]
+                    values_by_name[dependency] = np.array(
+                        data[identifier]["values"]
                     )
-                    continue
-                # Regroupement par année
-                yearly_data = defaultdict(
-                    lambda: ([], [])
-                )
-                for date, value in zip(dates, values):
-                    year = date.year
-                    yearly_data[year][0].append(
-                        date.replace(year=2000)
+                values = eval_expr(thema, values_by_name)
+                label = config.get(thema_name, {}).get("label", thema_name)
+                plot_variable(ax[i], dates, values, label=None, overlay_years=overlay_years)
+                ax[i].set_ylabel(label)
+            if isinstance(thema, list):
+                for variable in thema:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
+                    label = config[variable].get(
+                        "label",
+                        f"{name} — {key}",
                     )
-                    yearly_data[year][1].append(value)
-                for year, (year_dates, year_values) in (
-                    yearly_data.items()
-                ):
-                    ax[i].plot(
-                        year_dates,
-                        year_values,
-                        label=f"{label} — {year}",
-                    )
-            ax[i].set_xlabel("date")
-            ax[i].set_ylabel(thema_name)
+                    identifier = (name, key)
+                    dates = data[identifier]["dates"]
+                    values = data[identifier]["values"]
+                    plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
+                ax[i].set_ylabel(thema_name)
             ax[i].grid(True)
-            ax[i].legend()
     if overlay_years:
         for axis in ax:
             axis.xaxis.set_major_locator(
@@ -288,13 +339,44 @@ def plot_variables(db, config, overlay_years=True):
             axis.xaxis.set_major_formatter(
                 mdates.DateFormatter("%b")
             )
-    fig.tight_layout()
+        handles, labels = ax[0].get_legend_handles_labels()
+        fig.legend(
+            handles,
+            labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.96),
+            ncol=5,
+        )
+        fig.tight_layout(rect=[0, 0, 1, 0.92])
+    else:
+        for axis in ax:
+            axis.legend()
+        fig.tight_layout()
     plt.show()
 
 
 def safe_filename(name):
     """Return a filesystem-safe filename."""
     return re.sub(r'[<>:"/\\|?*]', "_", name)
+
+
+def open_chunk(output_dir, base_name, chunk_number):
+    """open chunk"""
+    filename = (
+        f"{base_name}.csv"
+        if chunk_number == 1
+        else f"{base_name}_{chunk_number:03d}.csv"
+    )
+    filepath = output_dir / filename
+    csvfile = filepath.open(
+        "w",
+        newline="",
+        encoding="utf-8",
+    )
+    writer = csv.writer(csvfile)
+    writer.writerow(["timestamp", "value"])
+    print(f"Exporting: {filepath}")
+    return csvfile, writer
 
 
 def export_variables_csv_chunk(db, config,
@@ -319,60 +401,40 @@ def export_variables_csv_chunk(db, config,
         )
         for _, thema in config["variables"].items():
             for variable in thema:
-                name = variable["name"]
-                key = variable["key"]
+                name = config[variable]["name"]
+                key = config[variable]["key"]
                 identifier = (name, key)
                 dates = data[identifier]["dates"]
                 values = data[identifier]["values"]
-                filename = safe_filename(name)
                 # Export in chunks.
                 chunk_index = 1
                 current_size = 0
-                csvfile = None
-                writer = None
-                def open_chunk(index):
-                    """open chunk"""
-                    nonlocal csvfile, writer, current_size
-                    if csvfile is not None:
-                        csvfile.close()
-                    if index == 1:
-                        filepath = output_dir / f"{filename}.csv"
-                    else:
-                        filepath = output_dir / (
-                            f"{filename}_{index:03d}.csv"
-                        )
-                    csvfile = filepath.open(
-                        "w",
-                        newline="",
-                        encoding="utf-8",
-                    )
-                    writer = csv.writer(csvfile)
-                    writer.writerow(["timestamp", "value"])
-                    csvfile.flush()
-                    current_size = csvfile.tell()
-                    print(f"Exporting: {filepath}")
                 try:
-                    open_chunk(chunk_index)
+                    csvfile, writer = open_chunk(
+                        output_dir,
+                        safe_filename(name),
+                        chunk_index,
+                    )
+                    current_size = 0
                     for date, value in zip(dates, values):
-                        # Generate the CSV row in memory
-                        # to determine its encoded size.
                         buffer = io.StringIO(newline="")
                         row_writer = csv.writer(buffer)
                         row_writer.writerow([date, value])
                         row = buffer.getvalue()
-                        row_size = len(
-                            row.encode("utf-8")
-                        )
-                        # Start a new chunk before writing
-                        # if the size limit would be exceeded.
+                        row_size = len(row.encode("utf-8"))
                         if (
                             current_size + row_size > max_size
                             and current_size > 0
                         ):
+                            csvfile.close()
                             chunk_index += 1
-                            open_chunk(chunk_index)
+                            csvfile, writer = open_chunk(
+                                output_dir,
+                                safe_filename(name),
+                                chunk_index,
+                            )
+                            current_size = 0
                         writer.writerow([date, value])
-                        csvfile.flush()
                         current_size += row_size
                 finally:
                     if csvfile is not None:
