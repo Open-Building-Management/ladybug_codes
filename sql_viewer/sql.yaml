@@ -1,7 +1,17 @@
 path: sql_db
-name: Agence_ACF_chauffage_seul_10Y_RSM_FD.sql
+
+name: Agence_ACF_H_4x5x100_Axiom240.sql
+#name:
+#  4x5x100m : Agence_ACF_H_4x5x100_Axiom240.sql 
+#  2x5x100m : Agence_ACF_H_2x5x100_Axiom240.sql 
+
+colors:
+  4x5x100m: "#ff7f0e"
+  2x5x100m: "#1f77b4"
 
 environment: "RUN PERIOD"
+
+title: "Agence ACF PAC AXIOM EXW 240 4x5x100m"
 
 variables:
   #temperature:
@@ -10,21 +20,23 @@ variables:
 
   borehole_delta_t: glhe_outlet_t - glhe_inlet_t
 
-  PAC:
-    - pac_load_heat_transfer
-    - pac_source_heat_transfer
-    - pac_elec
-  
+  pac_load_delta_t: pac_load_outlet_t - pac_load_inlet_t
+
   COP: pac_load_heat_transfer / pac_elec
 
-  borehole_average:
+  borehole_average_°C:
     - glhe_average_t
   
-  heat_transfer:
-    - glhe_power
+  rates:
+    - pac_load_heat_transfer
+    - glhe_heat_rate
+    - pac_elec
 
 borehole_delta_t:
   label: "borehole deltaT °C"
+
+pac_load_delta_t:
+  label: "pac deltaT °C"
 
 outdoor_t:
   name: "Site Outdoor Air Drybulb Temperature"
@@ -51,22 +63,38 @@ glhe_average_t:
   key: "BOREHOLE"
   label: "Average Borehole °C"
 
-glhe_power:
+glhe_heat_rate:
   name: "Ground Heat Exchanger Heat Transfer Rate"
   key: "BOREHOLE"
   label: "Borehole Heat Transfer W"
-
-pac_elec:
-  name: "Heat Pump Electricity Rate"
-  key: HPWTW
-  label: "HP elec W"
 
 pac_source_heat_transfer:
   name: "Heat Pump Source Side Heat Transfer Rate"
   key: HPWTW
   label: "HP source heat W"
 
+pac_elec:
+  name: "Heat Pump Electricity Rate"
+  key: HPWTW
+  label: "HP elec W"
+
 pac_load_heat_transfer:
   name: "Heat Pump Load Side Heat Transfer Rate"
   key: HPWTW
   label: "HP Load heat W"
+
+pac_load_inlet_t:
+  name: "Heat Pump Load Side Inlet Temperature"
+  key: "HPWTW"
+
+pac_load_outlet_t:
+  name: "Heat Pump Load Side Outlet Temperature"
+  key: HPWTW
+
+pac_source_inlet_t:
+  name: "Heat Pump Source Side Inlet Temperature"
+  key: HPWTW
+
+pac_source_outlet_t:
+  name: "Heat Pump Source Side Outlet Temperature"
+  key: HPWTW

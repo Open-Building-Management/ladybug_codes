@@ -197,6 +197,7 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
     nb = len(config["variables"])
     if nb < 1:
         return
+    colors = config.get("colors", {})
     with contextlib.ExitStack() as stack:
         cons = {
             db_name: stack.enter_context(sqlite3.connect(db_path))
@@ -210,18 +211,36 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
             fig.suptitle(config["title"])
         ax = ax[:, 0]
         for i, (thema_name, thema) in enumerate(config["variables"].items()):
-            for variable in thema:
-                name = config[variable]["name"]
-                key = config[variable]["key"]
-                identifier = (name, key)
-                label = config[variable].get("label", f"{name} — {key}")
-                for db_name, con in cons.items():
-                    db_label = label if db_name == "main" else f"{db_name} {label}"
-                    dates = datas[db_name][identifier]["dates"]
-                    values = datas[db_name][identifier]["values"]
-                    ax[i].plot(dates, values, label=db_label)
+            y_label = config.get(thema_name, {}).get("label", thema_name)
+            if isinstance(thema, str):
+                dependencies = get_dependencies(thema)
+                values_by_name: dict[str, dict] = {db_name: {} for db_name in cons}
+                dates: list = []
+                for dependency in dependencies:
+                    name = config[dependency]["name"]
+                    key = config[dependency]["key"]
+                    identifier = (name, key)
+                    for db_name in cons:
+                        if not dates:
+                            dates = datas[db_name][identifier]["dates"]
+                        values_by_name[db_name][dependency] = np.array(
+                            datas[db_name][identifier]["values"]
+                        )
+                for db_name in cons:
+                    values = eval_expr(thema, values_by_name[db_name])
+                    color = colors.get(db_name)
+                    ax[i].plot(dates, values, label=db_name, color=color)
+            if isinstance(thema, list):
+                for variable in thema:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
+                    identifier = (name, key)
+                    for db_name in cons:
+                        dates = datas[db_name][identifier]["dates"]
+                        values = datas[db_name][identifier]["values"]
+                        ax[i].plot(dates, values, label=db_name)
             ax[i].set_xlabel("date")
-            ax[i].set_ylabel(thema_name)
+            ax[i].set_ylabel(y_label)
             ax[i].grid(True)
             ax[i].legend()
     fig.tight_layout()
@@ -295,8 +314,9 @@ def plot_variables(db, config, overlay_years=True):
                         data[identifier]["values"]
                     )
                 values = eval_expr(thema, values_by_name)
-                label = config.get(thema_name, {}).get("label", thema)
-                plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
+                label = config.get(thema_name, {}).get("label", thema_name)
+                plot_variable(ax[i], dates, values, label=None, overlay_years=overlay_years)
+                ax[i].set_ylabel(label)
             if isinstance(thema, list):
                 for variable in thema:
                     name = config[variable]["name"]
@@ -309,7 +329,7 @@ def plot_variables(db, config, overlay_years=True):
                     dates = data[identifier]["dates"]
                     values = data[identifier]["values"]
                     plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
-            ax[i].set_ylabel(thema_name)
+                ax[i].set_ylabel(thema_name)
             ax[i].grid(True)
     if overlay_years:
         for axis in ax:
