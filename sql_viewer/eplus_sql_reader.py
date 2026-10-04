@@ -35,7 +35,7 @@ class CheckForFiles:
     def path(self, name):
         """Return the path"""
         return os.path.join(self.folder_path, name)
-    
+
     def filter_extension(self, ext="lite") -> None:
         """Filter files with extension ext."""
         folder_path = self.folder_path
