@@ -1,12 +1,5 @@
 path: sql_db
-
-name: Agence_ACF_H_4x5x100_Axiom240.sql
-name: Agence_ACF_H_4x5x100_Axiom240_daily_GLHE.sql
-name: Agence_ACF_H_4x5x100_Axiom240_montlhy_cop_20Y.sql
-#overlay: 1
-#name:
-#  4x5x100m : Agence_ACF_H_4x5x100_Axiom240.sql 
-#  2x5x100m : Agence_ACF_H_2x5x100_Axiom240.sql 
+#path: ..\ep_simulations\Agence_ACF_geo_only\Axiom_240\sql_longterm
 
 colors:
   4x5x100m: "#ff7f0e"
@@ -14,16 +7,16 @@ colors:
 
 environment: "RUN PERIOD"
 
-title: "Agence ACF PAC AXIOM EXW 240 4x5x100m"
+title: "Agence ACF PAC AXIOM EXW 240"
 
 variables:
   #temperature:
   #  - outdoor_t
   #  - indoor_t_r1
 
-  borehole_delta_t: glhe_outlet_t - glhe_inlet_t
+  #borehole_delta_t: glhe_outlet_t - glhe_inlet_t
 
-  pac_load_delta_t: pac_load_outlet_t - pac_load_inlet_t
+  #pac_load_delta_t: pac_load_outlet_t - pac_load_inlet_t
 
   COP: pac_load_heat_transfer / pac_elec
 

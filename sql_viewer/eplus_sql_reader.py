@@ -3,6 +3,7 @@ import argparse
 import contextlib
 import csv
 import io
+import os
 import re
 import sqlite3
 
@@ -11,12 +12,37 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import inquirer
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
 from idfhub.ast_utils import get_dependencies, eval_expr
+
+
+class CheckForFiles:
+    """Recherche fichiers suivant extension"""
+    def __init__(self, folder_path) -> None:
+        """Initialize."""
+        self.names: list[str] = []
+        self.folder_path: str = os.path.abspath(folder_path)
+
+    def get_names(self) -> list[str]:
+        """Return list of files paths."""
+        return self.names
+
+    def path(self, name):
+        """Return the path"""
+        return os.path.join(self.folder_path, name)
+    
+    def filter_extension(self, ext="lite") -> None:
+        """Filter files with extension ext."""
+        folder_path = self.folder_path
+        for name in [name for name in os.listdir(folder_path) if name not in [".",".."]]:
+            full_path = self.path(name)
+            if os.path.isfile(full_path) and name.split(".")[-1] == ext:
+                self.names.append(name)
 
 
 def list_variables(db):
@@ -452,19 +478,43 @@ def main():
     parser.add_argument("--tz", default="Europe/Paris")
     parser.add_argument("--mb", default=2)
     parser.add_argument("--table_info")
+    parser.add_argument("--overlay", default=0)
 
     args = parser.parse_args()
     with open(args.yml, encoding="utf-8") as f:
         sql_config = yaml.safe_load(f)
     databases = {}
-    if isinstance(sql_config.get('name'), str):
-        database = f"{sql_config.get('path')}/{sql_config.get('name')}"
-        databases["main"] = database
-    if isinstance(sql_config.get('name'), dict):
-        for key, value in sql_config.get('name').items():
-            database = f"{sql_config.get('path')}/{value}"
-            databases[key] = database
+    sql_db_paths = CheckForFiles(
+        folder_path=sql_config.get('path')
+    )
+    sql_db_paths.filter_extension(
+        ext="sql"
+    )
+    remaining = sql_db_paths.get_names().copy()
+    while remaining:
+        answers = inquirer.prompt([
+            inquirer.List(
+                "file",
+                message="Choose a file",
+                choices=remaining,
+            ),
+            inquirer.Text(
+                "name",
+                message="Short label for legend",
+            ),
+        ])
+        filename = answers["file"]
+        databases[answers["name"]] = sql_db_paths.path(filename)
+        remaining.remove(filename)
 
+        if not remaining:
+            break
+
+        if not inquirer.confirm(
+            "Add another file ?",
+            default=False,
+        ):
+            break
     if args.list:
         for database in databases.values():
             list_variables(database)
@@ -489,10 +539,11 @@ def main():
 
     if args.plot:
         if len(databases) == 1:
+            print(databases.values())
             plot_variables(
-                databases["main"],
+                next(iter(databases.values())),
                 sql_config,
-                overlay_years=sql_config.get('overlay', False)
+                overlay_years=args.overlay
             )
             return
         multidb_plot_variables(databases, sql_config)
