@@ -426,7 +426,11 @@ def export_variables_csv_chunk(db, config,
             mode="timestamp",
         )
         for _, thema in config["variables"].items():
-            for variable in thema:
+            # on n'applique pas les formules, on peut faire du postprocessing dans emoncms
+            dependencies = thema
+            if isinstance(thema, str):
+                dependencies = get_dependencies(thema)
+            for variable in dependencies:
                 name = config[variable]["name"]
                 key = config[variable]["key"]
                 identifier = (name, key)
