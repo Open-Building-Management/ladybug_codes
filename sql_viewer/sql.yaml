@@ -1,31 +1,108 @@
 path: sql_db
-name: Agence_ACF_chauffage_seul_10Y_RSM_FD.sql
+#path: ..\ep_simulations\Agence_ACF_geo_only\Axiom_240\sql_longterm
+
+colors:
+  4x5x100m: "#ff7f0e"
+  2x5x100m: "#1f77b4"
 
 environment: "RUN PERIOD"
 
-variables:
-  temperature:
-    - name: "Site Outdoor Air Drybulb Temperature"
-      key: Environment
-      label: "Outdoor Temp °C"
-    - name: "Zone Air Temperature"
-      key: RPLUS1
-      label: "RPLUS1 temp °C"
-  
-  borehole:
-    - name: "Ground Heat Exchanger Inlet Temperature"
-      key: "BOREHOLE"
-      label: "Soil inlet °C"
-    - name: "Ground Heat Exchanger Outlet Temperature"
-      key: "BOREHOLE"
-      label: "Soil outlet °C"
+title: "Agence ACF PAC AXIOM EXW 240"
 
-  borehole_average:
-    - name: "Ground Heat Exchanger Average Borehole Temperature"
-      key: "BOREHOLE"
-      label: "Average Borehole °C"
+variables:
+  #temperature:
+  #  - outdoor_t
+  #  - indoor_t_r1
+
+  #borehole_delta_t: glhe_outlet_t - glhe_inlet_t
+
+  #pac_load_delta_t: pac_load_outlet_t - pac_load_inlet_t
+
+  COP: pac_load_heat_transfer / pac_elec
+
+  borehole_average_°C:
+    - glhe_average_t
   
-  heat_transfer:
-    - name: "Ground Heat Exchanger Heat Transfer Rate"
-      key: "BOREHOLE"
-      label: "Borehole Heat Transfer W"
+  #rates:
+  #  - pac_load_heat_transfer
+  #  - glhe_heat_rate
+  #  - pac_elec
+
+borehole_delta_t:
+  label: "borehole deltaT °C"
+
+pac_load_delta_t:
+  label: "pac deltaT °C"
+
+outdoor_t:
+  name: "Site Outdoor Air Drybulb Temperature"
+  key: Environment
+  label: "Outdoor Temp °C"
+  
+indoor_t_r1:
+  name: "Zone Air Temperature"
+  key: RPLUS1
+  label: "RPLUS1 temp °C"
+
+glhe_inlet_t:
+  name: "Ground Heat Exchanger Inlet Temperature"
+  key: "BOREHOLE"
+  label: "Soil inlet °C"
+
+glhe_outlet_t:
+  name: "Ground Heat Exchanger Outlet Temperature"
+  key: "BOREHOLE"
+  label: "Soil outlet °C"
+
+glhe_average_t:
+  name: "Ground Heat Exchanger Average Borehole Temperature"
+  key: "BOREHOLE"
+  label: "Average Borehole °C"
+
+glhe_heat_rate:
+  name: "Ground Heat Exchanger Heat Transfer Rate"
+  key: "BOREHOLE"
+  label: "Borehole Heat Transfer W"
+
+pac_source_heat_transfer:
+  name: "Heat Pump Source Side Heat Transfer Rate"
+  key: HPWTW
+  label: "HP source heat W"
+
+pac_elec:
+  name: "Heat Pump Electricity Rate"
+  key: HPWTW
+  label: "HP elec W"
+
+pac_load_heat_transfer:
+  name: "Heat Pump Load Side Heat Transfer Rate"
+  key: HPWTW
+  label: "HP Load heat W"
+
+pac_load_inlet_t:
+  name: "Heat Pump Load Side Inlet Temperature"
+  key: "HPWTW"
+
+pac_load_outlet_t:
+  name: "Heat Pump Load Side Outlet Temperature"
+  key: HPWTW
+
+pac_source_inlet_t:
+  name: "Heat Pump Source Side Inlet Temperature"
+  key: HPWTW
+
+pac_source_outlet_t:
+  name: "Heat Pump Source Side Outlet Temperature"
+  key: HPWTW
+
+pac_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: PAC_VARIABLE_PUMP
+
+borehole_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: SOIL_PUMP
+
+zone_flow_rate:
+  name: "Pump Mass Flow Rate"
+  key: "ZONE_VARIABLE_PUMP"
