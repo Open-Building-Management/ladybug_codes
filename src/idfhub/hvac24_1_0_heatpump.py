@@ -1,4 +1,5 @@
 """Manage hvac heat pumps"""
+import json
 from idfhub.hvac import EPValues
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
@@ -48,31 +49,90 @@ def create_quadlincurve(name, coeff1, coeff2, coeff3, coeff4):
     )
 
 
+def quadlincurve(name, datas, curve_type, mode="heating"):
+    """create a curve from constructor fitted datas"""
+    curve = datas[curve_type]
+    return CurveQuadlinear(
+        idf,
+        **CurveQuadlinearType(
+            Name=f"{name}_{mode}_{curve_type}",
+            Coefficient1_Constant=curve["c"],
+            Coefficient2_w=curve["w"],
+            Coefficient3_x=curve["x"],
+            Coefficient4_y=curve["y"],
+            Coefficient5_z=curve["z"],
+            Maximum_Value_of_w=datas["w"]["max"],
+            Minimum_Value_of_w=datas["w"]["min"],
+            Maximum_Value_of_x=datas["x"]["max"],
+            Minimum_Value_of_x=datas["x"]["min"],
+            Maximum_Value_of_y=datas["y"]["max"],
+            Minimum_Value_of_y=datas["y"]["min"],
+            Maximum_Value_of_z=datas["z"]["max"],
+            Minimum_Value_of_z=datas["z"]["min"],
+            Maximum_Curve_Output=curve["max"],
+            Minimum_Curve_Output=curve["min"],
+            Input_Unit_Type_for_w=EPValues.DIMENSIONLESS,
+            Input_Unit_Type_for_x=EPValues.DIMENSIONLESS,
+            Input_Unit_Type_for_y=EPValues.DIMENSIONLESS,
+            Input_Unit_Type_for_z=EPValues.DIMENSIONLESS
+        )
+    )
+
+
 def water_to_water_heatpump(name):
     """add a water to water heatpump"""
     conf = CONF[name]
-    capacity_curve = CurveQuadlinear(
-        idf,
-        **create_quadlincurve(
-            f"{name} Heating capacity curve",
-            conf.get("capacity_c", 0.8),
-            conf.get("capacity_w", 0.002),
-            conf.get("capacity_x", 0.002),
-            0
+    # searching for constructor datas :-)
+    datas = {}
+    capacity_curve = None
+    power_curve = None
+    if "model" in conf:
+        with open(f"hardware/{conf["model"]}", "r", encoding="utf-8") as f:
+            datas = json.load(f)
+            capacity_curve = quadlincurve(name, datas, "capacity_curve")
+            power_curve = quadlincurve(name, datas, "power_curve")
+    # default = non realistic curves which simply "run"
+    if capacity_curve is None:
+        capacity_curve = CurveQuadlinear(
+            idf,
+            **create_quadlincurve(
+                f"{name}_heating_capacity_curve",
+                conf.get("capacity_c", 0.8),
+                conf.get("capacity_w", 0.002),
+                conf.get("capacity_x", 0.002),
+                0
+            )
+        )
+    if power_curve is None:
+        power_curve = CurveQuadlinear(
+            idf,
+            **create_quadlincurve(
+                f"{name}_heating_power_curve",
+                conf.get("power_c", 0.4),
+                conf.get("power_w", 0.002),
+                conf.get("power_x", 0.002),
+                0
+            )
+        )
+    load_flow_rate = datas.get(
+        "Reference_Load_Side_Flow_Rate",
+        EPValues.AUTOSIZE
+    )
+    source_flow_rate = datas.get(
+        "Reference_Source_Side_Flow_Rate",
+        EPValues.AUTOSIZE
+    )
+    capacity = datas.get(
+        "Reference_Heating_Capacity",
+        conf.get(
+            "Reference_Heating_Capacity",
+            EPValues.AUTOSIZE
         )
     )
-
-    power_curve = CurveQuadlinear(
-        idf,
-        **create_quadlincurve(
-            f"{name} Heating power curve",
-            conf.get("power_c", 0.4),
-            conf.get("power_w", 0.002),
-            conf.get("power_x", 0.002),
-            0
-        )
+    power = datas.get(
+        "Reference_Heating_Power_Consumption",
+        EPValues.AUTOSIZE
     )
-
     return HeatpumpWatertowaterEquationfitHeating(
         idf,
         **HeatpumpWatertowaterEquationfitHeatingType(
@@ -81,11 +141,10 @@ def water_to_water_heatpump(name):
             Source_Side_Outlet_Node_Name=f"{name}_source_side_outlet_node",
             Load_Side_Inlet_Node_Name=f"{name}_load_side_inlet_node",
             Load_Side_Outlet_Node_Name=f"{name}_load_side_outlet_node",
-            Reference_Load_Side_Flow_Rate=EPValues.AUTOSIZE,
-            Reference_Source_Side_Flow_Rate=EPValues.AUTOSIZE,
-            Reference_Heating_Capacity=conf.get(
-                "Reference_Heating_Capacity", EPValues.AUTOSIZE),
-            Reference_Heating_Power_Consumption=EPValues.AUTOSIZE,
+            Reference_Load_Side_Flow_Rate=load_flow_rate,
+            Reference_Source_Side_Flow_Rate=source_flow_rate,
+            Reference_Heating_Capacity=capacity,
+            Reference_Heating_Power_Consumption=power,
             Reference_Coefficient_of_Performance=conf.get(
                 "Reference_Coefficient_of_Performance", 2.5),
             Sizing_Factor=1,
