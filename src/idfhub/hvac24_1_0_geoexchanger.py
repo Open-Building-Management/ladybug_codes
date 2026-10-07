@@ -1,8 +1,8 @@
 """Manage geothermal systems and ground heat exchangers"""
-from idfhub.hvac import EPValues
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     SiteGroundtemperatureBuildingsurface,
+    SiteGroundtemperatureDeep,
     SiteGroundtemperatureUndisturbedKusudaachenbach,
     GroundheatexchangerVerticalProperties,
     GroundheatexchangerVerticalArray,
@@ -11,6 +11,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
 
 from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     SiteGroundtemperatureBuildingsurfaceType,
+    SiteGroundtemperatureDeepType,
     SiteGroundtemperatureUndisturbedKusudaachenbachType,
     GroundheatexchangerVerticalPropertiesType,
     GroundheatexchangerVerticalArrayType,
@@ -18,6 +19,27 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
 )
 
 from idfhub.common import idf, CONF
+
+
+def deep_ground_temperature():
+    """deep ground -> values from energyplus examples ?"""
+    SiteGroundtemperatureDeep(
+        idf,
+        **SiteGroundtemperatureDeepType(
+            January_Deep_Ground_Temperature=13.03,
+            February_Deep_Ground_Temperature=13.03,
+            March_Deep_Ground_Temperature=12.13,
+            April_Deep_Ground_Temperature=13.3,
+            May_Deep_Ground_Temperature=13.43,
+            June_Deep_Ground_Temperature=13.52,
+            July_Deep_Ground_Temperature=13.62,
+            August_Deep_Ground_Temperature=13.77,
+            September_Deep_Ground_Temperature=13.78,
+            October_Deep_Ground_Temperature=13.55,
+            November_Deep_Ground_Temperature=13.44,
+            December_Deep_Ground_Temperature=13.2
+        )
+    )
 
 
 def ground_temperature():
@@ -43,13 +65,18 @@ def ground_temperature():
 
 def vertical_geoexchanger(name: str):
     """add a geoexchanger with vertical boreholes"""
+    conf = CONF.get(name, {})
+    # conductivité en W/(m K) - 0.69 serait une valeur médiocre
+    conductivity = conf.get("Soil_Thermal_Conductivity", 2.5)
+    soil_density = conf.get("Soil_Density", 2000) # kg/m3
+    specific_heat = conf.get("Soil_Specific_Heat", 900)  # J/(kg K)
     soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
         idf,
         **SiteGroundtemperatureUndisturbedKusudaachenbachType(
             Name="Sol_KA",
-            Soil_Thermal_Conductivity=2.5,  # W/(m K)
-            Soil_Density=2000,  # kg/m3
-            Soil_Specific_Heat=900,  # J/(kg K)
+            Soil_Thermal_Conductivity=conductivity,
+            Soil_Density=soil_density,
+            Soil_Specific_Heat=specific_heat,
             Average_Soil_Surface_Temperature=11,
             Average_Amplitude_of_Surface_Temperature=10,
             Phase_Shift_of_Minimum_Surface_Temperature=45  # days
@@ -60,7 +87,7 @@ def vertical_geoexchanger(name: str):
         **GroundheatexchangerVerticalPropertiesType(
             Name=f"single vertical hole for {name}",
             Depth_of_Top_of_Borehole=0,
-            Borehole_Length=100,
+            Borehole_Length=conf.get("Borehole_Length", 100),
             Borehole_Diameter=0.15,
             Grout_Thermal_Conductivity=1.2,  # W / (m K)
             Grout_Thermal_Heat_Capacity=3.0e6,  # J / (m3 K)
@@ -77,11 +104,12 @@ def vertical_geoexchanger(name: str):
         **GroundheatexchangerVerticalArrayType(
             Name=f"{name} field array",
             GHEVerticalProperties_Object_Name=hole.Name,
-            Number_of_Boreholes_in_XDirection=CONF[name].get(
+            Number_of_Boreholes_in_XDirection=conf.get(
                 "Number_of_Boreholes_in_XDirection", 5),
-            Number_of_Boreholes_in_YDirection=CONF[name].get(
+            Number_of_Boreholes_in_YDirection=conf.get(
                 "Number_of_Boreholes_in_YDirection", 2),
-            Borehole_Spacing=6
+            Borehole_Spacing=conf.get(
+                "Borehole_Spacing",6)
         )
     )
 
@@ -95,8 +123,8 @@ def vertical_geoexchanger(name: str):
             Design_Flow_Rate=0.006,  # m3/s before 0.0033
             Undisturbed_Ground_Temperature_Model_Name=soil.Name,
             Undisturbed_Ground_Temperature_Model_Type=soil.key,
-            Ground_Thermal_Conductivity=2.5,  # W / (m K) - 0.69 serait une valeur médiocre
-            Ground_Thermal_Heat_Capacity=1.8e6,  # Pa/K = J / (m3 K)
+            Ground_Thermal_Conductivity=conductivity,
+            Ground_Thermal_Heat_Capacity=soil_density*specific_heat,  # Pa/K = J / (m3 K)
             GHEVerticalArray_Object_Name=boreholes.Name
         )
     )
