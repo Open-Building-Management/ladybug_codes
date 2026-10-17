@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 
-def merge_epw(directory, output, start_year=2025):
+def merge_epw(directory, output, start_year=2026):
     """merge all epw files in a directory
     adjust years"""
     files = sorted(Path(directory).glob("*.epw"))
