@@ -2,11 +2,12 @@ building_name: idf/Agence_ACF_geo_only
 North_Axis: 122.4
 
 name: SVG_3L_DSP
-suffix: 500m_30PAC_Gaz45_7040_10Y
+suffix: EXW240_Gaz_7040_1Y
+idf_name: 4x8x70_lb1.3_S4_P40
 
 verbose: 0
 
-os_ep_path: "D:/EnergyPlusV24-1-0"
+os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
 run_period:
   Begin_Month: 4
@@ -14,7 +15,7 @@ run_period:
   Begin_Year: 2026
   End_Month: 4
   End_Day_of_Month: 20
-  End_Year: 2035
+  End_Year: 2027
 
 schedules:
   cooling:
@@ -111,19 +112,17 @@ water_law_set_point_7040:
   Outdoor_High_Temperature: 15
 
 borehole:
-  Number_of_Boreholes_in_XDirection: 5
-  Number_of_Boreholes_in_YDirection: 1
+  Borehole_Length: 70
+  Soil_Thermal_Conductivity: 1.3
+  Soil_Density: 2000
+  Soil_Specific_Heat: 900
+  Number_of_Boreholes_in_XDirection: 8
+  Number_of_Boreholes_in_YDirection: 4
+  Borehole_Spacing: 4
 
 hpwtw:
-  Reference_Coefficient_of_Performance: 2.5
-  Reference_Heating_Capacity: 30000
   type: heatpump
-  capacity_c: 0.985034
-  capacity_w: 0.029963
-  capacity_x: -0.005332
-  power_c: 0.192996
-  power_w: 0.000464
-  power_x: 0.021273
+  model: trane_axiom_EXW240.json
 
 HX:
   type: exchanger
