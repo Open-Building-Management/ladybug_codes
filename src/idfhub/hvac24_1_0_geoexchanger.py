@@ -70,6 +70,11 @@ def vertical_geoexchanger(name: str):
     conductivity = conf.get("Soil_Thermal_Conductivity", 2.5)
     soil_density = conf.get("Soil_Density", 2000) # kg/m3
     specific_heat = conf.get("Soil_Specific_Heat", 900)  # J/(kg K)
+    average_amplitude = conf.get(
+        "Average_Amplitude_of_Surface_Temperature", 10)
+    phase_shift = conf.get(
+        "Phase_Shift_of_Minimum_Surface_Temperature", 45) # days
+
     soil = SiteGroundtemperatureUndisturbedKusudaachenbach(
         idf,
         **SiteGroundtemperatureUndisturbedKusudaachenbachType(
@@ -78,8 +83,8 @@ def vertical_geoexchanger(name: str):
             Soil_Density=soil_density,
             Soil_Specific_Heat=specific_heat,
             Average_Soil_Surface_Temperature=11,
-            Average_Amplitude_of_Surface_Temperature=10,
-            Phase_Shift_of_Minimum_Surface_Temperature=45  # days
+            Average_Amplitude_of_Surface_Temperature=average_amplitude,
+            Phase_Shift_of_Minimum_Surface_Temperature=phase_shift
         )
     )
     hole = GroundheatexchangerVerticalProperties(
