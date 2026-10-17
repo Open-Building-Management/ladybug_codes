@@ -9,6 +9,7 @@ verbose: 0
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
 
+#force_frequency: Timestep
 run_period:
   Begin_Month: 4
   Begin_Day_of_Month: 21

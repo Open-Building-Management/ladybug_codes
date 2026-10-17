@@ -8,6 +8,11 @@ colors:
 environment: "RUN PERIOD"
 
 title: "Agence ACF PAC AXIOM EXW 240"
+y_bottom: -3
+y_top: 14
+day_start: 7
+day_stop: 17
+style: marker
 
 variables:
   #temperature:
@@ -43,6 +48,10 @@ indoor_t_r1:
   name: "Zone Air Temperature"
   key: RPLUS1
   label: "RPLUS1 temp °C"
+
+indoor_hr_r1:
+  name: "Zone Air Relative Humidity"
+  key: RPLUS1
 
 glhe_inlet_t:
   name: "Ground Heat Exchanger Inlet Temperature"
@@ -98,11 +107,37 @@ pac_source_outlet_t:
 pac_flow_rate:
   name: "Pump Mass Flow Rate"
   key: PAC_VARIABLE_PUMP
+  label: kg/s
 
 borehole_flow_rate:
   name: "Pump Mass Flow Rate"
   key: SOIL_PUMP
+  label: kg/s
 
 zone_flow_rate:
   name: "Pump Mass Flow Rate"
   key: "ZONE_VARIABLE_PUMP"
+
+sensible_cooling_rate_rdc:
+  name: "Cooling Coil Sensible Cooling Rate"
+  key: FCU_RDC_COIL_COOLING_WATER
+
+sensible_cooling_rate_rplus1:
+  name: "Cooling Coil Sensible Cooling Rate"
+  key: FCU_RDC_COIL_COOLING_WATER
+
+total_cooling_rate_rdc:
+  name: "Cooling Coil Total Cooling Rate"
+  key: FCU_RDC_COIL_COOLING_WATER
+
+total_cooling_rate_rplus1:
+  name: "Cooling Coil Total Cooling Rate"
+  key: FCU_RPLUS1_COIL_COOLING_WATER
+
+cooling_wetted_area_rdc:
+  name: "Cooling Coil Wetted Area Fraction"
+  key: FCU_RDC_COIL_COOLING_WATER
+
+cooling_weeted_area_rplus1:
+  name: "Cooling Coil Wetted Area Fraction"
+  key: FCU_RPLUS1_COIL_COOLING_WATER 

@@ -217,6 +217,28 @@ def fetch_many(con, config,
     return data
 
 
+def filter_hours(dates, values, day_start=None, day_stop=None):
+    """Filter time series to keep only data within the specified hours."""
+    if day_start is None and day_stop is None:
+        return dates, values
+    dates = np.asarray(dates)
+    values = np.asarray(values)
+
+    hours = np.array([
+        date.hour + date.minute / 60 + date.second / 3600
+        for date in dates
+    ])
+
+    mask = np.ones(len(dates), dtype=bool)
+
+    if day_start is not None:
+        mask &= hours >= day_start
+    if day_stop is not None:
+        mask &= hours <= day_stop
+
+    return dates[mask], values[mask]
+
+
 def multidb_plot_variables(dbs: dict[str, str], config: dict):
     """Plot variables declared in the yaml for multiple sql databases.
     permits to compare 2 scenarios"""
@@ -224,14 +246,17 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
     if nb < 1:
         return
     colors = config.get("colors", {})
+    day_start = config.get("day_start")
+    day_stop = config.get("day_stop")
     with contextlib.ExitStack() as stack:
         cons = {
             db_name: stack.enter_context(sqlite3.connect(db_path))
             for db_name, db_path in dbs.items()
         }
-        datas: dict[str, dict] = {db_name : {} for db_name in cons}
-        for db_name, con in cons.items():
-            datas[db_name] = fetch_many(con, config)
+        datas = {
+            db_name: fetch_many(con, config)
+            for db_name, con in cons.items()
+        }
         fig, ax = plt.subplots(nb, 1, sharex=True, squeeze=False)
         if "title" in config:
             fig.suptitle(config["title"])
@@ -254,9 +279,12 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
                         )
                 for db_name in cons:
                     values = eval_expr(thema, values_by_name[db_name])
+                    dates, values = filter_hours(
+                        dates, values
+                    )
                     color = colors.get(db_name)
                     ax[i].plot(dates, values, label=db_name, color=color)
-            if isinstance(thema, list):
+            elif isinstance(thema, list):
                 for variable in thema:
                     name = config[variable]["name"]
                     key = config[variable]["key"]
@@ -264,7 +292,24 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
                     for db_name in cons:
                         dates = datas[db_name][identifier]["dates"]
                         values = datas[db_name][identifier]["values"]
-                        ax[i].plot(dates, values, label=db_name)
+                        dates, values = filter_hours(
+                            dates,
+                            values,
+                            day_start=day_start,
+                            day_stop=day_stop
+                        )
+                        kwargs = {}
+                        if config.get("style") == "marker":
+                            kwargs = {
+                                "linestyle": "None",
+                                "marker": ".",
+                                "markersize": 2
+                            }
+                        ax[i].plot(dates, values, label=db_name, **kwargs)
+            ax[i].set_ylim(
+                config.get("y_bottom"),
+                config.get("y_top")
+            )
             ax[i].set_xlabel("date")
             ax[i].set_ylabel(y_label)
             ax[i].grid(True)

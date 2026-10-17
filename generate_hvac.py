@@ -11,7 +11,7 @@ from idfhub.hvac import (
 )
 # autocompletion use
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
-    Timestep, SizingperiodDesignday, Runperiod, Version, Simulationcontrol,
+    Timestep, SizingperiodDesignday, Runperiod, RunperiodMeta, Version, Simulationcontrol,
     Building, Globalgeometryrules,
     SizingParameters, SizingZone, SizingPlant, SizingSystem,
     ZonehvacEquipmentconnections,
@@ -113,13 +113,36 @@ air_nodes: dict[str, dict[str, str]] = {}
 air_zone_splitters: dict[str, EpBunch] = {}
 air_zone_mixers: dict[str, EpBunch] = {}
 
-def add_variable(name, key="*"):
+
+class Outputs:
+    """outputs management"""
+    def __init__(self, frequency="Timestep"):
+        """initialise"""
+        self.frequency = frequency
+
+    def set_frequency(self, frequency):
+        """set the frequency"""
+        self.frequency = frequency
+
+    def add_variable(self, variable_name, key="*"):
+        """add a variable to the ep output"""
+        OutputVariable(
+            idf,
+            **OutputVariableType(
+                Key_Value=key,
+                Variable_Name=variable_name,
+                Reporting_Frequency=self.frequency
+            )
+        )
+
+
+def add_variable(variable_name, key="*"):
     """add a variable to the ep output"""
     OutputVariable(
         idf,
         **OutputVariableType(
             Key_Value=key,
-            Variable_Name=name,
+            Variable_Name=variable_name,
             Reporting_Frequency="Timestep"
         )
     )
@@ -262,25 +285,37 @@ def basic_zone_sizing(zone_name: str):
 
 def add_equipment_variables():
     """add variables for the declared equipments"""
+    runperiod = idf.getobject(
+        RunperiodMeta.idf_name,
+        "run period"
+    )
+    frequency = "Timestep"
+    nb_years = runperiod["End_Year"] - runperiod["Begin_Year"]
+    if nb_years >= 10:
+        frequency = "Daily"
+    if "force_frequency" in CONF:
+        frequency = CONF["force_frequency"]
+    outputs = Outputs(frequency)
+
     for equipment_name in EQUIPMENTS:
         if COIL_SYSTEM in equipment_name and COOLING_DX in equipment_name:
             add_variable("Cooling Coil Total Cooling Rate")
         if BOREHOLE in equipment_name:
             suffix = "Ground Heat Exchanger"
-            add_variable(f"{suffix} Heat Transfer Rate")
-            add_variable(f"{suffix} Inlet Temperature")
-            add_variable(f"{suffix} Outlet Temperature")
-            add_variable(f"{suffix} Average Borehole Temperature")
+            outputs.add_variable(f"{suffix} Heat Transfer Rate")
+            outputs.add_variable(f"{suffix} Inlet Temperature")
+            outputs.add_variable(f"{suffix} Outlet Temperature")
+            outputs.add_variable(f"{suffix} Average Borehole Temperature")
         if HP in equipment_name:
             suffix = "Heat Pump"
-            add_variable(f"{suffix} Load Side Outlet Temperature")
-            add_variable(f"{suffix} Load Side Inlet Temperature")
-            add_variable(f"{suffix} Source Side Outlet Temperature")
-            add_variable(f"{suffix} Source Side Inlet Temperature")
-            add_variable(f"{suffix} Source Side Mass Flow Rate")
-            add_variable(f"{suffix} Electricity Rate")
-            add_variable(f"{suffix} Load Side Heat Transfer Rate")
-            add_variable(f"{suffix} Source Side Heat Transfer Rate")
+            outputs.add_variable(f"{suffix} Load Side Outlet Temperature")
+            outputs.add_variable(f"{suffix} Load Side Inlet Temperature")
+            outputs.add_variable(f"{suffix} Source Side Outlet Temperature")
+            outputs.add_variable(f"{suffix} Source Side Inlet Temperature")
+            outputs.add_variable(f"{suffix} Source Side Mass Flow Rate")
+            outputs.add_variable(f"{suffix} Electricity Rate")
+            outputs.add_variable(f"{suffix} Load Side Heat Transfer Rate")
+            outputs.add_variable(f"{suffix} Source Side Heat Transfer Rate")
         if BOILER in equipment_name:
             suffix = "Boiler"
             add_variable(f"{suffix} Heating Rate")
@@ -676,5 +711,7 @@ if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}"):
 if not os.path.exists(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}"):
     os.mkdir(f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}")
 
-final_name = f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}/{BUILDING_LAST_NAME}.idf"
+idf_name = CONF["idf_name"] if "idf_name" in CONF else BUILDING_LAST_NAME 
+
+final_name = f"{EP_SIM_PATH}/{BUILDING_LAST_NAME}/{PROJECT_NAME}/{idf_name}.idf"
 idf.save(final_name)
