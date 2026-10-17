@@ -84,13 +84,14 @@ def water_to_water_heatpump(name):
     conf = CONF[name]
     # searching for constructor datas :-)
     datas = {}
-    capacity_curve = None
-    power_curve = None
-    if "model" in conf:
+    try:
         with open(f"hardware/{conf["model"]}", "r", encoding="utf-8") as f:
             datas = json.load(f)
             capacity_curve = quadlincurve(name, datas, "capacity_curve")
             power_curve = quadlincurve(name, datas, "power_curve")
+    except (KeyError, FileNotFoundError):
+        capacity_curve = None
+        power_curve = None
     # default = non realistic curves which simply "run"
     if capacity_curve is None:
         capacity_curve = CurveQuadlinear(
