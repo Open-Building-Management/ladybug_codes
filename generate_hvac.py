@@ -369,6 +369,8 @@ Simulationcontrol(
     )
 )
 
+winter_dd = CONF.get("design_days", {}).get("heating", {})
+summer_dd = CONF.get("design_days", {}).get("cooling", {})
 SizingperiodDesignday(
     idf,
     **SizingperiodDesigndayType(
@@ -376,10 +378,17 @@ SizingperiodDesignday(
         Month=1,
         Day_of_Month=1,
         Day_Type=EPValues.WINTER_DESIGN_DAY,
-        Maximum_DryBulb_Temperature=-5,
+        Maximum_DryBulb_Temperature=winter_dd.get(
+            "Maximum_DryBulb_Temperature", -5
+        ),
+        Daily_DryBulb_Temperature_Range=winter_dd.get(
+            "Daily_DryBulb_Temperature_Range", 0
+        ),
         Wind_Speed=0,
         Wind_Direction=0,
-        Wetbulb_or_DewPoint_at_Maximum_DryBulb=-10,
+        Wetbulb_or_DewPoint_at_Maximum_DryBulb=winter_dd.get(
+            "Wetbulb_or_DewPoint_at_Maximum_DryBulb", -10
+        ),
         Humidity_Condition_Type="DewPoint"
     )
 )
@@ -391,11 +400,17 @@ SizingperiodDesignday(
         Month=7,
         Day_of_Month=21,
         Day_Type=EPValues.SUMMER_DESIGN_DAY,
-        Maximum_DryBulb_Temperature=38,
-        Daily_DryBulb_Temperature_Range=10,
+        Maximum_DryBulb_Temperature=summer_dd.get(
+            "Maximum_DryBulb_Temperature", 38
+        ),
+        Daily_DryBulb_Temperature_Range=summer_dd.get(
+            "Daily_DryBulb_Temperature_Range", 10
+        ),
         Wind_Speed=2,
         Wind_Direction=180,
-        Wetbulb_or_DewPoint_at_Maximum_DryBulb=18,
+        Wetbulb_or_DewPoint_at_Maximum_DryBulb=summer_dd.get(
+            "Wetbulb_or_DewPoint_at_Maximum_DryBulb", 18
+        ),
         Humidity_Condition_Type="DewPoint",
         Barometric_Pressure=101325
     )
