@@ -11,11 +11,6 @@ colors:
 environment: "RUN PERIOD"
 
 title: "Agence ACF PAC AXIOM EXW 240"
-y_bottom: -3
-y_top: 14
-day_start: 7
-day_stop: 17
-style: marker
 # only for multidb plots 
 #y_bottom: -3
 #y_top: 14
