@@ -19,9 +19,10 @@ title: "Agence ACF PAC AXIOM EXW 240"
 #style: marker
 
 variables:
-  #temperature:
-  #  - outdoor_t
-  #  - indoor_t_r1
+  temperature:
+    - outdoor_t
+    - indoor_t_r1
+  #  - indoor_hr_r1
 
   #borehole_delta_t: glhe_outlet_t - glhe_inlet_t
 
@@ -29,7 +30,9 @@ variables:
 
   #COP: pac_load_heat_transfer / pac_elec
 
-  borehole_average_°C:
+  borehole_temperatures_°C:
+    - glhe_inlet_t
+    - glhe_outlet_t
     - glhe_average_t
   
   #"GLHE INLET °C":
