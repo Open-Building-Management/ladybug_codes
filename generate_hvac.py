@@ -300,6 +300,8 @@ def add_equipment_variables():
     for equipment_name in EQUIPMENTS:
         if COIL_SYSTEM in equipment_name and COOLING_DX in equipment_name:
             add_variable("Cooling Coil Total Cooling Rate")
+        if PUMP in equipment_name:
+            outputs.add_variable("Pump Electricity Rate")
         if BOREHOLE in equipment_name:
             suffix = "Ground Heat Exchanger"
             outputs.add_variable(f"{suffix} Heat Transfer Rate")
