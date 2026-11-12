@@ -7,3 +7,5 @@ sql_viewer/sql_db
 sql_viewer/exports
 *egg-info
 ep_simulations/*
+build/*
+src/ep_simulations

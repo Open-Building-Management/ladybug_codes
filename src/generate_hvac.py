@@ -717,7 +717,6 @@ OutputSqlite(
         Option_Type="SimpleAndTabular"
     )
 )
-input("press")
 
 BUILDING_LAST_NAME = BUILDING_NAME.split("/")[-1]
 
