@@ -100,7 +100,7 @@ class EmsProgram():
                 Program_Name_1=program.Name
             )
         )
-    
+
     def calculate(
         self,
         *,
@@ -463,17 +463,21 @@ def air_to_water_heatpump_ems(name):
     return hp_virtual_boiler
 
 
-def air_to_water_heatpump(name):
-    """add an air to water heatpump
-    cannot be injected as is on a plantloop !"""
-    air_node_name = f"{name}_InputOutdoorAirNode"
-    input_air_node = OutdoorairNode(
+def create_air_node(name):
+    """create an air node"""
+    return OutdoorairNode(
         idf,
         **OutdoorairNodeType(
-            Name=air_node_name,
+            Name=name,
             Height_Above_Ground=10
         )
     )
+
+
+def air_to_water_heatpump(name):
+    """add an air to water heatpump
+    cannot be injected as is on a plantloop !"""
+    input_air_node = create_air_node(f"{name}_InputOutdoorAirNode")
     # un set de courbes théoriques pour fonctionner avec une loi d'eau de type 35/55
     heating_capacity_curve = CurveBiquadratic(
         idf,

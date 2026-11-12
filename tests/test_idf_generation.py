@@ -8,8 +8,8 @@ from honeybee.room import Room
 
 # Import the geometry generation script components
 # This assumes generate_geometry_from_yaml.py can be imported or executed
-from src.idfhub.common import load_config, eval_expr, GEOMETRY, BLOCKS, REPO_ROOT
-from src.idfhub.helpers.geometry import complex_room, ApertureManager, add_aperture
+from src.idfhub.common import eval_expr, GEOMETRY, BLOCKS
+from src.idfhub.helpers.geometry import complex_room, add_aperture
 from src.idfhub.helpers.matlib import CONSTLIB
 from ladybug_geometry.geometry3d import Face3D, Point3D
 from honeybee.boundarycondition import Outdoors, Ground

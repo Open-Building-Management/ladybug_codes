@@ -11,7 +11,7 @@ an oasystem is a controller and an equipment
 the equipment is an oamixer and the controller is an oacontroller
 """
 from typing import Tuple
-from eppy.bunch_subclass import BadEPFieldError, EpBunch
+from eppy.bunch_subclass import EpBunch
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     Airloophvac,
@@ -21,7 +21,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     AirloophvacZonemixer,AirloophvacReturnpath,
     ZonehvacAirdistributionunit,
     AirterminalSingleductConstantvolumeNoreheat,
-    HeatexchangerAirtoairSensibleandlatent,
     OutdoorairMixer,
     OutdoorairNode,
     ControllerOutdoorair,
@@ -38,7 +37,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     AirloophvacZonemixerType,AirloophvacReturnpathType,
     ZonehvacAirdistributionunitType,
     AirterminalSingleductConstantvolumeNoreheatType,
-    HeatexchangerAirtoairSensibleandlatentType,
     OutdoorairMixerType,OutdoorairNodeType,
     ControllerOutdoorairType, AirloophvacControllerlistType,
     AirloophvacOutdoorairsystemEquipmentlistType,
@@ -53,7 +51,9 @@ def cv_no_reheat(
     * ,
     zone_air_inlet_node: str
 ) -> Tuple[EpBunch, EpBunch]:
-    """create an Constant volume (CV) no reheat air terminal and its air distribution unit wrapper"""
+    """create an Constant volume (CV) no reheat air terminal 
+    and its air distribution unit wrapper
+    """
     terminal_name = f"{name} terminal unit"
     air_terminal = AirterminalSingleductConstantvolumeNoreheat(
         idf,
@@ -212,7 +212,7 @@ def add_airloop(name) -> Tuple[EpBunch, EpBunch, EpBunch]:
             Node_1_Name=nodes.demand_inlet
         )
     )
-    # creating the zone splitter - outlet nodes to be filled 
+    # creating the zone splitter - outlet nodes to be filled
     air_zone_splitter = AirloophvacZonesplitter(
         idf,
         **AirloophvacZonesplitterType(

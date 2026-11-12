@@ -16,7 +16,7 @@ def fan(
     *,
     inlet_node_name: str|None = None,
     outlet_node_name: str|None = None
-) -> EpBunch:
+) -> EpBunch | None:
     """create a fan
     not implemented yet : exhaust and variable
     """
@@ -34,7 +34,7 @@ def fan(
                 Maximum_Flow_Rate=EPValues.AUTOSIZE,
                 Motor_Efficiency=conf.get("Motor_Efficiency", 0.9),
                 Air_Inlet_Node_Name=inlet_node_name,
-                Air_Outlet_Node_Name=outlet_node_name 
+                Air_Outlet_Node_Name=outlet_node_name
             )
         )
     if "system" in name:
@@ -56,3 +56,4 @@ def fan(
                 Speed_3_Electric_Power_Fraction=1
             )
         )
+    return None
