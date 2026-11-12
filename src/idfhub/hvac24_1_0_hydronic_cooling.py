@@ -1,10 +1,11 @@
 """hvac four pipe fan coil (and two pipe also)
 
 # Capacity_Control_Method
-Si le ventilateur tourne toujours à la même vitesse et que seule la vanne d'eau froide module : ConstantFanVariableFlow
-Si vanne On/Off et fan Petite/Moyenne/Grande vitesse : MultiSpeedFan
-Si moteur EC/vitesse variable continue/vanne modulante : VariableFanVariableFlow
-
+1) ConstantFanVariableFlow
+- Si le ventilateur tourne toujours à la même vitesse
+- et si seule la vanne d'eau froide module
+2) MultiSpeedFan, si vanne On/Off et fan Petite/Moyenne/Grande vitesse
+3) VariableFanVariableFlow, si moteur EC/vitesse variable continue/vanne modulante
 
 Pour une zone :
 Zone Air Node = air mélangé de la pièce, référence, n'est pas un node de connexion
@@ -13,7 +14,7 @@ zone_air_exhaust_node = là où les équipements prélèvent
 
 Pour le Fan, on prend 120 Pa de pressure rise, parce que le système est local (zone HVAC)
 - peu de pertes réseau
-- seulement une batterie eau glacée, une grille de soufflage et un petit plénum (volume air “tampon”)
+- seulement une batterie eau glacée, une grille de soufflage et un petit plénum (volume air tampon)
 pour les vitesses :
 - petite vitesse ≈ confort nuit / faible charge
 - moyenne ≈ régime normal
@@ -61,7 +62,6 @@ def fcu_cooling(
     - le mixe à l'air extérieur, le fait passer dans le fan,
     - le raffraichit avec la CC = coil cooling
     - rejette vers zone_air_inlet"""
-    zone_name = name.split("_")[-1]
     # le noeud de l'air extérieur
     mixer_name = f"{name}_OA_mixer"
     oa_in_node = f"{mixer_name}_OA_in_node"
@@ -121,7 +121,7 @@ def fcu_cooling(
     summer_start, summer_end = summer()
     if summer_start and summer_end:
         fan_schedule = two_season_schedule(
-            name=f"common_summer_fan_schedule",
+            name="common_summer_fan_schedule",
             period_start=summer_start,
             period_end=summer_end,
             value_on_period=1,
@@ -151,7 +151,7 @@ def fcu_cooling(
             Air_Inlet_Node_Name=ccw_air_outlet_node,
             Air_Outlet_Node_Name=zone_air_inlet_node,
             Availability_Schedule_Name=always_off
-        ) 
+        )
     )
     # other control methods
     # ConstantFanVariableFlow < pour les FanConstantVolume

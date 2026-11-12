@@ -1,5 +1,4 @@
 """Integration tests for YAML geometry generation"""
-import os
 import tempfile
 import pytest
 import yaml

@@ -22,10 +22,10 @@ def coil_system_cooling_dx(name) -> list[EpBunch]|None:
         return None
     side = resolve_side(coil_name)
     if not side:
-         return None
+        return None
     coil = None
     if "cooling_dx_single_speed" in coil_name:
-            coil = coil_cooling_dx_single_speed(coil_name)
+        coil = coil_cooling_dx_single_speed(coil_name)
     if not coil:
         return None
     inlet = f"{side}_{EPApi.INLET.node_name()}"
@@ -47,10 +47,10 @@ def coil_cooling_dx_single_speed(name: str) -> EpBunch:
     """coil cooling direct expansion"""
     conf = CONF.get(name, {})
     # the default values come from the energy plus examples,
-    # they are caracterisation values for a window air conditionner 
+    # they are caracterisation values for a window air conditionner
     # x = inside air temperature, which enters the evaporator
     # y = outside air temperature, which enters the condenser
-    # nota : there is a DXcoolingcoil.idf file in the datasets folder of the energyplus installation 
+    # nota : there is a DXcoolingcoil.idf file in the datasets folder of the energyplus installation
     capacity_f_iat_oat = CurveBiquadratic(
         idf,
         **CurveBiquadraticType(
