@@ -122,7 +122,7 @@ def basic_compact_schedule(
         detailed_schedule_name
     )
     if not compact_sched:
-        conf = CONF["schedules"][schedule_name]
+        conf = SCHEDULES[schedule_name]
         on_day =  [
             { "07:00": value_standby },
             { "17:00": value_confort },
