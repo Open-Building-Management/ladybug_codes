@@ -4,34 +4,83 @@ path: sql_db
 colors:
   4x5x100m: "#ff7f0e"
   2x5x100m: "#1f77b4"
+  glhe_inlet_t: "#ff7f0e" # orange
+  glhe_outlet_t: "#1f77b4" # blue
+  glhe_average_t: "#2ca02c" # green
 
 environment: "RUN PERIOD"
 
 title: "Agence ACF PAC AXIOM EXW 240"
-y_bottom: -3
-y_top: 14
-day_start: 7
-day_stop: 17
-style: marker
+# only for multidb plots 
+#y_bottom: -3
+#y_top: 14
+#day_start: 7
+#day_stop: 17
+#style: marker
 
 variables:
-  #temperature:
-  #  - outdoor_t
-  #  - indoor_t_r1
+  temperature:
+    - outdoor_t
+    - indoor_t_r1
+  #  - indoor_hr_r1
 
   #borehole_delta_t: glhe_outlet_t - glhe_inlet_t
 
   #pac_load_delta_t: pac_load_outlet_t - pac_load_inlet_t
 
-  COP: pac_load_heat_transfer / pac_elec
+  #COP: pac_load_heat_transfer / pac_elec
 
-  borehole_average_°C:
+  borehole_temperatures_°C:
+    - glhe_inlet_t
+    - glhe_outlet_t
     - glhe_average_t
   
-  #rates:
+  #"GLHE INLET °C":
+  #  - glhe_inlet_t
+  
+  #"GLHE OUTLET °C":
+  #  - glhe_outlet_t
+  
+  #stack_auxiliary_rates:
+  #  - soil_pump_elec
+  #  - pac_pump_elec
+  #  - zone_pump_elec
+  #  - fan_rdc_elec
+  #  - fan_rplus1_elec
+
+  #pac_thermal_power_W:
   #  - pac_load_heat_transfer
+  
+  #borehole_rate_W:
   #  - glhe_heat_rate
+
+  #main_rates: 
   #  - pac_elec
+
+soil_pump_elec:
+  name: "Pump Electricity Rate"
+  key: "SOIL_PUMP"
+  label: "soil pump W"
+
+pac_pump_elec:
+  name: "Pump Electricity Rate"
+  key: PAC_VARIABLE_PUMP
+  label: "pac pump W"
+
+zone_pump_elec:
+  name: "Pump Electricity Rate"
+  key: ZONE_VARIABLE_PUMP
+  label: "zone pump W"
+
+fan_rdc_elec:
+  name: "Fan Coil Fan Electricity Rate"
+  key: FCU_RDC
+  label: "fan RDC W"
+
+fan_rplus1_elec:
+  name: "Fan Coil Fan Electricity Rate"
+  key: FCU_RPLUS1
+  label: "fan RPLUS1 W"
 
 borehole_delta_t:
   label: "borehole deltaT °C"
@@ -81,7 +130,7 @@ pac_source_heat_transfer:
 pac_elec:
   name: "Heat Pump Electricity Rate"
   key: HPWTW
-  label: "HP elec W"
+  label: "HeatPump W"
 
 pac_load_heat_transfer:
   name: "Heat Pump Load Side Heat Transfer Rate"

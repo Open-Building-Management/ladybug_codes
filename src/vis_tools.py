@@ -74,7 +74,7 @@ def get_diff(data, label1, label2, absolute_value=1):
     except ValueError as e:
         print(e)
     if absolute_value:
-       return [abs(res) for res in result]
+        return [abs(res) for res in result]
     return result
 
 

@@ -262,25 +262,24 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
             fig.suptitle(config["title"])
         ax = ax[:, 0]
         for i, (thema_name, thema) in enumerate(config["variables"].items()):
-            y_label = config.get(thema_name, {}).get("label", thema_name)
             if isinstance(thema, str):
                 dependencies = get_dependencies(thema)
                 values_by_name: dict[str, dict] = {db_name: {} for db_name in cons}
                 dates: list = []
-                for dependency in dependencies:
-                    name = config[dependency]["name"]
-                    key = config[dependency]["key"]
+                for variable in dependencies:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
                     identifier = (name, key)
                     for db_name in cons:
                         if not dates:
                             dates = datas[db_name][identifier]["dates"]
-                        values_by_name[db_name][dependency] = np.array(
+                        values_by_name[db_name][variable] = np.array(
                             datas[db_name][identifier]["values"]
                         )
                 for db_name in cons:
-                    values = eval_expr(thema, values_by_name[db_name])
                     dates, values = filter_hours(
-                        dates, values
+                        dates,
+                        eval_expr(thema, values_by_name[db_name])
                     )
                     color = colors.get(db_name)
                     ax[i].plot(dates, values, label=db_name, color=color)
@@ -311,20 +310,23 @@ def multidb_plot_variables(dbs: dict[str, str], config: dict):
                 config.get("y_top")
             )
             ax[i].set_xlabel("date")
-            ax[i].set_ylabel(y_label)
+            ax[i].set_ylabel(
+                config.get(thema_name, {}).get("label", thema_name)
+            )
             ax[i].grid(True)
             ax[i].legend()
     fig.tight_layout()
     plt.show()
 
 
-def plot_variable(ax, dates, values, label, overlay_years=False):
+def plot_variable(ax, dates, values, label, overlay_years=False, color=None):
     """plot a single serie on an matplotlib axe"""
     if not overlay_years:
         ax.plot(
             dates,
             values,
             label=label,
+            color=color
         )
         return
     # overlay mode
@@ -372,34 +374,62 @@ def plot_variables(db, config, overlay_years=True):
             config["variables"].items()
         ):
             if isinstance(thema, str):
-                dependencies = get_dependencies(thema)
+                variables = get_dependencies(thema)
                 values_by_name = {}
                 dates = []
-                for dependency in dependencies:
-                    name = config[dependency]["name"]
-                    key = config[dependency]["key"]
+                for variable in variables:
+                    name = config[variable]["name"]
+                    key = config[variable]["key"]
                     identifier = (name, key)
                     if not dates:
                         dates = data[identifier]["dates"]
-                    values_by_name[dependency] = np.array(
+                    values_by_name[variable] = np.array(
                         data[identifier]["values"]
                     )
-                values = eval_expr(thema, values_by_name)
-                label = config.get(thema_name, {}).get("label", thema_name)
-                plot_variable(ax[i], dates, values, label=None, overlay_years=overlay_years)
-                ax[i].set_ylabel(label)
+                plot_variable(
+                    ax[i],
+                    dates,
+                    eval_expr(thema, values_by_name),
+                    label=None,
+                    overlay_years=overlay_years
+                )
+                ax[i].set_ylabel(
+                    config.get(thema_name, {}).get("label", thema_name)
+                )
             if isinstance(thema, list):
+                labels = {}
+                identifiers = {}
+                first_variable = None
                 for variable in thema:
+                    if not first_variable:
+                        first_variable = variable
                     name = config[variable]["name"]
                     key = config[variable]["key"]
                     label = config[variable].get(
                         "label",
                         f"{name} — {key}",
                     )
-                    identifier = (name, key)
-                    dates = data[identifier]["dates"]
-                    values = data[identifier]["values"]
-                    plot_variable(ax[i], dates, values, label, overlay_years=overlay_years)
+                    labels[variable] = label
+                    identifiers[variable] = (name, key)
+                if "stack" in thema_name:
+                    values = [
+                        data[identifiers[variable]]["values"] for variable in thema
+                    ]
+                    ax[i].stackplot(
+                        data[identifiers[first_variable]]["dates"],
+                        *values,
+                        labels=labels.values()
+                    )
+                else:
+                    for variable in thema:
+                        plot_variable(
+                            ax[i],
+                            data[identifiers[variable]]["dates"],
+                            data[identifiers[variable]]["values"],
+                            labels[variable],
+                            overlay_years=overlay_years,
+                            color=config.get("colors", {}).get(variable)
+                        )
                 ax[i].set_ylabel(thema_name)
             ax[i].grid(True)
     if overlay_years:
@@ -479,8 +509,6 @@ def export_variables_csv_chunk(db, config,
                 name = config[variable]["name"]
                 key = config[variable]["key"]
                 identifier = (name, key)
-                dates = data[identifier]["dates"]
-                values = data[identifier]["values"]
                 # Export in chunks.
                 chunk_index = 1
                 current_size = 0
@@ -491,7 +519,10 @@ def export_variables_csv_chunk(db, config,
                         chunk_index,
                     )
                     current_size = 0
-                    for date, value in zip(dates, values):
+                    for date, value in zip(
+                        data[identifier]["dates"],
+                        data[identifier]["values"]
+                    ):
                         buffer = io.StringIO(newline="")
                         row_writer = csv.writer(buffer)
                         row_writer.writerow([date, value])

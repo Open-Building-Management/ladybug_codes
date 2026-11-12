@@ -161,7 +161,7 @@ def basic_compact_schedule(
             compact_sched[f"{EPApi.FIELD}_{i}"] = f"{EPValues.FOR}: {days}"
             i += 1
             for item in period["Until"]:
-                for time, value in item.items():    
+                for time, value in item.items():
                     compact_sched[f"{EPApi.FIELD}_{i}"] = f"{EPValues.UNTIL}: {time}"
                     compact_sched[f"{EPApi.FIELD}_{i+1}"] = value
                     i += 2

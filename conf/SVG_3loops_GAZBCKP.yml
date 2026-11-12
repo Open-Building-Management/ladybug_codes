@@ -3,7 +3,7 @@ North_Axis: 122.4
 
 name: SVG_3L_DSP
 suffix: EXW240_Gaz_7040_1Y
-idf_name: 4x8x70_lb1.3_S4_P40
+idf_name: 2x7x70_lb1.3_S6_P40_fcu_DDsizing
 
 verbose: 0
 
@@ -21,7 +21,7 @@ run_period:
 
 design_days:
   heating:
-    Maximum_DryBulb_Temperature: -3
+    Maximum_DryBulb_Temperature: -5
     Daily_DryBulb_Temperature_Range: 0
     Wetbulb_or_DewPoint_at_Maximum_DryBulb: -10
   cooling:
@@ -63,6 +63,9 @@ equipments:
   - HX
   - baseboards_RDC
   - baseboards_RPLUS1
+  - fcu_RDC
+  - fcu_RPLUS1
+  - bypass_pipe
 
 sensors:
   pac_outlet:
@@ -71,9 +74,24 @@ sensors:
   setpoint_sensor:
     location_name: pac_water_heating_loop_plant_outlet_node
     type: "System Node Setpoint Temperature"
+  # to evaluate latent deshumidification power
+  RDC_cool_total_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RDC_cool_sensible_rate:
+    location_name: fcu_RDC_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
+  RPLUS1_cool_total_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Total Cooling Rate"
+  RPLUS1_cool_sensible_rate:
+    location_name: fcu_RPLUS1_coil_cooling_water
+    type: "Cooling Coil Sensible Cooling Rate"
 
 process:
   deltaSP: "setpoint_sensor - pac_outlet"
+  RDC_cool_latent_rate: "RDC_cool_total_rate - RDC_cool_sensible_rate"
+  RPLUS1_cool_latent_rate: "RPLUS1_cool_total_rate - RPLUS1_cool_sensible_rate"
 
 controls:
   boiler_availability:
@@ -89,7 +107,12 @@ soil_loop:
     uncontrolled: [borehole]
   branches:
     plant: [soil_pump, borehole]
-    demand: [hpwtw]
+    demand: 
+      - parallel:
+        - [hpwtw]
+        - [fcu_RDC]
+        - [fcu_RPLUS1]
+        - [bypass_pipe]
   Loop_Type: cooling
   Design_Loop_Exit_Temperature: 12
   Loop_Design_Temperature_Difference: 5
@@ -128,9 +151,9 @@ borehole:
   Soil_Thermal_Conductivity: 1.3
   Soil_Density: 2000
   Soil_Specific_Heat: 900
-  Number_of_Boreholes_in_XDirection: 8
-  Number_of_Boreholes_in_YDirection: 4
-  Borehole_Spacing: 4
+  Number_of_Boreholes_in_XDirection: 7
+  Number_of_Boreholes_in_YDirection: 2
+  Borehole_Spacing: 6
 
 hpwtw:
   type: heatpump
@@ -143,7 +166,7 @@ HX:
 
 gas_boiler:
   force_side: Boiler_Water
-  Nominal_Capacity: 45000
+  Nominal_Capacity: 30000
   Nominal_Thermal_Efficiency: 0.87
   efficiency_c: 1 #0.96
   efficiency_x: 0.02 #0.04 # x=PLR
@@ -160,3 +183,11 @@ RDC:
 RPLUS1:
   Outdoor_Air_Method: "Flow/Zone"
   Outdoor_Air_Flow_per_Zone: 0.1
+
+fcu_RDC:
+  process: "cooling"
+  force_side: Water
+
+fcu_RPLUS1:
+  process: "cooling"
+  force_side: Water

@@ -12,7 +12,7 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import(
 )
 
 from idfhub.common import idf
-from idfhub.hvac24_1_0 import create_sensor
+from idfhub.hvac24_1_0_secondary import create_sensor
 
 def evaluate_unmet(zone_name, schedule_name):
     """evaluate unmet hours"""

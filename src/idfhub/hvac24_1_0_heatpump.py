@@ -1,13 +1,13 @@
 """Manage hvac heat pumps"""
 import json
 from idfhub.hvac import EPValues
+from idfhub.hvac24_1_0_secondary import create_air_node
 
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     CurveBiquadratic,
     CurveQuadratic,
     CurveQuadlinear,
     HeatpumpPlantloopEirHeating,
-    OutdoorairNode,
     HeatpumpWatertowaterEquationfitHeating,
 )
 
@@ -16,7 +16,6 @@ from idfhub.idf_autocomplete.v24_1_0.idf_types_short import (
     CurveQuadraticType,
     CurveQuadlinearType,
     HeatpumpPlantloopEirHeatingType,
-    OutdoorairNodeType,
     HeatpumpWatertowaterEquationfitHeatingType,
 )
 
@@ -287,14 +286,7 @@ def air_to_water_heatpump_eir(name):
             Maximum_Value_of_x=26.6666667
         )
     )
-    air_node_name = f"{name}_source_inlet_outdoor_air_node"
-    input_air_node = OutdoorairNode(
-        idf,
-        **OutdoorairNodeType(
-            Name=air_node_name,
-            Height_Above_Ground=10
-        )
-    )
+    input_air_node = create_air_node(f"{name}_source_inlet_outdoor_air_node")
     hpatw = HeatpumpPlantloopEirHeating(
         idf,
         **HeatpumpPlantloopEirHeatingType(

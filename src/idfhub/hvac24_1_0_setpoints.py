@@ -1,7 +1,7 @@
 """setpoints management"""
 
 from idfhub.common import idf, CONF, get_logger
-from idfhub.hvac import EPApi, EPValues, LoopNodes
+from idfhub.hvac import EPValues, LoopNodes
 from idfhub.hvac24_1_0 import constant_schedule
 from idfhub.idf_autocomplete.v24_1_0.idf_helpers_short import (
     SetpointmanagerMultizoneCoolingAverage, SetpointmanagerMultizoneCoolingAverageMeta,
@@ -105,4 +105,3 @@ def oa_reset(loop_name: str, setpoint_name: str, node: str|None = None):
             Reporting_Frequency="Timestep"
         )
     )
-

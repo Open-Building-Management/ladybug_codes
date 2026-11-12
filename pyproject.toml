@@ -35,7 +35,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "idfhub"
-version = "0.0.1"
+version = "0.0.3"
 dependencies = [
     "eppy",
     "honeybee-core",
@@ -49,4 +49,7 @@ dependencies = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["idfhub"]
+py-modules = ["generate_hvac", "generate_geometry_from_yaml"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
