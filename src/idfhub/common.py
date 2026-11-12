@@ -163,33 +163,6 @@ def get_variables(metadata: dict) -> dict:
             _resolve(key, metadata, resolved, set())
     return resolved
 
-def get_variables_old(metadata: dict) -> dict:
-    """return dict of variables"""
-    variables = {}
-    formulas = {}
-    accepted_keys = [
-        "height",
-        "altitude",
-    ]
-    for key in metadata:
-        if key in accepted_keys:
-            if isinstance(metadata[key], str):
-                formulas[key] = metadata[key]
-            else:
-                variables[key] = metadata[key]
-        for start in ["d", "z", "h"]:
-            pattern = f"^{start}[0-9]+"
-            if re.match(pattern, key):
-                if isinstance(metadata[key], str):
-                    formulas[key] = metadata[key]
-                else:
-                    variables[key] = metadata[key]
-    resolved = {
-        key:eval_expr(formula, variables)
-        for key,formula in formulas.items()
-    }
-    return {**variables, **resolved}
-
 
 REQUIRED = [
     "building_name",
