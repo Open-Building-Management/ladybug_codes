@@ -4,10 +4,13 @@ import logging
 import os
 import re
 import sys
-import yaml
+from os import PathLike
+from pathlib import Path
 
 from eppy.modeleditor import IDF
-from .ast_utils import get_dependencies, eval_expr 
+import yaml
+
+from .ast_utils import get_dependencies, eval_expr
 
 FORMAT = (
     '%(asctime)s | %(levelname).1s | '
@@ -61,21 +64,36 @@ def get_logger(
     return logger
 
 
-def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
-    """Load configuration.yml."""
-    yaml_path = f"{repo_root}/{file_name}"
+def resolve_config_path(path: str) -> Path:
+    """Résolution du path yaml de config"""
+    config_path = Path(path).expanduser()
+    if not config_path.is_absolute():
+        config_path = REPO_ROOT / config_path
+    if not config_path.is_file():
+        raise FileNotFoundError(f"Fichier inexistant: {config_path}")
+    return config_path.resolve()
+
+
+def load_yaml(yaml_path: PathLike|str) -> dict:
+    """load an yml config file"""
     if os.path.exists(yaml_path):
         with open(yaml_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
     print("*********YML FILE NOT FOUND*********")
     return {}
 
-hvac_parser = argparse.ArgumentParser(description='hvac configuration')
+
+def load_config(repo_root:str, file_name:str = "configuration.yml") -> dict:
+    """Load configuration.yml."""
+    return load_yaml(f"{repo_root}/{file_name}")
+
+
+hvac_parser = argparse.ArgumentParser(description='yml configurations')
 
 hvac_parser.add_argument(
     "--conf",
     action="store",
-    help="yml configuration file",
+    help="hvac configuration file",
     default="configuration.yml"
 )
 
@@ -93,8 +111,8 @@ except SystemExit:
     # Use defaults when argument parsing fails (e.g., in pytest)
     args = argparse.Namespace(conf="configuration.yml", geoconf="conf_geometry/agence.yml")
 
-CONF = load_config(REPO_ROOT, args.conf)
-GEOMETRY = load_config(REPO_ROOT, args.geoconf)
+CONF = load_yaml(resolve_config_path(args.conf))
+GEOMETRY = load_yaml(resolve_config_path(args.geoconf))
 COMMON_HEIGHT = GEOMETRY.get("height", 3)
 BLOCKS = GEOMETRY.get("blocks", {})
 
@@ -225,15 +243,6 @@ for sched_name, sched_conf in YML_SCHED.items():
 
 RUN_PERIOD = CONF.get("run_period", {})
 
-required = [
-    "Begin_Month",
-    "Begin_Day_of_Month",
-    "Begin_Year",
-    "End_Month",
-    "End_Day_of_Month",
-    "End_Year"
-]
-
 DEF_RUN_PERIOD = {
     "Begin_Month": 1,
     "Begin_Day_of_Month": 1,
@@ -243,6 +252,6 @@ DEF_RUN_PERIOD = {
     "End_Year": 2026
 }
 
-for el in required:
-    if el not in RUN_PERIOD:
-        RUN_PERIOD[el] = DEF_RUN_PERIOD[el]
+for rpk, rpv in DEF_RUN_PERIOD.items():
+    if rpk not in RUN_PERIOD:
+        RUN_PERIOD[rpk] = rpv
