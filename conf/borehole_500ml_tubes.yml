@@ -1,10 +1,14 @@
-building_name: Agence_ACF
+building_name: idf/Agence_ACF_geo_only
 North_Axis: 122.4
 
 name: borehole_500ml_reducedFlow30_80
 suffix: SP5535
 
 os_ep_path: "C:/openstudioapplication-1.8.0/EnergyPlus"
+
+run_period:
+  Begin_Year: 2017
+  End_Year: 2017
 
 zones:
   - "RDC"

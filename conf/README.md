@@ -1,3 +1,24 @@
+# run_period
+
+Default values for `Begin_Year` and `End_year` are 2017
+
+```
+run_period:
+  Begin_Year: 2017
+  End_Year: 2017
+```
+
+For a custom 10 years run_period:
+```
+run_period:
+  Begin_Month: 4
+  Begin_Day_of_Month: 21
+  Begin_Year: 2026
+  End_Month: 4
+  End_Day_of_Month: 20
+  End_Year: 2036
+```
+
 # structure
 
 mandatory yaml keys :

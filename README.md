@@ -20,7 +20,7 @@ pip install -e .
 # Geometry
 
 ```
-py .\generate_geometry_from_yam.py  --geoconf=conf_geometry/agence.yaml
+py src/generate_geometry_from_yaml.py  --geoconf=conf_geometry/agence.yaml
 ```
 
 domestic|tertiary/industry
@@ -30,10 +30,10 @@ domestic|tertiary/industry
 # HVAC
 
 ```
-py .\generate_hvac.py
+py src/generate_hvac.py
 
-py .\generate_hvac.py --conf=conf/a2w_hp_w_gas_backup.yml
-py .\generate_hvac.py --conf=conf/borehole_500ml_tubes.yml
+py src/generate_hvac.py --conf=conf/a2w_hp_w_gas_backup.yml
+py src/generate_hvac.py --conf=conf/borehole_500ml_tubes.yml
 ```
 [more on yml conf](conf)
 
