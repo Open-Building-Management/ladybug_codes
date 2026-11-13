@@ -65,6 +65,6 @@ jobs:
             IDFHUB_REF=${{ inputs.idfhub_ref }}
           push: true
           tags: |
-            ghcr.io/${{ steps.outputs.image_name.name }}:${{ steps.outputs.image_tag.tag }}
+            ghcr.io/${{ steps.image.outputs.name }}:${{ steps.image.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
