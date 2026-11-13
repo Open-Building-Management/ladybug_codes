@@ -46,17 +46,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - id: image
+        name: Set image name and tag
+        run: |
+          echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+          t0=ep${{ inputs.energyplus_version }}-${{ inputs.energyplus_build }}
+          t1=_idfhub${{ inputs.idfhub_ref }}
+          echo "tag=$t0$t1" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./docker
           file: ./docker/Dockerfile
           build-args: |
-            "ENERGYPLUS_VERSION=${{ inputs.energyplus_version }}"
-            "ENERGYPLUS_BUILD=${{ inputs.energyplus_build }}"
-            "IDFHUB_REF=${{ inputs.idfhub_ref }}"
+            ENERGYPLUS_VERSION=${{ inputs.energyplus_version }}
+            ENERGYPLUS_BUILD=${{ inputs.energyplus_build }}
+            IDFHUB_REF=${{ inputs.idfhub_ref }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:ep${{ inputs.energyplus_version }}_idfhub${{ inputs.idfhub_ref}}
+            ghcr.io/${{ steps.outputs.image_name.name }}:${{ steps.outputs.image_tag.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

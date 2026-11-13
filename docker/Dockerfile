@@ -12,7 +12,7 @@ ARG IDFHUB_PATH=/opt/ladybug_codes
 ARG OS_EP_PATH=/opt/energyplus
 ARG MOD_CONF="s|^os_ep_path:.*|os_ep_path: ${OS_EP_PATH}|"
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     tar \
     libgomp1 \
@@ -35,6 +35,9 @@ RUN wget -q \
     && pip install --no-cache-dir ${IDFHUB_PATH}
 
 RUN find ${IDFHUB_PATH} \
+    -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) \
+    -exec sed -i "${MOD_CONF}" {} + \
+    && find ${IDFHUB_PATH}/conf ${IDFHUB_PATH}/conf_geometry \
     -type f \( -name '*.yml' -o -name '*.yaml' \) \
     -exec sed -i "${MOD_CONF}" {} +
 
