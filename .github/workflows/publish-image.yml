@@ -26,7 +26,6 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -48,11 +47,15 @@ jobs:
 
       - id: image
         name: Set image name and tag
+        env:
+          ENERGYPLUS_VERSION: ${{ inputs.energyplus_version }}
+          ENERGYPLUS_BUILD: ${{ inputs.energyplus_build }}
+          IDFHUB_REF: ${{ inputs.idfhub_ref }}
         run: |
-          echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
-          t0=ep${{ inputs.energyplus_version }}-${{ inputs.energyplus_build }}
-          t1=_idfhub${{ inputs.idfhub_ref }}
-          echo "tag=$t0$t1" >> $GITHUB_OUTPUT
+          echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+          t0="ep${ENERGYPLUS_VERSION}-${ENERGYPLUS_BUILD}"
+          t1="_idfhub${IDFHUB_REF}"
+          echo "tag=$t0$t1" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -65,6 +68,6 @@ jobs:
             IDFHUB_REF=${{ inputs.idfhub_ref }}
           push: true
           tags: |
-            ghcr.io/${{ steps.image.outputs.name }}:${{ steps.image.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}:${{ steps.image.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
