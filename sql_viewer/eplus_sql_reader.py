@@ -291,7 +291,17 @@ def accumulate_variables(db, config, period="month"):
         if dates is None:
             continue
         energy_values = eval_expr(expression, values_by_name)
-        results[name] = accumulate(dates, energy_values, period=period)
+        # EnergyPlus timestamps mark interval ends; group by interval start
+        # so the final interval of a month remains in that month.
+        period_dates = [
+            date - timedelta(minutes=minutes)
+            for date, minutes in zip(
+                interval_data["dates"], interval_data["values"]
+            )
+        ]
+        results[name] = accumulate(
+            period_dates, energy_values, period=period
+        )
     return results
 
 
