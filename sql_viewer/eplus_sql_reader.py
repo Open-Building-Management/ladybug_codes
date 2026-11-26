@@ -127,7 +127,7 @@ def fetch(con, name, key, config):
     return dates, values
 
 
-def get_dictionary_indexes(con, config):
+def get_dictionary_indexes(con, config, include_accumulate=False):
     """Return dictionary indexes for requested variables."""
     variables = []
     for thema in config.get("variables", {}).values():
@@ -137,8 +137,9 @@ def get_dictionary_indexes(con, config):
         if isinstance(thema, str):
             # we have a formula so we must get the dependencies
             variables.extend(get_dependencies(thema))
-    for expression in config.get("accumulate", {}).values():
-        variables.extend(get_dependencies(expression) - {"interval_minutes"})
+    if include_accumulate:
+        for expression in config.get("accumulate", {}).values():
+            variables.extend(get_dependencies(expression) - {"interval_minutes"})
     variables = list(dict.fromkeys(variables))
     if not variables:
         return {}
@@ -171,10 +172,13 @@ def get_dictionary_indexes(con, config):
 
 def fetch_many(con, config,
     tz_name="Europe/Paris",
-    mode="human"
+    mode="human",
+    include_accumulate=False,
 ):
     """Fetch several EnergyPlus variables sharing the same dates."""
-    indexes = get_dictionary_indexes(con, config)
+    indexes = get_dictionary_indexes(
+        con, config, include_accumulate=include_accumulate
+    )
     if not indexes:
         return {}
     index_to_variable = {
@@ -265,7 +269,7 @@ def accumulate_variables(db, config, period="month"):
         return {}
 
     with sqlite3.connect(db) as con:
-        data = fetch_many(con, config)
+        data = fetch_many(con, config, include_accumulate=True)
 
     interval_data = data["interval_minutes"]
     results = {}
