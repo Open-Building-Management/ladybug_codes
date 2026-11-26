@@ -129,16 +129,19 @@ def fetch(con, name, key, config):
 
 def get_dictionary_indexes(con, config):
     """Return dictionary indexes for requested variables."""
-    if "variables" not in config:
-        return {}
     variables = []
-    for thema in config["variables"].values():
+    for thema in config.get("variables", {}).values():
         if isinstance(thema, list):
             for variable in thema:
                 variables.append(variable)
         if isinstance(thema, str):
             # we have a formula so we must get the dependencies
             variables.extend(get_dependencies(thema))
+    for expression in config.get("accumulate", {}).values():
+        variables.extend(get_dependencies(expression) - {"interval_minutes"})
+    variables = list(dict.fromkeys(variables))
+    if not variables:
+        return {}
     conditions = []
     params = []
     for variable in variables:
