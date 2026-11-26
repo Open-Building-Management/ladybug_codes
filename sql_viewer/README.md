@@ -115,5 +115,6 @@ python eplus_sql_reader.py --yml path/to/sql.yaml --accumulate --period month
 - The selected `environment` is applied to SQL queries, so design-day
   environments are not mixed with the run period.
 - Accumulation uses `Time.Interval`; it does not assume a one-hour interval.
+- EnergyPlus timestamps mark the end of each reporting interval; monthly and yearly grouping uses the interval start, so the final interval at a month boundary is assigned to the month it belongs to.
 - The current reader loads selected series into memory for plotting and
   accumulation. Very large databases may therefore require substantial memory.
