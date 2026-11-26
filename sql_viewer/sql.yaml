@@ -10,6 +10,11 @@ colors:
 
 environment: "RUN PERIOD"
 
+# Integrated energy from signed heat-transfer rates (GJ).
+# interval_minutes is provided by the SQL reader from Time.Interval.
+accumulate:
+  borehole_energy_GJ: glhe_heat_rate * interval_minutes * 60 * 1e-9
+
 title: "Agence ACF PAC AXIOM EXW 240"
 # only for multidb plots 
 #y_bottom: -3
