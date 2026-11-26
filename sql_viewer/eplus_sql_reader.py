@@ -306,16 +306,16 @@ def accumulate_variables(db, config, period="month"):
 
 
 def print_accumulations(results):
-    """Print accumulated formula results as readable tables."""
+    """Print accumulated formula results in a csv fashion"""
     for name, rows in results.items():
         print("\n" + name)
-        print(f"{'Period':<12} {'Positive':>14} {'Negative':>14} {'Net':>14}")
+        print("Period,Positive,Negative,Net")
         for row in rows:
             print(
-                f"{str(row['period']):<12} "
-                f"{row['positive']:>14.3f} "
-                f"{row['negative']:>14.3f} "
-                f"{row['net']:>14.3f}"
+                str(row['period']),
+                f",{row['positive']:.3f} "
+                f",{row['negative']:.3f} "
+                f",{row['net']:.3f}"
             )
 
 
