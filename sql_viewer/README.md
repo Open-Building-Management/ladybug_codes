@@ -21,17 +21,87 @@ Run the script from this directory, or pass the YAML file explicitly with
 `--yml`. The default configuration is `sql.yaml`.
 
 - `path`: directory containing EnergyPlus `.sql` files.
+- `colors`: define custom colors for the plots.
 - `environment`: EnergyPlus environment to read, for example `RUN PERIOD`.
 - `variables`: variables and expressions used by plots and CSV exports.
 - `accumulate`: expressions that calculate an energy value for each reporting
   interval, before the values are accumulated by calendar month or year.
 
-A variable entry defines the EnergyPlus report name and key:
+Entries used in `variables` and `accumulate` are defined with the EnergyPlus report `name` and `key` and an optional `label` for legending.
 
 ```yaml
+outdoor_t:
+  name: "Site Outdoor Air Drybulb Temperature"
+  key: Environment
+  label: "Outdoor Temp °C"
+  
+indoor_t_r1:
+  name: "Zone Air Temperature"
+  key: RPLUS1
+  label: "RPLUS1 temp °C"
+
+pac_elec:
+  name: "Heat Pump Electricity Rate"
+  key: HPWTW
+  label: "HeatPump W"
+
+pac_load_heat_transfer:
+  name: "Heat Pump Load Side Heat Transfer Rate"
+  key: HPWTW
+  label: "HP Load heat W"
+
 glhe_heat_rate:
   name: "Ground Heat Exchanger Heat Transfer Rate"
   key: "BOREHOLE"
+
+soil_pump_elec:
+  name: "Pump Electricity Rate"
+  key: "SOIL_PUMP"
+  label: "soil pump W"
+
+pac_pump_elec:
+  name: "Pump Electricity Rate"
+  key: PAC_VARIABLE_PUMP
+  label: "pac pump W"
+
+zone_pump_elec:
+  name: "Pump Electricity Rate"
+  key: ZONE_VARIABLE_PUMP
+  label: "zone pump W"
+
+fan_rdc_elec:
+  name: "Fan Coil Fan Electricity Rate"
+  key: FCU_RDC
+  label: "fan RDC W"
+
+fan_rplus1_elec:
+  name: "Fan Coil Fan Electricity Rate"
+  key: FCU_RPLUS1
+  label: "fan RPLUS1 W"
+```
+
+### Variables
+
+The following yaml creates a graph with 3 subplots.
+- The first subplot will render 2 curves of temperature (indoor and outdoor)
+- The second one will calculate the COP
+- The third will show cumulative stack of the auxiliary powers, as the pattern `stack`
+  is used in the key name
+
+```yaml
+variables:
+  temperature:
+    - outdoor_t
+    - indoor_t_r1
+
+  COP: pac_load_heat_transfer / pac_elec
+
+  stack_auxiliary_rates:
+    - soil_pump_elec
+    - pac_pump_elec
+    - zone_pump_elec
+    - fan_rdc_elec
+    - fan_rplus1_elec
 ```
 
 ### Accumulation formulas
@@ -89,6 +159,12 @@ Plot configured variables:
 
 ```bash
 python eplus_sql_reader.py --plot
+```
+
+Plot a multi years simulation in an overlay fashion, with consecutive years stacked :
+
+```bash
+python eplus_sql_reader.py --plot --overlay=1
 ```
 
 Export configured source variables to chunked CSV files:
