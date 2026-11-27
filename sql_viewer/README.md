@@ -21,7 +21,7 @@ Run the script from this directory, or pass the YAML file explicitly with
 `--yml`. The default configuration is `sql.yaml`.
 
 - `path`: directory containing EnergyPlus `.sql` files.
-- `colors`: define custom colors for the plots.
+- `colors`: custom colors.
 - `environment`: EnergyPlus environment to read, for example `RUN PERIOD`.
 - `variables`: variables and expressions used by plots and CSV exports.
 - `accumulate`: expressions that calculate an energy value for each reporting
