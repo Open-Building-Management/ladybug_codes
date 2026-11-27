@@ -127,21 +127,27 @@ def fetch(con, name, key, config):
     return dates, values
 
 
-def get_dictionary_indexes(con, config):
+def get_dictionary_indexes(con, config, include_accumulate=False):
     """Return dictionary indexes for requested variables."""
-    if "variables" not in config:
-        return {}
     variables = []
-    for thema in config["variables"].values():
+    for thema in config.get("variables", {}).values():
         if isinstance(thema, list):
             for variable in thema:
                 variables.append(variable)
         if isinstance(thema, str):
             # we have a formula so we must get the dependencies
             variables.extend(get_dependencies(thema))
+    if include_accumulate:
+        for expression in config.get("accumulate", {}).values():
+            variables.extend(get_dependencies(expression) - {"interval_minutes"})
+    variables = list(dict.fromkeys(variables))
+    if not variables:
+        return {}
     conditions = []
     params = []
     for variable in variables:
+        if variable == "interval_minutes":
+            continue
         conditions.append(
             "(Name = ? AND KeyValue = ?)"
         )
@@ -166,10 +172,13 @@ def get_dictionary_indexes(con, config):
 
 def fetch_many(con, config,
     tz_name="Europe/Paris",
-    mode="human"
+    mode="human",
+    include_accumulate=False,
 ):
     """Fetch several EnergyPlus variables sharing the same dates."""
-    indexes = get_dictionary_indexes(con, config)
+    indexes = get_dictionary_indexes(
+        con, config, include_accumulate=include_accumulate
+    )
     if not indexes:
         return {}
     index_to_variable = {
@@ -187,6 +196,7 @@ def fetch_many(con, config,
             t.Day,
             t.Hour,
             t.Minute,
+            t.Interval,
             r.ReportDataDictionaryIndex,
             r.Value
         FROM ReportData r
@@ -209,12 +219,104 @@ def fetch_many(con, config,
         }
         for variable in indexes
     }
-    for _, y, mo, d, h, mi, dict_index, value in rows:
+    data["interval_minutes"] = {"dates": [], "values": []}
+    previous_time_index = None
+    for time_index, y, mo, d, h, mi, interval, dict_index, value in rows:
         dt = energyplus_date(y, mo, d, h, mi, tz_name=tz_name, mode=mode)
+        if time_index != previous_time_index:
+            data["interval_minutes"]["dates"].append(dt)
+            data["interval_minutes"]["values"].append(interval)
+            previous_time_index = time_index
         variable = index_to_variable[dict_index]
         data[variable]["dates"].append(dt)
         data[variable]["values"].append(value)
     return data
+
+
+def accumulate(dates, values, period="month"):
+    """Integrate interval energies by calendar period.
+
+    Positive and negative values are accumulated separately; negative
+    values are returned as positive magnitudes. ``net`` retains the sign.
+    """
+    if period not in ("month", "year"):
+        raise ValueError("period must be 'month' or 'year'")
+
+    totals = defaultdict(lambda: {
+        "positive": 0.0,
+        "negative": 0.0,
+        "net": 0.0,
+    })
+    for date, value in zip(dates, values):
+        key = (date.year, date.month) if period == "month" else date.year
+        value = float(value)
+        if value > 0:
+            totals[key]["positive"] += value
+        elif value < 0:
+            totals[key]["negative"] += -value
+        totals[key]["net"] += value
+
+    return [
+        {"period": key, **totals[key]}
+        for key in sorted(totals)
+    ]
+
+
+def accumulate_variables(db, config, period="month"):
+    """Evaluate YAML accumulation formulas and aggregate their energies."""
+    formulas = config.get("accumulate", {})
+    if not formulas:
+        return {}
+
+    with sqlite3.connect(db) as con:
+        data = fetch_many(con, config, include_accumulate=True)
+
+    interval_data = data["interval_minutes"]
+    results = {}
+    for name, expression in formulas.items():
+        dependencies = get_dependencies(expression)
+        values_by_name = {}
+        dates = None
+        for variable in dependencies:
+            if variable == "interval_minutes":
+                source = interval_data
+            else:
+                definition = config[variable]
+                identifier = (definition["name"], definition["key"])
+                source = data[identifier]
+            if dates is None:
+                dates = source["dates"]
+            values_by_name[variable] = np.asarray(source["values"])
+
+        if dates is None:
+            continue
+        energy_values = eval_expr(expression, values_by_name)
+        # EnergyPlus timestamps mark interval ends; group by interval start
+        # so the final interval of a month remains in that month.
+        period_dates = [
+            date - timedelta(minutes=minutes)
+            for date, minutes in zip(
+                interval_data["dates"], interval_data["values"]
+            )
+        ]
+        results[name] = accumulate(
+            period_dates, energy_values, period=period
+        )
+    return results
+
+
+def print_accumulations(results):
+    """Print accumulated formula results in a csv fashion"""
+    for name, rows in results.items():
+        print("\n" + name)
+        print("Period,Positive,Negative,Net")
+        for row in rows:
+            print(
+                str(row['period']),
+                f",{row['positive']:.3f} "
+                f",{row['negative']:.3f} "
+                f",{row['net']:.3f}"
+            )
 
 
 def filter_hours(dates, values, day_start=None, day_stop=None):
@@ -554,6 +656,8 @@ def main():
     parser.add_argument("--plot", action="store_true")
     parser.add_argument("--explore", action="store_true")
     parser.add_argument("--csv", action="store_true")
+    parser.add_argument("--accumulate", action="store_true")
+    parser.add_argument("--period", choices=("month", "year"), default="month")
     parser.add_argument("--yml", default="sql.yaml")
     parser.add_argument("--tz", default="Europe/Paris")
     parser.add_argument("--mb", default=2)
@@ -614,6 +718,14 @@ def main():
                 sql_config,
                 tz_name=args.tz,
                 max_size_mb=args.mb
+            )
+        return
+
+    if args.accumulate:
+        for label, database in databases.items():
+            print("\nDatabase: " + label)
+            print_accumulations(
+                accumulate_variables(database, sql_config, period=args.period)
             )
         return
 
